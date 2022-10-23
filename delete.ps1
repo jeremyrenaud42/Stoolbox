@@ -1,1 +1,1 @@
-﻿Remove-Item  "C:\_Tech" -Recurse -Confirm -Force
+﻿Remove-Item  "C:\_Tech" -Recurse -Force
