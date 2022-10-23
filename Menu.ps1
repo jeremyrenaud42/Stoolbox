@@ -15,68 +15,6 @@ function admin
 }
 admin
 
-Function Check-RunAsAdministrator()
-{
-  #Get current user context
-  $CurrentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
-  
-  #Check user is running the script is member of Administrator Group
-  if($CurrentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator))
-  {
-    
-  }
-  else
-    {
-       #Create a new Elevated process to Start PowerShell
-       $ElevatedProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
- 
-       # Specify the current script path and name as a parameter
-       $ElevatedProcess.Arguments = "& '" + $script:MyInvocation.MyCommand.Path + "'"
- 
-       #Set the Process to elevated
-       $ElevatedProcess.Verb = "runas"
- 
-       #Start the new elevated process
-       [System.Diagnostics.Process]::Start($ElevatedProcess)
- 
-       #Exit from the current, unelevated, process
-       Exit
- 
-    }
-}
- 
-#Check Script is running with Elevated Privileges
-#Check-RunAsAdministrator
-
-function FolderMenu #Permet d'éxécuter menu.exe au bon emplacement pour respecter la nomenclature des dossiers et éviter des erreurs
-{
-#Si executer depuis le bon emplacement va skipper cette fonction
-#Partie 1: Si menu.exe pas au bon endroit, le met au bon endroit.
-$testpathmenuexe = Test-Path "$root\_Tech\menu.exe" #Test l'emplacement du dosiser lettre\_Tech\menu (le bon emplacement)
-    if($testpathmenuexe -eq $false) #Si Lettre\_tech\menu.exe existe pas
-    {
-        New-Item "$root\_Tech" -ItemType Directory -ErrorAction Ignore | Out-Null #Créé Lettre\_TECH
-        copy-item "$root\_Tech\menu.exe" -destination "$root\_Tech" -Force | Out-Null #Copy le menu mal placé au bon endroit
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Intermediate.ps1' -OutFile "$root\_Tech\Intermediate.ps1" | Out-Null ##Download le script ps1
-        Start-Process powershell.exe -WindowStyle Hidden "$root\_Tech\Intermediate.ps1" #script qui permet de lancer menu.exe depuis le bon endroit. Car si menu deja en cours d'execution, ne peut pas ouvrir un autre menu.exe
-        exit #ferme menu.exe
-    }
-#A ce moment Menu est a 2 endroits. Au premier endroit qu'il a été exécuter et au bon endroit(qui a été rajouté grace a la partie 1).
-#Il faut donc gérer le fait d'avoir 2 Menu.exe et de s'assurer que le bon soit pri. Car si l'utilisateur éxécute à nouveau le mauvais, Le script vois que Lettre\_Tech\menu.exe est créé.
-#Donc si on ne fait rien, le script va continuer depuis le mauvais emplacement et potentiellement avoir des erreurs.
-#La partie 2 va s'assurer de corriger ce cas. Elle va regarder l'emplacement actuel du menu.exe et vérifier s'il s'agit du bon endroit.
-#Si bon endroit, alors va skipper cette section, sinon va fermer menu.exe et lancer le bon menu.exe
-
-#Partie 2: Maintenant que Menu.exe est au bon endroit, S'assure qu'il soit éxécuter depuis le bon endroit, sinon va forcer l'execution depuis le bon endroit.    
-    $mypath = "$pwd\menu.exe" #Emplacement du menu.exe actuel
-    if($mypath -notlike "$root\_Tech\menu.exe") #si mon emplacement actuel n'est pas le bon emplacement
-    {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Intermediate.ps1' -OutFile "$root\_Tech\Intermediate.ps1" | Out-Null #Download le script ps1
-        Start-Process powershell.exe -WindowStyle Hidden "$root\_Tech\Intermediate.ps1" #script qui permet de lancer menu.exe depuis le bon endroit. Car si menu deja en cours d'execution, ne peut pas ouvrir un autre menu.exe
-        exit #ferme menu.exe
-    }  
-}
-
 function Testconnexion
 {
     $internet = $false
@@ -113,7 +51,7 @@ $keypath = Test-Path "c:\_Tech\applications" #Test si dossier applications exist
     if (!($keypath)) #S'il n'existe pas
     {
         [System.Windows.MessageBox]::Show("Votre clé n'est pas configuré de la bonne facon","Chemin obligatoire",0) | Out-Null #Affiche ce message
-        [System.Windows.MessageBox]::Show("Elle doit respectée le chemin Lettre:\_Tech\Applications\...","Chemin obligatoire",0) | Out-Null #Affiche ce message
+        [System.Windows.MessageBox]::Show("Elle doit respectée le chemin C:\_Tech\Applications\...","Chemin obligatoire",0) | Out-Null #Affiche ce message
         exit
     }
 }
@@ -130,12 +68,12 @@ function Update
         try 
         {
             Write-Host "Lancer mise à jour de Menu.exe"
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/menu.exe' -OutFile "$root\_Tech\Menu.exe" | Out-Null
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' -OutFile "$root\_Tech\Menu.ps1" | Out-Null
             Copy-Item "$root\_Tech\Temp\menu.version.txt" -Destination "$root\_Tech\menu.version.txt" -Force | Out-Null #Met le fichier version a jour.
         }
         catch 
         {
-            Write-Error "Erreur lors de la mise à jour de Menu.exe!"
+            Write-Error "Erreur lors de la mise à jour de Menu.ps1!"
             return
         }
     } 
@@ -146,7 +84,6 @@ function Update
 Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #met la policy a unrestricted a cause de intermediate .ps1
 $driveletter = $pwd.drive.name #retourne la lettre du disque actuel
 $root = "$driveletter" + ":" #rajoute  : pour que sa fit dans le path
-#FolderMenu #vérifie emplacement de menu.exe
 set-location "C:\_Tech" #met la location au repertoir actuel
 zipsource #install les fichiers sources (deja installé par foldermenu normalement)
 testpath #vérifie si la clé est bien faite (deja vérifier par foldemrenu normalement)
@@ -180,10 +117,10 @@ $Form.BackgroundImageLayout = "Stretch"
 
 function zipinstallation
 {
-    $installationexepath = Test-Path "$root\_Tech\Applications\Installation\installation.exe" #vérifie si le exe existe
+    $installationexepath = Test-Path "$root\_Tech\Applications\Installation\installation.ps1" #vérifie si le exe existe
     if($installationexepath) #S'Il existe
     {
-        Remove-Item -Path "$root\_Tech\Applications\Installation\installation.exe" -Recurse | Out-Null #supprime le .exe
+        Remove-Item -Path "$root\_Tech\Applications\Installation\installation.ps1" -Recurse | Out-Null #supprime le .exe
     }
     #Créer le dossier vide Installation s'il n'existe pas
     $instapath = Test-Path "$root\_Tech\Applications\Installation" #vérifie si le dossier existe 
@@ -191,9 +128,9 @@ function zipinstallation
     {
         New-Item -Path "$root\_Tech\Applications\Installation" -ItemType directory | Out-Null #s'il n'existe pas le créé
     }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Installation.exe' -OutFile "$root\_Tech\Applications\Installation\Installation.exe" | Out-Null #download le .exe
-    set-location "$root\_Tech\\Applications\\Installation" #met le path dans le dossier Installation
-    Start-Process $root\_Tech\Installation.exe | Out-Null #Lance le script d'installation
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' -OutFile "$root\_Tech\Applications\Installation\Installation.ps1" | Out-Null #download le .exe
+    set-location "$root\_Tech\Applications\Installation" #met le path dans le dossier Installation
+    Start-Process "$root\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #Lance le script d'installation
 
 }
 
@@ -215,19 +152,17 @@ $BoutonInstall.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonInstall.Add_MouseEnter({$BoutonInstall.ForeColor = 'White'})
 $BoutonInstall.Add_MouseLeave({$BoutonInstall.ForeColor = 'Black'})
 $BoutonInstall.Add_Click({
-#zipinstallation
-set-location "$root\_Tech\Applications\Installation" #met le path dans le dossier Installation
-Start-Process "$root\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #Lance le script d'installation
+zipinstallation
 $Form.Close()
 })
 
 function zipOpti 
 {
     #Mettre à jour le .exe s'il existe.
-    $optiexepath = Test-Path "$root\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.exe" | Out-Null #vérifie si le .exe existe
+    $optiexepath = Test-Path "$root\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #vérifie si le .exe existe
     if($optiexepath) #si le .exe existe
     {
-        Remove-Item -Path "$root\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.exe" -Recurse | Out-Null #supprime le .exe
+        Remove-Item -Path "$root\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" -Recurse | Out-Null #supprime le .exe
     }
      #Créer le dossier vide Optimisation_Nettoyage s'il n'existe pas
     $optipath = Test-Path "$root\_Tech\Applications\Optimisation_Nettoyage" #vérifie si le dossier existe 
@@ -235,9 +170,9 @@ function zipOpti
     {
         New-Item -Path "$root\_Tech\Applications\Optimisation_Nettoyage" -ItemType directory | Out-Null #s'il n'existe pas le créé
     }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Optimisation_Nettoyage.exe' -OutFile "$root\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.exe" | Out-Null #download le .exe
-    set-location "$root\_Tech\\Applications\Optimisation_Nettoyage" #met le path dans le dossier Optimisation
-    Start-Process "$root\_Tech\Optimisation_Nettoyage.exe" | Out-Null #Lance le script d'optimisation
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' -OutFile "$root\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #download le .exe
+    set-location "$root\_Tech\Applications\Optimisation_Nettoyage" #met le path dans le dossier Optimisation
+    Start-Process "$root\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #Lance le script d'optimisation
 }
 
 #Optimisation et nettoyage
@@ -258,19 +193,17 @@ $BoutonOptiNett.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonOptiNett.Add_MouseEnter({$BoutonOptiNett.ForeColor = 'White'})
 $BoutonOptiNett.Add_MouseLeave({$BoutonOptiNett.ForeColor = 'Black'})
 $BoutonOptiNett.Add_Click({
-#zipOpti
-set-location "$root\_Tech\\Applications\Optimisation_Nettoyage" #met le path dans le dossier Optimisation
-Start-Process "$root\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #Lance le script d'optimisation
+zipOpti
 $Form.Close()
 })
 
 function zipdiag
 {
     #Mettre à jour le .exe s'il existe.
-    $diagexepath = Test-Path "$root\_Tech\Applications\Diagnostique\Diagnostique.exe"  #vérifie si le .exe existe
+    $diagexepath = Test-Path "$root\_Tech\Applications\Diagnostique\Diagnostique.ps1"  #vérifie si le .exe existe
     if($diagexepath) #s'il existe supprime le .exe
     {
-        Remove-Item -Path "$root\_Tech\Applications\Diagnostique\Diagnostique.exe" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
+        Remove-Item -Path "$root\_Tech\Applications\Diagnostique\Diagnostique.ps1" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
     }
     #Créer le dossier vide Diagnostique s'il n'existe pas
     $diagpath = Test-Path "$root\_Tech\Applications\Diagnostique"  #vérifie si le dossier existe 
@@ -278,9 +211,9 @@ function zipdiag
     {
         New-Item -Path "$root\_Tech\Applications\Diagnostique" -ItemType directory | Out-Null #s'il n'existe pas le créé
     }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Diagnostique.exe' -OutFile "$root\_Tech\Applications\Diagnostique\Diagnostique.exe" | Out-Null #download le .exe
-    set-location "$root\_Tech\\Applications\Diagnostique" #met le path dans le dossier Diagnostique
-    Start-Process "$root\_Tech\Diagnostique.exe" | Out-Null #Lance le script de Diagnostique
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' -OutFile "$root\_Tech\Applications\Diagnostique\Diagnostique.ps1" | Out-Null #download le .exe
+    set-location "$root\_Tech\Applications\Diagnostique" #met le path dans le dossier Diagnostique
+    Start-Process "$root\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #Lance le script de Diagnostique
 }
 
 #Diagnostic
@@ -300,19 +233,17 @@ $Diagnostic.FlatAppearance.MouseOverBackColor = 'gray'
 $Diagnostic.Add_MouseEnter({$Diagnostic.ForeColor = 'White'})
 $Diagnostic.Add_MouseLeave({$Diagnostic.ForeColor = 'Black'})
 $Diagnostic.Add_Click({
-#zipdiag
-set-location "$root\_Tech\\Applications\Diagnostique" #met le path dans le dossier Diagnostique
-Start-Process "$root\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #Lance le script de Diagnostique
+zipdiag
 $Form.Close()
 })
 
 function zipdesinfection 
 {
     #Mettre à jour le .exe s'il existe.
-    $desinfectionexepath = Test-Path "$root\_Tech\Applications\Securite\Desinfection.exe"  #vérifie si le .exe existe
+    $desinfectionexepath = Test-Path "$root\_Tech\Applications\Securite\Desinfection.ps1"  #vérifie si le .exe existe
     if($desinfectionexepath) #s'il existe supprime le .exe
     {
-        Remove-Item -Path "$root\_Tech\Applications\Securite\Desinfection.exe" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
+        Remove-Item -Path "$root\_Tech\Applications\Securite\Desinfection.ps1" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
     }
     #Créer le dossier vide Securite s'il n'existe pas
     $desinfectionpath = Test-Path "$root\_Tech\Applications\Securite"  #vérifie si le dossier existe 
@@ -320,9 +251,9 @@ function zipdesinfection
     {
         New-Item -Path "$root\_Tech\Applications\Securite" -ItemType directory | Out-Null #s'il n'existe pas le créé
     }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Desinfection.exe' -OutFile "$root\_Tech\Applications\Securite\Desinfection.exe" | Out-Null #download le .exe
-    set-location "$root\_Tech\\Applications\Securite" #met le path dans le dossier Securite
-    Start-Process "$root\_Tech\Desinfection.exe" | Out-Null #Lance le script de désinfcetion
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' -OutFile "$root\_Tech\Applications\Securite\Desinfection.ps1" | Out-Null #download le .exe
+    set-location "$root\_Tech\Applications\Securite" #met le path dans le dossier Securite
+    Start-Process "$root\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #Lance le script de désinfcetion
 }
 
 #Desinfection
@@ -342,9 +273,7 @@ $Desinfection.FlatAppearance.MouseOverBackColor = 'gray'
 $Desinfection.Add_MouseEnter({$Desinfection.ForeColor = 'White'})
 $Desinfection.Add_MouseLeave({$Desinfection.ForeColor = 'Black'})
 $Desinfection.Add_Click({
-#zipdesinfection
-set-location "$root\_Tech\\Applications\Securite" #met le path dans le dossier Securite
-Start-Process "$root\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #Lance le script de désinfcetion
+zipdesinfection
 $Form.Close()
 })
 
@@ -362,10 +291,9 @@ function zipfix
     {
         New-Item -Path "$root\_Tech\Applications\Fix" -ItemType directory | Out-Null #s'il n'existe pas le créé
     }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Fix.ps1' -OutFile "$root\_Tech\Applications\Fix\Fix.ps1" | Out-Null #download le .ps1
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/RunAsFix.bat' -OutFile "$root\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #download le .bat
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' -OutFile "$root\_Tech\Applications\Fix\Fix.ps1" | Out-Null #download le .ps1
     set-location "$root\_Tech\\Applications\Fix" #met le path dans le dossier Fix
-    Start-Process "$root\_Tech\RunAsFix.bat" | Out-Null #Lance le script de Fix
+    Start-Process "$root\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #Lance le script de Fix
 }
 
 #Fix
@@ -385,9 +313,7 @@ $Fix.FlatAppearance.MouseOverBackColor = 'gray'
 $Fix.Add_MouseEnter({$Fix.ForeColor = 'White'})
 $Fix.Add_MouseLeave({$Fix.ForeColor = 'Black'})
 $Fix.Add_Click({
-#zipfix
-set-location "$root\_Tech\\Applications\Fix" #met le path dans le dossier Fix
-Start-Process "$root\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #Lance le script de Fix
+zipfix
 $Form.Close()
 })
 
