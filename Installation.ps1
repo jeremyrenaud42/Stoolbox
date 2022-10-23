@@ -695,7 +695,7 @@ function PreverifHP
 function HPSA
 {   
     $progres.Text = "Installation de Hp Support Assistant"
-    $Labeloutput.Text += "Installation de Hp Support Assistant en cours`r`n"
+    $Labeloutput.Text += "Installation de Hp Support Assistant en cours"
     $pathexist = PreverifHP #s'il est déja installé il ne va pas poursuivre
         if($pathexist -eq $false)
         {   
