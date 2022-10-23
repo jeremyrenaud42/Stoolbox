@@ -17,11 +17,11 @@ set-location "c:\_Tech\Applications\Installation" #met le path dans le dossier I
 #Vérifier la présence du dossier source dans la clé
 function Sourceexist
 {
-$sourcefolder = Test-path "$root\_Tech_\Applications\Installation\Source" #chemin du dossier source
+$sourcefolder = Test-path "$root\_Tech\Applications\Installation\Source" #chemin du dossier source
 
     if(!($sourcefolder))
     {
-        New-Item "$root\_Tech_\Applications\Installation\Source" -ItemType Directory | Out-Null #Créer le dossier source si il n'est pas là
+        New-Item "$root\_Tech\Applications\Installation\Source" -ItemType Directory | Out-Null #Créer le dossier source si il n'est pas là
     }
 }
 
@@ -29,16 +29,16 @@ function zipinstallation
 {
     Sourceexist #appel la fonction qui test le chemin du dossier source
     #les 3 lignes ci-dessous permettent de tout wiper sauf winget
-    Get-ChildItem -Path "$root\_Tech_\Applications\Installation\source\Logiciels" -Exclude "Winget"  | Remove-Item -Recurse -Force
-    Get-ChildItem -Path "$root\_Tech_\Applications\Installation\source" -Exclude "Logiciels"  | Remove-Item -Recurse -Force
-    Get-ChildItem -Path "$root\_Tech_\Applications\Installation\" -Exclude "Source"  | Remove-Item -Recurse -Force
+    Get-ChildItem -Path "$root\_Tech\Applications\Installation\source\Logiciels" -Exclude "Winget"  | Remove-Item -Recurse -Force
+    Get-ChildItem -Path "$root\_Tech\Applications\Installation\source" -Exclude "Logiciels"  | Remove-Item -Recurse -Force
+    Get-ChildItem -Path "$root\_Tech\Applications\Installation\" -Exclude "Source"  | Remove-Item -Recurse -Force
 
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Source.zip' -OutFile "$root\_Tech_\Applications\Installation\source.zip" | Out-Null #download le dossier source
-    Expand-Archive "$root\_Tech_\Applications\Installation\source.zip" "$root\_Tech_\Applications\Installation\" -Force | Out-Null #dezip source
-    Remove-Item "$root\_Tech_\Applications\Installation\source.zip" | Out-Null #supprime zip source
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Source.zip' -OutFile "$root\_Tech\Applications\Installation\source.zip" | Out-Null #download le dossier source
+    Expand-Archive "$root\_Tech\Applications\Installation\source.zip" "$root\_Tech\Applications\Installation\" -Force | Out-Null #dezip source
+    Remove-Item "$root\_Tech\Applications\Installation\source.zip" | Out-Null #supprime zip source
 }
 
-#zipinstallation
+zipinstallation
 
 $Form = New-Object System.Windows.Forms.Form #Créer la fenêtre GUI
 $Form.ClientSize = '1041,688' #Taille de la GUI
@@ -46,7 +46,7 @@ $Form.Text = "Installation Windows" #Titre de la GUI (apparait en haut à gauche
 $Form.StartPosition = 'Centerscreen' #position de démarrage
 $Form.MaximizeBox = $false #Ne peut pas s'agrandir
 $Form.AutoSize = $false #Ne peut pas modifier la taille de la fenêtre
-$Form.icon = New-Object system.drawing.icon ("$root\_Tech_\Applications\Installation\Source\Icone.ico") #chemin de l'icone. 
+$Form.icon = New-Object system.drawing.icon ("$root\_Tech\Applications\Installation\Source\Icone.ico") #chemin de l'icone. 
 
 #titre du champ texte de la fenêtre (en dessous du titre de la Form)
 $labeltitre = New-Object System.Windows.Forms.Label #Creer la label du titre
@@ -95,14 +95,14 @@ Set-ExecutionPolicy unrestricted -Force #change la policy pour que le script se 
 #Permet de documenter chaque étape
 function AddLog ($message)
 {
-    $logfilepath="$root\_Tech_\Applications\Installation\\Source\Log.txt" #chemin du fichier texte
+    $logfilepath="$root\_Tech\Applications\Installation\\Source\Log.txt" #chemin du fichier texte
     $message + "`r`n" | Out-file -filepath $logfilepath -append -force #ajoute le texte dans le fichier
 }
 
 #Permet de documenter les erreurs 
 function AddErrorsLog ($message)
 {
-    $errorslogfilepath="$root\_Tech_\Applications\Installation\\Source\\Logs\\ErrorsLog.txt" #chemin du fichier texte
+    $errorslogfilepath="$root\_Tech\Applications\Installation\\Source\\Logs\\ErrorsLog.txt" #chemin du fichier texte
     (Get-Date).ToString() + " - " + $message + "`r`n" | Out-file -filepath $errorslogfilepath -append -force #ajoute le texte dans le fichier
 }
 
@@ -120,17 +120,17 @@ function Testconnexion
 #Download fichiers winget depuis github
 function zipwinget
 {
-$logicielpath = test-Path "$root\_Tech_\Applications\Installation\Source\Logiciels"
-$wingetpath = test-Path "$root\_Tech_\Applications\Installation\Source\Logiciels\winget"
+$logicielpath = test-Path "$root\_Tech\Applications\Installation\Source\Logiciels"
+$wingetpath = test-Path "$root\_Tech\Applications\Installation\Source\Logiciels\winget"
     if($wingetpath -eq $false)
     {
         if($logicielpath -eq $false)
         {
-            New-Item "$root\_Tech_\Applications\Installation\Source\Logiciels" -ItemType Directory
+            New-Item "$root\_Tech\Applications\Installation\Source\Logiciels" -ItemType Directory
         }
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Winget.zip' -OutFile "$root\_Tech_\Applications\Installation\Source\Logiciels\Winget.zip"
-Expand-Archive "$root\_Tech_\Applications\Installation\Source\Logiciels\Winget.zip" ".\Source\Logiciels"
-Remove-Item "$root\_Tech_\Applications\Installation\Source\Logiciels\Winget.zip"
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Winget.zip' -OutFile "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip"
+Expand-Archive "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip" ".\Source\Logiciels"
+Remove-Item "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip"
     }
 }
 
@@ -203,15 +203,15 @@ function Wingetinstall
     if($wingetpath -eq $false)
     {
         zipwinget
-        Add-AppxPackage -path "$root\_Tech_\Applications\Installation\Source\Logiciels\winget\Microsoft.VCLibs.x64.14.00.Desktop.appx"  | out-null #prérequis pour winget
-        Add-AppxPackage -path "$root\_Tech_\Applications\Installation\Source\Logiciels\winget\Microsoft.UI.Xaml.2.7.appx" | out-null #prérequis pour winget
-        Add-AppPackage -path "$root\_Tech_\Applications\Installation\Source\Logiciels\winget\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" | out-null #installeur de winget
+        Add-AppxPackage -path "$root\_Tech\Applications\Installation\Source\Logiciels\winget\Microsoft.VCLibs.x64.14.00.Desktop.appx"  | out-null #prérequis pour winget
+        Add-AppxPackage -path "$root\_Tech\Applications\Installation\Source\Logiciels\winget\Microsoft.UI.Xaml.2.7.appx" | out-null #prérequis pour winget
+        Add-AppPackage -path "$root\_Tech\Applications\Installation\Source\Logiciels\winget\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" | out-null #installeur de winget
     }
     Postverifwinget
 }
 
 #Importe le module qui gère la Voix et la musique
-import-module "$root\_Tech_\Applications\Installation\Source\Voice.psm1" #Module pour musicdebut et getvoice
+import-module "$root\_Tech\Applications\Installation\Source\Voice.psm1" #Module pour musicdebut et getvoice
 
 ######Vrai début du script######
 function Debut
@@ -507,17 +507,17 @@ function Teamviewer
 
 function plancteamviewer
 {
-Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/28hvOkUIc0WhxzqjJk3WGw/Ninite%20TeamViewer%2015%20Installer.zip' -OutFile "$root\_Tech_\Applications\Installation\Source\Logiciels\niniteteamviewer.zip"
-Expand-Archive "$root\_Tech_\Applications\Installation\Source\Logiciels\niniteteamviewer.zip" "$root\_Tech_\Applications\Installation\Source\Logiciels"
-Remove-Item "$root\_Tech_\Applications\Installation\Source\Logiciels\niniteteamviewer.zip"
-Start-Process "$root\_Tech_\Applications\Installation\Source\Logiciels\Ninite TeamViewer 15 Installer.exe" -Verb runAs #escape pour terminer
+Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/28hvOkUIc0WhxzqjJk3WGw/Ninite%20TeamViewer%2015%20Installer.zip' -OutFile "$root\_Tech\Applications\Installation\Source\Logiciels\niniteteamviewer.zip"
+Expand-Archive "$root\_Tech\Applications\Installation\Source\Logiciels\niniteteamviewer.zip" "$root\_Tech\Applications\Installation\Source\Logiciels"
+Remove-Item "$root\_Tech\Applications\Installation\Source\Logiciels\niniteteamviewer.zip"
+Start-Process "$root\_Tech\Applications\Installation\Source\Logiciels\Ninite TeamViewer 15 Installer.exe" -Verb runAs #escape pour terminer
 }
 function plancgoogle
 {
-Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/kucInISgUkWwbWcLvA_M7g/Ninite%20Chrome%20Installer.zip' -OutFile "$root\_Tech_\Applications\Installation\Source\Logiciels\google.zip"
-Expand-Archive "$root\_Tech_\Applications\Installation\Source\Logiciels\google.zip $root\_Tech_\Applications\Installation\Source\Logiciels"
-Remove-Item "$root\_Tech_\Applications\Installation\Source\Logiciels\google.zip"
-Start-Process "$root\_Tech_\Applications\Installation\Source\Logiciels\Ninite Chrome Installer.exe" -Verb runAs #escape pour terminer
+Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/kucInISgUkWwbWcLvA_M7g/Ninite%20Chrome%20Installer.zip' -OutFile "$root\_Tech\Applications\Installation\Source\Logiciels\google.zip"
+Expand-Archive "$root\_Tech\Applications\Installation\Source\Logiciels\google.zip $root\_Tech\Applications\Installation\Source\Logiciels"
+Remove-Item "$root\_Tech\Applications\Installation\Source\Logiciels\google.zip"
+Start-Process "$root\_Tech\Applications\Installation\Source\Logiciels\Ninite Chrome Installer.exe" -Verb runAs #escape pour terminer
 }
 <#
 function verifierSiLogicielEstDejaInstalle {
