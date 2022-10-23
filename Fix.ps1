@@ -76,7 +76,7 @@ $driveletter = $pwd.drive.name
 $root = "$driveletter" + ":"
 
 set-location "$root\\_Tech\\Applications\\fix" #met la location au repertoir actuel
-$loc = Get-Location #assgine la location du repertoir actuel
+Import-Module "$root\_Tech\Applications\Source\update.psm1"
 
 $scriptDir = 
     if (-not $PSScriptRoot) 
@@ -90,16 +90,187 @@ $scriptDir =
     }
 $lettre = [System.IO.path]::GetPathRoot($scriptDir)
 
-$logfilepath="$PSScriptRoot\Source\Logs\Log.txt"
+$logfilepath="$PSScriptRoot\Source\Log.txt"
 function AddLog ($message)
 {
 (Get-Date).ToString() + " - " + $message + "`r`n">> $logfilepath
 }
 
+$sourcepath = test-Path "$root\\_Tech\\Applications\\fix\Source"
+    if($sourcepath -eq $false)
+    {
+        New-Item "$root\\_Tech\\Applications\\fix\Source" -ItemType Directory | Out-Null #CrÃ©er le dossier source si il n'est pas lÃ 
+    }
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Log.txt' -OutFile $root\\_Tech\\Applications\\fix\Source\Log.txt
+
+function zipComIntRep
+{
+    $sourcepath = test-Path "$root\\_Tech\\Applications\\fix\Source"
+    $ComIntReppath = test-Path "$root\\_Tech\\Applications\\fix\Source\ComIntRep\ComIntRep_X64.exe"
+    if($ComIntReppath -eq $false)
+    {
+        if($sourcepath -eq $false)
+        {
+            New-Item "$root\\_Tech\\Applications\\fix\Source" -ItemType Directory
+        }
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' -OutFile $root\\_Tech\\Applications\\fix\Source\ComIntRep.zip
+    Expand-Archive $root\\_Tech\\Applications\\fix\Source\ComIntRep.zip $root\\_Tech\\Applications\\fix\Source
+    Remove-Item $root\\_Tech\\Applications\\fix\Source\ComIntRep.zip
+    }
+    Start-Process "$root\\_Tech\\Applications\\fix\Source\ComIntRep\ComIntRep_X64.exe"
+    AddLog "RÃ©parer Internet"
+}
+
+function zipsecudossier
+{
+    $sourcepath = test-Path "$root\\_Tech\\Applications\\fix\Source"
+    $SecuriteDossierpath = test-Path "$root\\_Tech\\Applications\\fix\Source\Securite_Dossier"
+    if($SecuriteDossierpath -eq $false)
+    {
+        if($sourcepath -eq $false)
+        {
+            New-Item "$root\\_Tech\\Applications\\fix\Source" -ItemType Directory
+        }
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Securite_Dossier.zip' -OutFile $root\\_Tech\\Applications\\fix\Source\Securite_Dossier.zip
+    Expand-Archive $root\\_Tech\\Applications\\fix\Source\Securite_Dossier.zip $root\\_Tech\\Applications\\fix\Source
+    Remove-Item $root\\_Tech\\Applications\\fix\Source\Securite_Dossier.zip
+    }
+}
+
+function zipsterjo
+{
+    $sourcepath = test-Path "$root\\_Tech\\Applications\\fix\Source"
+    $Sterjopath = test-Path "$root\\_Tech\\Applications\\fix\Source\Sterjo"
+    if($Sterjopath -eq $false)
+    {
+        if($sourcepath -eq $false)
+        {
+            New-Item "$root\\_Tech\\Applications\\fix\Source" -ItemType Directory
+        }
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' -OutFile $root\\_Tech\\Applications\\fix\Source\Sterjo.zip
+    Expand-Archive $root\\_Tech\\Applications\\fix\Source\Sterjo.zip $root\\_Tech\\Applications\\fix\Source
+    Remove-Item $root\\_Tech\\Applications\\fix\Source\Sterjo.zip
+    }
+}
+
+function zipWinDirStat
+{
+    $sourcepath = test-Path "$root\\_Tech\\Applications\\fix\Source"
+    $WinDirStatpath = test-Path "$root\\_Tech\\Applications\\fix\Source\WinDirStat\WinDirStatPortable.exe"
+    if($WinDirStatpath -eq $false)
+    {
+        if($sourcepath -eq $false)
+        {
+            New-Item "$root\\_Tech\\Applications\\fix\Source" -ItemType Directory
+        }
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' -OutFile $root\\_Tech\\Applications\\fix\Source\WinDirStat.zip
+    Expand-Archive $root\\_Tech\\Applications\\fix\Source\WinDirStat.zip $root\\_Tech\\Applications\\fix\Source
+    Remove-Item $root\\_Tech\\Applications\\fix\Source\WinDirStat.zip
+    }
+    Start-Process "$root\\_Tech\\Applications\\fix\Source\WinDirStat\WinDirStatPortable.exe"
+}
+
+function zipscripts
+{
+    $sourcepath = test-Path "$root\\_Tech\\Applications\\fix\Source"
+    $scriptspath = test-Path "$root\\_Tech\\Applications\\fix\Source\scripts"
+    if($scriptspath -eq $false)
+    {
+        if($sourcepath -eq $false)
+        {
+            New-Item "$root\\_Tech\\Applications\\fix\Source" -ItemType Directory
+        }
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' -OutFile $root\\_Tech\\Applications\\fix\Source\scripts.zip
+    Expand-Archive $root\\_Tech\\Applications\\fix\Source\scripts.zip $root\\_Tech\\Applications\\fix\Source
+    Remove-Item $root\\_Tech\\Applications\\fix\Source\scripts.zip
+    }
+}
+
+function zipDDU
+{
+    $sourcepath = test-Path "$root\\_Tech\\Applications\\fix\Source"
+    $DDUpath = test-Path "$root\\_Tech\\Applications\\fix\Source\DDU\Display Driver Uninstaller.exe"
+    if($DDUpath -eq $false)
+    {
+        if($sourcepath -eq $false)
+        {
+            New-Item "$root\\_Tech\\Applications\\fix\Source" -ItemType Directory
+        }
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/DDU.zip' -OutFile $root\\_Tech\\Applications\\fix\Source\DDU.zip
+    Expand-Archive $root\\_Tech\\Applications\\fix\Source\DDU.zip $root\\_Tech\\Applications\\fix\Source
+    Remove-Item $root\\_Tech\\Applications\\fix\Source\DDU.zip
+    }
+    Start-Process "$root\\_Tech\\Applications\\fix\Source\DDU\Display Driver Uninstaller.exe"
+    addlog "DÃ©sinstallation du pilote graphique avec DDU"
+}
+
+function zipMinitool
+{
+    $sourcepath = test-Path "$root\\_Tech\\Applications\\fix\Source"
+    $sminitoolpath = test-Path "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard"
+    if($sminitoolpath -eq $false)
+    {
+        if($sourcepath -eq $false)
+        {
+            New-Item "$root\\_Tech\\Applications\\fix\Source" -ItemType Directory
+        }
+    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/XqWu-SWMYUK0NIeIeo9hLA/Partition_Wizard.zip' -OutFile "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard.zip"
+    Expand-Archive "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard.zip" $root\\_Tech\\Applications\\fix\Source
+    Remove-Item "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard.zip"
+    }
+    Start-Process "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard\partitionwizard.exe"
+}
+function zipTweak
+{
+    $sourcepath = test-Path "$root\\_Tech\\Applications\\fix\Source"
+    $tweakpath = test-Path "$root\\_Tech\\Applications\\fix\Source\Tweak"
+    if($tweakpath -eq $false)
+    {
+        if($sourcepath -eq $false)
+        {
+            New-Item "$root\\_Tech\\Applications\\fix\Source" -ItemType Directory
+        }
+    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/YRbvPvpuCkO0OmxvzU_w4A/Tweak.zip' -OutFile $root\\_Tech\\Applications\\fix\Source\Tweak.zip
+    Expand-Archive $root\\_Tech\\Applications\\fix\Source\Tweak.zip $root\\_Tech\\Applications\\fix\Source
+    Remove-Item $root\\_Tech\\Applications\\fix\Source\Tweak.zip
+    }
+}
+
+function Tweaking
+{
+    $path = Test-Path "$root\\_Tech\\Applications\\fix\Source\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
+    $desktoppath = test-path "C:\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
+    if($path)
+    {
+        if($desktoppath)
+        {
+            Start-Process "C:\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
+        }
+        Copy-Item "$root\\_Tech\\Applications\\fix\Source\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "C:\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair"
+        Start-Process "C:\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
+    }
+}
+
+function zipRecup
+{
+    $sourcepath = test-Path "$root\\_Tech\\Applications\\fix\Source"
+    $recuppath = test-Path "$root\\_Tech\\Applications\\fix\Source\Recup_donnees"
+    if($recuppath -eq $false)
+    {
+        if($sourcepath -eq $false)
+        {
+            New-Item "$root\\_Tech\\Applications\\fix\Source" -ItemType Directory
+        }
+    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/x_25M6QRJUSCC3KDhnBGxg/Recup_donnees.zip' -OutFile $root\\_Tech\\Applications\\fix\Source\Recup_donnees.zip
+    Expand-Archive $root\\_Tech\\Applications\\fix\Source\Recup_donnees.zip $root\\_Tech\\Applications\\fix\Source
+    Remove-Item $root\\_Tech\\Applications\\fix\Source\Recup_donnees.zip
+    }
+    Start-Process "$root\\_Tech\\Applications\\fix\Source\Recup_donnees\EaseUS Data Recovery Wizard\DRW.exe"
+}
 
 Function menu
 {
-cls
+Clear-Host
 write-host "[1] Fichiers corrompues" -ForegroundColor Cyan
 write-host "[2] Windows Tweak et Fix" -ForegroundColor Green
 write-host "[3] Obtenir MDP et licenses" -ForegroundColor darkcyan
@@ -109,7 +280,6 @@ write-host "[6] Windirstat" -ForegroundColor red
 write-host "[7] Partition Wizard" -ForegroundColor green
 write-host "[8] Reparer Internet" -ForegroundColor DarkRed
 write-host "[9] Recuperer des donnees" -ForegroundColor Yellow
-#write-host "[10] Driver Internet" -ForegroundColor white
 write-host ""
 write-host "[0] Quitter" -ForegroundColor red
 $choix = read-host "Choisissez une option" 
@@ -117,16 +287,15 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{sortie;break}
-1{submenu-HDD;Break}
-2{submenu-Tweak;Break}
-3{submenu-MDP;Break}
-4{Start "$PSScriptRoot\Source\DDU\Display Driver Uninstaller.exe" | addlog "Désinstallation du pilote graphique avec DDU";Break}
-5{submenu-Dossier;Break}
-6{start "$PSScriptRoot\Source\WinDirStat\WinDirStatPortable.exe";Break}
-7{start "$PSScriptRoot\Source\MiniTool Partition Wizard 11\partitionwizard.exe";Break}
-8{start "$PSScriptRoot\Source\ComIntRep\ComIntRep_X64.exe";Break}
-9{start "$PSScriptRoot\Source\Recup_donnees\EaseUS Data Recovery Wizard\DRW.EXE";Break}
-10{Start "$PSScriptRoot\Source\Drivers\pilote_carte_asus\setup.exe"| addlog "installation du pilote wifi asus";Break}
+1{zipscripts; submenuHDD;Break}
+2{zipTweak; submenuTweak;Break}
+3{zipsterjo; submenuMDP;Break}
+4{zipDDU;Break}
+5{zipsecudossier; submenuDossier;Break}
+6{zipWinDirStat;Break}
+7{zipMinitool;Break} 
+8{zipComIntRep;Break}
+9{zipRecup;Break}
 }
 start-sleep 1
 menu
@@ -139,7 +308,7 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
     if($sortie -eq "o")
     {   
         Set-Location "$lettre\\_Tech"
-        start-process "$lettre\\_Tech\\RunAsMenu.bat" -verb Runas
+        start-process "$lettre\\_Tech\\Menu.exe" -verb Runas
         exit
     }
     else
@@ -148,88 +317,86 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
     }
 }
 
-function submenu-HDD
+function submenuHDD
 {
-cls
+Clear-Host
 set-location "c:\"
 write-host "[1] Sfc /scannow"
 write-host "[2] DISM"
 write-host "[3] CHKDSK"
 write-host "[4] Creer session admin"
 write-host ""
-Write-host "[0] Retour au menu précédent" -ForegroundColor red
+Write-host "[0] Retour au menu precedent" -ForegroundColor red
 $choix = read-host "Choisissez une option"
 
 switch ($choix)
 {
 0{set-location "$lettre\\_Tech\\applications\\fix"; menu; break}
-1{start "$PSScriptRoot\Source\Scripts\sfcScannow.bat" | addlog "Réparation des fichiers corrompus" ;Break}
-2{start "$PSScriptRoot\Source\Scripts\DISM.bat" | addlog "Réparation du Windows" ;Break}
-3{start "$PSScriptRoot\Source\Scripts\CHKDSK.BAT" | addlog "Réparation du HDD";Break}
-4{start "$PSScriptRoot\Source\Scripts\creer_session.txt" | addlog "Nouvelle session créé" ;Break}
+1{Start-Process "$PSScriptRoot\Source\Scripts\sfcScannow.bat" | addlog "RÃ©paration des fichiers corrompus" ;Break}
+2{Start-Process "$PSScriptRoot\Source\Scripts\DISM.bat" | addlog "RÃ©paration du Windows" ;Break}
+3{Start-Process "$PSScriptRoot\Source\Scripts\CHKDSK.BAT" | addlog "RÃ©paration du HDD";Break}
+4{Start-Process "$PSScriptRoot\Source\Scripts\creer_session.txt" | addlog "Nouvelle session crÃ©Ã©" ;Break}
 }
 start-sleep 1
-submenu-HDD
+submenuHDD
 }
 
-function submenu-Dossier
+function submenuDossier
 {
-cls
+Clear-Host
 write-host "[1] Unlocker"
 write-host "[2] WinOwnership"
 write-host "[3] TakeOwnershipPro"
 write-host "[4] FileAssassin"
 write-host "[5] Wise Force Deleter"
 write-host ""
-Write-host "[0] Retour au menu précédent" -ForegroundColor red
+Write-host "[0] Retour au menu precedent" -ForegroundColor red
 $choix = read-host "Choisissez une option"
 
 switch ($choix)
 {
 0{menu}
-1{Start "$PSScriptRoot\Source\Securite_Dossier\Unlocker\UnlockerPortable.exe";Break}
-2{Start "$PSScriptRoot\Source\Securite_Dossier\WinOwnership\WinOwnership v1.1.exe";Break}
-3{Start "$PSScriptRoot\Source\Securite_Dossier\TakeOwnershipPro\TakeOwnershipPro.exe";Break}
-4{Start "$PSScriptRoot\Source\Securite_Dossier\FileAssassin\FileASSASSIN.exe";Break}
-5{Start "$PSScriptRoot\Source\Securite_Dossier\Wise Force Deleter\WiseDeleter.exe";Break}
+1{Start-Process "$PSScriptRoot\Source\Securite_Dossier\Unlocker\UnlockerPortable.exe";Break}
+2{Start-Process "$PSScriptRoot\Source\Securite_Dossier\WinOwnership\WinOwnership v1.1.exe";Break}
+3{Start-Process "$PSScriptRoot\Source\Securite_Dossier\TakeOwnershipPro\TakeOwnershipPro.exe";Break}
+4{Start-Process "$PSScriptRoot\Source\Securite_Dossier\FileAssassin\FileASSASSIN.exe";Break}
+5{Start-Process "$PSScriptRoot\Source\Securite_Dossier\Wise Force Deleter\WiseDeleter.exe";Break}
 }
 Start-Sleep 1
-submenu-Dossier
+submenuDossier
 }
 
-function submenu-MDP
+function submenuMDP
 {
-cls
+Clear-Host
 write-host "[1] Browser"
 write-host "[2] Chrome"
 write-host "[3] Firefox"
 write-host "[4] Keys"
 write-host "[5] Mail"
 write-host "[6] Wireless"
-write-host "[7] NetStalker"
 write-host ""
-Write-host "[0] Retour au menu précédent" -ForegroundColor red
+Write-host "[0] Retour au menu precedent" -ForegroundColor red
 $choix = read-host "Choisissez une option"
 
 switch ($choix)
 {
 0{menu}
-1{Start "$PSScriptRoot\Source\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe";Break}
-2{Start "$PSScriptRoot\Source\Sterjo\SterJo_Chrome_Passwords_sps\ChromePasswords.exe";Break}
-3{Start "$PSScriptRoot\Source\Sterjo\Sterjo_Firefox\FirefoxPasswords.exe";Break}
-4{Start "$PSScriptRoot\Source\Sterjo\Sterjo_Key\KeyFinder.exe";Break}
-5{Start "$PSScriptRoot\Source\Sterjo\SterJo_Mail_Passwords_sps\MailPasswords.exe";Break}
-6{Start "$PSScriptRoot\Source\Sterjo\Sterjo_Wireless\WiFiPasswords.exe";Break}
-7{Start "$PSScriptRoot\Source\Sterjo\SterJo_NetStalker_sps\NetStalker.exe";Break}
+1{Start-Process "$PSScriptRoot\Source\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe";Break}
+2{Start-Process "$PSScriptRoot\Source\Sterjo\SterJo_Chrome_Passwords_sps\ChromePasswords.exe";Break}
+3{Start-Process "$PSScriptRoot\Source\Sterjo\Sterjo_Firefox\FirefoxPasswords.exe";Break}
+4{Start-Process "$PSScriptRoot\Source\Sterjo\Sterjo_Key\KeyFinder.exe";Break}
+5{Start-Process "$PSScriptRoot\Source\Sterjo\SterJo_Mail_Passwords_sps\MailPasswords.exe";Break}
+6{Start-Process "$PSScriptRoot\Source\Sterjo\Sterjo_Wireless\WiFiPasswords.exe";Break}
 }
 
 Start-Sleep 1
-submenu-MDP
+submenuMDP
 }
 
-function submenu-Tweak
+function submenuTweak
 {
-cls
+Clear-Host
 write-host "[1] Fix w10"
 write-host "[2] Fix w8"
 write-host "[3] Fix w7"
@@ -237,21 +404,22 @@ write-host "[4] Tweaking - Windows Repair"
 write-host "[5] Ultimate Windows Tweaker W10"
 write-host "[6] Ultimate Windows Tweaker W11"
 write-host ""
-Write-host "[0] Retour au menu précédent" -ForegroundColor red
+Write-host "[0] Retour au menu precedent" -ForegroundColor red
 $choix = read-host "Choisissez une option"
 
 switch ($choix)
 {
 0{menu}
-1{Start "$PSScriptRoot\Source\Tweak\FixWin10\FixWin 10.2.2.exe";Break}
-2{Start "$PSScriptRoot\Source\Tweak\FixWin8\FixWin 2.2.exe";break}
-3{Start "$PSScriptRoot\Source\Tweak\FixWin7\FixWin v 1.2.exe";Break}
-4{Start "$PSScriptRoot\Source\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe";Break}
-5{Start "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe";Break}
-6{Start "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.0.exe";break}
+1{Start-Process "$PSScriptRoot\Source\Tweak\FixWin10\FixWin 10.2.2.exe";Break}
+2{Start-Process "$PSScriptRoot\Source\Tweak\FixWin8\FixWin 2.2.exe";break}
+3{Start-Process "$PSScriptRoot\Source\Tweak\FixWin7\FixWin v 1.2.exe";Break}
+#4{Start-Process "$PSScriptRoot\Source\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe";Break} 
+4{Tweaking;Break} 
+5{Start-Process "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe";Break}
+6{Start-Process "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.0.exe";break}
 }
 Start-Sleep 1
-submenu-Tweak
+submenuTweak
 }
 
 menu
