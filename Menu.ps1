@@ -34,15 +34,27 @@ function zipsource #Download et création des fondamentaux
 {
 $fondpath = test-Path "$root\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
 $iconepath = test-path "$root\_Tech\applications\source\Images\Icone.ico" #vérifie si l'icone existe
+#$intermediatebat = test-path "$root\_Tech\applications\source\scripts\Intermediatebat.ps1"
     if($fondpath -eq $false) #si fond pas présent
     {
         New-Item "$root\_Tech\Applications\Source\Images" -ItemType Directory -Force | Out-Null #créé les dossiers source\images
+        #New-Item "$root\_Tech\Applications\Source\scripts" -ItemType Directory -Force | Out-Null #créé les dossiers source\images
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$root\_Tech\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
     }
     if($iconepath -eq $false)
     {
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$root\_Tech\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
-    }    
+    } 
+    <#
+    if($intermediatebat -eq $false)
+    {
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Intermediatebat.ps1' -OutFile "$root\_Tech\applications\source\scripts\Intermediatebat.ps1" | Out-Null
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/delete.ps1' -OutFile "$root\_Tech\applications\source\scripts\delete.ps1" | Out-Null 
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsMenu.bat' -OutFile "$root\_Tech\applications\source\scripts\RunAsMenu.bat" | Out-Null  
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Preinstall.ps1' -OutFile "$root\_Tech\Preinstall.ps1" | Out-Null 
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$root\_Tech\Remove.bat" | Out-Null  
+    }
+    #>
 }
 
 function testpath #vérification que le dossier a bien été créé par zipsource
