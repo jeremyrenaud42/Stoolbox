@@ -31,7 +31,7 @@ function zipinstallation
     #les 3 lignes ci-dessous permettent de tout wiper sauf winget
     Get-ChildItem -Path "$root\_Tech\Applications\Installation\source\Logiciels" -Exclude "Winget"  | Remove-Item -Recurse -Force
     Get-ChildItem -Path "$root\_Tech\Applications\Installation\source" -Exclude "Logiciels"  | Remove-Item -Recurse -Force
-    Get-ChildItem -Path "$root\_Tech\Applications\Installation\" -Exclude "Source","Installation.ps1"  | Remove-Item -Recurse -Force
+    Get-ChildItem -Path "$root\_Tech\Applications\Installation\" -Exclude "Source","Installation.ps1","RunAsInstallation.bat"  | Remove-Item -Recurse -Force
 
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Source.zip' -OutFile "$root\_Tech\Applications\Installation\source.zip" | Out-Null #download le dossier source
     Expand-Archive "$root\_Tech\Applications\Installation\source.zip" "$root\_Tech\Applications\Installation\Source" -Force | Out-Null #dezip source
