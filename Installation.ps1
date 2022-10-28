@@ -260,7 +260,7 @@ Function Dossiers
 {
     $progres.Text = "Configuration des paramètres de l'explorateur de fichiers"
     set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -Type DWord -Value 1
-    $Labeloutput.Text += "L'accès rapides a été remplacé par Ce PC`r`n"
+    $Labeloutput.Text += "L'accès rapide a été remplacé par Ce PC`r`n"
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowSyncProviderNotifications -Type DWord -Value 0
     $Labeloutput.Text += "Le fournisseur de synchronisation a été decoché`r`n"      
     addlog "Explorateur de fichiers configuré"  
@@ -507,17 +507,11 @@ function Teamviewer
 
 function plancteamviewer
 {
-Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/28hvOkUIc0WhxzqjJk3WGw/Ninite%20TeamViewer%2015%20Installer.zip' -OutFile "$root\_Tech\Applications\Installation\Source\Logiciels\niniteteamviewer.zip"
-Expand-Archive "$root\_Tech\Applications\Installation\Source\Logiciels\niniteteamviewer.zip" "$root\_Tech\Applications\Installation\Source\Logiciels"
-Remove-Item "$root\_Tech\Applications\Installation\Source\Logiciels\niniteteamviewer.zip"
-Start-Process "$root\_Tech\Applications\Installation\Source\Logiciels\Ninite TeamViewer 15 Installer.exe" -Verb runAs #escape pour terminer
+Start-Process "$root\_Tech\Applications\Installation\Source\Ninite TeamViewer 15 Installer.exe" -Verb runAs #escape pour terminer
 }
 function plancgoogle
 {
-Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/kucInISgUkWwbWcLvA_M7g/Ninite%20Chrome%20Installer.zip' -OutFile "$root\_Tech\Applications\Installation\Source\Logiciels\google.zip"
-Expand-Archive "$root\_Tech\Applications\Installation\Source\Logiciels\google.zip $root\_Tech\Applications\Installation\Source\Logiciels"
-Remove-Item "$root\_Tech\Applications\Installation\Source\Logiciels\google.zip"
-Start-Process "$root\_Tech\Applications\Installation\Source\Logiciels\Ninite Chrome Installer.exe" -Verb runAs #escape pour terminer
+Start-Process "$root\_Tech\Applications\Installation\Source\Ninite Chrome Installer.exe" -Verb runAs #escape pour terminer
 }
 <#
 function verifierSiLogicielEstDejaInstalle {
@@ -829,40 +823,49 @@ function Edge
     }  
 }
 
+<#
+$msgBoxInput = [System.Windows.MessageBox]:: Show('Épingler Google Chrome dans la barre des tâches','Title','OKCancel','Information')
+switch ($msgBoxInput) 
+{
+    'Ok' {Write-Host "You pressed Ok"}
+    'Cancel' {continue}
+}
+#>
+
 function Pintotaskbar
 {
-$targetdir = "C:\Users\$env:username\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
+#$targetdir = "C:\Users\$env:username\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
 #$pinnedgoogle = Get-ChildItem $targetdir -recurse -Filter "Goo*" | Select-Object -expand name
-$pinpath = Test-Path "$targetdir\Google Chrome.lnk"
+#$pinpath = Test-Path "$targetdir\Google Chrome.lnk"
 
-while($pinpath -eq $false)
-    {
+#while($pinpath -eq $false)
+    #{
         [Microsoft.VisualBasic.Interaction]::MsgBox("Épingler Google Chrome dans la barre des tâches",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
-        $pinpath = test-path "$targetdir\Google Chrome.lnk"
-    }
+        #$pinpath = test-path "$targetdir\Google Chrome.lnk"
+    #}
 }
 
 function Defaultpdf
 {
-$pdf = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice | Select-Object -ExpandProperty ProgId
-    while($pdf -notlike "*.Document.DC")
-    {
+#$pdf = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice | Select-Object -ExpandProperty ProgId
+    #while($pdf -notlike "*.Document.DC")
+    #{
         [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre Adobe Reader par défaut",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
-        $pdf = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice | Select-Object -ExpandProperty ProgId
-    } 
+        #$pdf = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice | Select-Object -ExpandProperty ProgId
+    #} 
 }
 
 function Defaultbrowser
 {
-$http = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\http\UserChoice | Select-Object -ExpandProperty ProgId
-$https = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\https\UserChoice | Select-Object -ExpandProperty ProgId
-    while(($http -notlike "ChromeHTML*") -and ($https -notlike "ChromeHTML*"))
-    {
+#$http = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\http\UserChoice | Select-Object -ExpandProperty ProgId
+#$https = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\https\UserChoice | Select-Object -ExpandProperty ProgId
+    #while(($http -notlike "ChromeHTML*") -and ($https -notlike "ChromeHTML*"))
+    #{
         Start-Process ms-settings:defaultapps
         [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre Google Chrome par défaut",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null   
-        $http = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\http\UserChoice | Select-Object -ExpandProperty ProgId
-        $https = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\https\UserChoice | Select-Object -ExpandProperty ProgId
-    }  
+        #$http = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\http\UserChoice | Select-Object -ExpandProperty ProgId
+        #$https = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\https\UserChoice | Select-Object -ExpandProperty ProgId
+    #}  
 }
 
 function End
