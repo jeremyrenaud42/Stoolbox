@@ -561,7 +561,7 @@ $Menuprincipal.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Menuprincipal.Add_MouseEnter({$Menuprincipal.ForeColor = 'White'})
 $Menuprincipal.Add_MouseLeave({$Menuprincipal.ForeColor = 'black'})
 $Menuprincipal.Add_Click({
-start-process "$root\\_Tech\\RunAsMenu.bat" -verb Runas
+start-process "$root\\_Tech\\Menu.bat" -verb Runas
 $Form.Close()
 #Close-ExcelPackage $excel #Ferme la grille Excel
 })

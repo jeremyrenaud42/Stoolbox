@@ -576,7 +576,7 @@ $Menuprincipal.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkm
 $Menuprincipal.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Menuprincipal.Add_Click({
 $Form.Close()
-start-process "$root\\_Tech\\RunAsMenu.bat" -verb Runas
+start-process "$root\\_Tech\\Menu.bat" -verb Runas
 })
 
 #Label

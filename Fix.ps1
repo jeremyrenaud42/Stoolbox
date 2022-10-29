@@ -308,7 +308,7 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
     if($sortie -eq "o")
     {   
         Set-Location "$lettre\\_Tech"
-        start-process "$lettre\\_Tech\\Menu.exe" -verb Runas
+        start-process "$lettre\\_Tech\\Menu.bat" -verb Runas
         exit
     }
     else

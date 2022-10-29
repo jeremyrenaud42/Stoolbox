@@ -1104,7 +1104,7 @@ $Menuprincipal.FlatAppearance.MouseOverBackColor = 'gray'
 $Menuprincipal.Add_MouseEnter({$Menuprincipal.ForeColor = 'White'})
 $Menuprincipal.Add_MouseLeave({$Menuprincipal.ForeColor = 'black'})
 $Menuprincipal.Add_Click({
-start-process "$root\\_Tech\\RunAsMenu.bat" -verb Runas
+start-process "$root\\_Tech\sMenu.bat" -verb Runas
 $Form.Close()
 })
 
