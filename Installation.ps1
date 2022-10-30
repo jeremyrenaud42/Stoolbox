@@ -902,7 +902,7 @@ function End
     getvoice -Verb runAs
     changevoice -Verb runAs
     speak
-    $reboot = get-wurebootstatus -Silent #vérifie si ordi doit reboot à cause windows update
+    $reboot = get-wurebootstatus -Silent #vérifie si ordi doit reboot à cause de windows update
     if($reboot -eq $true)
     {
         Set-ExecutionPolicy $executionpolicy
@@ -913,8 +913,9 @@ function End
         #Pintotaskbar
         #Defaultpdf
         #Defaultbrowser
-        start-sleep -s 3
-        Restart-Computer -Force
+        #start-sleep -s 3
+        #Restart-Computer -Force
+        shutdown /r /t 60
     }
     else 
     {
