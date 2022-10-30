@@ -18,7 +18,7 @@
         New-Item "$Psscriptroot\Applications\Source\scripts" -ItemType Directory -Force | Out-Null
     }
     
-    $images = test-path "$Psscriptroot\Applications\Source\scripts" 
+    $images = test-path "$Psscriptroot\Applications\Source\images" 
     if($images -eq $false)
     {
         New-Item "$Psscriptroot\Applications\Source\images" -ItemType Directory -Force | Out-Null
