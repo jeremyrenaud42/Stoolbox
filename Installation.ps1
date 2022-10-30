@@ -919,9 +919,10 @@ function End
     else 
     {
         Set-ExecutionPolicy $executionpolicy
-        Pintotaskbar
-        Defaultpdf
-        Defaultbrowser
+        Postverif
+        #Pintotaskbar
+        #Defaultpdf
+        #Defaultbrowser
         exit
     }     
 }
