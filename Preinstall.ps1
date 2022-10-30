@@ -1,4 +1,22 @@
-﻿function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sauf preinstall.ps1 (lui meme)
+﻿Add-Type -AssemblyName Microsoft.VisualBasic
+function Testconnexion
+{
+    $internet = $false
+    $ping = test-connection 8.8.8.8 -Count 1 -quiet -ErrorAction Ignore
+    if ($ping -eq $true)
+    {
+       $internet = $true 
+    } 
+    else 
+    {
+
+        [Microsoft.VisualBasic.Interaction]::MsgBox("Vous n'êtes pas connecté à Internet, certaines fonctionnalités ne pourraient pas fonctionner",'OKOnly,SystemModal,Information', "Menu") | Out-Null
+    }
+    return $internet
+}
+
+
+function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sauf preinstall.ps1 (lui meme)
 {
     $Applications = test-path "$Psscriptroot\Applications" 
     if($Applications -eq $false)
@@ -23,8 +41,10 @@
     {
         New-Item "$Psscriptroot\Applications\Source\images" -ItemType Directory -Force | Out-Null
     }
-
     start-sleep -s 2
+
+    if(Testconnexion)
+    {
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/delete.ps1' -OutFile "$Psscriptroot\applications\source\scripts\delete.ps1" | Out-Null 
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsMenu.bat' -OutFile "$Psscriptroot\applications\source\scripts\RunAsMenu.bat" | Out-Null  
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$Psscriptroot\Remove.bat" | Out-Null
@@ -32,6 +52,7 @@
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' -OutFile "$Psscriptroot\Menu.ps1" | Out-Null     
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$Psscriptroot\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$Psscriptroot\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
+    }
 }
 
 function Launch #Copie tout dans la clé ou lance le script

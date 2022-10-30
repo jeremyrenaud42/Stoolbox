@@ -23,10 +23,6 @@ function Testconnexion
     {
        $internet = $true 
     } 
-    else 
-    {
-        write-warning "Vous n'êtes pas connecté à Internet, certaines fonctionnalités ne pourraient pas fonctionner"
-    }
     return $internet
 }
 
