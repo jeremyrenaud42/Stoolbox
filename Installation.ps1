@@ -836,7 +836,7 @@ function Pintotaskbar
 {
 #$targetdir = "C:\Users\$env:username\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
 #$pinnedgoogle = Get-ChildItem $targetdir -recurse -Filter "Goo*" | Select-Object -expand name
-#$pinpath = Test-Path "$targetdir\Google Chrome.lnk"
+#$pinpath = Test-Path "$targetdir\*Google*Chrome*"
 
 #while($pinpath -eq $false)
     #{
@@ -868,6 +868,30 @@ function Defaultbrowser
     #}  
 }
 
+function Postverif
+{
+    #default browser
+    $http = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\http\UserChoice | Select-Object -ExpandProperty ProgId
+    $https = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\https\UserChoice | Select-Object -ExpandProperty ProgId
+    if(($http -notlike "ChromeHTML*") -and ($https -notlike "ChromeHTML*"))
+    {
+        [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre Google Chrome par défaut",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null   
+    }
+    #PDF
+    $pdf = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice | Select-Object -ExpandProperty ProgId
+    if($pdf -notlike "*.Document.DC")
+    {
+        [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre Adobe Reader par défaut",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null   
+    }
+    #taskbar
+    $targetdir = "C:\Users\$env:username\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
+    $pinpath = Test-Path "$targetdir\*Google*Chrome*"
+    if($pinpath -eq $false)
+    {
+        [Microsoft.VisualBasic.Interaction]::MsgBox("Épingler Google Chrome dans la barre des tâches",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null   
+    } 
+}
+
 function End
 {
     AddLog "Installation de Windows effectué avec Succès"
@@ -885,9 +909,10 @@ function End
         $Labeloutput.Text += "`r`nL'ordinateur va redémarrer pour finaliser l'installation des mises à jour"
         start-sleep -s 3
         [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre les logiciels par défaut et épingler Google Chrome à la barre des tâches. Cliquer sur OK pour redémarrer l'ordinateur",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
-        Pintotaskbar
-        Defaultpdf
-        Defaultbrowser
+        Postverif
+        #Pintotaskbar
+        #Defaultpdf
+        #Defaultbrowser
         start-sleep -s 3
         Restart-Computer -Force
     }
