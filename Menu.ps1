@@ -45,16 +45,6 @@ $iconepath = test-path "$root\_Tech\applications\source\Images\Icone.ico" #véri
     {
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$root\_Tech\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
     } 
-    <#
-    if($intermediatebat -eq $false)
-    {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Intermediatebat.ps1' -OutFile "$root\_Tech\applications\source\scripts\Intermediatebat.ps1" | Out-Null
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/delete.ps1' -OutFile "$root\_Tech\applications\source\scripts\delete.ps1" | Out-Null 
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsMenu.bat' -OutFile "$root\_Tech\applications\source\scripts\RunAsMenu.bat" | Out-Null  
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Preinstall.ps1' -OutFile "$root\_Tech\Preinstall.ps1" | Out-Null 
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$root\_Tech\Remove.bat" | Out-Null  
-    }
-    #>
 }
 
 function testpath #vérification que le dossier a bien été créé par zipsource
