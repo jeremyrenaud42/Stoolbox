@@ -875,6 +875,7 @@ function Postverif
     $https = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\https\UserChoice | Select-Object -ExpandProperty ProgId
     if(($http -notlike "ChromeHTML*") -and ($https -notlike "ChromeHTML*"))
     {
+        Start-Process ms-settings:defaultapps
         [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre Google Chrome par défaut",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null   
     }
     #PDF
