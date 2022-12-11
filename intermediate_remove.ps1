@@ -1,0 +1,1 @@
+Start-Process "c:\temp\Remove.bat" | Out-Null #Exécuter remove.bat
