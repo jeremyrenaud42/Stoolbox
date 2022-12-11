@@ -999,6 +999,7 @@ Googlechrome
 Teamviewer
 Edge
 Pilotes
+LenovoVantage
 GeForce
 License
 Msstore
