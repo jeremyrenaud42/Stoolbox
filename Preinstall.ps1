@@ -18,6 +18,7 @@ function Testconnexion
 
 function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sauf preinstall.ps1 (lui meme) , tout ce passe dans la clé USB
 {
+    #Création des dossiers
     $Applications = test-path "$Psscriptroot\Applications" 
     if($Applications -eq $false)
     {
@@ -43,6 +44,7 @@ function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sau
     }
     start-sleep -s 2
 
+    #Download des files
     if(Testconnexion)
     {
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/delete.ps1' -OutFile "$Psscriptroot\applications\source\scripts\delete.ps1" | Out-Null 
@@ -50,6 +52,7 @@ function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sau
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$Psscriptroot\Remove.bat" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.bat' -OutFile "$Psscriptroot\Menu.bat" | Out-Null 
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' -OutFile "$Psscriptroot\Menu.ps1" | Out-Null 
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Intermediate_remove.ps1' -OutFile "$Psscriptroot\applications\source\scripts\Intermediate_remove.ps1" | Out-Null
     
     $a = Test-Path "$Psscriptroot\applications\source\Images\fondpluiesize.gif"
     $b = Test-path  "$Psscriptroot\applications\source\Images\Icone.ico" 
