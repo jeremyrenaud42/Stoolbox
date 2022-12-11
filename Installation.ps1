@@ -858,7 +858,7 @@ function Task
     $t = Get-ScheduledTask 'delete _tech' | Select-Object -expand state
     if($t -match 'Ready')
     {
-        Unregister-ScheduledTask -TaskName "delete _tech"
+        Unregister-ScheduledTask -TaskName "delete _tech" -Confirm:$false
         $taskname = 'Delete _Tech'
         $Action = New-ScheduledTaskAction -Execute 'C:\Temp\Remove.bat'
         $Trigger = New-ScheduledTaskTrigger -At (Get-Date).AddSeconds(05) -Once #le fait 1x à +1 minute du temps actuel
