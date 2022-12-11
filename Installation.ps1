@@ -624,12 +624,22 @@ function SystemUpdate
     addlog "Installation de Lenovo System Update"      
 }
 
-<#Lenovo Vantage
+Lenovo Vantage
+function LenovoVantage
+{
+    $progres.Text = "Installation de Lenovo Vantage"
+    $Labeloutput.Text += "Installation de Lenovo System Vantage"
+    winget install -e --id 9WZDNCRFJ4MV --accept-package-agreements --accept-source-agreements --silent | out-null
+    $Labeloutput.Text += " -Lenovo System Update installé avec succès`r`n" 
+    addlog "Installation de Lenovo Vantage" 
+}
 
+<#
 function PreverifVantage
 {
    $pathexist = $false
    $Vantagepath = Test-Path "C:\ProgramData\Lenovo\Vantage" #si déja ouvert.
+   #$Prevantagepsth Test-Path "C:\Users\test\AppData\Local\Packages\E046963F.LenovoCompanion_k1h2ywk1493x8" #si jamais ouvert
    if($Vantagepath -eq $true)
    {
      $pathexist = $true
@@ -637,11 +647,7 @@ function PreverifVantage
    }
    return $pathexist
 }
-
-winget install -e --id 9WZDNCRFJ4MV --accept-package-agreements --accept-source-agreements --silent | out-null
 #>
-
-
 
 
 #Dell
@@ -862,7 +868,7 @@ function Task
     }
         $taskname = 'Delete _Tech'
         $Action = New-ScheduledTaskAction -Execute 'C:\Temp\Remove.bat'
-        $Trigger = New-ScheduledTaskTrigger -At (Get-Date).AddSeconds(05) -Once #le fait 1x à +1 minute du temps actuel
+        $Trigger = New-ScheduledTaskTrigger -At (Get-Date).AddSeconds(05) -Once
         $Settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew -Compatibility Win8 #si ordi éteint, le refait après 10 minutes
         $Task = New-ScheduledTask -Action $Action -Trigger $Trigger -Settings $Settings
         Register-ScheduledTask -TaskName $taskname -InputObject $Task
