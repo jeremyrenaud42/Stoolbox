@@ -956,9 +956,8 @@ function End
         #Pintotaskbar
         #Defaultpdf
         #Defaultbrowser
-        Start-Process powershell.exe "C:\temp\remove.bat" | Out-Null #Exécuter remove.bat
-        $Form.Close()
-        exit    
+        exit  
+        Start-Process powershell.exe "C:\temp\remove.bat" | Out-Null #Exécuter remove.bat  
     }     
 }
 
