@@ -52,10 +52,10 @@ function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sau
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$Psscriptroot\Remove.bat" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.bat' -OutFile "$Psscriptroot\Menu.bat" | Out-Null 
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' -OutFile "$Psscriptroot\Menu.ps1" | Out-Null 
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Intermediate_remove.ps1' -OutFile "$Psscriptroot\applications\source\scripts\Intermediate_remove.ps1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Extra1.ps1' -OutFile "$Psscriptroot\applications\source\scripts\Extra1.ps1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Extra2.ps1' -OutFile "$Psscriptroot\applications\source\scripts\Extra2.ps1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Extra3.ps1' -OutFile "$Psscriptroot\applications\source\scripts\Extra3.ps1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/intermediate_remove.ps1' -OutFile "$Psscriptroot\applications\source\scripts\intermediate_remove.ps1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/extra1.ps1' -OutFile "$Psscriptroot\applications\source\scripts\extra1.ps1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/extra2.ps1' -OutFile "$Psscriptroot\applications\source\scripts\extra2.ps1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/extra3.ps1' -OutFile "$Psscriptroot\applications\source\scripts\extra3.ps1" | Out-Null
     
     $a = Test-Path "$Psscriptroot\applications\source\Images\fondpluiesize.gif"
     $b = Test-path  "$Psscriptroot\applications\source\Images\Icone.ico" 
@@ -89,6 +89,7 @@ function Launch #Copie tout dans la clé ou lance le script
         Start-Sleep -s 1
         copy-item "C:\_TECH\Applications\source\scripts\delete.ps1" "c:\Temp" -Force #Copier delete dans c:\temp
         copy-item "C:\_TECH\Remove.bat" "c:\Temp" -Force #Copier remove dans c:\temp
+        copy-item "C:\_TECH\applications\source\scripts\intermediate_remove.ps1" "c:\Temp\intermediate_remove.ps1" -Force #Copier remove dans c:\temp
         Start-Process "C:\_Tech\Applications\Source\scripts\RunAsMenu.bat" -WindowStyle Hidden
         exit
     }
