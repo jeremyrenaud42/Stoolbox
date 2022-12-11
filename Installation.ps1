@@ -851,12 +851,8 @@ function License
 
 function Edge
 {
-    $edgeversion = (Get-AppxPackage -Name "Microsoft.MicrosoftEdge.Stable").Version
-    if($edgeversion -lt 100)
-    {
-        $Labeloutput.Text += "Mise à jour de Microsoft Edge en cours"
+        $Labeloutput.Text += "Mise à jour de Microsoft Edge"
         winget upgrade -e -h --id Microsoft.Edge --accept-package-agreements --accept-source-agreements --silent
-    }  
 }
 
 function Task
