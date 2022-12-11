@@ -624,6 +624,26 @@ function SystemUpdate
     addlog "Installation de Lenovo System Update"      
 }
 
+<#Lenovo Vantage
+
+function PreverifVantage
+{
+   $pathexist = $false
+   $Vantagepath = Test-Path "C:\ProgramData\Lenovo\Vantage" #si déja ouvert.
+   if($Vantagepath -eq $true)
+   {
+     $pathexist = $true
+     $Labeloutput.Text += " -Lenovo Vantage est déja installé`r`n"
+   }
+   return $pathexist
+}
+
+winget install -e --id 9WZDNCRFJ4MV --accept-package-agreements --accept-source-agreements --silent | out-null
+#>
+
+
+
+
 #Dell
 function PreverifDellSA
 {
@@ -729,6 +749,16 @@ Function Pilotes
     {
         DellSA
     }
+    <#
+    elseif($x -match 'MSI')
+    {
+        
+    }
+    elseif($x -like 'ASUS*')
+    {
+        
+    }
+    #>
 }
 
 #Geforce
@@ -916,7 +946,8 @@ function End
         #Defaultbrowser
         #start-sleep -s 3
         #Restart-Computer -Force
-        shutdown /r /t 60
+        shutdown /r /t 60à
+        Start-Process "c:\temp\Remove.bat" | Out-Null #Exécuter remove.bat
     }
     else 
     {
@@ -925,10 +956,16 @@ function End
         #Pintotaskbar
         #Defaultpdf
         #Defaultbrowser
+        Start-Process "c:\temp\Remove.bat" | Out-Null #Exécuter remove.bat
         exit
     }     
 }
 #https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
+
+
+
+
+
 function Main
 {
 Debut
