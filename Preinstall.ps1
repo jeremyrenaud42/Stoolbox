@@ -76,7 +76,7 @@ function Launch #Copie tout dans la clé ou lance le script
         Write-Host "Le dossier C:\_Tech a été créé"
         Start-Sleep -s 1
         New-Item -ItemType Directory "C:\_Tech" -Force | Out-Null #Créer le dossier _Tech sur le C:
-        New-Item -ItemType Directory -Name "Temp" -Path "C:\" -Force -ErrorAction SilentlyContinue #Creer dossier Temp  pour y copier/coller remove.
+        New-Item -ItemType Directory -Name "Temp" -Path "C:\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
         write-host "Copie des fichiers sur le C:"
         Start-Sleep -s 1
         Copy-Item "$Psscriptroot\*" "C:\_TECH" -Recurse -Force | Out-Null #copy tous le dossier _Tech de la clé USB vers le dossier _Tech du C:
