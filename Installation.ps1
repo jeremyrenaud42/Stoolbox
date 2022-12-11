@@ -947,7 +947,7 @@ function End
         #start-sleep -s 3
         #Restart-Computer -Force
         shutdown /r /t 60
-        Start-Process "C:\_tech\applications\source\scripts\Intermediate_remove.ps1" | Out-Null #Exécuter remove.bat
+        Start-Process powershell.exe "C:\_tech\applications\source\scripts\Intermediate_remove.ps1" | Out-Null #Exécuter remove.bat
     }
     else 
     {
@@ -956,7 +956,7 @@ function End
         #Pintotaskbar
         #Defaultpdf
         #Defaultbrowser
-        Start-Process "C:\_tech\applications\source\scripts\Intermediate_remove.ps1" | Out-Null #Exécuter remove.bat
+        Start-Process powershell.exe "C:\_tech\applications\source\scripts\Intermediate_remove.ps1" | Out-Null #Exécuter remove.bat
         exit    
     }     
 }
