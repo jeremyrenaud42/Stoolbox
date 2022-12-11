@@ -853,6 +853,16 @@ function Edge
     }  
 }
 
+function Task
+{
+    $taskname = 'Delete _Tech'
+    $Action = New-ScheduledTaskAction -Execute 'C:\Temp\Remove.bat'
+    $Trigger = New-ScheduledTaskTrigger -At (Get-Date).AddMinutes(1) -Once #le fait 1x à +1 minute du temps actuel
+    $Settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew -Compatibility Win8 #si ordi éteint, le refait après 10 minutes
+    $Task = New-ScheduledTask -Action $Action -Trigger $Trigger -Settings $Settings
+    Register-ScheduledTask -TaskName $taskname -InputObject $Task
+}
+
 <#
 $msgBoxInput = [System.Windows.MessageBox]:: Show('Épingler Google Chrome dans la barre des tâches','Title','OKCancel','Information')
 switch ($msgBoxInput) 
@@ -946,7 +956,8 @@ function End
         #Defaultbrowser
         #start-sleep -s 3
         #Restart-Computer -Force
-        shutdown /r /t 60
+        Task #tâche planifié qui delete tout après une minute
+        shutdown /r /t 90
         Start-Process powershell.exe "C:\temp\remove.bat" | Out-Null #Exécuter remove.bat
     }
     else 
@@ -955,7 +966,8 @@ function End
         Postverif
         #Pintotaskbar
         #Defaultpdf
-        #Defaultbrowser  
+        #Defaultbrowser 
+        Task #tâche planifié qui delete tout après une minute 
         Start-Process powershell.exe "C:\temp\remove.bat" | Out-Null #Exécuter remove.bat  
     }     
 }
