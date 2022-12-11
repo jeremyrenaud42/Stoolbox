@@ -858,13 +858,15 @@ function Task
     $t = Get-ScheduledTask 'delete _tech' | Select-Object -expand state
     if($t -match 'Ready')
     {
-        $taskname = 'Delete _Tech2'
+        Unregister-ScheduledTask -TaskName "delete _tech"
+        $taskname = 'Delete _Tech'
         $Action = New-ScheduledTaskAction -Execute 'C:\Temp\Remove.bat'
         $Trigger = New-ScheduledTaskTrigger -At (Get-Date).AddSeconds(05) -Once #le fait 1x à +1 minute du temps actuel
         $Settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew -Compatibility Win8 #si ordi éteint, le refait après 10 minutes
         $Task = New-ScheduledTask -Action $Action -Trigger $Trigger -Settings $Settings
         Register-ScheduledTask -TaskName $taskname -InputObject $Task
     }
+
     else
     {
         $taskname = 'Delete _Tech'
