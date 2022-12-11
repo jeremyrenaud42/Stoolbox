@@ -955,8 +955,7 @@ function End
         Postverif
         #Pintotaskbar
         #Defaultpdf
-        #Defaultbrowser
-        exit  
+        #Defaultbrowser  
         Start-Process powershell.exe "C:\temp\remove.bat" | Out-Null #Exécuter remove.bat  
     }     
 }
