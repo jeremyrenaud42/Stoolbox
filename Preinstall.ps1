@@ -51,12 +51,7 @@ function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sau
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsMenu.bat' -OutFile "$Psscriptroot\applications\source\scripts\RunAsMenu.bat" | Out-Null  
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$Psscriptroot\Remove.bat" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.bat' -OutFile "$Psscriptroot\Menu.bat" | Out-Null 
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' -OutFile "$Psscriptroot\Menu.ps1" | Out-Null 
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/intermediate_remove.ps1' -OutFile "$Psscriptroot\applications\source\scripts\intermediate_remove.ps1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/extra1.ps1' -OutFile "$Psscriptroot\applications\source\scripts\extra1.ps1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/extra2.ps1' -OutFile "$Psscriptroot\applications\source\scripts\extra2.ps1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/extra3.ps1' -OutFile "$Psscriptroot\applications\source\scripts\extra3.ps1" | Out-Null
-    
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' -OutFile "$Psscriptroot\Menu.ps1" | Out-Null     
     $a = Test-Path "$Psscriptroot\applications\source\Images\fondpluiesize.gif"
     $b = Test-path  "$Psscriptroot\applications\source\Images\Icone.ico" 
     if($a -and $b -eq $false)
@@ -82,14 +77,10 @@ function Launch #Copie tout dans la clé ou lance le script
         Write-Host "Le dossier C:\_Tech a été créé"
         Start-Sleep -s 1
         New-Item -ItemType Directory "C:\_Tech" -Force | Out-Null #Créer le dossier _Tech sur le C:
-        New-Item -ItemType Directory -Name "Temp" -Path "C:\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
         write-host "Copie des fichiers sur le C:"
         Start-Sleep -s 1
         Copy-Item "$Psscriptroot\*" "C:\_TECH" -Recurse -Force | Out-Null #copy tous le dossier _Tech de la clé USB vers le dossier _Tech du C:
         Start-Sleep -s 1
-        copy-item "C:\_TECH\Applications\source\scripts\delete.ps1" "c:\Temp" -Force #Copier delete dans c:\temp
-        copy-item "C:\_TECH\Remove.bat" "c:\Temp" -Force #Copier remove dans c:\temp
-        copy-item "C:\_TECH\applications\source\scripts\intermediate_remove.ps1" "c:\Temp\intermediate_remove.ps1" -Force #Copier remove dans c:\temp
         Start-Process "C:\_Tech\Applications\Source\scripts\RunAsMenu.bat" -WindowStyle Hidden
         exit
     }

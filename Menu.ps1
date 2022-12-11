@@ -30,11 +30,9 @@ function zipsource #Download et création des fondamentaux
 {
 $fondpath = test-Path "$root\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
 $iconepath = test-path "$root\_Tech\applications\source\Images\Icone.ico" #vérifie si l'icone existe
-#$intermediatebat = test-path "$root\_Tech\applications\source\scripts\Intermediatebat.ps1"
     if($fondpath -eq $false) #si fond pas présent
     {
         New-Item "$root\_Tech\Applications\Source\Images" -ItemType Directory -Force | Out-Null #créé les dossiers source\images
-        #New-Item "$root\_Tech\Applications\Source\scripts" -ItemType Directory -Force | Out-Null #créé les dossiers source\images
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$root\_Tech\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
     }
     if($iconepath -eq $false)
@@ -83,14 +81,17 @@ Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #met la policy a unre
 $driveletter = $pwd.drive.name #retourne la lettre du disque actuel
 $root = "$driveletter" + ":" #rajoute  : pour que sa fit dans le path
 set-location "C:\_Tech" #met la location au repertoir actuel
-zipsource #install les fichiers sources (deja installé par foldermenu normalement)
-testpath #vérifie si la clé est bien faite (deja vérifier par foldemrenu normalement)
+zipsource #install les fichiers sources 
+testpath #vérifie si la clé est bien faite 
 $internetenabled = Testconnexion
 if($internetenabled -eq $true)
 {
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/update.psm1' -OutFile "$root\_Tech\applications\source\update.psm1" | Out-Null #Download le module des update
     Update #Vérifie si menu.exe a des mise a jours
 }
+New-Item -ItemType Directory -Name "Temp" -Path "C:\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
+copy-item "C:\_TECH\Applications\source\scripts\delete.ps1" "c:\Temp" -Force | Out-Null #Copier delete dans c:\temp
+copy-item "C:\_TECH\Remove.bat" "c:\Temp" -Force | Out-Null #Copier remove dans c:\temp
 
 $img = [system.drawing.image]::FromFile("$root\_Tech\Applications\Source\Images\fondpluiesize.gif") #Il faut mettre le chemin complet pour éviter des erreurs.
 $pictureBoxBackGround = new-object Windows.Forms.PictureBox #permet d'afficher un gif
@@ -369,3 +370,18 @@ $signatureSTO.TextAlign = 'Middleleft'
 #afficher la form
 $Form.controls.AddRange(@($signatureSTO,$labelchoisiroption,$BoutonInstall,$BoutonOptiNett,$Diagnostic,$Desinfection,$Fix,$quit,$pictureBoxBackGround))
 $Form.ShowDialog() | out-null
+
+
+<#
+$Action = New-ScheduledTaskAction -Execute 'pwsh.exe' -Argument '-NonInteractive -NoLogo -NoProfile -File "C:\MyScript.ps1"'
+$Trigger = New-ScheduledTaskTrigger -Once -At 3am
+$Settings = New-ScheduledTaskSettingsSet
+$Task = New-ScheduledTask -Action $Action -Trigger $Trigger -Settings $Settings
+Register-ScheduledTask -TaskName 'My PowerShell Script' -InputObject $Task -User 'username' -Password 'passhere'
+
+Get-ScheduledTask -TaskName 'My PowerShell Script'
+
+https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtask?view=windowsserver2022-ps
+
+
+#>
