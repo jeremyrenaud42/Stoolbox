@@ -946,7 +946,7 @@ function End
         #Defaultbrowser
         #start-sleep -s 3
         #Restart-Computer -Force
-        shutdown /r /t 60à
+        shutdown /r /t 60
         Start-Process "c:\temp\Remove.bat" | Out-Null #Exécuter remove.bat
     }
     else 
@@ -956,8 +956,8 @@ function End
         #Pintotaskbar
         #Defaultpdf
         #Defaultbrowser
-        Start-Process "c:\temp\Remove.bat" | Out-Null #Exécuter remove.bat
         exit
+        Start-Process "c:\temp\Remove.bat" | Out-Null #Exécuter remove.bat
     }     
 }
 #https://gist.github.com/alirobe/7f3b34ad89a159e6daa1
