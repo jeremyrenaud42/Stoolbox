@@ -83,11 +83,7 @@ $Labeloutput.Font= 'Microsoft Sans Serif,11' #la sorte et taille de police
 $Labeloutput.BorderStyle = 'fixed3D' #Style de la bordure de la zone de texte
 $Form.Controls.Add($Labeloutput) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
 
-#Start-Process ".\Source\LogoSTO.exe" #Lancer le splashscreen
-#Start-Sleep -s 7 #Permet un bel affichage assez long du Logo
-
 $Form.Show() | out-null #afficher la form, ne jamais enlever sinon plus d'affichage GUI
-#Stop-Process -name LogoSTO -Force #Fermer le splashscreen
 
 $executionpolicy = Get-ExecutionPolicy #policy de départ pour la remettre dans la fonction end
 Set-ExecutionPolicy unrestricted -Force #change la policy pour que le script se passe bien
@@ -95,7 +91,7 @@ Set-ExecutionPolicy unrestricted -Force #change la policy pour que le script se 
 #Permet de documenter chaque étape
 function AddLog ($message)
 {
-    $logfilepath="$root\_Tech\Applications\Installation\\Source\Log.txt" #chemin du fichier texte
+    $logfilepath="$root\_Tech\Applications\Installation\Source\Log.txt" #chemin du fichier texte
     $message + "`r`n" | Out-file -filepath $logfilepath -append -force #ajoute le texte dans le fichier
 }
 
@@ -109,7 +105,7 @@ function AddErrorsLog ($message)
 #vérifier s'il y a internet 
 function Testconnexion
 {
-    while (!(test-connection 8.8.8.8 -Count 1 -quiet)) #Ping Google
+    while (!(test-connection 8.8.8.8 -Count 1 -quiet)) #Ping Google et recommence jusqu'a ce qu'il y est internet
     {
     write-warning "Veuillez vous connecter à Internet"
     $Labeloutput.Text += "Une fois la connexion établie l'installation va débuter`r`n"
@@ -122,15 +118,15 @@ function zipwinget
 {
 $logicielpath = test-Path "$root\_Tech\Applications\Installation\Source\Logiciels"
 $wingetpath = test-Path "$root\_Tech\Applications\Installation\Source\Logiciels\winget"
-    if($wingetpath -eq $false)
+    if($wingetpath -eq $false) #Si dossier Winget n'existe pas, va le download
     {
         if($logicielpath -eq $false)
         {
-            New-Item "$root\_Tech\Applications\Installation\Source\Logiciels" -ItemType Directory
+            New-Item "$root\_Tech\Applications\Installation\Source\Logiciels" -ItemType Directory #Créer le dossier Logiciel afin de permettre le download du dossier Winget
         }
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Winget.zip' -OutFile "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip"
-Expand-Archive "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip" ".\Source\Logiciels"
-Remove-Item "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip"
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Winget.zip' -OutFile "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip"
+        Expand-Archive "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip" ".\Source\Logiciels"
+        Remove-Item "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip"
     }
 }
 
@@ -138,7 +134,7 @@ Remove-Item "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip"
 function Preverifchoco 
 {
     $chocoexist = $false
-    $chocopath = Test-Path C:\ProgramData\chocolatey
+    $chocopath = Test-Path "C:\ProgramData\chocolatey"
     if ($chocopath -eq $true)
     {
        $chocoexist = $true 
@@ -161,7 +157,7 @@ function Preverifwinget
 #Vérifier si choco s'est bien installé
 function Postverifchoco 
 {
-    $chocopath = Test-Path C:\ProgramData\chocolatey
+    $chocopath = Test-Path "C:\ProgramData\chocolatey"
     if ($chocopath -eq $false)
     {
         $ErrorMessage = $_.Exception.Message
@@ -232,16 +228,15 @@ function Msupdate
     $progres.Text = "Mises à jour de Windows"
     $Labeloutput.Text += "Installation des mises à jour de Windows"
     
-    Install-PackageProvider -name Nuget -MinimumVersion 2.8.5.201 -Force | Out-Null
+    Install-PackageProvider -name Nuget -MinimumVersion 2.8.5.201 -Force | Out-Null #Prérequis pour download le module PSwindowsupdate
     Install-Module PSWindowsUpdate -Force | Out-Null #install le module
     $path = test-path "C:\Program Files\WindowsPowerShell\Modules\PSWindowsUpdate" #vérifie le chemin du module
-    if($path -eq $false) #si le module n'est pas là
+    if($path -eq $false) #si le module n'est pas là (Plan B)
     {
         choco install pswindowsupdate -y | out-null #Install le module avec Choco
     }
     Import-Module PSWindowsUpdate | out-null #Import le module
     Get-WindowsUpdate -MaxSize 250mb -Install -AcceptAll -IgnoreReboot | out-null #download et install les updates de moins de 250mb sans reboot
-
     $Labeloutput.Text += " -Mises à jour de Windows effectuées`r`n"
     addlog "Mises à jour de Windows effectuées"
 }
@@ -362,7 +357,6 @@ function PostverifAdobe
     $adobereaderpath32 = Test-Path "C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"        
     if(($adobereaderpath) -OR ($adobereaderpath32))
     {   
-        #iconeadobe
         $Labeloutput.Text += " -Adobe Reader installé avec succès`r`n"
     }
     else
@@ -384,7 +378,6 @@ function AdobeReader
             $adobereaderpath32 = Test-Path "C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe" 
             if(($adobereaderpath) -OR ($adobereaderpath32))
             {
-                #iconeadobe
                 $Labeloutput.Text += " -Adobe Reader installé avec succès`r`n" 
             } 
             else
@@ -507,73 +500,12 @@ function Teamviewer
 
 function plancteamviewer
 {
-Start-Process "$root\_Tech\Applications\Installation\Source\Ninite TeamViewer 15 Installer.exe" -Verb runAs #escape pour terminer
+    Start-Process "$root\_Tech\Applications\Installation\Source\Ninite TeamViewer 15 Installer.exe" -Verb runAs #escape pour terminer
 }
 function plancgoogle
 {
-Start-Process "$root\_Tech\Applications\Installation\Source\Ninite Chrome Installer.exe" -Verb runAs #escape pour terminer
+    Start-Process "$root\_Tech\Applications\Installation\Source\Ninite Chrome Installer.exe" -Verb runAs #escape pour terminer
 }
-<#
-function verifierSiLogicielEstDejaInstalle {
-    param (
-        [PSCustomObject] $infoApp
-    )
-
-    $pathexist = $false
-    $emplacementExecutable = Test-Path $infoApp.emplacementExecutable
-    if($emplacementExecutable -eq $true)
-    {
-        $pathexist = $true
-        $Labeloutput.Text += " -" + $infoApp.nomAffiche + " est déja installé`r`n"
-    }
-    return $pathexist
-}
-
-function verifierApresInstallation {
-    param (
-        [PSCustomObject] $infoApp
-    )
-
-    $emplacementExecutable = Test-Path $infoApp.emplacementExecutable
-    if($emplacementExecutable -eq $true)
-    {
-        $Labeloutput.Text += " -" + $infoApp.nomAffiche + " installé avec succès`r`n"
-    }
-    else
-    {
-        Write-Warning "Erreur lors de l'installation de " + $infoApp.nomAffiche + "!!!!"
-    }    
-}
-
-function installerLogiciel {
-    param (
-        [PSCustomObject] $infoApp
-    )
-    
-    $progres.Text = "Installation de " + $infoApp.nomAffiche
-    $Labeloutput.Text += "Installation de " + $infoApp.nomAffiche + " en cours"
-    $pathexist = verifierSiLogicielEstDejaInstalle $infoApp
-    if($pathexist -eq $false)
-    {
-        choco install $infoApp.idChocolatey -y | out-null
-        $Labeloutput.Text += " -" + $infoApp.nomAffiche + " installé avec succès`r`n"
-    }
-
-    verifierApresInstallation $infoApp
-
-    addlog "Installation de " + $infoApp.nomAffiche
-}
-
-
-$infoApp = [PSCustomObject]@{
-    nomAffiche = "Teamviewer"
-    emplacementExecutable = "C:\Program Files\TeamViewer\TeamViewer.exe"
-    idWinget = "teamviewer"
-    idChocolatey = "teamviewer"
-}
-
-installerLogiciel $infoApp
- #> 
 
 #Gérer les pilotes
 #Lenovo
@@ -744,6 +676,7 @@ Function Pilotes
     if($x -match 'LENOVO')
     {
         SystemUpdate
+        LenovoVantage
     }
 
     elseif($x -match 'HP')
@@ -943,6 +876,7 @@ function Postverif
 function End
 {
     AddLog "Installation de Windows effectué avec Succès"
+    Copy-Item "$root\_Tech\Applications\Installation\Source\Log.txt" -Destination "C:\TEMP" -Force | out-null     
     [Audio]::Volume = 0.25
     [console]::beep(1000,666)
     Start-Sleep -s 1
@@ -965,7 +899,6 @@ function End
         #Restart-Computer -Force
         Task #tâche planifié qui delete tout après une minute
         shutdown /r /t 60
-        #Start-Process powershell.exe "C:\temp\remove.bat" | Out-Null #Exécuter remove.bat
     }
     else 
     {
@@ -974,8 +907,7 @@ function End
         #Pintotaskbar
         #Defaultpdf
         #Defaultbrowser 
-        Task #tâche planifié qui delete tout après une minute 
-        #Start-Process powershell.exe "C:\temp\remove.bat" | Out-Null #Exécuter remove.bat  
+        Task #tâche planifié qui delete tout après une minute  
     }     
 }
 
@@ -993,9 +925,8 @@ IconeBureau
 AdobeReader
 Googlechrome
 Teamviewer
-Edge
+#Edge
 Pilotes
-LenovoVantage
 GeForce
 License
 Msstore
