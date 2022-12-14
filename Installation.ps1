@@ -92,7 +92,7 @@ Set-ExecutionPolicy unrestricted -Force #change la policy pour que le script se 
 function AddLog ($message)
 {
     $logfilepath="$root\_Tech\Applications\Installation\Source\Log.txt" #chemin du fichier texte
-    $message + "`r`n" | Out-file -filepath $logfilepath -append -force #ajoute le texte dans le fichier
+    $message + "`r`n" | Out-file -filepath $logfilepath -append -encoding utf8 -force #ajoute le texte dans le fichier
 }
 
 #Permet de documenter les erreurs 
