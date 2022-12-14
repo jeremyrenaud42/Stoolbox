@@ -73,7 +73,6 @@ function Update
             return
         }
     } 
-    Remove-Item "$root\_Tech\Temp" -Recurse -Force #Supprime le dossier temp
     return  
 }
 
@@ -370,18 +369,3 @@ $signatureSTO.TextAlign = 'Middleleft'
 #afficher la form
 $Form.controls.AddRange(@($signatureSTO,$labelchoisiroption,$BoutonInstall,$BoutonOptiNett,$Diagnostic,$Desinfection,$Fix,$quit,$pictureBoxBackGround))
 $Form.ShowDialog() | out-null
-
-
-<#
-$Action = New-ScheduledTaskAction -Execute 'pwsh.exe' -Argument '-NonInteractive -NoLogo -NoProfile -File "C:\MyScript.ps1"'
-$Trigger = New-ScheduledTaskTrigger -Once -At 3am
-$Settings = New-ScheduledTaskSettingsSet
-$Task = New-ScheduledTask -Action $Action -Trigger $Trigger -Settings $Settings
-Register-ScheduledTask -TaskName 'My PowerShell Script' -InputObject $Task -User 'username' -Password 'passhere'
-
-Get-ScheduledTask -TaskName 'My PowerShell Script'
-
-https://learn.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtask?view=windowsserver2022-ps
-
-
-#>
