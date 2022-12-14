@@ -91,7 +91,7 @@ Set-ExecutionPolicy unrestricted -Force #change la policy pour que le script se 
 #Permet de documenter chaque étape
 function AddLog ($message)
 {
-    $logfilepath="$root\_Tech\Applications\Installation\Source\Log.txt" #chemin du fichier texte
+    $logfilepath = "$root\_Tech\Applications\Installation\Source\Log.txt" #chemin du fichier texte
     $message + "`r`n" | Out-file -filepath $logfilepath -append -encoding ASCII -force #ajoute le texte dans le fichier
 }
 
@@ -213,7 +213,7 @@ import-module "$root\_Tech\Applications\Installation\Source\Voice.psm1" #Module 
 function Debut
 {
     Testconnexion #appel la fonction qui test la connexion internet
-    addlog (Get-Date).ToString() #ajoute la date dans le fichier texte de log
+    addlog (Get-Date).ToString() encoding ASCII #ajoute la date dans le fichier texte de log
     $progres.Text = "Préparation"
     $Labeloutput.Text = "" #effacer le texte qui serait déja écrit par la fonction testconnexion
     $Labeloutput.Text += "Lancement de la configuration du Windows`r`n"
