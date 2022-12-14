@@ -73,6 +73,7 @@ function Update
             return
         }
     } 
+    Remove-Item "$root\_Tech\Temp" -Recurse -Force #Supprime le dossier temp
     return  
 }
 
