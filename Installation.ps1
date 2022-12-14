@@ -214,7 +214,8 @@ function Debut
 {
     Testconnexion #appel la fonction qui test la connexion internet
     $version = (Get-WmiObject -class Win32_OperatingSystem).Caption
-    addlog "Installation de $version le (Get-Date).ToString()" #ajoute la date dans le fichier texte de log
+    addlog "Installation de $version le "
+    addlog (Get-Date).ToString() #ajoute la date dans le fichier texte de log
     $progres.Text = "Préparation"
     $Labeloutput.Text = "" #effacer le texte qui serait déja écrit par la fonction testconnexion
     $Labeloutput.Text += "Lancement de la configuration du Windows`r`n"
