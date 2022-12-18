@@ -249,6 +249,7 @@ Function LabelHDD
     $progres.Text = "Renommage du disque"
     Set-Volume -DriveLetter 'C' -NewFileSystemLabel "OS" #Renomme le disque C: par OS
     $Labeloutput.Text += "`r`nLe disque C: a été renommé OS`r`n"
+    #Get-Volume -DriveLetter 'C' | Select-Object -expand FileSystemLabel | Out-Null #donne comme résultat le nom du disque C.
     addlog "Le disque C: a été renommé OS"
 }
 
@@ -256,10 +257,12 @@ Function LabelHDD
 Function Dossiers
 {
     $progres.Text = "Configuration des paramètres de l'explorateur de fichiers"
-    set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name LaunchTo -Type DWord -Value 1
+    set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo' -Type 'DWord' -Value '1'
     $Labeloutput.Text += "L'accès rapide a été remplacé par Ce PC`r`n"
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name ShowSyncProviderNotifications -Type DWord -Value 0
-    $Labeloutput.Text += "Le fournisseur de synchronisation a été decoché`r`n"      
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications' -Type 'DWord' -Value '0'
+    $Labeloutput.Text += "Le fournisseur de synchronisation a été decoché`r`n"
+    #Get-ItemPropertyValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo'   
+    #Get-ItemPropertyValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications'   
     addlog "Explorateur de fichiers configuré"  
 }
 
@@ -274,6 +277,7 @@ Function Dossiers
             Disable-BitLocker -MountPoint $BLV | Out-Null
             $Labeloutput.Text += "Bitlocker a été désactivé`r`n"
         }
+    #Get-BitLockerVolume | Select-Object -expand VolumeStatus #FullyDecrypted
     addlog "Bitlocker a été désactivé"
 }
 
@@ -294,6 +298,7 @@ Function Langue
     $AnglaisCanada = $LangList | Where-Object LanguageTag -eq "en-CA" #sélectionne le clavier anglais canada de la liste
     $LangList.Remove($AnglaisCanada) | Out-Null #supprimer la clavier sélectionner
     Set-WinUserLanguageList $LangList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
+    #if($AnglaisCanada) {write-host "erreur"}
     $Labeloutput.Text += "Le clavier Anglais a été supprimé`r`n"
     addlog "Le clavier Anglais a été supprimé"
 }
@@ -302,10 +307,16 @@ Function Langue
 Function Privacy
 {
     $progres.Text = "Paramètres de confidentialité"
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name SubscribedContent-338393Enabled -Type DWord -Value 0 
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name SubscribedContent-353694Enabled -Type DWord -Value 0 
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name SubscribedContent-353696Enabled -Type DWord -Value 0 
-    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name Start_TrackProgs -Type DWord -Value 0 
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled" -Type 'DWord' -Value 0 
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Type 'DWord' -Value 0 
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type 'DWord' -Value 0 
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type 'DWord' -Value 0 
+
+    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled" 
+    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled"  
+    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" 
+    #get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs"
+
     $Labeloutput.Text += "Les options de confidentialité ont été configuré`r`n"
     addlog "Les options de confidentialité ont été configuré"  
 }
@@ -314,13 +325,17 @@ Function Privacy
 Function IconeBureau
 {
     $progres.Text = "Installation des icones systèmes sur le bureau"
-    if (!(Test-Path -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel)) #vérifie si le chemin du registre existe
+    if (!(Test-Path -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel")) #vérifie si le chemin du registre existe
 		{
-			New-Item -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel -Force #s'il n'existe pas le créé
+			New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Force #s'il n'existe pas le créé
 		}
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 0 
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0 
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 0
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type 'DWord' -Value 0 
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type 'DWord' -Value 0 
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type 'DWord' -Value 0
+
+    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}"
+    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" 
+    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" 
     $Labeloutput.Text += "Les icones systèmes ont été installés sur le bureau`r`n"
     addlog "Les icones systèmes ont été installés sur le bureau"
 }
@@ -562,9 +577,9 @@ Lenovo Vantage
 function LenovoVantage
 {
     $progres.Text = "Installation de Lenovo Vantage"
-    $Labeloutput.Text += "Installation de Lenovo System Vantage"
+    $Labeloutput.Text += "Installation de Lenovo Vantage"
     winget install -e --id 9WZDNCRFJ4MV --accept-package-agreements --accept-source-agreements --silent | out-null
-    $Labeloutput.Text += " -Lenovo System Update installé avec succès`r`n" 
+    $Labeloutput.Text += " -Lenovo Vantage installé avec succès`r`n" 
     addlog "Installation de Lenovo Vantage" 
 }
 
@@ -582,7 +597,6 @@ function PreverifVantage
    return $pathexist
 }
 #>
-
 
 #Dell
 function PreverifDellSA
@@ -755,16 +769,11 @@ function GeForce
     }      
 }
 
-#Antivirus
 #Function Antivirus
 #{
-#    #$progres.Text = "Paramètre de Defender : Progrès 75%"
-#    $Labeloutput.Text += "Antivirus configuré`r`n"
 #    start-Process "windowsdefender:"
-#    #Start-Sleep -s 3
 #    [Microsoft.VisualBasic.Interaction]::MsgBox("Vérifier que l'antivirus est bien configuré, puis cliquer sur OK",'OKOnly,SystemModal,Information', "Windows -Antivirus") | Out-Null
 #    #[System.Windows.MessageBox]::Show("Vérifier que l'antivirus est bien configuré, puis cliquer sur OK","Windows -Antivirus",0) | Out-Null
-#    #start-sleep -s 3
 #}
 
 
