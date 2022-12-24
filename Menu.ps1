@@ -123,7 +123,7 @@ $Form.height = $img.height
 $Form.MaximizeBox = $false
 $Form.icon = New-Object system.drawing.icon ("$root\_Tech\Applications\Source\Images\Icone.ico") #Il faut mettre le chemin complet pour éviter des erreurs.
 $Form.KeyPreview = $True
-$Form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {$Form.Close()}}) #si on fait échape sa ferme la fenetre
+$Form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {Task;$Form.Close()}}) #si on fait échape sa ferme la fenetre
 $Form.TopMost = $true
 $Form.StartPosition = "CenterScreen"
 $Form.BackgroundImageLayout = "Stretch"
