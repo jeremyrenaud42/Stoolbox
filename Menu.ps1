@@ -94,7 +94,7 @@ if($internetenabled -eq $true)
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/update.psm1' -OutFile "$root\_Tech\applications\source\update.psm1" | Out-Null #Download le module des update
     Update #Vérifie si menu.exe a des mise a jours
 }
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/task.psm1' -OutFile "$root\_Tech\applications\source\task.psm1" | Out-Null
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$root\_Tech\applications\source\task.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null
 New-Item -ItemType Directory -Name "Temp" -Path "C:\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
 copy-item "C:\_TECH\Applications\source\scripts\delete.ps1" "c:\Temp" -Force | Out-Null #Copier delete dans c:\temp
