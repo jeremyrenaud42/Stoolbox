@@ -26,6 +26,9 @@ function Testconnexion
     return $internet
 }
 
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/task.psm1' -OutFile "$root\_Tech\applications\source\task.psm1" | Out-Null
+Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null
+<#
 function Task
 {
     $t = Get-ScheduledTask 'delete _tech' | Select-Object -expand state
@@ -40,7 +43,7 @@ function Task
         $Task = New-ScheduledTask -Action $Action -Trigger $Trigger -Settings $Settings
         Register-ScheduledTask -TaskName $taskname -InputObject $Task
 }
-
+#>
 
 function zipsource #Download et création des fondamentaux
 {
@@ -55,17 +58,6 @@ $iconepath = test-path "$root\_Tech\applications\source\Images\Icone.ico" #véri
     {
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$root\_Tech\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
     } 
-}
-
-function testpath #vérification que le dossier a bien été créé par zipsource
-{
-$keypath = Test-Path "c:\_Tech\applications" #Test si dossier applications existe
-    if (!($keypath)) #S'il n'existe pas
-    {
-        [System.Windows.MessageBox]::Show("Votre clé n'est pas configuré de la bonne facon","Chemin obligatoire",0) | Out-Null #Affiche ce message
-        [System.Windows.MessageBox]::Show("Elle doit respectée le chemin C:\_Tech\Applications\...","Chemin obligatoire",0) | Out-Null #Affiche ce message
-        exit
-    }
 }
 
 function Update
@@ -97,8 +89,7 @@ Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #met la policy a unre
 $driveletter = $pwd.drive.name #retourne la lettre du disque actuel
 $root = "$driveletter" + ":" #rajoute  : pour que sa fit dans le path
 set-location "C:\_Tech" #met la location au repertoir actuel
-zipsource #install les fichiers sources 
-testpath #vérifie si la clé est bien faite 
+zipsource #install les fichiers sources  
 $internetenabled = Testconnexion
 if($internetenabled -eq $true)
 {
