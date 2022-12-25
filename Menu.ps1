@@ -122,7 +122,7 @@ function ZipOpti
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' -OutFile "$root\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #download le .exe
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsOptimisation_Nettoyage.bat' -OutFile "$root\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #download le .exe
     set-location "$root\_Tech\Applications\Optimisation_Nettoyage" #met le path dans le dossier Optimisation
-    Start-Process "$root\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #Lance le script d'optimisation
+    Start-Process powershell.exe -WindowStyle Hidden "$root\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.ps1" | Out-Null #Lance le script d'optimisation
 }
 
 #Optimisation et nettoyage
