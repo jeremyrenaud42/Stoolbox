@@ -1,23 +1,6 @@
-﻿#Ce script ne se met pas à jour.
-#Partie 1: Tout se passe dans la clé USB
-#Si nécéssaire, Créer les fondamentaux. soit le dossier applications et source, qui contient images et scripts.
-#Si internet, Download les fichiers nécéssaire. Download a neuf à chaque execution afin d'être à jour tout le temp.
-#Partie2: Tout se pase sur le C:
-#Vérifie la présence du menu dans le C:. si existe, l,execute sinno créer le dossier _tech
-#Copie/colle tout le dossier _Tech de la clé USB vers le C:
+﻿Add-Type -AssemblyName Microsoft.VisualBasic
 
-Add-Type -AssemblyName Microsoft.VisualBasic
-
-function Testconnexion
-{
-    while (!(test-connection 8.8.8.8 -Count 1 -quiet)) #Ping Google et recommence jusqu'a ce qu'il y est internet
-    {
-        [Microsoft.VisualBasic.Interaction]::MsgBox("Veuillez vous connecter à Internet",'OKOnly,SystemModal,Information', "Menu") | Out-Null
-        start-sleep 5
-    }
-}
-
-function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sauf preinstall.ps1 (lui meme) , tout ce passe dans la clé USB
+function SourceMenu
 {
     #Création des dossiers
     $Applications = test-path "$Psscriptroot\Applications" 
@@ -58,8 +41,11 @@ function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sau
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$Psscriptroot\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$Psscriptroot\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
     }
+    Start-Process "C:\_Tech\Applications\Source\scripts\RunAsMenu.bat" -WindowStyle Hidden
+    exit
 }
 
+<#
 function Launch #Copie tout dans la clé ou lance le script
 {
     $menups1 = Test-Path "C:\_Tech\Menu.ps1" 
@@ -83,6 +69,5 @@ function Launch #Copie tout dans la clé ou lance le script
         exit
     }
 }
-Testconnexion
+#>
 SourceMenu
-Launch
