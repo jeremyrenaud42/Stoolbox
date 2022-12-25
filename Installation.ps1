@@ -14,7 +14,7 @@ $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cel
 
 set-location "c:\_Tech\Applications\Installation" #met le path dans le dossier Installation au lieu du path de PowerShell.
 
-Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null
+Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #importe le module pour Task, qui supprime le dfossier _Tech à la fin
 
 #Vérifier la présence du dossier source dans la clé
 function Sourceexist
@@ -88,7 +88,7 @@ $Form.Controls.Add($Labeloutput) #ajoute officiellement le label. Il suffit de m
 $Form.Show() | out-null #afficher la form, ne jamais enlever sinon plus d'affichage GUI
 
 $executionpolicy = Get-ExecutionPolicy #policy de départ pour la remettre dans la fonction end
-Set-ExecutionPolicy unrestricted -Force #change la policy pour que le script se passe bien
+Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #change la policy pour que le script se passe bien
 
 #Permet de documenter chaque étape
 function AddLog ($message)
@@ -802,51 +802,6 @@ function Edge
 }
 
 
-<#
-$msgBoxInput = [System.Windows.MessageBox]:: Show('Épingler Google Chrome dans la barre des tâches','Title','OKCancel','Information')
-switch ($msgBoxInput) 
-{
-    'Ok' {Write-Host "You pressed Ok"}
-    'Cancel' {continue}
-}
-#>
-
-function Pintotaskbar
-{
-#$targetdir = "C:\Users\$env:username\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
-#$pinnedgoogle = Get-ChildItem $targetdir -recurse -Filter "Goo*" | Select-Object -expand name
-#$pinpath = Test-Path "$targetdir\*Google*Chrome*"
-
-#while($pinpath -eq $false)
-    #{
-        [Microsoft.VisualBasic.Interaction]::MsgBox("Épingler Google Chrome dans la barre des tâches",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
-        #$pinpath = test-path "$targetdir\Google Chrome.lnk"
-    #}
-}
-
-function Defaultpdf
-{
-#$pdf = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice | Select-Object -ExpandProperty ProgId
-    #while($pdf -notlike "*.Document.DC")
-    #{
-        [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre Adobe Reader par défaut",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
-        #$pdf = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice | Select-Object -ExpandProperty ProgId
-    #} 
-}
-
-function Defaultbrowser
-{
-#$http = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\http\UserChoice | Select-Object -ExpandProperty ProgId
-#$https = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\https\UserChoice | Select-Object -ExpandProperty ProgId
-    #while(($http -notlike "ChromeHTML*") -and ($https -notlike "ChromeHTML*"))
-    #{
-        Start-Process ms-settings:defaultapps
-        [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre Google Chrome par défaut",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null   
-        #$http = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\http\UserChoice | Select-Object -ExpandProperty ProgId
-        #$https = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\URLAssociations\https\UserChoice | Select-Object -ExpandProperty ProgId
-    #}  
-}
-
 function Postverif
 {
     #default browser
@@ -891,11 +846,6 @@ function End
         start-sleep -s 3
         [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre les logiciels par défaut et épingler Google Chrome à la barre des tâches. Cliquer sur OK pour redémarrer l'ordinateur",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
         Postverif
-        #Pintotaskbar
-        #Defaultpdf
-        #Defaultbrowser
-        #start-sleep -s 3
-        #Restart-Computer -Force
         Task #tâche planifié qui delete tout après une minute
         shutdown /r /t 60
     }
@@ -903,9 +853,6 @@ function End
     {
         Set-ExecutionPolicy $executionpolicy
         Postverif
-        #Pintotaskbar
-        #Defaultpdf
-        #Defaultbrowser 
         Task #tâche planifié qui delete tout après une minute  
     }     
 }

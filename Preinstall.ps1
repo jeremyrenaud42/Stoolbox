@@ -1,20 +1,21 @@
-﻿Add-Type -AssemblyName Microsoft.VisualBasic
+﻿#Ce script ne se met pas à jour.
+#Partie 1: Tout se passe dans la clé USB
+#Si nécéssaire, Créer les fondamentaux. soit le dossier applications et source, qui contient images et scripts.
+#Si internet, Download les fichiers nécéssaire. Download a neuf à chaque execution afin d'être à jour tout le temp.
+#Partie2: Tout se pase sur le C:
+#Vérifie la présence du menu dans le C:. si existe, l,execute sinno créer le dossier _tech
+#Copie/colle tout le dossier _Tech de la clé USB vers le C:
+
+Add-Type -AssemblyName Microsoft.VisualBasic
+
 function Testconnexion
 {
-    $internet = $false
-    $ping = test-connection 8.8.8.8 -Count 1 -quiet -ErrorAction Ignore
-    if ($ping -eq $true)
+    while (!(test-connection 8.8.8.8 -Count 1 -quiet)) #Ping Google et recommence jusqu'a ce qu'il y est internet
     {
-       $internet = $true 
-    } 
-    else 
-    {
-
-        [Microsoft.VisualBasic.Interaction]::MsgBox("Vous n'êtes pas connecté à Internet, certaines fonctionnalités ne pourraient pas fonctionner",'OKOnly,SystemModal,Information', "Menu") | Out-Null
+        [Microsoft.VisualBasic.Interaction]::MsgBox("Veuillez vous connecter à Internet",'OKOnly,SystemModal,Information', "Menu") | Out-Null
+        start-sleep 5
     }
-    return $internet
 }
-
 
 function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sauf preinstall.ps1 (lui meme) , tout ce passe dans la clé USB
 {
@@ -45,8 +46,6 @@ function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sau
     start-sleep -s 2
 
     #Download des files
-    if(Testconnexion)
-    {
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/delete.ps1' -OutFile "$Psscriptroot\applications\source\scripts\delete.ps1" | Out-Null 
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsMenu.bat' -OutFile "$Psscriptroot\applications\source\scripts\RunAsMenu.bat" | Out-Null  
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$Psscriptroot\Remove.bat" | Out-Null
@@ -58,7 +57,6 @@ function SourceMenu #Créer dossier et met à jours tout ce qui touche menu, sau
     {
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$Psscriptroot\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$Psscriptroot\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
-    }
     }
 }
 
