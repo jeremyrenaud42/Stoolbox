@@ -6,16 +6,16 @@ Add-Type -AssemblyName presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
 #Cette fonction permet de relancer le script en mode Admin si besoin
-function admin
+function Admin
 {
     If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator'))
      {
         Start-Process powershell.exe -ArgumentList ("-NoProfile -windowstyle hidden -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-        Exit #permet de fermer la session non-admin
+        Exit #permet de fermer la session non-Admin
     }
 }
 
-function zipsource #Download et création des fondamentaux
+function Zipsource #Download et création des fondamentaux
 {
 $fondpath = test-Path "$root\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
 $iconepath = test-path "$root\_Tech\applications\source\Images\Icone.ico" #vérifie si l'icone existe
@@ -30,12 +30,12 @@ $iconepath = test-path "$root\_Tech\applications\source\Images\Icone.ico" #véri
     } 
 }
 
-admin
+Admin
 Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #met la policy a unrestricted a cause de intermediate .ps1
 $driveletter = $pwd.drive.name #retourne la lettre du disque actuel
 $root = "$driveletter" + ":" #rajoute  : pour que sa fit dans le path
 set-location "C:\_Tech" #met la location au repertoir actuel
-zipsource #install les fichiers sources  
+Zipsource #install les fichiers sources  
 Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$root\_Tech\applications\source\update.psm1" | Out-Null
 Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$root\_Tech\applications\source\task.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
@@ -50,20 +50,20 @@ $pictureBoxBackGround.height = $img.height
 $pictureBoxBackGround.Image = $img #contient l'image gif de background
 $pictureBoxBackGround.AutoSize = $true 
 
-$Form = New-Object System.Windows.Forms.Form
-$Form.Text = "Menu - Boite à outils du technicien"
-$Form.Width = $img.Width
-$Form.height = $img.height
-$Form.MaximizeBox = $false
-$Form.icon = New-Object system.drawing.icon ("$root\_Tech\Applications\Source\Images\Icone.ico") #Il faut mettre le chemin complet pour éviter des erreurs.
-$Form.KeyPreview = $True
-$Form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {Task;$Form.Close()}}) #si on fait échape sa ferme la fenetre
-#$Form.add_FormClosed({Task;$Form.Close()})
-$Form.TopMost = $true
-$Form.StartPosition = "CenterScreen"
-$Form.BackgroundImageLayout = "Stretch"
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "Menu - Boite à outils du technicien"
+$form.Width = $img.Width
+$form.height = $img.height
+$form.MaximizeBox = $false
+$form.icon = New-Object system.drawing.icon ("$root\_Tech\Applications\Source\Images\Icone.ico") #Il faut mettre le chemin complet pour éviter des erreurs.
+$form.KeyPreview = $True
+$form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {Task;$form.Close()}}) #si on fait échape sa ferme la fenetre
+#$form.add_FormClosed({Task;$form.Close()})
+$form.TopMost = $true
+$form.StartPosition = "CenterScreen"
+$form.BackgroundImageLayout = "Stretch"
 
-function zipinstallation
+function Zipinstallation
 {
     $installationexepath = Test-Path "$root\_Tech\Applications\Installation\installation.ps1" #vérifie si le exe existe
     if($installationexepath) #S'Il existe
@@ -84,28 +84,28 @@ function zipinstallation
 }
 
 #Installation
-$BoutonInstall = New-Object System.Windows.Forms.Button
-$BoutonInstall.Location = New-Object System.Drawing.Point(446,100)
-$BoutonInstall.AutoSize = $false
-$BoutonInstall.Width = '150'
-$BoutonInstall.Height = '65'
-$BoutonInstall.ForeColor='black'
-$BoutonInstall.BackColor = 'darkred'
-$BoutonInstall.Text = "Installation Windows"
-$BoutonInstall.Font= 'Microsoft Sans Serif,16'
-$BoutonInstall.FlatStyle = 'Flat'
-$BoutonInstall.FlatAppearance.BorderSize = 2
-$BoutonInstall.FlatAppearance.BorderColor = 'black'
-$BoutonInstall.FlatAppearance.MouseDownBackColor = 'darkcyan'
-$BoutonInstall.FlatAppearance.MouseOverBackColor = 'gray'
-$BoutonInstall.Add_MouseEnter({$BoutonInstall.ForeColor = 'White'})
-$BoutonInstall.Add_MouseLeave({$BoutonInstall.ForeColor = 'Black'})
-$BoutonInstall.Add_Click({
-zipinstallation
-$Form.Close()
+$boutonInstall = New-Object System.Windows.Forms.Button
+$boutonInstall.Location = New-Object System.Drawing.Point(446,100)
+$boutonInstall.AutoSize = $false
+$boutonInstall.Width = '150'
+$boutonInstall.Height = '65'
+$boutonInstall.ForeColor='black'
+$boutonInstall.BackColor = 'darkred'
+$boutonInstall.Text = "Installation Windows"
+$boutonInstall.Font= 'Microsoft Sans Serif,16'
+$boutonInstall.FlatStyle = 'Flat'
+$boutonInstall.FlatAppearance.BorderSize = 2
+$boutonInstall.FlatAppearance.BorderColor = 'black'
+$boutonInstall.FlatAppearance.MouseDownBackColor = 'darkcyan'
+$boutonInstall.FlatAppearance.MouseOverBackColor = 'gray'
+$boutonInstall.Add_MouseEnter({$boutonInstall.ForeColor = 'White'})
+$boutonInstall.Add_MouseLeave({$boutonInstall.ForeColor = 'Black'})
+$boutonInstall.Add_Click({
+Zipinstallation
+$form.Close()
 })
 
-function zipOpti 
+function ZipOpti 
 {
     #Mettre à jour le .exe s'il existe.
     $optiexepath = Test-Path "$root\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #vérifie si le .exe existe
@@ -126,28 +126,28 @@ function zipOpti
 }
 
 #Optimisation et nettoyage
-$BoutonOptiNett = New-Object System.Windows.Forms.Button
-$BoutonOptiNett.Location = New-Object System.Drawing.Point(446,175)
-$BoutonOptiNett.AutoSize = $false
-$BoutonOptiNett.Width = '150'
-$BoutonOptiNett.Height = '65'
-$BoutonOptiNett.ForeColor='black'
-$BoutonOptiNett.BackColor = 'darkred'
-$BoutonOptiNett.Text = "Optimisation et Nettoyage"
-$BoutonOptiNett.Font= 'Microsoft Sans Serif,16'
-$BoutonOptiNett.FlatStyle = 'Flat'
-$BoutonOptiNett.FlatAppearance.BorderSize = 3
-$BoutonOptiNett.FlatAppearance.BorderColor = 'black'
-$BoutonOptiNett.FlatAppearance.MouseDownBackColor = 'darkcyan'
-$BoutonOptiNett.FlatAppearance.MouseOverBackColor = 'gray'
-$BoutonOptiNett.Add_MouseEnter({$BoutonOptiNett.ForeColor = 'White'})
-$BoutonOptiNett.Add_MouseLeave({$BoutonOptiNett.ForeColor = 'Black'})
-$BoutonOptiNett.Add_Click({
-zipOpti
-$Form.Close()
+$boutonOptiNett = New-Object System.Windows.Forms.Button
+$boutonOptiNett.Location = New-Object System.Drawing.Point(446,175)
+$boutonOptiNett.AutoSize = $false
+$boutonOptiNett.Width = '150'
+$boutonOptiNett.Height = '65'
+$boutonOptiNett.ForeColor='black'
+$boutonOptiNett.BackColor = 'darkred'
+$boutonOptiNett.Text = "Optimisation et Nettoyage"
+$boutonOptiNett.Font= 'Microsoft Sans Serif,16'
+$boutonOptiNett.FlatStyle = 'Flat'
+$boutonOptiNett.FlatAppearance.BorderSize = 3
+$boutonOptiNett.FlatAppearance.BorderColor = 'black'
+$boutonOptiNett.FlatAppearance.MouseDownBackColor = 'darkcyan'
+$boutonOptiNett.FlatAppearance.MouseOverBackColor = 'gray'
+$boutonOptiNett.Add_MouseEnter({$boutonOptiNett.ForeColor = 'White'})
+$boutonOptiNett.Add_MouseLeave({$boutonOptiNett.ForeColor = 'Black'})
+$boutonOptiNett.Add_Click({
+ZipOpti
+$form.Close()
 })
 
-function zipdiag
+function Zipdiag
 {
     #Mettre à jour le .exe s'il existe.
     $diagexepath = Test-Path "$root\_Tech\Applications\Diagnostique\Diagnostique.ps1"  #vérifie si le .exe existe
@@ -168,27 +168,27 @@ function zipdiag
 }
 
 #Diagnostic
-$Diagnostic = New-Object System.Windows.Forms.Button
-$Diagnostic.Location = New-Object System.Drawing.Point(446,250)
-$Diagnostic.Width = '150'
-$Diagnostic.Height = '65'
-$Diagnostic.ForeColor='black'
-$Diagnostic.BackColor = 'darkred'
-$Diagnostic.Text = "Diagnostique"
-$Diagnostic.Font= 'Microsoft Sans Serif,16'
-$Diagnostic.FlatStyle = 'Flat'
-$Diagnostic.FlatAppearance.BorderSize = 3
-$Diagnostic.FlatAppearance.BorderColor = 'black'
-$Diagnostic.FlatAppearance.MouseDownBackColor = 'darkcyan'
-$Diagnostic.FlatAppearance.MouseOverBackColor = 'gray'
-$Diagnostic.Add_MouseEnter({$Diagnostic.ForeColor = 'White'})
-$Diagnostic.Add_MouseLeave({$Diagnostic.ForeColor = 'Black'})
-$Diagnostic.Add_Click({
-zipdiag
-$Form.Close()
+$diagnostic = New-Object System.Windows.Forms.Button
+$diagnostic.Location = New-Object System.Drawing.Point(446,250)
+$diagnostic.Width = '150'
+$diagnostic.Height = '65'
+$diagnostic.ForeColor='black'
+$diagnostic.BackColor = 'darkred'
+$diagnostic.Text = "Diagnostique"
+$diagnostic.Font= 'Microsoft Sans Serif,16'
+$diagnostic.FlatStyle = 'Flat'
+$diagnostic.FlatAppearance.BorderSize = 3
+$diagnostic.FlatAppearance.BorderColor = 'black'
+$diagnostic.FlatAppearance.MouseDownBackColor = 'darkcyan'
+$diagnostic.FlatAppearance.MouseOverBackColor = 'gray'
+$diagnostic.Add_MouseEnter({$diagnostic.ForeColor = 'White'})
+$diagnostic.Add_MouseLeave({$diagnostic.ForeColor = 'Black'})
+$diagnostic.Add_Click({
+Zipdiag
+$form.Close()
 })
 
-function zipdesinfection 
+function Zipdesinfection 
 {
     #Mettre à jour le .exe s'il existe.
     $desinfectionexepath = Test-Path "$root\_Tech\Applications\Securite\Desinfection.ps1"  #vérifie si le .exe existe
@@ -209,27 +209,27 @@ function zipdesinfection
 }
 
 #Desinfection
-$Desinfection = New-Object System.Windows.Forms.Button
-$Desinfection.Location = New-Object System.Drawing.Point(446,325)
-$Desinfection.Width = '150'
-$Desinfection.Height = '65'
-$Desinfection.ForeColor='black'
-$Desinfection.BackColor = 'darkred'
-$Desinfection.Text = "Désinfection"
-$Desinfection.Font= 'Microsoft Sans Serif,16'
-$Desinfection.FlatStyle = 'Flat'
-$Desinfection.FlatAppearance.BorderSize = 3
-$Desinfection.FlatAppearance.BorderColor = 'black'
-$Desinfection.FlatAppearance.MouseDownBackColor = 'darkcyan'
-$Desinfection.FlatAppearance.MouseOverBackColor = 'gray'
-$Desinfection.Add_MouseEnter({$Desinfection.ForeColor = 'White'})
-$Desinfection.Add_MouseLeave({$Desinfection.ForeColor = 'Black'})
-$Desinfection.Add_Click({
-zipdesinfection
-$Form.Close()
+$desinfection = New-Object System.Windows.Forms.Button
+$desinfection.Location = New-Object System.Drawing.Point(446,325)
+$desinfection.Width = '150'
+$desinfection.Height = '65'
+$desinfection.ForeColor='black'
+$desinfection.BackColor = 'darkred'
+$desinfection.Text = "Désinfection"
+$desinfection.Font= 'Microsoft Sans Serif,16'
+$desinfection.FlatStyle = 'Flat'
+$desinfection.FlatAppearance.BorderSize = 3
+$desinfection.FlatAppearance.BorderColor = 'black'
+$desinfection.FlatAppearance.MouseDownBackColor = 'darkcyan'
+$desinfection.FlatAppearance.MouseOverBackColor = 'gray'
+$desinfection.Add_MouseEnter({$desinfection.ForeColor = 'White'})
+$desinfection.Add_MouseLeave({$desinfection.ForeColor = 'Black'})
+$desinfection.Add_Click({
+Zipdesinfection
+$form.Close()
 })
 
-function zipfix
+function Zipfix
 {
     #Mettre à jour le .exe s'il existe.
     $fixexepath = Test-Path "$root\_Tech\Applications\Fix\Fix.ps1" #vérifie si le .exe existe
@@ -250,24 +250,24 @@ function zipfix
 }
 
 #Fix
-$Fix = New-Object System.Windows.Forms.Button
-$Fix.Location = New-Object System.Drawing.Point(446,400)
-$Fix.Width = '150'
-$Fix.Height = '65'
-$Fix.ForeColor='black'
-$Fix.BackColor = 'darkred'
-$Fix.Text = "Fix"
-$Fix.Font= 'Microsoft Sans Serif,16'
-$Fix.FlatStyle = 'Flat'
-$Fix.FlatAppearance.BorderSize = 3
-$Fix.FlatAppearance.BorderColor = 'black'
-$Fix.FlatAppearance.MouseDownBackColor = 'darkcyan'
-$Fix.FlatAppearance.MouseOverBackColor = 'gray'
-$Fix.Add_MouseEnter({$Fix.ForeColor = 'White'})
-$Fix.Add_MouseLeave({$Fix.ForeColor = 'Black'})
-$Fix.Add_Click({
-zipfix
-$Form.Close()
+$fix = New-Object System.Windows.Forms.Button
+$fix.Location = New-Object System.Drawing.Point(446,400)
+$fix.Width = '150'
+$fix.Height = '65'
+$fix.ForeColor='black'
+$fix.BackColor = 'darkred'
+$fix.Text = "Fix"
+$fix.Font= 'Microsoft Sans Serif,16'
+$fix.FlatStyle = 'Flat'
+$fix.FlatAppearance.BorderSize = 3
+$fix.FlatAppearance.BorderColor = 'black'
+$fix.FlatAppearance.MouseDownBackColor = 'darkcyan'
+$fix.FlatAppearance.MouseOverBackColor = 'gray'
+$fix.Add_MouseEnter({$fix.ForeColor = 'White'})
+$fix.Add_MouseLeave({$fix.ForeColor = 'Black'})
+$fix.Add_Click({
+Zipfix
+$form.Close()
 })
 
 
@@ -289,7 +289,7 @@ $quit.Add_MouseEnter({$quit.ForeColor = 'black'})
 $quit.Add_MouseLeave({$quit.ForeColor = 'darkred'})
 $quit.Add_Click({
 Task
-$Form.Close()
+$form.Close()
 })
  
 #Choisissez une option
@@ -318,5 +318,5 @@ $signatureSTO.Text = "Propriété de Jérémy Renaud"
 $signatureSTO.TextAlign = 'Middleleft'
 
 #afficher la form
-$Form.controls.AddRange(@($signatureSTO,$labelchoisiroption,$BoutonInstall,$BoutonOptiNett,$Diagnostic,$Desinfection,$Fix,$quit,$pictureBoxBackGround))
-$Form.ShowDialog() | out-null
+$form.controls.AddRange(@($signatureSTO,$labelchoisiroption,$boutonInstall,$boutonOptiNett,$diagnostic,$desinfection,$fix,$quit,$pictureBoxBackGround))
+$form.ShowDialog() | out-null
