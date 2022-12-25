@@ -5,6 +5,7 @@ Add-Type -AssemblyName System.Drawing
 Add-Type -AssemblyName presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
+#Cette fonction permet de relancer le script en mode Admin si besoin
 function admin
 {
     If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator'))
@@ -12,18 +13,6 @@ function admin
         Start-Process powershell.exe -ArgumentList ("-NoProfile -windowstyle hidden -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
         Exit #permet de fermer la session non-admin
     }
-}
-admin
-
-function Testconnexion
-{
-    $internet = $false
-    $ping = test-connection 8.8.8.8 -Count 1 -quiet -ErrorAction Ignore
-    if ($ping -eq $true)
-    {
-       $internet = $true 
-    } 
-    return $internet
 }
 
 function zipsource #Download et création des fondamentaux
@@ -41,16 +30,18 @@ $iconepath = test-path "$root\_Tech\applications\source\Images\Icone.ico" #véri
     } 
 }
 
+admin
 Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #met la policy a unrestricted a cause de intermediate .ps1
 $driveletter = $pwd.drive.name #retourne la lettre du disque actuel
 $root = "$driveletter" + ":" #rajoute  : pour que sa fit dans le path
 set-location "C:\_Tech" #met la location au repertoir actuel
 zipsource #install les fichiers sources  
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$root\_Tech\applications\source\update.psm1" | Out-Null
 Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$root\_Tech\applications\source\task.psm1" | Out-Null
-Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null
+Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 New-Item -ItemType Directory -Name "Temp" -Path "C:\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
-copy-item "C:\_TECH\Applications\source\scripts\delete.ps1" "c:\Temp" -Force | Out-Null #Copier delete dans c:\temp
-copy-item "C:\_TECH\Remove.bat" "c:\Temp" -Force | Out-Null #Copier remove dans c:\temp
+copy-item "C:\_TECH\Applications\source\scripts\delete.ps1" -Destination "c:\Temp" -Force | Out-Null #Copier delete dans c:\temp
+copy-item "C:\_TECH\Remove.bat" -Destination "c:\Temp" -Force | Out-Null #Copier remove dans c:\temp
 
 $img = [system.drawing.image]::FromFile("$root\_Tech\Applications\Source\Images\fondpluiesize.gif") #Il faut mettre le chemin complet pour éviter des erreurs.
 $pictureBoxBackGround = new-object Windows.Forms.PictureBox #permet d'afficher un gif
