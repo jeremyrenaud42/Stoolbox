@@ -26,23 +26,6 @@ function Testconnexion
     return $internet
 }
 
-<#
-function Task
-{
-    $t = Get-ScheduledTask 'delete _tech' | Select-Object -expand state
-    if($t -match 'Ready')
-    {
-        Unregister-ScheduledTask -TaskName "delete _tech" -Confirm:$false
-    }
-        $taskname = 'Delete _Tech'
-        $Action = New-ScheduledTaskAction -Execute 'C:\Temp\Remove.bat'
-        $Trigger = New-ScheduledTaskTrigger -At (Get-Date).AddSeconds(05) -Once
-        $Settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew -Compatibility Win8 #si ordi éteint, le refait après 10 minutes
-        $Task = New-ScheduledTask -Action $Action -Trigger $Trigger -Settings $Settings
-        Register-ScheduledTask -TaskName $taskname -InputObject $Task
-}
-#>
-
 function zipsource #Download et création des fondamentaux
 {
 $fondpath = test-Path "$root\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
@@ -58,42 +41,11 @@ $iconepath = test-path "$root\_Tech\applications\source\Images\Icone.ico" #véri
     } 
 }
 
-function Update
-{
-    New-Item "$root\_Tech\Temp" -ItemType Directory -Force | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/menu.version.txt' -OutFile "$root\_Tech\Temp\menu.version.txt" | Out-Null
-    $valuedownloadfile = Get-Content -Path "$root\_Tech\Temp\menu.version.txt" | Out-Null #fichier version nouveau
-    $valueactualfile = Get-Content -Path "$root\_Tech\menu.version.txt" | Out-Null #fichier version actuel
-
-    if ($valuedownloadfile -gt $valueactualfile) 
-    { 
-        try 
-        {
-            Write-Host "Lancer mise à jour de Menu.exe"
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' -OutFile "$root\_Tech\Menu.ps1" | Out-Null
-            Copy-Item "$root\_Tech\Temp\menu.version.txt" -Destination "$root\_Tech\menu.version.txt" -Force | Out-Null #Met le fichier version a jour.
-        }
-        catch 
-        {
-            Write-Error "Erreur lors de la mise à jour de Menu.ps1!"
-            return
-        }
-    } 
-    Remove-Item "$root\_Tech\Temp" -Recurse -Force #Supprime le dossier temp
-    return  
-}
-
 Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #met la policy a unrestricted a cause de intermediate .ps1
 $driveletter = $pwd.drive.name #retourne la lettre du disque actuel
 $root = "$driveletter" + ":" #rajoute  : pour que sa fit dans le path
 set-location "C:\_Tech" #met la location au repertoir actuel
 zipsource #install les fichiers sources  
-$internetenabled = Testconnexion
-if($internetenabled -eq $true)
-{
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/update.psm1' -OutFile "$root\_Tech\applications\source\update.psm1" | Out-Null #Download le module des update
-    Update #Vérifie si menu.exe a des mise a jours
-}
 Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$root\_Tech\applications\source\task.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null
 New-Item -ItemType Directory -Name "Temp" -Path "C:\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
@@ -119,8 +71,6 @@ $Form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {Task;$Form.Close()}}) #si on fa
 $Form.TopMost = $true
 $Form.StartPosition = "CenterScreen"
 $Form.BackgroundImageLayout = "Stretch"
-
-
 
 function zipinstallation
 {

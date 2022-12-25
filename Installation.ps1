@@ -14,6 +14,8 @@ $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cel
 
 set-location "c:\_Tech\Applications\Installation" #met le path dans le dossier Installation au lieu du path de PowerShell.
 
+Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null
+
 #Vérifier la présence du dossier source dans la clé
 function Sourceexist
 {
@@ -799,20 +801,6 @@ function Edge
         winget upgrade -e -h --id Microsoft.Edge --accept-package-agreements --accept-source-agreements --silent
 }
 
-function Task
-{
-    $t = Get-ScheduledTask 'delete _tech' | Select-Object -expand state
-    if($t -match 'Ready')
-    {
-        Unregister-ScheduledTask -TaskName "delete _tech" -Confirm:$false
-    }
-        $taskname = 'Delete _Tech'
-        $Action = New-ScheduledTaskAction -Execute 'C:\Temp\Remove.bat'
-        $Trigger = New-ScheduledTaskTrigger -At (Get-Date).AddSeconds(05) -Once
-        $Settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew -Compatibility Win8 #si ordi éteint, le refait après 10 minutes
-        $Task = New-ScheduledTask -Action $Action -Trigger $Trigger -Settings $Settings
-        Register-ScheduledTask -TaskName $taskname -InputObject $Task
-}
 
 <#
 $msgBoxInput = [System.Windows.MessageBox]:: Show('Épingler Google Chrome dans la barre des tâches','Title','OKCancel','Information')
