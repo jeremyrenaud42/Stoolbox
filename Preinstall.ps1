@@ -83,6 +83,6 @@ function Launch #Copie tout dans la clé ou lance le script
         exit
     }
 }
-
+Testconnexion
 SourceMenu
 Launch
