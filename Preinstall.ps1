@@ -3,6 +3,11 @@
 function SourceMenu
 {
     #Création des dossiers
+    $TECH = test-path "C:\_Tech" 
+    if($TECH -eq $false)
+    {
+        New-Item -ItemType Directory "C:\_Tech" -Force | Out-Null #Créer le dossier _Tech sur le C:
+    }
     $Applications = test-path "$Psscriptroot\Applications" 
     if($Applications -eq $false)
     {
@@ -30,9 +35,9 @@ function SourceMenu
 
     #Download des files
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/delete.ps1' -OutFile "$Psscriptroot\applications\source\scripts\delete.ps1" | Out-Null 
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsMenu.bat' -OutFile "$Psscriptroot\applications\source\scripts\RunAsMenu.bat" | Out-Null  
+    #Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsMenu.bat' -OutFile "$Psscriptroot\applications\source\scripts\RunAsMenu.bat" | Out-Null  
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$Psscriptroot\Remove.bat" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.bat' -OutFile "$Psscriptroot\Menu.bat" | Out-Null 
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.bat' -OutFile "$Psscriptroot\Menu.bat" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' -OutFile "$Psscriptroot\Menu.ps1" | Out-Null     
     $a = Test-Path "$Psscriptroot\applications\source\Images\fondpluiesize.gif"
     $b = Test-path  "$Psscriptroot\applications\source\Images\Icone.ico" 
@@ -41,7 +46,7 @@ function SourceMenu
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$Psscriptroot\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$Psscriptroot\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
     }
-    Start-Process "C:\_Tech\Applications\Source\scripts\RunAsMenu.bat" -WindowStyle Hidden
+    Start-Process "C:\_Tech\Applications\Source\scripts\Menu.bat" -WindowStyle Hidden #On va pouvoir juste executer menu, car runasmenu est rendu stoolbox.bat
     exit
 }
 
