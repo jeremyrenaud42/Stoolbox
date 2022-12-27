@@ -46,7 +46,7 @@ function SourceMenu
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$Psscriptroot\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$Psscriptroot\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
     }
-    Start-Process "C:\_Tech\Applications\Source\scripts\Menu.bat" -WindowStyle Hidden #On va pouvoir juste executer menu, car runasmenu est rendu stoolbox.bat
+    Start-Process "C:\_Tech\Menu.bat" -WindowStyle Hidden #On va pouvoir juste executer menu, car runasmenu est rendu stoolbox.bat
     exit
 }
 
