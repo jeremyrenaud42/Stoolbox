@@ -12,6 +12,7 @@ $root = "$driveletter" + ":"
 
 set-location "$root\\_Tech\\Applications\\Optimisation_Nettoyage" -ErrorAction stop   #met la location au repertoir actuel
 Import-Module "$root\_Tech\Applications\Source\update.psm1"
+Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 
 #Import-Module -Name "$root\\_TECH\\Applications\\Source\\Excel\\ImportExcel" #import le module Excel situ� dans la cl�
 #$excel = Open-ExcelPackage -Path "$root\\_TECH\\Applications\\Source\\Excel\\Rapport.xlsm" #ouvre la grille Excel
@@ -541,6 +542,7 @@ $quit.Add_MouseEnter({$quit.ForeColor = 'White'})
 $quit.Add_MouseLeave({$quit.ForeColor = 'black'})
 $quit.Add_Click({
 #Close-ExcelPackage $excel #Ferme la grille Excel
+Task
 $Form.Close()
 })
 

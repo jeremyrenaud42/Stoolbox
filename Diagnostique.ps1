@@ -11,6 +11,7 @@ $root = "$driveletter" + ":"
 set-location "C:\_Tech\Applications\Diagnostique" #met la location au repertoir actuel
 
 Import-Module "$root\_Tech\Applications\Source\update.psm1"
+Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 
 $logfilepath = "$root\_Tech\Applications\Diagnostique\Source\Log.txt"
 function AddLog ($message)
@@ -1084,6 +1085,7 @@ $quit.FlatAppearance.MouseOverBackColor = 'gray'
 $quit.Add_MouseEnter({$quit.ForeColor = 'White'})
 $quit.Add_MouseLeave({$quit.ForeColor = 'black'})
 $quit.Add_Click({
+Task
 $Form.Close()
 })
 

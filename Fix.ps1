@@ -77,6 +77,7 @@ $root = "$driveletter" + ":"
 
 set-location "$root\\_Tech\\Applications\\fix" #met la location au repertoir actuel
 Import-Module "$root\_Tech\Applications\Source\update.psm1"
+Import-Module "$root\_Tech\Applications\Source\task.psm1" #Module pour supprimer C:\_Tech
 
 $scriptDir = 
     if (-not $PSScriptRoot) 
@@ -313,6 +314,7 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
     }
     else
     {
+        Task
         exit
     }
 }

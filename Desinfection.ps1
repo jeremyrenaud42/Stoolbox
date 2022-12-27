@@ -10,6 +10,7 @@ $root = "$driveletter" + ":"
 
 set-location "$root\\_Tech\\Applications\\Securite" #met la location au repertoir actuel
 Import-Module "$root\_Tech\Applications\Source\update.psm1" #Module pour updater les apps
+Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 
 $logfilepath=".\Source\Log.txt"
 
@@ -305,6 +306,7 @@ $Form.Width = $image.Width
 $Form.height = $image.height
 $Form.MaximizeBox = $false
 $Form.icon = New-Object system.drawing.icon (".\Source\Icone.ico") 
+#$Form.add_FormClosed({Task;$Form.Close()}) #Supprimer le dossier _Tech lorsque la form se ferme
 
 
 #Process_Explorer
@@ -557,6 +559,7 @@ $quit.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $quit.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $quit.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $quit.Add_Click({
+Task
 $Form.Close()
 })
 
