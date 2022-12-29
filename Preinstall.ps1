@@ -1,5 +1,15 @@
 ﻿Add-Type -AssemblyName Microsoft.VisualBasic
 
+function Admin
+{
+    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator'))
+     {
+        Start-Process powershell.exe -ArgumentList ("-NoProfile -windowstyle hidden -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+        Exit #permet de fermer la session non-Admin
+    }
+}
+Admin
+
 function SourceMenu
 {
     #Création des dossiers
