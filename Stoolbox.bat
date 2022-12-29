@@ -13,10 +13,10 @@ if %errorlevel% equ 0 (
 :end
 
 rem créer un dossier nommé "_tech" dans le lecteur C: afin de pouvoir y downloader le script Powershell de preinstall
-if not exist c:\_Tech mkdir c:\_Tech 2>nul
-powershell -Command "if (!(Test-Path -Path 'C:\_Tech')) { New-Item -ItemType Directory -Path 'C:\_Tech' -Force -ErrorAction SilentlyContinue }"
+if not exist %SystemDrive%\_Tech mkdir %SystemDrive%\_Tech 2>nul
+powershell -Command "if (!(Test-Path -Path '%SystemDrive%\_Tech')) { New-Item -ItemType Directory -Path '%SystemDrive%\_Tech' -Force -ErrorAction SilentlyContinue }"
 
 rem Download le script preinstall.ps1 dans le dossier C:\_TECH
-powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command "& { (New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Preinstall.ps1', 'C:\_tech\Preinstall.ps1')}"
+powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command "& { (New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Preinstall.ps1', '%SystemDrive%\_tech\Preinstall.ps1')}"
 rem Lance le script Preinstall
-START /min /wait powershell.exe -executionpolicy unrestricted -command "C:\_TECH\preinstall.ps1" -Verb runAs
+START /min /wait powershell.exe -executionpolicy unrestricted -command "%SystemDrive%\_TECH\preinstall.ps1" -Verb runAs
