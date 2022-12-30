@@ -35,7 +35,7 @@ function zipsourcevirus #Ce qui va toujours être redownloader à neuf à chaque
 function Preverifchoco 
 {
     $chocoexist = $false
-    $chocopath = Test-Path C:\ProgramData\chocolatey
+    $chocopath = Test-Path "$env:SystemDrive\ProgramData\chocolatey"
     if ($chocopath -eq $true)
     {
        $chocoexist = $true 
@@ -46,7 +46,7 @@ function Preverifchoco
 #Vérifier si choco s'est bien installé
 function Postverifchoco 
 {
-    $chocopath = Test-Path C:\ProgramData\chocolatey
+    $chocopath = Test-Path "$env:SystemDrive\ProgramData\chocolatey"
     if ($chocopath -eq $false)
     {
         $ErrorMessage = $_.Exception.Message
@@ -62,7 +62,7 @@ function Chocoinstall
     if($chocoexist -eq $false)
     {
         Invoke-WebRequest https://chocolatey.org/install.ps1 -UseBasicParsing | Invoke-Expression | Out-Null #install le module choco
-        $env:Path += ";C:\ProgramData\chocolatey" #permet de pouvoir installer les logiciels sans reload powershell
+        $env:Path += ";$env:SystemDrive\ProgramData\chocolatey" #permet de pouvoir installer les logiciels sans reload powershell
     }
     Postverifchoco
 }
@@ -71,7 +71,7 @@ function Chocoinstall
 function Preverifwinget
 {
    $wingetpath = $false
-   $wingetpath = test-path "C:\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
+   $wingetpath = test-path "$env:SystemDrive\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
    if($wingetpath -eq $true)
    {
      $wingetpath = $true
@@ -86,9 +86,9 @@ $sourcepath = ".\Source\winget"
     {
         New-Item ".\Source" -ItemType Directory
     }
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Winget.zip' -OutFile .\Source\Winget.zip
-Expand-Archive .\Source\Winget.zip .\Source\
-Remove-Item .\Source\Winget.zip
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Winget.zip' -OutFile ".\Source\Winget.zip"
+Expand-Archive ".\Source\Winget.zip" ".\Source\"
+Remove-Item ".\Source\Winget.zip"
 }
 
 #Install le package manager Winget
@@ -109,7 +109,7 @@ function Wingetinstall
 #Vérifier si winget s'est bien installé
 function Postverifwinget
 {
-   $wingetpath = test-path "C:\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
+   $wingetpath = test-path "$env:SystemDrive\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
    if($wingetpath -eq $false)
    {
        $ErrorMessage = $_.Exception.Message
@@ -249,13 +249,13 @@ function zipccleaner
     Expand-Archive "$root\\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner.zip" "$root\\_Tech\\Applications\Optimisation_Nettoyage\Source" -Force
     Remove-Item "$root\\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner.zip"
     }
-    $ccleanerpostpath = test-Path "C:\Temp\CCleaner\CCleaner64.exe"
+    $ccleanerpostpath = test-Path "$env:SystemDrive\Temp\CCleaner\CCleaner64.exe"
     if(!($ccleanerpostpath))
     {
-        New-Item "C:\Temp\CCleaner" -ItemType Directory
-        Copy-Item "$root\\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner\*" -Destination "C:\Temp\CCleaner" -Force | Out-Null #copy sur le dossier user pour pas bloquer la clé
+        New-Item "$env:SystemDrive\Temp\CCleaner" -ItemType Directory
+        Copy-Item "$root\\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner\*" -Destination "$env:SystemDrive\Temp\CCleaner" -Force | Out-Null #copy sur le dossier user pour pas bloquer la clé
     }
-    Start-Process "C:\Temp\CCleaner\CCleaner64.exe"
+    Start-Process "$env:SystemDrive\Temp\CCleaner\CCleaner64.exe"
     AddLog "Nettoyage CCleaner effectué"
 }
 
@@ -273,10 +273,10 @@ function zipsas
     Expand-Archive ".\Source\sas.zip" ".\Source"
     Remove-Item ".\Source\sas.zip"
     }
-    $path = Test-Path "C:\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
+    $path = Test-Path "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
     if($path)
     {
-        Start-Process "C:\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
+        Start-Process "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
     }
     else 
     {
@@ -290,7 +290,7 @@ zipsourcevirus
 function Restore
 {
 write-host "création du point de restauration"
-Enable-ComputerRestore -Drive "C:\" 
+Enable-ComputerRestore -Drive "$env:SystemDrive\" 
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V "SystemRestorePointCreationFrequency" /T REG_DWORD /D 0 /F
 #https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/reg-add
 #write-host si pas fini apres 1 minute, fermer la fenetre PowerShell
@@ -315,7 +315,6 @@ $Process_Explorer.Location = New-Object System.Drawing.Point(670,300)
 $Process_Explorer.Width = '120'
 $Process_Explorer.Height = '55'
 $Process_Explorer.ForeColor='black'
-#$Process_Explorer.BackColor = 'darkgray'
 $Process_Explorer.Text = "Process Explorer"
 $Process_Explorer.Font= 'Microsoft Sans Serif,13'
 $Process_Explorer.FlatStyle = 'Flat'
@@ -377,7 +376,7 @@ $HDD.FlatAppearance.BorderColor = 'darkred'
 $HDD.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $HDD.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HDD.Add_Click({
-Start-Process "C:\Windows\SYSTEM32\cleanmgr.exe"
+Start-Process "$env:SystemDrive\Windows\SYSTEM32\cleanmgr.exe"
 AddLog "Nettoyage du disque effectué"
 })
 
@@ -481,11 +480,11 @@ $MalwareByte.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmag
 $MalwareByte.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $MalwareByte.Add_Click({
 Wingetinstall
-$path = Test-Path "C:\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
+$path = Test-Path "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
 if($path -eq $false)
 {
     winget install -e --id  Malwarebytes.Malwarebytes --accept-package-agreements --accept-source-agreements --silent
-    Start-Process "C:\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
+    Start-Process "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
 }
 })
 
@@ -579,7 +578,7 @@ $Menuprincipal.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkm
 $Menuprincipal.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Menuprincipal.Add_Click({
 $Form.Close()
-start-process "$root\\_Tech\\Menu.bat" -verb Runas
+start-process "$root\_Tech\Menu.bat" -verb Runas
 })
 
 #Label
