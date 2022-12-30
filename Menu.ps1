@@ -30,18 +30,19 @@ $iconepath = test-path "$root\_Tech\applications\source\Images\Icone.ico" #véri
     } 
 }
 
+
 Admin
 Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #met la policy a unrestricted a cause de intermediate .ps1
 $driveletter = $pwd.drive.name #retourne la lettre du disque actuel
 $root = "$driveletter" + ":" #rajoute  : pour que sa fit dans le path
-set-location "C:\_Tech" #met la location au repertoir actuel
+set-location "$env:SystemDrive\_Tech" #met la location au repertoir actuel
 Zipsource #install les fichiers sources  
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$root\_Tech\applications\source\update.psm1" | Out-Null
 Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$root\_Tech\applications\source\task.psm1" | Out-Null
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$root\_Tech\applications\source\update.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
-New-Item -ItemType Directory -Name "Temp" -Path "C:\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
-copy-item "C:\_TECH\Applications\source\scripts\delete.ps1" -Destination "c:\Temp" -Force | Out-Null #Copier delete dans c:\temp
-copy-item "C:\_TECH\Remove.bat" -Destination "c:\Temp" -Force | Out-Null #Copier remove dans c:\temp
+New-Item -ItemType Directory -Name "Temp" -Path "$env:SystemDrive\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
+copy-item "$env:SystemDrive\_TECH\Applications\source\scripts\delete.ps1" -Destination "$env:SystemDrive\Temp" -Force | Out-Null #Copier delete dans $env:SystemDrive\temp
+copy-item "$env:SystemDrive\_TECH\Remove.bat" -Destination "$env:SystemDrive\Temp" -Force | Out-Null #Copier remove dans c:\temp
 
 $img = [system.drawing.image]::FromFile("$root\_Tech\Applications\Source\Images\fondpluiesize.gif") #Il faut mettre le chemin complet pour éviter des erreurs.
 $pictureBoxBackGround = new-object Windows.Forms.PictureBox #permet d'afficher un gif
