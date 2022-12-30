@@ -11,7 +11,7 @@ $driveletter = $pwd.drive.name
 $root = "$driveletter" + ":"
 
 set-location "$root\\_Tech\\Applications\\Optimisation_Nettoyage" -ErrorAction stop   #met la location au repertoir actuel
-Import-Module "$root\_Tech\Applications\Source\update.psm1"
+Import-Module "$root\_Tech\Applications\Source\update.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 
 #Import-Module -Name "$root\\_TECH\\Applications\\Source\\Excel\\ImportExcel" #import le module Excel situ� dans la cl�
@@ -77,13 +77,13 @@ function zipccleaner
     Remove-Item .\Source\Ccleaner.zip
     }
     Update "Optimisation_Nettoyage" "Ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Optimisation_Nettoyage/ccleaner.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip'
-    $ccleanerpostpath = test-Path "C:\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
+    $ccleanerpostpath = test-Path "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
     if(!($ccleanerpostpath))
     {
-        New-Item "C:\Users\$env:UserName\Downloads\CCleaner" -ItemType Directory
-        Copy-Item ".\Source\Ccleaner\*" -Destination "C:\Users\$env:UserName\Downloads\CCleaner" -Force | Out-Null #copy sur le dossier user pour pas bloquer la clé
+        New-Item "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner" -ItemType Directory
+        Copy-Item ".\Source\Ccleaner\*" -Destination "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner" -Force | Out-Null #copy sur le dossier user pour pas bloquer la clé
     }
-    Start-Process "C:\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
+    Start-Process "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
     AddLog "Nettoyage CCleaner effectué"
 }
 
@@ -378,7 +378,7 @@ $HDD.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HDD.Add_MouseEnter({$HDD.ForeColor = 'White'})
 $HDD.Add_MouseLeave({$HDD.ForeColor = 'black'})
 $HDD.Add_Click({
-Start-Process "C:\Windows\SYSTEM32\cleanmgr.exe"
+Start-Process "$env:SystemDrive\Windows\SYSTEM32\cleanmgr.exe"
 AddLog "Nettoyage du disque effectué"
 })
 

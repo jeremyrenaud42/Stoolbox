@@ -8,9 +8,9 @@ Add-Type -AssemblyName presentationCore
 $driveletter = $pwd.drive.name
 $root = "$driveletter" + ":"
 
-set-location "C:\_Tech\Applications\Diagnostique" #met la location au repertoir actuel
+set-location "$env:SystemDrive\_Tech\Applications\Diagnostique" #met la location au repertoir actuel
 
-Import-Module "$root\_Tech\Applications\Source\update.psm1"
+Import-Module "$root\_Tech\Applications\Source\update.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 
 $logfilepath = "$root\_Tech\Applications\Diagnostique\Source\Log.txt"

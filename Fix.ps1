@@ -76,8 +76,8 @@ $driveletter = $pwd.drive.name
 $root = "$driveletter" + ":"
 
 set-location "$root\\_Tech\\Applications\\fix" #met la location au repertoir actuel
-Import-Module "$root\_Tech\Applications\Source\update.psm1"
-Import-Module "$root\_Tech\Applications\Source\task.psm1" #Module pour supprimer C:\_Tech
+Import-Module "$root\_Tech\Applications\Source\update.psm1" | Out-Null
+Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 
 $scriptDir = 
     if (-not $PSScriptRoot) 
@@ -240,15 +240,15 @@ function zipTweak
 function Tweaking
 {
     $path = Test-Path "$root\\_Tech\\Applications\\fix\Source\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
-    $desktoppath = test-path "C:\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
+    $desktoppath = test-path "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
     if($path)
     {
         if($desktoppath)
         {
-            Start-Process "C:\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
+            Start-Process "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
         }
-        Copy-Item "$root\\_Tech\\Applications\\fix\Source\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "C:\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair"
-        Start-Process "C:\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
+        Copy-Item "$root\\_Tech\\Applications\\fix\Source\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair"
+        Start-Process "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
     }
 }
 
@@ -322,7 +322,7 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
 function submenuHDD
 {
 Clear-Host
-set-location "c:\"
+set-location "$env:SystemDrive\"
 write-host "[1] Sfc /scannow"
 write-host "[2] DISM"
 write-host "[3] CHKDSK"
