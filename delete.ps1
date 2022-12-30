@@ -4,7 +4,7 @@ $preverif = Test-Path "$env:SystemDrive\_Tech"
 if($preverif)
 {
     write-host "Suppression du dossier $env:SystemDrive\_Tech"
-    Remove-Item  "$env:SystemDrive_Tech\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null #Ca prend cette ligne si executer depuis C:\_tech. Ca va laisser le odssier _tech vide, mais au moins ca marchera.
+    Remove-Item  "$env:SystemDrive\_Tech\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null #Ca prend cette ligne si executer depuis C:\_tech. Ca va laisser le odssier _tech vide, mais au moins ca marchera.
     Remove-Item  "$env:SystemDrive\_Tech" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     start-sleep -s 2
     Write-Host "Vidage de la corbeille"
