@@ -8,9 +8,10 @@ Add-Type -AssemblyName presentationCore
 $driveletter = $pwd.drive.name
 $root = "$driveletter" + ":"
 
-set-location "$root\\_Tech\\Applications\\Securite" #met la location au repertoir actuel
-Import-Module "$root\_Tech\Applications\Source\update.psm1" #Module pour updater les apps
+set-location "$root\_Tech\\Applications\Securite" #met la location au repertoir actuel
+Import-Module "$root\_Tech\Applications\Source\update.psm1" | Out-Null #Module pour updater les apps
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
+Import-Module "$root\_Tech\Applications\Source\choco.psm1" | Out-Null #Module pour chocolatey
 
 $logfilepath=".\Source\Log.txt"
 
@@ -29,42 +30,6 @@ function zipsourcevirus #Ce qui va toujours être redownloader à neuf à chaque
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' -OutFile ".\Source\fondvirus.png" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Icone.ico' -OutFile ".\Source\Icone.ico" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Log.txt' -OutFile ".\Source\Log.txt" | Out-Null
-}
-
-#Vérifier si Choco est déja installé
-function Preverifchoco 
-{
-    $chocoexist = $false
-    $chocopath = Test-Path "$env:SystemDrive\ProgramData\chocolatey"
-    if ($chocopath -eq $true)
-    {
-       $chocoexist = $true 
-    } 
-    return $chocoexist
-}
-
-#Vérifier si choco s'est bien installé
-function Postverifchoco 
-{
-    $chocopath = Test-Path "$env:SystemDrive\ProgramData\chocolatey"
-    if ($chocopath -eq $false)
-    {
-        $ErrorMessage = $_.Exception.Message
-        Write-Warning "Choco n'a pas pu s'installer !!!! $ErrorMessage"
-    }
-}
-
-#Install le package manager Choco
-function Chocoinstall
-{
-    $progressPreference = 'SilentlyContinue' #cache la barre de progres
-    $chocoexist = Preverifchoco
-    if($chocoexist -eq $false)
-    {
-        Invoke-WebRequest https://chocolatey.org/install.ps1 -UseBasicParsing | Invoke-Expression | Out-Null #install le module choco
-        $env:Path += ";$env:SystemDrive\ProgramData\chocolatey" #permet de pouvoir installer les logiciels sans reload powershell
-    }
-    Postverifchoco
 }
 
 #Vérifier si winget est déja installé

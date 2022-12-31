@@ -15,6 +15,7 @@ $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cel
 set-location "$env:SystemDrive\_Tech\Applications\Installation" #met le path dans le dossier Installation au lieu du path de PowerShell.
 
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #importe le module pour Task, qui supprime le dossier _Tech à la fin
+Import-Module "$root\_Tech\Applications\Source\choco.psm1" | Out-Null #Module pour chocolatey
 
 #Vérifier la présence du dossier source dans la clé
 function Sourceexist
@@ -115,48 +116,6 @@ function Testconnexion
     }
 }
 
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/choco.psm1' -OutFile "$root\_Tech\applications\source\choco.psm1" | Out-Null
-Import-Module "$root\_Tech\Applications\Source\choco.psm1" | Out-Null
-
-
-<#
-#Vérifier si Choco est déja installé
-function Preverifchoco 
-{
-    $chocoexist = $false
-    $chocopath = Test-Path "$env:SystemDrive\ProgramData\chocolatey"
-    if ($chocopath -eq $true)
-    {
-       $chocoexist = $true 
-    } 
-    return $chocoexist
-}
-
-#Vérifier si choco s'est bien installé
-function Postverifchoco 
-{
-    $chocopath = Test-Path "$env:SystemDrive\ProgramData\chocolatey"
-    if ($chocopath -eq $false)
-    {
-        $ErrorMessage = $_.Exception.Message
-        Write-Warning "Choco n'a pas pu s'installer !!!! $ErrorMessage"
-        #AddErrorsLog $ErrorMessage
-    }
-}
-
-#Install le package manager Choco
-function Chocoinstall
-{
-    $progressPreference = 'SilentlyContinue' #cache la barre de progres
-    $chocoexist = Preverifchoco
-    if($chocoexist -eq $false)
-    {
-        Invoke-WebRequest https://chocolatey.org/install.ps1 -UseBasicParsing | Invoke-Expression | Out-Null #install le module choco
-        $env:Path += ";$env:SystemDrive\ProgramData\chocolatey" #permet de pouvoir installer les logiciels sans reload powershell
-    }
-    Postverifchoco
-}
-#>
 #Download fichiers winget depuis github
 function zipwinget
 {
