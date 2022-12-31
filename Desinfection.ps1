@@ -12,6 +12,7 @@ set-location "$root\_Tech\\Applications\Securite" #met la location au repertoir 
 Import-Module "$root\_Tech\Applications\Source\update.psm1" | Out-Null #Module pour updater les apps
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 Import-Module "$root\_Tech\Applications\Source\choco.psm1" | Out-Null #Module pour chocolatey
+Import-Module "$root\_Tech\Applications\Source\winget.psm1" | Out-Null #Module pour Winget
 
 $logfilepath=".\Source\Log.txt"
 
@@ -30,56 +31,6 @@ function zipsourcevirus #Ce qui va toujours être redownloader à neuf à chaque
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' -OutFile ".\Source\fondvirus.png" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Icone.ico' -OutFile ".\Source\Icone.ico" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Log.txt' -OutFile ".\Source\Log.txt" | Out-Null
-}
-
-#Vérifier si winget est déja installé
-function Preverifwinget
-{
-   $wingetpath = $false
-   $wingetpath = test-path "$env:SystemDrive\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
-   if($wingetpath -eq $true)
-   {
-     $wingetpath = $true
-   }
-   return $wingetpath
-}
-
-function zipwinget
-{
-$sourcepath = ".\Source\winget"
-    if($sourcepath -eq $false)
-    {
-        New-Item ".\Source" -ItemType Directory
-    }
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Winget.zip' -OutFile ".\Source\Winget.zip"
-Expand-Archive ".\Source\Winget.zip" ".\Source\"
-Remove-Item ".\Source\Winget.zip"
-}
-
-#Install le package manager Winget
-function Wingetinstall
-{
-    $progressPreference = 'SilentlyContinue' #cache la barre de progres
-    $wingetpath = Preverifwinget
-    if($wingetpath -eq $false)
-    {
-        zipwinget
-        Add-AppxPackage -path ".\Source\winget\Microsoft.VCLibs.x64.14.00.Desktop.appx"  | out-null #prérequis pour winget
-        Add-AppxPackage -path ".\Source\winget\Microsoft.UI.Xaml.2.7.appx" | out-null #prérequis pour winget
-        Add-AppPackage -path ".\Source\winget\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" | out-null #installeur de winget
-    }
-    Postverifwinget
-}
-
-#Vérifier si winget s'est bien installé
-function Postverifwinget
-{
-   $wingetpath = test-path "$env:SystemDrive\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
-   if($wingetpath -eq $false)
-   {
-       $ErrorMessage = $_.Exception.Message
-       Write-Warning "Winget n'a pas pu s'installer !!!! $ErrorMessage"
-   }
 }
 
 function zipHitmanPro
