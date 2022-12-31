@@ -16,12 +16,13 @@ set-location "$env:SystemDrive\_Tech\Applications\Installation" #met le path dan
 
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #importe le module pour Task, qui supprime le dossier _Tech à la fin
 Import-Module "$root\_Tech\Applications\Source\choco.psm1" | Out-Null #Module pour chocolatey
+Import-Module "$root\_Tech\Applications\Source\winget.psm1" | Out-Null #Module pour Winget
+import-module "$root\_Tech\Applications\Installation\Source\Voice.psm1" | Out-Null #Module pour musicdebut et getvoice
 
 #Vérifier la présence du dossier source dans la clé
 function Sourceexist
 {
 $sourcefolder = Test-path "$root\_Tech\Applications\Installation\Source" #chemin du dossier source
-
     if(!($sourcefolder))
     {
         New-Item "$root\_Tech\Applications\Installation\Source" -ItemType Directory | Out-Null #Créer le dossier source si il n'est pas là
@@ -32,9 +33,9 @@ function zipinstallation
 {
     Sourceexist #appel la fonction qui test le chemin du dossier source
     #les 3 lignes ci-dessous permettent de tout wiper sauf winget
-    Get-ChildItem -Path "$root\_Tech\Applications\Installation\source\Logiciels" -Exclude "Winget"  | Remove-Item -Recurse -Force
-    Get-ChildItem -Path "$root\_Tech\Applications\Installation\source" -Exclude "Logiciels"  | Remove-Item -Recurse -Force
-    Get-ChildItem -Path "$root\_Tech\Applications\Installation\" -Exclude "Source","Installation.ps1","RunAsInstallation.bat"  | Remove-Item -Recurse -Force
+    #Get-ChildItem -Path "$root\_Tech\Applications\Installation\source\Logiciels" -Exclude "Winget"  | Remove-Item -Recurse -Force
+    #Get-ChildItem -Path "$root\_Tech\Applications\Installation\source" -Exclude "Logiciels"  | Remove-Item -Recurse -Force
+    #Get-ChildItem -Path "$root\_Tech\Applications\Installation\" -Exclude "Source","Installation.ps1","RunAsInstallation.bat"  | Remove-Item -Recurse -Force
 
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Source.zip' -OutFile "$root\_Tech\Applications\Installation\source.zip" | Out-Null #download le dossier source
     Expand-Archive "$root\_Tech\Applications\Installation\source.zip" "$root\_Tech\Applications\Installation\Source" -Force | Out-Null #dezip source
@@ -116,6 +117,7 @@ function Testconnexion
     }
 }
 
+<#
 #Download fichiers winget depuis github
 function zipwinget
 {
@@ -171,9 +173,7 @@ function Wingetinstall
     }
     Postverifwinget
 }
-
-#Importe le module qui gère la Voix et la musique
-import-module "$root\_Tech\Applications\Installation\Source\Voice.psm1" #Module pour musicdebut et getvoice
+#>
 
 ######Vrai début du script######
 function Debut

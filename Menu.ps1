@@ -40,6 +40,7 @@ Zipsource #install les fichiers sources
 Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/choco.psm1' -OutFile "$root\_Tech\applications\source\choco.psm1" | Out-Null  
 Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$root\_Tech\applications\source\task.psm1" | Out-Null
 Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$root\_Tech\applications\source\update.psm1" | Out-Null
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/winget.psm1' -OutFile "$root\_Tech\applications\source\winget.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 New-Item -ItemType Directory -Name "Temp" -Path "$env:SystemDrive\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
 copy-item "$env:SystemDrive\_TECH\Applications\source\scripts\delete.ps1" -Destination "$env:SystemDrive\Temp" -Force | Out-Null #Copier delete dans $env:SystemDrive\temp
