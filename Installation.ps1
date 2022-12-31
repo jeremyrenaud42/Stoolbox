@@ -12,7 +12,7 @@ $root = "$driveletter" + ":" #Rajoute : après la lettre trouvée. exemple: D: ,
 
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que el scripte se ferme s'il rencontre une erreur
 
-set-location "c:\_Tech\Applications\Installation" #met le path dans le dossier Installation au lieu du path de PowerShell.
+set-location "$env:SystemDrive\_Tech\Applications\Installation" #met le path dans le dossier Installation au lieu du path de PowerShell.
 
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #importe le module pour Task, qui supprime le dfossier _Tech à la fin
 
@@ -136,7 +136,7 @@ $wingetpath = test-Path "$root\_Tech\Applications\Installation\Source\Logiciels\
 function Preverifchoco 
 {
     $chocoexist = $false
-    $chocopath = Test-Path "C:\ProgramData\chocolatey"
+    $chocopath = Test-Path "$env:SystemDrive\ProgramData\chocolatey"
     if ($chocopath -eq $true)
     {
        $chocoexist = $true 
@@ -148,7 +148,7 @@ function Preverifchoco
 function Preverifwinget
 {
    $wingetpath = $false
-   $wingetpath = test-path "C:\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
+   $wingetpath = test-path "$env:SystemDrive\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
    if($wingetpath -eq $true)
    {
      $wingetpath = $true
@@ -159,7 +159,7 @@ function Preverifwinget
 #Vérifier si choco s'est bien installé
 function Postverifchoco 
 {
-    $chocopath = Test-Path "C:\ProgramData\chocolatey"
+    $chocopath = Test-Path "$env:SystemDrive\ProgramData\chocolatey"
     if ($chocopath -eq $false)
     {
         $ErrorMessage = $_.Exception.Message
@@ -171,7 +171,7 @@ function Postverifchoco
 #Vérifier si winget s'est bien installé
 function Postverifwinget
 {
-   $wingetpath = test-path "C:\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
+   $wingetpath = test-path "$env:SystemDrive\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
    if($wingetpath -eq $false)
    {
        $ErrorMessage = $_.Exception.Message
@@ -188,7 +188,7 @@ function Chocoinstall
     if($chocoexist -eq $false)
     {
         Invoke-WebRequest https://chocolatey.org/install.ps1 -UseBasicParsing | Invoke-Expression | Out-Null #install le module choco
-        $env:Path += ";C:\ProgramData\chocolatey" #permet de pouvoir installer les logiciels sans reload powershell
+        $env:Path += ";$env:SystemDrive\ProgramData\chocolatey" #permet de pouvoir installer les logiciels sans reload powershell
     }
     Postverifchoco
 }
@@ -231,10 +231,9 @@ function Msupdate
 {
     $progres.Text = "Mises à jour de Windows"
     $Labeloutput.Text += "Installation des mises à jour de Windows"
-    
     Install-PackageProvider -name Nuget -MinimumVersion 2.8.5.201 -Force | Out-Null #Prérequis pour download le module PSwindowsupdate
-    Install-Module PSWindowsUpdate -Force | Out-Null #install le module
-    $path = test-path "C:\Program Files\WindowsPowerShell\Modules\PSWindowsUpdate" #vérifie le chemin du module
+    Install-Module PSWindowsUpdate -Force | Out-Null #install le module pour les Update de Windows
+    $path = test-path "$env:SystemDrive\Program Files\WindowsPowerShell\Modules\PSWindowsUpdate" #vérifie le chemin du module
     if($path -eq $false) #si le module n'est pas là (Plan B)
     {
         choco install pswindowsupdate -y | out-null #Install le module avec Choco
@@ -291,6 +290,13 @@ Function DisableFastBoot
     $Labeloutput.Text += "Le démarrage rapide a été désactivé`r`n"
     addlog "Le démarrage rapide a été désactivé"
 }
+<#
+$a = powercfg /a 
+if(!($a -match "Hibernation is not available"))
+{
+    write-host "erreur"
+}
+#>
 
 #supprimer le clavier anglais canada
 Function Langue
@@ -304,6 +310,24 @@ Function Langue
     $Labeloutput.Text += "Le clavier Anglais a été supprimé`r`n"
     addlog "Le clavier Anglais a été supprimé"
 }
+<#
+Ne survit pas à 22h2
+# Set WinUserLanguageList as a variable
+$lang = Get-WinUserLanguageList 
+$lang
+# Clear the WinUserLanguageList
+$lang.Clear()
+# Add language to the language list
+$lang.add("fr-CA")
+$lang
+# Remove whatever input method is present
+$lang[0].InputMethodTips.Clear()
+# Add this keyboard as keyboard language
+$lang[0].InputMethodTips.Add('0C0C:00001009')
+# Set this language list as default
+Set-WinUserLanguageList $lang -Force
+#https://scribbleghost.net/2018/04/30/add-keyboard-language-to-windows-10-with-powershell/
+#>
 
 #Confidentialité
 Function Privacy
@@ -359,8 +383,8 @@ function Msstore
 function PreverifAdobe
 {
    $pathexist = $false
-   $adobereaderpath = Test-Path "C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe"
-   $adobereaderpath32 = Test-Path "C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"   
+   $adobereaderpath = Test-Path "$env:SystemDrive\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe"
+   $adobereaderpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"   
    if(($adobereaderpath) -OR ($adobereaderpath32))
    {
      $pathexist = $true
@@ -372,8 +396,8 @@ function PreverifAdobe
 function PostverifAdobe
 {
     choco install adobereader -params "/DesktopIcon" -y | out-null 
-    $adobereaderpath = Test-Path "C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe" 
-    $adobereaderpath32 = Test-Path "C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"        
+    $adobereaderpath = Test-Path "$env:SystemDrive\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe" 
+    $adobereaderpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"        
     if(($adobereaderpath) -OR ($adobereaderpath32))
     {   
         $Labeloutput.Text += " -Adobe Reader installé avec succès`r`n"
@@ -393,8 +417,8 @@ function AdobeReader
         if($pathexist -eq $false)
         {   
             winget install -e --id Adobe.Acrobat.Reader.64-bit --accept-package-agreements --accept-source-agreements --silent | out-null
-            $adobereaderpath = Test-Path "C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe" 
-            $adobereaderpath32 = Test-Path "C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe" 
+            $adobereaderpath = Test-Path "$env:SystemDrive\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe" 
+            $adobereaderpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe" 
             if(($adobereaderpath) -OR ($adobereaderpath32))
             {
                 $Labeloutput.Text += " -Adobe Reader installé avec succès`r`n" 
@@ -411,9 +435,9 @@ function AdobeReader
 function PreverifGoogle
 {
    $pathexist = $false
-   $googlepath = Test-Path "C:\Program Files\Google\Chrome\Application\chrome.exe" 
-   $googlepath32 = Test-Path "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" 
-   $googleappdatapath = Test-Path "C:\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
+   $googlepath = Test-Path "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe" 
+   $googlepath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe" 
+   $googleappdatapath = Test-Path "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
    if(($googlepath) -OR ($googlepath32) -OR ($googleappdatapath))
    {
      $pathexist = $true
@@ -425,9 +449,9 @@ function PreverifGoogle
 function PostverifGoogle
 {
     choco install googlechrome -y | out-null
-    $googlepath = Test-Path "C:\Program Files\Google\Chrome\Application\chrome.exe"
-    $googlepath32 = Test-Path "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-    $googleappdatapath = Test-Path "C:\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
+    $googlepath = Test-Path "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe"
+    $googlepath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+    $googleappdatapath = Test-Path "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
     if (($googlepath) -OR ($googlepath32) -OR ($googleappdatapath))
     {   
         iconeadobe
@@ -449,9 +473,9 @@ function Googlechrome
         if($pathexist -eq $false)
         {  
             winget install -e --id Google.Chrome --accept-package-agreements --accept-source-agreements --silent | out-null 
-            $googlepath = Test-Path "C:\Program Files\Google\Chrome\Application\chrome.exe"
-            $googlepath32 = Test-Path "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-            $googleappdatapath = Test-Path "C:\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
+            $googlepath = Test-Path "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe"
+            $googlepath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+            $googleappdatapath = Test-Path "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
             if (($googlepath) -OR ($googlepath32) -OR ($googleappdatapath))
             {
                 $Labeloutput.Text += " -Google Chrome installé avec succès`r`n"  
@@ -468,8 +492,8 @@ function Googlechrome
 function PreverifTeamViewer
 {
    $pathexist = $false
-   $teamviewerpath = Test-Path "C:\Program Files\TeamViewer\TeamViewer.exe" 
-   $teamviewerpath32 = Test-Path "C:\Program Files (x86)\TeamViewer\TeamViewer.exe" 
+   $teamviewerpath = Test-Path "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe" 
+   $teamviewerpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe" 
    if(($teamviewerpath) -OR ($teamviewerpath32))
    {
      $pathexist = $true
@@ -481,8 +505,8 @@ function PreverifTeamViewer
 function PostverifTeamViewer
 {
     choco install teamviewer -y | out-null
-    $teamviewerpath = Test-Path "C:\Program Files\TeamViewer\TeamViewer.exe"         
-    $teamviewerpath32 = Test-Path "C:\Program Files (x86)\TeamViewer\TeamViewer.exe" 
+    $teamviewerpath = Test-Path "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe"         
+    $teamviewerpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe" 
     if(($teamviewerpath) -OR ($teamviewerpath32))
     {   
         $Labeloutput.Text += " -TeamViewer installé avec succès`r`n"
@@ -503,8 +527,8 @@ function Teamviewer
     if($pathexist -eq $false)
     {   
         winget install -e --id TeamViewer.TeamViewer --accept-package-agreements --accept-source-agreements --silent | out-null
-        $teamviewerpath = Test-Path "C:\Program Files\TeamViewer\TeamViewer.exe" 
-        $teamviewerpath32 = Test-Path "C:\Program Files (x86)\TeamViewer\TeamViewer.exe" 
+        $teamviewerpath = Test-Path "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe" 
+        $teamviewerpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe" 
         if(($teamviewerpath) -OR ($teamviewerpath32))
         {
             $Labeloutput.Text += " -Teamviewer installé avec succès`r`n"  
@@ -531,7 +555,7 @@ function plancgoogle
 function PreverifSystemUpdate
 {
    $pathexist = $false
-   $SystemUpdatepath = Test-Path "C:\Program Files (x86)\Lenovo\System Update\tvsu.exe" 
+   $SystemUpdatepath = Test-Path "$env:SystemDrive\Program Files (x86)\Lenovo\System Update\tvsu.exe" 
    if($SystemUpdatepath -eq $true)
    {
      $pathexist = $true
@@ -542,7 +566,7 @@ function PreverifSystemUpdate
 function PostverifSystemUpdate
 {
     choco install lenovo-thinkvantage-system-update -y | out-null
-    $SystemUpdatepath = Test-Path "C:\Program Files (x86)\Lenovo\System Update\tvsu.exe"         
+    $SystemUpdatepath = Test-Path "$env:SystemDrive\Program Files (x86)\Lenovo\System Update\tvsu.exe"         
     if($SystemUpdatepath -eq $true)
     {   
         $Labeloutput.Text += " -Lenovo System Update installé avec succès`r`n"
@@ -562,7 +586,7 @@ function SystemUpdate
         if($pathexist -eq $false)
         {   
             winget install -e --id Lenovo.SystemUpdate --accept-package-agreements --accept-source-agreements --silent | out-null  
-            $SystemUpdatepath = Test-Path "C:\Program Files (x86)\Lenovo\System Update\tvsu.exe"
+            $SystemUpdatepath = Test-Path "$env:SystemDrive\Program Files (x86)\Lenovo\System Update\tvsu.exe"
             if($SystemUpdatepath)
             {
                 $Labeloutput.Text += " -Lenovo System Update installé avec succès`r`n"  
@@ -604,7 +628,7 @@ function PreverifVantage
 function PreverifDellSA
 {
    $pathexist = $false
-   $DellSApath = Test-Path "C:\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe" 
+   $DellSApath = Test-Path "$env:SystemDrive\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe" 
    if($DellSApath -eq $true)
    {
      $pathexist = $true
@@ -616,7 +640,7 @@ function PreverifDellSA
 function PostverifDellSA
 {
     choco install dellcommandupdate -y | out-null
-    $DellSApath = Test-Path "C:\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe"         
+    $DellSApath = Test-Path "$env:SystemDrive\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe"         
     if($DellSApath -eq $true)
     {   
         $Labeloutput.Text += " -Dell Command Update installé avec succès`r`n"
@@ -636,7 +660,7 @@ function DellSA
         if($pathexist -eq $false)
         {   
             winget install -e --id Dell.CommandUpdate --accept-package-agreements --accept-source-agreements --silent | out-null
-            $DellSApath = Test-Path "C:\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe"         
+            $DellSApath = Test-Path "$env:SystemDrive\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe"         
             if($DellSApath)
             {
                 $Labeloutput.Text += " -Dell Command Update installé avec succès`r`n" 
@@ -653,7 +677,7 @@ function DellSA
 function PreverifHP
 {
    $pathexist = $false
-   $HPpath = Test-Path "C:\Program Files (x86)\HP\HP Support Framework\hpsupportassistant.dll" 
+   $HPpath = Test-Path "$env:SystemDrive\Program Files (x86)\HP\HP Support Framework\hpsupportassistant.dll" 
    if($HPpath -eq $true)
    {
      $pathexist = $true
@@ -670,7 +694,7 @@ function HPSA
         if($pathexist -eq $false)
         {   
             choco install hpsupportassistant -y | out-null
-            $HPpath = Test-Path "C:\Program Files (x86)\HP\HP Support Framework\hpsupportassistant.dll" 
+            $HPpath = Test-Path "$env:SystemDrive\Program Files (x86)\HP\HP Support Framework\hpsupportassistant.dll" 
             if($HPpath) #Pas de winget de dispo, donc pas de postverif
             {
                 $Labeloutput.Text += " -Hp Support Assistant avec succès`r`n"
@@ -722,7 +746,7 @@ Function Pilotes
 function PreverifGeForce
 {
    $pathexist = $false
-   $GeForcepath = Test-Path "C:\Program Files\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe" 
+   $GeForcepath = Test-Path "$env:SystemDrive\Program Files\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe" 
    if($GeForcepath -eq $true)
    {
      $pathexist = $true
@@ -734,7 +758,7 @@ function PreverifGeForce
 function PostverifGeForce
 {
     winget install -e --id Nvidia.GeForceExperience --accept-package-agreements --accept-source-agreements --silent | out-null
-    $GeForcepath = Test-Path "C:\Program Files\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe"         
+    $GeForcepath = Test-Path "$env:SystemDrive\Program Files\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe"         
     if($GeForcepath -eq $true)
     {   
         $Labeloutput.Text += " -GeForce Experience installé avec succès`r`n"
@@ -757,7 +781,7 @@ function GeForce
             if($pathexist -eq $false)
             {   
                 choco install geforce-experience -y | out-null 
-                $GeForcepath = Test-Path "C:\Program Files\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe"     
+                $GeForcepath = Test-Path "$env:SystemDrive\Program Files\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe"     
                 if($GeForcepath)
                 {
                     $Labeloutput.Text += " -GeForce Experience installé avec succès`r`n"  
@@ -819,7 +843,7 @@ function Postverif
         [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre Adobe Reader par défaut",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null   
     }
     #taskbar
-    $targetdir = "C:\Users\$env:username\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
+    $targetdir = "$env:SystemDrive\Users\$env:username\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
     $pinpath = Test-Path "$targetdir\*Google*Chrome*"
     if($pinpath -eq $false)
     {
@@ -830,7 +854,7 @@ function Postverif
 function End
 {
     AddLog "Installation de Windows effectué avec Succès"
-    Copy-Item "$root\_Tech\Applications\Installation\Source\Log.txt" -Destination "C:\TEMP" -Force | out-null     
+    Copy-Item "$root\_Tech\Applications\Installation\Source\Log.txt" -Destination "$env:SystemDrive\TEMP" -Force | out-null     
     [Audio]::Volume = 0.25
     [console]::beep(1000,666)
     Start-Sleep -s 1
