@@ -454,7 +454,6 @@ function PostverifGoogle
     $googleappdatapath = Test-Path "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
     if (($googlepath) -OR ($googlepath32) -OR ($googleappdatapath))
     {   
-        iconeadobe
         $Labeloutput.Text += " -Google Chrome installé avec succès`r`n"
     }
     else

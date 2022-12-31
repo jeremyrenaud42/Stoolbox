@@ -6,7 +6,7 @@ function Task()
         Unregister-ScheduledTask -TaskName "delete _tech" -Confirm:$false
     }
         $taskname = 'Delete _Tech'
-        $Action = New-ScheduledTaskAction -Execute '$env:SystemDrive\Temp\Remove.bat'
+        $Action = New-ScheduledTaskAction -Execute 'C:\Temp\Remove.bat'
         $seconds = '05'
         $Trigger = New-ScheduledTaskTrigger -At (Get-Date).AddSeconds($seconds ) -Once
         $Settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew -Compatibility Win8 #si ordi éteint, le refait après 10 minutes
