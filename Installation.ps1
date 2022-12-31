@@ -1,11 +1,6 @@
 ﻿#Les assembly sont nécéssaire pour le fonctionnement du script. Ne pas effacer
-Add-Type -AssemblyName PresentationFramework
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName System.speech
-Add-Type -AssemblyName System.Drawing
-Add-Type -AssemblyName presentationCore
-Add-Type -AssemblyName Microsoft.VisualBasic
-[System.Windows.Forms.Application]::EnableVisualStyles()
+Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
+[System.Windows.Forms.Application]::EnableVisualStyles() #it will use the built-in Windows theming to style controls instead of the "classic Windows" look and feel
 
 $driveletter = $pwd.drive.name #Retourne la Lettre du disque utilisé  exemple: D
 $root = "$driveletter" + ":" #Rajoute : après la lettre trouvée. exemple: D: ,ceci permet de pouvoir l'utiliser lors des paths
@@ -19,7 +14,7 @@ Import-Module "$root\_Tech\Applications\Source\choco.psm1" | Out-Null #Module po
 Import-Module "$root\_Tech\Applications\Source\winget.psm1" | Out-Null #Module pour Winget
 import-module "$root\_Tech\Applications\Installation\Source\Voice.psm1" | Out-Null #Module pour musicdebut et getvoice
 
-#Vérifier la présence du dossier source dans la clé
+#Vérifier la présence du dossier source
 function Sourceexist
 {
 $sourcefolder = Test-path "$root\_Tech\Applications\Installation\Source" #chemin du dossier source
@@ -32,11 +27,6 @@ $sourcefolder = Test-path "$root\_Tech\Applications\Installation\Source" #chemin
 function zipinstallation
 {
     Sourceexist #appel la fonction qui test le chemin du dossier source
-    #les 3 lignes ci-dessous permettent de tout wiper sauf winget
-    #Get-ChildItem -Path "$root\_Tech\Applications\Installation\source\Logiciels" -Exclude "Winget"  | Remove-Item -Recurse -Force
-    #Get-ChildItem -Path "$root\_Tech\Applications\Installation\source" -Exclude "Logiciels"  | Remove-Item -Recurse -Force
-    #Get-ChildItem -Path "$root\_Tech\Applications\Installation\" -Exclude "Source","Installation.ps1","RunAsInstallation.bat"  | Remove-Item -Recurse -Force
-
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Source.zip' -OutFile "$root\_Tech\Applications\Installation\source.zip" | Out-Null #download le dossier source
     Expand-Archive "$root\_Tech\Applications\Installation\source.zip" "$root\_Tech\Applications\Installation\Source" -Force | Out-Null #dezip source
     Remove-Item "$root\_Tech\Applications\Installation\source.zip" | Out-Null #supprime zip source
@@ -116,64 +106,6 @@ function Testconnexion
     start-sleep 5
     }
 }
-
-<#
-#Download fichiers winget depuis github
-function zipwinget
-{
-$logicielpath = test-Path "$root\_Tech\Applications\Installation\Source\Logiciels"
-$wingetpath = test-Path "$root\_Tech\Applications\Installation\Source\Logiciels\winget"
-    if($wingetpath -eq $false) #Si dossier Winget n'existe pas, va le download
-    {
-        if($logicielpath -eq $false)
-        {
-            New-Item "$root\_Tech\Applications\Installation\Source\Logiciels" -ItemType Directory #Créer le dossier Logiciel afin de permettre le download du dossier Winget
-        }
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Winget.zip' -OutFile "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip"
-        Expand-Archive "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip" ".\Source\Logiciels"
-        Remove-Item "$root\_Tech\Applications\Installation\Source\Logiciels\Winget.zip"
-    }
-}
-
-#Vérifier si winget est déja installé
-function Preverifwinget
-{
-   $wingetpath = $false
-   $wingetpath = test-path "$env:SystemDrive\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
-   if($wingetpath -eq $true)
-   {
-     $wingetpath = $true
-   }
-   return $wingetpath
-}
-
-#Vérifier si winget s'est bien installé
-function Postverifwinget
-{
-   $wingetpath = test-path "$env:SystemDrive\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
-   if($wingetpath -eq $false)
-   {
-       $ErrorMessage = $_.Exception.Message
-       Write-Warning "Winget n'a pas pu s'installer !!!! $ErrorMessage"
-       #AddErrorsLog $ErrorMessage
-   }
-}
-
-#Install le package manager Winget
-function Wingetinstall
-{
-    $progressPreference = 'SilentlyContinue' #cache la barre de progres
-    $wingetpath = Preverifwinget
-    if($wingetpath -eq $false)
-    {
-        zipwinget
-        Add-AppxPackage -path "$root\_Tech\Applications\Installation\Source\Logiciels\winget\Microsoft.VCLibs.x64.14.00.Desktop.appx"  | out-null #prérequis pour winget
-        Add-AppxPackage -path "$root\_Tech\Applications\Installation\Source\Logiciels\winget\Microsoft.UI.Xaml.2.7.appx" | out-null #prérequis pour winget
-        Add-AppPackage -path "$root\_Tech\Applications\Installation\Source\Logiciels\winget\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" | out-null #installeur de winget
-    }
-    Postverifwinget
-}
-#>
 
 ######Vrai début du script######
 function Debut
