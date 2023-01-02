@@ -67,21 +67,21 @@ $form.BackgroundImageLayout = "Stretch"
 
 function Zipinstallation
 {
-    $installationexepath = Test-Path "$root\_Tech\Applications\Installation\installation.ps1" #vérifie si le exe existe
+    $installationexepath = Test-Path "$env:SystemDrive\_Tech\Applications\Installation\installation.ps1" #vérifie si le exe existe
     if($installationexepath) #S'Il existe
     {
-        Remove-Item -Path "$root\_Tech\Applications\Installation\installation.ps1" -Recurse | Out-Null #supprime le .exe
+        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\Installation\installation.ps1" -Recurse | Out-Null #supprime le .exe
     }
     #Créer le dossier vide Installation s'il n'existe pas
-    $instapath = Test-Path "$root\_Tech\Applications\Installation" #vérifie si le dossier existe 
+    $instapath = Test-Path "$env:SystemDrive\_Tech\Applications\Installation" #vérifie si le dossier existe 
     if($instapath -eq $false)
     {
-        New-Item -Path "$root\_Tech\Applications\Installation" -ItemType directory | Out-Null #s'il n'existe pas le créé
+        New-Item -Path "$env:SystemDrive\_Tech\Applications\Installation" -ItemType directory | Out-Null #s'il n'existe pas le créé
     }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' -OutFile "$root\_Tech\Applications\Installation\Installation.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsInstallation.bat' -OutFile "$root\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #download le .exe
-    set-location "$root\_Tech\Applications\Installation" #met le path dans le dossier Installation
-    Start-Process "$root\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #Lance le script d'installation
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Installation\Installation.ps1" | Out-Null #download le .exe
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsInstallation.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #download le .exe
+    set-location "$env:SystemDrive\_Tech\Applications\Installation" #met le path dans le dossier Installation
+    Start-Process "$env:SystemDrive\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #Lance le script d'installation
 
 }
 
@@ -110,21 +110,21 @@ $form.Close()
 function ZipOpti 
 {
     #Mettre à jour le .exe s'il existe.
-    $optiexepath = Test-Path "$root\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #vérifie si le .exe existe
+    $optiexepath = Test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #vérifie si le .exe existe
     if($optiexepath) #si le .exe existe
     {
-        Remove-Item -Path "$root\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" -Recurse | Out-Null #supprime le .exe
+        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" -Recurse | Out-Null #supprime le .exe
     }
      #Créer le dossier vide Optimisation_Nettoyage s'il n'existe pas
-    $optipath = Test-Path "$root\_Tech\Applications\Optimisation_Nettoyage" #vérifie si le dossier existe 
+    $optipath = Test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage" #vérifie si le dossier existe 
     if($optipath -eq $false)
     {
-        New-Item -Path "$root\_Tech\Applications\Optimisation_Nettoyage" -ItemType directory | Out-Null #s'il n'existe pas le créé
+        New-Item -Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage" -ItemType directory | Out-Null #s'il n'existe pas le créé
     }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' -OutFile "$root\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsOptimisation_Nettoyage.bat' -OutFile "$root\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #download le .exe
-    set-location "$root\_Tech\Applications\Optimisation_Nettoyage" #met le path dans le dossier Optimisation
-    Start-Process "$root\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #Lance le script d'optimisation
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #download le .exe
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsOptimisation_Nettoyage.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #download le .exe
+    set-location "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage" #met le path dans le dossier Optimisation
+    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #Lance le script d'optimisation
 }
 
 #Optimisation et nettoyage
@@ -152,21 +152,21 @@ $form.Close()
 function Zipdiag
 {
     #Mettre à jour le .exe s'il existe.
-    $diagexepath = Test-Path "$root\_Tech\Applications\Diagnostique\Diagnostique.ps1"  #vérifie si le .exe existe
+    $diagexepath = Test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Diagnostique.ps1"  #vérifie si le .exe existe
     if($diagexepath) #s'il existe supprime le .exe
     {
-        Remove-Item -Path "$root\_Tech\Applications\Diagnostique\Diagnostique.ps1" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
+        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Diagnostique.ps1" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
     }
     #Créer le dossier vide Diagnostique s'il n'existe pas
-    $diagpath = Test-Path "$root\_Tech\Applications\Diagnostique"  #vérifie si le dossier existe 
+    $diagpath = Test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique"  #vérifie si le dossier existe 
     if($diagpath -eq $false)
     {
-        New-Item -Path "$root\_Tech\Applications\Diagnostique" -ItemType directory | Out-Null #s'il n'existe pas le créé
+        New-Item -Path "$env:SystemDrive\_Tech\Applications\Diagnostique" -ItemType directory | Out-Null #s'il n'existe pas le créé
     }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' -OutFile "$root\_Tech\Applications\Diagnostique\Diagnostique.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsDiagnostique.bat' -OutFile "$root\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #download le .exe
-    set-location "$root\_Tech\Applications\Diagnostique" #met le path dans le dossier Diagnostique
-    Start-Process "$root\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #Lance le script de Diagnostique
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\Diagnostique.ps1" | Out-Null #download le .exe
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsDiagnostique.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #download le .exe
+    set-location "$env:SystemDrive\_Tech\Applications\Diagnostique" #met le path dans le dossier Diagnostique
+    Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #Lance le script de Diagnostique
 }
 
 #Diagnostic
@@ -193,21 +193,21 @@ $form.Close()
 function Zipdesinfection 
 {
     #Mettre à jour le .exe s'il existe.
-    $desinfectionexepath = Test-Path "$root\_Tech\Applications\Securite\Desinfection.ps1"  #vérifie si le .exe existe
+    $desinfectionexepath = Test-Path "$env:SystemDrive\_Tech\Applications\Securite\Desinfection.ps1"  #vérifie si le .exe existe
     if($desinfectionexepath) #s'il existe supprime le .exe
     {
-        Remove-Item -Path "$root\_Tech\Applications\Securite\Desinfection.ps1" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
+        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\Securite\Desinfection.ps1" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
     }
     #Créer le dossier vide Securite s'il n'existe pas
-    $desinfectionpath = Test-Path "$root\_Tech\Applications\Securite"  #vérifie si le dossier existe 
+    $desinfectionpath = Test-Path "$env:SystemDrive\_Tech\Applications\Securite"  #vérifie si le dossier existe 
     if($desinfectionpath -eq $false)
     {
-        New-Item -Path "$root\_Tech\Applications\Securite" -ItemType directory | Out-Null #s'il n'existe pas le créé
+        New-Item -Path "$env:SystemDrive\_Tech\Applications\Securite" -ItemType directory | Out-Null #s'il n'existe pas le créé
     }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' -OutFile "$root\_Tech\Applications\Securite\Desinfection.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsDesinfection.bat' -OutFile "$root\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #download le .exe
-    set-location "$root\_Tech\Applications\Securite" #met le path dans le dossier Securite
-    Start-Process "$root\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #Lance le script de désinfcetion
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Desinfection.ps1" | Out-Null #download le .exe
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsDesinfection.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #download le .exe
+    set-location "$env:SystemDrive\_Tech\Applications\Securite" #met le path dans le dossier Securite
+    Start-Process "$env:SystemDrive\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #Lance le script de désinfcetion
 }
 
 #Desinfection
@@ -234,21 +234,21 @@ $form.Close()
 function Zipfix
 {
     #Mettre à jour le .exe s'il existe.
-    $fixexepath = Test-Path "$root\_Tech\Applications\Fix\Fix.ps1" #vérifie si le .exe existe
+    $fixexepath = Test-Path "$env:SystemDrive\_Tech\Applications\Fix\Fix.ps1" #vérifie si le .exe existe
     if($fixexepath) #s'il existe supprime le fichier ps1
     {
-        Remove-Item -Path "$root\_Tech\Applications\Fix\Fix.ps1" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
+        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\Fix\Fix.ps1" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
     }
      #Créer le dossier vide Fix s'il n'existe pas
-    $fixpath = Test-Path "$root\_Tech\Applications\Fix" #vérifie si le dossier existe 
+    $fixpath = Test-Path "$env:SystemDrive\_Tech\Applications\Fix" #vérifie si le dossier existe 
     if($fixpath -eq $false)
     {
-        New-Item -Path "$root\_Tech\Applications\Fix" -ItemType directory | Out-Null #s'il n'existe pas le créé
+        New-Item -Path "$env:SystemDrive\_Tech\Applications\Fix" -ItemType directory | Out-Null #s'il n'existe pas le créé
     }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' -OutFile "$root\_Tech\Applications\Fix\Fix.ps1" | Out-Null #download le .ps1
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsFix.bat' -OutFile "$root\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #download le .ps1
-    set-location "$root\_Tech\\Applications\Fix" #met le path dans le dossier Fix
-    Start-Process "$root\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #Lance le script de Fix
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Fix\Fix.ps1" | Out-Null #download le .ps1
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsFix.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #download le .ps1
+    set-location "$env:SystemDrive\_Tech\\Applications\Fix" #met le path dans le dossier Fix
+    Start-Process "$env:SystemDrive\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #Lance le script de Fix
 }
 
 #Fix
