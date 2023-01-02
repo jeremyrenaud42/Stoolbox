@@ -17,19 +17,18 @@ function Admin
 
 function Zipsource #Download et création des fondamentaux
 {
-$fondpath = test-Path "$root\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
-$iconepath = test-path "$root\_Tech\applications\source\Images\Icone.ico" #vérifie si l'icone existe
+$fondpath = test-Path "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
+$iconepath = test-path "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" #vérifie si l'icone existe
     if($fondpath -eq $false) #si fond pas présent
     {
-        New-Item "$root\_Tech\Applications\Source\Images" -ItemType Directory -Force | Out-Null #créé les dossiers source\images
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$root\_Tech\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
+        New-Item "$env:SystemDrive\_Tech\Applications\Source\Images" -ItemType Directory -Force | Out-Null #créé les dossiers source\images
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
     }
     if($iconepath -eq $false)
     {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$root\_Tech\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
     } 
 }
-
 
 Admin
 Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #met la policy a unrestricted a cause de intermediate .ps1
@@ -37,11 +36,11 @@ $driveletter = $pwd.drive.name #retourne la lettre du disque actuel
 $root = "$driveletter" + ":" #rajoute  : pour que sa fit dans le path
 set-location "$env:SystemDrive\_Tech" #met la location au repertoir actuel
 Zipsource #install les fichiers sources
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/choco.psm1' -OutFile "$root\_Tech\applications\source\choco.psm1" | Out-Null  
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$root\_Tech\applications\source\task.psm1" | Out-Null
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$root\_Tech\applications\source\update.psm1" | Out-Null
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/winget.psm1' -OutFile "$root\_Tech\applications\source\winget.psm1" | Out-Null
-Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/choco.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\choco.psm1" | Out-Null  
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\task.psm1" | Out-Null
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\update.psm1" | Out-Null
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/winget.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\winget.psm1" | Out-Null
+Import-Module "$env:SystemDrive\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 New-Item -ItemType Directory -Name "Temp" -Path "$env:SystemDrive\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
 copy-item "$env:SystemDrive\_TECH\Applications\source\scripts\delete.ps1" -Destination "$env:SystemDrive\Temp" -Force | Out-Null #Copier delete dans $env:SystemDrive\temp
 copy-item "$env:SystemDrive\_TECH\Remove.bat" -Destination "$env:SystemDrive\Temp" -Force | Out-Null #Copier remove dans c:\temp
@@ -58,7 +57,7 @@ $form.Text = "Menu - Boite à outils du technicien"
 $form.Width = $img.Width
 $form.height = $img.height
 $form.MaximizeBox = $false
-$form.icon = New-Object system.drawing.icon ("$root\_Tech\Applications\Source\Images\Icone.ico") #Il faut mettre le chemin complet pour éviter des erreurs.
+$form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Source\Images\Icone.ico") #Il faut mettre le chemin complet pour éviter des erreurs.
 $form.KeyPreview = $True
 $form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {Task;$form.Close()}}) #si on fait échape sa ferme la fenetre
 #$form.add_FormClosed({Task;$form.Close()})
