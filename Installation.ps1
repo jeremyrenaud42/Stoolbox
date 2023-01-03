@@ -103,7 +103,7 @@ function Debut
     $progres.Text = "Préparation"
     $Labeloutput.Text = "" #effacer le texte qui serait déja écrit par la fonction testconnexion
     $Labeloutput.Text += "Lancement de la configuration du Windows`r`n"
-    MusicDebut #Appel la fonction qui joue la musique au début (se situe dans le module Voice.psm1)
+    MusicDebut "$root\_Tech\Applications\Installation\Source\Intro.mp3" #Appel la fonction qui joue la musique au début (se situe dans le module Voice.psm1)
     Chocoinstall #Download Choco
     Wingetinstall #Download Winget
 }
@@ -645,9 +645,9 @@ function End
     [console]::beep(1000,666)
     Start-Sleep -s 1
     [Audio]::Volume = 0.75
-    getvoice -Verb runAs
-    changevoice -Verb runAs
-    speak
+    Getvoice -Verb runAs
+    Changevoice -Verb runAs
+    Speak "Vous avez terminer la configuration du Windows."
     $reboot = get-wurebootstatus -Silent #vérifie si ordi doit reboot à cause de windows update
     if($reboot -eq $true)
     {
