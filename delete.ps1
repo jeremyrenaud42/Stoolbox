@@ -12,7 +12,7 @@ if($preverif)
     Write-Host "La corbeille a été vidé"
     start-sleep -s 2
     
-    $path = Test-Path "$env:SystemDrive\_Tech\preinstall.ps1"
+    $path = Test-Path "$env:SystemDrive\_Tech\Menu.ps1"
     if($path)
     {
         [Microsoft.VisualBasic.Interaction]::MsgBox("La suppression du dossier C:\_Tech a échoué",'OKOnly,SystemModal,Information', "Suppression") | Out-Null
