@@ -11,8 +11,8 @@ $driveletter = $pwd.drive.name
 $root = "$driveletter" + ":"
 
 set-location "$root\\_Tech\\Applications\\Optimisation_Nettoyage" -ErrorAction stop   #met la location au repertoir actuel
-Import-Module "$root\_Tech\Applications\Source\update.psm1" | Out-Null
-Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
+Import-Module "$root\_Tech\Applications\Source\modules\update.psm1" | Out-Null
+Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
 Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
 
