@@ -328,7 +328,8 @@ function plancgoogle($softpath,$softpath32,$softpathdata)
     if((Test-Path $softpath) -OR (Test-Path $softpath32) -OR (Test-Path $softpathdata))
     {}
     else
-    {
+    {   
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite Chrome Installer.exe' -OutFile "$root\_Tech\Applications\Installation\Source\Ninite Chrome Installer.exe" | Out-Null
         Start-Process "$root\_Tech\Applications\Installation\Source\Ninite Chrome Installer.exe" -Verb runAs #escape pour terminer
     }
 }
@@ -338,6 +339,7 @@ function plancteamviewer($softpath,$softpath32,$softpathdata)
     {}
     else
     {
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite TeamViewer 15 Installer.exe' -OutFile "$root\_Tech\Applications\Installation\Source\Ninite TeamViewer 15 Installer.exe" | Out-Null
         Start-Process "$root\_Tech\Applications\Installation\Source\Ninite TeamViewer 15 Installer.exe" -Verb runAs #escape pour terminer
     }
 }
