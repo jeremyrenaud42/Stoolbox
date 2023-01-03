@@ -41,7 +41,7 @@ Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/win
 Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Voice.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Voice.psm1" | Out-Null
 Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Logs.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Logs.psm1" | Out-Null
 Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/source.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\source.psm1" | Out-Null
-Import-Module "$env:SystemDrive\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
+Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 New-Item -ItemType Directory -Name "Temp" -Path "$env:SystemDrive\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
 copy-item "$env:SystemDrive\_TECH\Applications\source\scripts\delete.ps1" -Destination "$env:SystemDrive\Temp" -Force | Out-Null #Copier delete dans $env:SystemDrive\temp
 copy-item "$env:SystemDrive\_TECH\Remove.bat" -Destination "$env:SystemDrive\Temp" -Force | Out-Null #Copier remove dans c:\temp
