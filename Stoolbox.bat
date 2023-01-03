@@ -16,7 +16,8 @@ rem créer un dossier nommé "_tech" dans le lecteur C: afin de pouvoir y downlo
 if not exist %SystemDrive%\_Tech mkdir %SystemDrive%\_Tech 2>nul
 powershell -Command "if (!(Test-Path -Path '%SystemDrive%\_Tech')) { New-Item -ItemType Directory -Path '%SystemDrive%\_Tech' -Force -ErrorAction SilentlyContinue }"
 
-rem Download le script preinstall.ps1 dans le dossier C:\_TECH
-powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command "& { (New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Preinstall.ps1', '%SystemDrive%\_tech\Preinstall.ps1')}"
-rem Lance le script Preinstall
-START /min /wait powershell.exe -executionpolicy unrestricted -command "%SystemDrive%\_TECH\preinstall.ps1" -Verb runAs
+rem Download le script Menu.ps1 dans le dossier C:\_TECH
+powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command "& { (New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1', '%SystemDrive%\_tech\Menu.ps1')}"
+powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command "& { (New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.bat', '%SystemDrive%\_tech\Menu.bat')}"
+rem Lance le script Menu.bat qui appel Menu.ps1
+START /min /wait powershell.exe -executionpolicy unrestricted -command "%SystemDrive%\_TECH\Menu.bat" -Verb runAs
