@@ -9,10 +9,11 @@ $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cel
 
 set-location "$env:SystemDrive\_Tech\Applications\Installation" #met le path dans le dossier Installation au lieu du path de PowerShell.
 
-Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #importe le module pour Task, qui supprime le dossier _Tech à la fin
-Import-Module "$root\_Tech\Applications\Source\choco.psm1" | Out-Null #Module pour chocolatey
-Import-Module "$root\_Tech\Applications\Source\winget.psm1" | Out-Null #Module pour Winget
-import-module "$root\_Tech\Applications\Installation\Source\Voice.psm1" | Out-Null #Module pour musicdebut et getvoice
+Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #importe le module pour Task, qui supprime le dossier _Tech à la fin
+Import-Module "$root\_Tech\Applications\Source\modules\choco.psm1" | Out-Null #Module pour chocolatey
+Import-Module "$root\_Tech\Applications\Source\modules\winget.psm1" | Out-Null #Module pour Winget
+import-module "$root\_Tech\Applications\Source\modules\Voice.psm1" | Out-Null #Module pour musicdebut et getvoice
+import-module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour musicdebut et getvoice
 
 #Vérifier la présence du dossier source
 function Sourceexist
@@ -82,26 +83,11 @@ $Form.Show() | out-null #afficher la form, ne jamais enlever sinon plus d'affich
 $executionpolicy = Get-ExecutionPolicy #policy de départ pour la remettre dans la fonction end
 Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #change la policy pour que le script se passe bien
 
-#Permet de documenter chaque étape
-function AddLog ($message)
-{
-    $logfilepath = "$root\_Tech\Applications\Installation\Source\Log.txt" #chemin du fichier texte
-    $message + "`r`n" | Out-file -filepath $logfilepath -append -force #ajoute le texte dans le fichier
-}
-
-#Permet de documenter les erreurs 
-function AddErrorsLog ($message)
-{
-    $errorslogfilepath="$root\_Tech\Applications\Installation\\Source\\Logs\\ErrorsLog.txt" #chemin du fichier texte
-    (Get-Date).ToString() + " - " + $message + "`r`n" | Out-file -filepath $errorslogfilepath -append -force #ajoute le texte dans le fichier
-}
-
 #vérifier s'il y a internet 
 function Testconnexion
 {
     while (!(test-connection 8.8.8.8 -Count 1 -quiet)) #Ping Google et recommence jusqu'a ce qu'il y est internet
     {
-    write-warning "Veuillez vous connecter à Internet"
     $Labeloutput.Text += "Une fois la connexion établie l'installation va débuter`r`n"
     start-sleep 5
     }
@@ -113,7 +99,7 @@ function Debut
     Testconnexion #appel la fonction qui test la connexion internet
     $version = (Get-WmiObject -class Win32_OperatingSystem).Caption
     $date = (Get-Date).ToString()
-    addlog "Installation de $version le $date"#ajoute la date dans le fichier texte de log
+    addlog "installationlog.txt" "Installation de $version le $date"#ajoute la date dans le fichier texte de log
     $progres.Text = "Préparation"
     $Labeloutput.Text = "" #effacer le texte qui serait déja écrit par la fonction testconnexion
     $Labeloutput.Text += "Lancement de la configuration du Windows`r`n"
@@ -137,7 +123,7 @@ function Msupdate
     Import-Module PSWindowsUpdate | out-null #Import le module
     Get-WindowsUpdate -MaxSize 250mb -Install -AcceptAll -IgnoreReboot | out-null #download et install les updates de moins de 250mb sans reboot
     $Labeloutput.Text += " -Mises à jour de Windows effectuées`r`n"
-    addlog "Mises à jour de Windows effectuées"
+    addlog "installationlog.txt" "Mises à jour de Windows effectuées"
 }
 
 function Cortana
@@ -164,7 +150,7 @@ Function LabelHDD
     Set-Volume -DriveLetter 'C' -NewFileSystemLabel "OS" #Renomme le disque C: par OS
     $Labeloutput.Text += "`r`nLe disque C: a été renommé OS`r`n"
     #Get-Volume -DriveLetter 'C' | Select-Object -expand FileSystemLabel | Out-Null #donne comme résultat le nom du disque C.
-    addlog "Le disque C: a été renommé OS"
+    addlog "installationlog.txt" "Le disque C: a été renommé OS"
 }
 
 #Dossiers
@@ -177,7 +163,7 @@ Function Dossiers
     $Labeloutput.Text += "Le fournisseur de synchronisation a été decoché`r`n"
     #Get-ItemPropertyValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo'   
     #Get-ItemPropertyValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications'   
-    addlog "Explorateur de fichiers configuré"  
+    addlog "installationlog.txt" "Explorateur de fichiers configuré"  
 }
 
  #Désactiver bitlocker
@@ -192,7 +178,7 @@ Function Dossiers
             $Labeloutput.Text += "Bitlocker a été désactivé`r`n"
         }
     #Get-BitLockerVolume | Select-Object -expand VolumeStatus #FullyDecrypted
-    addlog "Bitlocker a été désactivé"
+    addlog "installationlog.txt" "Bitlocker a été désactivé"
 }
 
 #Fast boot
@@ -201,7 +187,7 @@ Function DisableFastBoot
     $progres.Text = "Desactivation du demarrage rapide"
     powercfg /h off #désactive l'hibernation
     $Labeloutput.Text += "Le démarrage rapide a été désactivé`r`n"
-    addlog "Le démarrage rapide a été désactivé"
+    addlog "installationlog.txt" "Le démarrage rapide a été désactivé"
 }
 <#
 $a = powercfg /a 
@@ -221,7 +207,7 @@ Function Langue
     Set-WinUserLanguageList $LangList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
     #if($AnglaisCanada) {write-host "erreur"}
     $Labeloutput.Text += "Le clavier Anglais a été supprimé`r`n"
-    addlog "Le clavier Anglais a été supprimé"
+    addlog "installationlog.txt" "Le clavier Anglais a été supprimé"
 }
 <#
 Ne survit pas à 22h2
@@ -257,7 +243,7 @@ Function Privacy
     #get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs"
 
     $Labeloutput.Text += "Les options de confidentialité ont été configuré`r`n"
-    addlog "Les options de confidentialité ont été configuré"  
+    addlog "installationlog.txt" "Les options de confidentialité ont été configuré"  
 }
 
 #Icones sur le bureau
@@ -276,7 +262,7 @@ Function IconeBureau
     #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" 
     #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" 
     $Labeloutput.Text += "Les icones systèmes ont été installés sur le bureau`r`n"
-    addlog "Les icones systèmes ont été installés sur le bureau"
+    addlog "installationlog.txt" "Les icones systèmes ont été installés sur le bureau"
 }
 
 #Mises à jour des applis du Microsoft store
@@ -289,7 +275,7 @@ function Msstore
     $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
     $result = $wmiObj.UpdateScanMethod()
     $Labeloutput.Text += " -Mises à jour du Microsoft Store lancées`r`n"
-    addlog "Mises à jour de Microsoft Store"
+    addlog "installationlog.txt" "Mises à jour de Microsoft Store"
 }
  
 
@@ -334,7 +320,7 @@ function Software($softname,$softpath,$softpath32,$softpathdata,$wingetname,$cho
                 Postverifsoft $softname $softpath $softpath32 $softpathdata $choconame
             }
         }       
-    addlog "Installation de $softname"      
+    addlog "installationlog.txt" "Installation de $softname"      
 }
 
 function plancgoogle($softpath,$softpath32,$softpathdata)
@@ -379,7 +365,6 @@ function PostverifSystemUpdate
     }
     else
     {
-        Write-Warning "Erreur lors de l'installation de System Update!!!!"
         $Labeloutput.Text += " -Lenovo System Update a échoué`r`n"
     } 
 }
@@ -402,7 +387,7 @@ function SystemUpdate
                 PostverifSystemUpdate
             }         
         }             
-    addlog "Installation de Lenovo System Update"      
+    addlog "installationlog.txt" "Installation de Lenovo System Update"      
 }
 
 Lenovo Vantage
@@ -412,7 +397,7 @@ function LenovoVantage
     $Labeloutput.Text += "Installation de Lenovo Vantage"
     winget install -e --id 9WZDNCRFJ4MV --accept-package-agreements --accept-source-agreements --silent | out-null
     $Labeloutput.Text += " -Lenovo Vantage installé avec succès`r`n" 
-    addlog "Installation de Lenovo Vantage" 
+    addlog "installationlog.txt" "Installation de Lenovo Vantage" 
 }
 
 <#
@@ -453,7 +438,6 @@ function PostverifDellSA
     }
     else
     {
-        Write-Warning "Erreur lors de l'installation de  Dell Command Update!!!!"
         $Labeloutput.Text += " -Dell Command Update a échoué`r`n"
     } 
 }
@@ -476,7 +460,7 @@ function DellSA
                 PostverifDellSA
             }  
         }         
-    addlog "Installation de  Dell Command Update"      
+    addlog "installationlog.txt" "Installation de  Dell Command Update"      
 }
 
 #HP
@@ -509,11 +493,10 @@ function HPSA
             else 
             {
                 $ErrorMessage = $_.Exception.Message
-                Write-Warning "Hp Support Assistant n'a pas pu s'installer !!!! $ErrorMessage"
                 $Labeloutput.Text += " -Hp Support Assistant a échoué`r`n"
             }  
         }  
-    addlog "Installation de Hp Support Assistant"      
+    addlog "installationlog.txt" "Installation de Hp Support Assistant"      
 }
 
 Function Pilotes
@@ -571,7 +554,6 @@ function PostverifGeForce
     }
     else
     {
-        Write-Warning "Erreur lors de l'installation de GeForce Experience!!!!"
         $Labeloutput.Text += " -GeForce Experience a échoué`r`n"
     } 
 }
@@ -597,7 +579,7 @@ function GeForce
                     PostverifGeForce
                 } 
             }                     
-        addlog "Installation de GeForce Experience"
+        addlog "installationlog.txt" "Installation de GeForce Experience"
     }      
 }
 
@@ -657,7 +639,7 @@ function Postverif
 
 function End
 {
-    AddLog "Installation de Windows effectué avec Succès"
+    addlog "installationlog.txt" "Installation de Windows effectué avec Succès"
     Copy-Item "$root\_Tech\Applications\Installation\Source\Log.txt" -Destination "$env:SystemDrive\TEMP" -Force | out-null     
     [Audio]::Volume = 0.25
     [console]::beep(1000,666)

@@ -32,14 +32,14 @@ $iconepath = test-path "$env:SystemDrive\_Tech\applications\source\Images\Icone.
 
 Admin
 Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #met la policy a unrestricted a cause de intermediate .ps1
-$driveletter = $pwd.drive.name #retourne la lettre du disque actuel
-$root = "$driveletter" + ":" #rajoute  : pour que sa fit dans le path
 set-location "$env:SystemDrive\_Tech" #met la location au repertoir actuel
 Zipsource #install les fichiers sources
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/choco.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\choco.psm1" | Out-Null  
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\task.psm1" | Out-Null
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\update.psm1" | Out-Null
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/winget.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\winget.psm1" | Out-Null
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/choco.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\choco.psm1" | Out-Null  
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\task.psm1" | Out-Null
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\update.psm1" | Out-Null
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/winget.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\winget.psm1" | Out-Null
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Voice.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Voice.psm1" | Out-Null
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Logs.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Logs.psm1" | Out-Null
 Import-Module "$env:SystemDrive\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 New-Item -ItemType Directory -Name "Temp" -Path "$env:SystemDrive\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
 copy-item "$env:SystemDrive\_TECH\Applications\source\scripts\delete.ps1" -Destination "$env:SystemDrive\Temp" -Force | Out-Null #Copier delete dans $env:SystemDrive\temp

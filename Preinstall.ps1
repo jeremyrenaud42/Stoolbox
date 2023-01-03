@@ -13,11 +13,6 @@ Admin #Nécéssaire car si on dit non a la fenetre admin via Menu.ps1, ca downlo
 function SourceMenu
 {
     #Création des dossiers
-    $TECH = test-path "$env:SystemDrive\_Tech" 
-    if($TECH -eq $false)
-    {
-        New-Item -ItemType Directory "$env:SystemDrive\_Tech" -Force | Out-Null #Créer le dossier _Tech sur le C:
-    }
     $Applications = test-path "$Psscriptroot\Applications" 
     if($Applications -eq $false)
     {
@@ -34,6 +29,12 @@ function SourceMenu
     if($scripts -eq $false)
     {
         New-Item "$Psscriptroot\Applications\Source\scripts" -ItemType Directory -Force | Out-Null
+    }
+
+    $modules = test-path "$Psscriptroot\Applications\Source\modules" 
+    if($modules -eq $false)
+    {
+        New-Item "$Psscriptroot\Applications\Source\modules" -ItemType Directory -Force | Out-Null
     }
     
     $images = test-path "$Psscriptroot\Applications\Source\images" 
