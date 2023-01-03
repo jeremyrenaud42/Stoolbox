@@ -292,174 +292,68 @@ function Msstore
     addlog "Mises à jour de Microsoft Store"
 }
  
-#Adobe
-function PreverifAdobe
+
+function Preverifsoft($softname,$softpath,$softpath32,$softpathdata)
 {
    $pathexist = $false
-   $adobereaderpath = Test-Path "$env:SystemDrive\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe"
-   $adobereaderpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"   
-   if(($adobereaderpath) -OR ($adobereaderpath32))
+   if((Test-Path $softpath) -OR (Test-Path $softpath32) -OR (Test-Path $softpathdata))
    {
      $pathexist = $true
-     $Labeloutput.Text += " -Adobe Reader est déja installé`r`n"
+     $Labeloutput.Text += " -$softname est déja installé`r`n"
    }
    return $pathexist
 }
 
-function PostverifAdobe
+function Postverifsoft ($softname,$softpath,$softpath32,$softpathdata,$choconame)
 {
-    choco install adobereader -params "/DesktopIcon" -y | out-null 
-    $adobereaderpath = Test-Path "$env:SystemDrive\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe" 
-    $adobereaderpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe"        
-    if(($adobereaderpath) -OR ($adobereaderpath32))
+    choco install $choconame -y | out-null
+    if((Test-Path $softpath) -OR (Test-Path $softpath32) -OR (Test-Path $softpathdata))
     {   
-        $Labeloutput.Text += " -Adobe Reader installé avec succès`r`n"
+        $Labeloutput.Text += " -$softname installé avec succès`r`n"
     }
     else
     {
-        Write-Warning "Erreur lors de l'installation de Adobe Reader!!!!"
-        $Labeloutput.Text += " -Adobe Reader a échoué`r`n"
+        $Labeloutput.Text += " -$softname a échoué`r`n"
     } 
 }
     
-function AdobeReader
+function Software($softname,$softpath,$softpath32,$softpathdata,$wingetname,$choconame)
 {   
-    $progres.Text = "Installation de Adobe Reader"
-    $Labeloutput.Text += "`r`nInstallation d'Adobe Reader en cours"
-    $pathexist = PreverifAdobe #s'il est déja installé il ne va pas poursuivre
-        if($pathexist -eq $false)
-        {   
-            winget install -e --id Adobe.Acrobat.Reader.64-bit --accept-package-agreements --accept-source-agreements --silent | out-null
-            $adobereaderpath = Test-Path "$env:SystemDrive\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe" 
-            $adobereaderpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe" 
-            if(($adobereaderpath) -OR ($adobereaderpath32))
-            {
-                $Labeloutput.Text += " -Adobe Reader installé avec succès`r`n" 
-            } 
-            else
-            {
-                PostverifAdobe
-            }
-        }             
-    addlog "Installation de Adobe"      
-}
-
-#Google
-function PreverifGoogle
-{
-   $pathexist = $false
-   $googlepath = Test-Path "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe" 
-   $googlepath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe" 
-   $googleappdatapath = Test-Path "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
-   if(($googlepath) -OR ($googlepath32) -OR ($googleappdatapath))
-   {
-     $pathexist = $true
-     $Labeloutput.Text += " -Google Chrome est déja installé`r`n"
-   }
-   return $pathexist
-}
-
-function PostverifGoogle
-{
-    choco install googlechrome -y | out-null
-    $googlepath = Test-Path "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe"
-    $googlepath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-    $googleappdatapath = Test-Path "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
-    if (($googlepath) -OR ($googlepath32) -OR ($googleappdatapath))
-    {   
-        $Labeloutput.Text += " -Google Chrome installé avec succès`r`n"
-    }
-    else
-    {
-        Write-Warning "Erreur lors de l'installation de Google Chrome!!!!"
-        $Labeloutput.Text += " -Google Chrome a échoué`r`n"
-        plancgoogle
-    } 
-}
-    
-function Googlechrome
-{   
-    $progres.Text = "Installation de Google Chrome"
-    $Labeloutput.Text += "Installation de Google Chrome en cours"
-    $pathexist = PreverifGoogle #s'il est déja installé il ne va pas poursuivre
+    $progres.Text = "Installation de $softname"
+    $Labeloutput.Text += "Installation de $softname en cours"
+    $pathexist = Preverifsoft $softname $softpath $softpath32 $softpathdata #s'il est déja installé il ne va pas poursuivre
         if($pathexist -eq $false)
         {  
-            winget install -e --id Google.Chrome --accept-package-agreements --accept-source-agreements --silent | out-null 
-            $googlepath = Test-Path "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe"
-            $googlepath32 = Test-Path "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-            $googleappdatapath = Test-Path "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
-            if (($googlepath) -OR ($googlepath32) -OR ($googleappdatapath))
+            winget install -e --id $wingetname --accept-package-agreements --accept-source-agreements --silent | out-null 
+            if((Test-Path $softpath) -OR (Test-Path $softpath32) -OR (Test-Path $softpathdata))
             {
-                $Labeloutput.Text += " -Google Chrome installé avec succès`r`n"  
+                $Labeloutput.Text += " -$softname installé avec succès`r`n"  
             } 
             else
             {
-                PostverifGoogle
+                Postverifsoft $softname $softpath $softpath32 $softpathdata $choconame
             }
         }       
-    addlog "Installation de Google Chrome"      
+    addlog "Installation de $softname"      
 }
 
-#Teamviewer
-function PreverifTeamViewer
+function plancgoogle($softpath,$softpath32,$softpathdata)
 {
-   $pathexist = $false
-   $teamviewerpath = Test-Path "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe" 
-   $teamviewerpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe" 
-   if(($teamviewerpath) -OR ($teamviewerpath32))
-   {
-     $pathexist = $true
-     $Labeloutput.Text += " -TeamViewer est déja installé`r`n"
-   }
-   return $pathexist
-}
-
-function PostverifTeamViewer
-{
-    choco install teamviewer -y | out-null
-    $teamviewerpath = Test-Path "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe"         
-    $teamviewerpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe" 
-    if(($teamviewerpath) -OR ($teamviewerpath32))
-    {   
-        $Labeloutput.Text += " -TeamViewer installé avec succès`r`n"
-    }
+    if((Test-Path $softpath) -OR (Test-Path $softpath32) -OR (Test-Path $softpathdata))
+    {}
     else
     {
-        Write-Warning "Erreur lors de l'installation de TeamViewer!!!!"
-        $Labeloutput.Text += " -TeamViewer a échoué`r`n"
-        plancteamviewer
-    } 
+        Start-Process "$root\_Tech\Applications\Installation\Source\Ninite Chrome Installer.exe" -Verb runAs #escape pour terminer
+    }
 }
- 
-function Teamviewer
-{   
-    $progres.Text = "Installation de Teamviewer"
-    $Labeloutput.Text += "Installation de Teamviewer en cours"
-    $pathexist = PreverifTeamViewer #s'il est déja installé il ne va pas poursuivre
-    if($pathexist -eq $false)
-    {   
-        winget install -e --id TeamViewer.TeamViewer --accept-package-agreements --accept-source-agreements --silent | out-null
-        $teamviewerpath = Test-Path "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe" 
-        $teamviewerpath32 = Test-Path "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe" 
-        if(($teamviewerpath) -OR ($teamviewerpath32))
-        {
-            $Labeloutput.Text += " -Teamviewer installé avec succès`r`n"  
-        } 
-        else
-        {
-            PostverifTeamViewer
-        }
-    }         
-    addlog "Installation de Teamviewer"      
-}
-
-function plancteamviewer
+function plancteamviewer($softpath,$softpath32,$softpathdata)
 {
-    Start-Process "$root\_Tech\Applications\Installation\Source\Ninite TeamViewer 15 Installer.exe" -Verb runAs #escape pour terminer
-}
-function plancgoogle
-{
-    Start-Process "$root\_Tech\Applications\Installation\Source\Ninite Chrome Installer.exe" -Verb runAs #escape pour terminer
+    if((Test-Path $softpath) -OR (Test-Path $softpath32) -OR (Test-Path $softpathdata))
+    {}
+    else
+    {
+        Start-Process "$root\_Tech\Applications\Installation\Source\Ninite TeamViewer 15 Installer.exe" -Verb runAs #escape pour terminer
+    }
 }
 
 #Gérer les pilotes
@@ -714,7 +608,6 @@ function GeForce
 #    #[System.Windows.MessageBox]::Show("Vérifier que l'antivirus est bien configuré, puis cliquer sur OK","Windows -Antivirus",0) | Out-Null
 #}
 
-
 function License
 {
     $version = (Get-WmiObject -class Win32_OperatingSystem).Caption
@@ -736,7 +629,6 @@ function Edge
         $Labeloutput.Text += "Mise à jour de Microsoft Edge"
         winget upgrade -e -h --id Microsoft.Edge --accept-package-agreements --accept-source-agreements --silent
 }
-
 
 function Postverif
 {
@@ -804,10 +696,11 @@ DisableFastBoot
 Langue
 Privacy
 IconeBureau
-AdobeReader
-Googlechrome
-Teamviewer
-#Edge
+Software "Adobe Reader" "$env:SystemDrive\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe" "$env:SystemDrive\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe" "$env:SystemDrive\Users\$env:username\AppData\Roaming\Adobe\Acrobat\DC" "Adobe.Acrobat.Reader.64-bit" "adobereader"
+Software "Google chrome" "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe" "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe" "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe" "Google.Chrome" "googlechrome"
+plancgoogle "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe" "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe" "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
+Software "Teamviewer" "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe" "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe" "$env:SystemDrive\Users\$env:username\AppData\Roaming\TeamViewer" "TeamViewer.TeamViewer" "teamviewer"
+plancteamviewer "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe" "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe" "$env:SystemDrive\Users\$env:username\AppData\Roaming\TeamViewer"
 Pilotes
 GeForce
 License
