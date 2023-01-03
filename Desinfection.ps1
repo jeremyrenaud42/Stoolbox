@@ -9,25 +9,16 @@ $driveletter = $pwd.drive.name
 $root = "$driveletter" + ":"
 
 set-location "$root\_Tech\\Applications\Securite" #met la location au repertoir actuel
-Import-Module "$root\_Tech\Applications\Source\update.psm1" | Out-Null #Module pour updater les apps
-Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
-Import-Module "$root\_Tech\Applications\Source\choco.psm1" | Out-Null #Module pour chocolatey
-Import-Module "$root\_Tech\Applications\Source\winget.psm1" | Out-Null #Module pour Winget
-
-$logfilepath=".\Source\Log.txt"
-
-function AddLog ($message)
-{
-(Get-Date).ToString() + " - " + $message + "`r`n" | Out-file -filepath $logfilepath -append -force
-}
+Import-Module "$root\_Tech\Applications\Source\modules\update.psm1" | Out-Null #Module pour updater les apps
+Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
+Import-Module "$root\_Tech\Applications\Source\modules\choco.psm1" | Out-Null #Module pour chocolatey
+Import-Module "$root\_Tech\Applications\Source\modules\winget.psm1" | Out-Null #Module pour Winget
+Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
+Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour les logs
 
 function zipsourcevirus #Ce qui va toujours être redownloader à neuf à chaque lancement. Le pack obligatoire pour le fonctionnement + le reset des logs
 {
-    $sourcepath = test-Path ".\Source"
-    if($sourcepath -eq $false)
-    {
-        New-Item ".\Source" -ItemType Directory | Out-Null #Créer le dossier source si il n'est pas là
-    }
+    Sourceexist
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' -OutFile ".\Source\fondvirus.png" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Icone.ico' -OutFile ".\Source\Icone.ico" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Log.txt' -OutFile ".\Source\Log.txt" | Out-Null
@@ -46,7 +37,7 @@ function zipHitmanPro
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' -OutFile ".\Source\HitmanPro.exe"
     }
     Start-Process ".\Source\HitmanPro.exe"
-    AddLog "Vérifier les virus avec HitmanPro"
+    Addlog "desinfectionlog.txt" "Vérifier les virus avec HitmanPro"
 }
 
 function zipautoruns
@@ -64,7 +55,7 @@ function zipautoruns
     Start-Process "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\autoruns.exe"
     start-sleep 5
     taskmgr
-    AddLog "Vérifier les logiciels au démarrage"
+    Addlog "desinfectionlog.txt" "Vérifier les logiciels au démarrage"
 }
 
 function zipprocessexplorer
@@ -80,7 +71,7 @@ function zipprocessexplorer
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/procexp64.exe' -OutFile ".\Source\procexp64.exe"
     }
     Start-Process ".\Source\procexp64.exe"
-    AddLog "Vérifier les process"
+    Addlog "desinfectionlog.txt" "Vérifier les process"
 }
 
 function ziprkill
@@ -96,7 +87,7 @@ function ziprkill
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/rkill64.exe' -OutFile ".\Source\rkill64.exe"
     }
     Start-Process ".\Source\rkill64.exe"
-    AddLog "Désactiver les process"
+    Addlog "desinfectionlog.txt" "Désactiver les process"
 }
 
 function zipadw
@@ -112,7 +103,7 @@ function zipadw
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/adwcleaner.exe' -OutFile ".\Source\adwcleaner.exe"
     }
     Start-Process ".\Source\adwcleaner.exe"
-    AddLog "Analyse ADW effectué"
+    Addlog "desinfectionlog.txt" "Analyse ADW effectué"
 }
 
 function ziproguekiller
@@ -130,7 +121,7 @@ function ziproguekiller
     Remove-Item ".\Source\Roguekiller.zip"
     }
     Start-Process ".\Source\Roguekiller\RogueKiller_portable64.exe"
-    AddLog "Analyse RogueKiller effectué"
+    Addlog "desinfectionlog.txt" "Analyse RogueKiller effectué"
 }
 
 function ziprevo
@@ -148,7 +139,7 @@ function ziprevo
     Remove-Item "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\RevoUninstaller_Portable.zip"
     }
     Start-Process "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\RevoUninstaller_Portable\RevoUPort.exe"
-    AddLog "Vérifier les programmes nuisibles"
+    Addlog "desinfectionlog.txt" "Vérifier les programmes nuisibles"
 }
 
 function zipccleaner
@@ -172,7 +163,7 @@ function zipccleaner
         Copy-Item "$root\\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner\*" -Destination "$env:SystemDrive\Temp\CCleaner" -Force | Out-Null #copy sur le dossier user pour pas bloquer la clé
     }
     Start-Process "$env:SystemDrive\Temp\CCleaner\CCleaner64.exe"
-    AddLog "Nettoyage CCleaner effectué"
+    Addlog "desinfectionlog.txt" "Nettoyage CCleaner effectué"
 }
 
 function zipsas
@@ -198,7 +189,7 @@ function zipsas
     {
         Start-Process ".\Source\sas\SUPERAntiSpywarePro.exe"
     }    
-    AddLog "Analyse SuperAntiSpyware effectué"
+    Addlog "desinfectionlog.txt" "Analyse SuperAntiSpyware effectué"
 }
 
 zipsourcevirus
@@ -293,7 +284,7 @@ $HDD.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $HDD.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HDD.Add_Click({
 Start-Process "$env:SystemDrive\Windows\SYSTEM32\cleanmgr.exe"
-AddLog "Nettoyage du disque effectué"
+Addlog "desinfectionlog.txt" "Nettoyage du disque effectué"
 })
 
 #Ccleaner
@@ -330,7 +321,7 @@ $Restauration.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkma
 $Restauration.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Restauration.Add_Click({
 Restore | Out-Null
-AddLog "Point de restauration effectué"
+Addlog "desinfectionlog.txt" "Point de restauration effectué"
 })
 
 Function Revo
