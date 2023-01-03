@@ -15,83 +15,88 @@ function Admin
     }
 }
 
-function  Preinstall
+function  Preinstall  #Création des dossiers
 {
- #Création des dossiers
- $Applications = test-path "$Psscriptroot\Applications" 
- if($Applications -eq $false)
- {
-     New-Item "$Psscriptroot\Applications" -ItemType 'Directory' -Force | Out-Null
- }
-
- $Source = test-path "$Psscriptroot\Applications\Source"  
- if($Source -eq $false)
- {
-     New-Item "$Psscriptroot\Applications\Source" -ItemType 'Directory' -Force | Out-Null
- }
+    $Applications = test-path "$Psscriptroot\Applications" 
+    if($Applications -eq $false)
+    {
+        New-Item "$Psscriptroot\Applications" -ItemType 'Directory' -Force | Out-Null
+    }
+    $Source = test-path "$Psscriptroot\Applications\Source"  
+    if($Source -eq $false)
+    {
+        New-Item "$Psscriptroot\Applications\Source" -ItemType 'Directory' -Force | Out-Null
+    }
+    $scripts = test-path "$Psscriptroot\Applications\Source\scripts" 
+    if($scripts -eq $false)
+    {
+        New-Item "$Psscriptroot\Applications\Source\scripts" -ItemType 'Directory' -Force | Out-Null
+    }
+    $modules = test-path "$Psscriptroot\Applications\Source\modules" 
+    if($modules -eq $false)
+    {
+        New-Item "$Psscriptroot\Applications\Source\modules" -ItemType 'Directory' -Force | Out-Null
+    }
+    $images = test-path "$Psscriptroot\Applications\Source\images" 
+    if($images -eq $false)
+    {
+        New-Item "$Psscriptroot\Applications\Source\images" -ItemType 'Directory' -Force | Out-Null
+    }
+    $Tempfodler = Test-Path "$env:SystemDrive\Temp"
+    if($Tempfodler -eq $false)
+    {
+        New-Item -ItemType 'Directory' -Name "Temp" -Path "$env:SystemDrive\" -Force -ErrorAction 'SilentlyContinue' | Out-Null #Creer dossier Temp  pour y copier/coller remove.
+    }
+}
  
- $scripts = test-path "$Psscriptroot\Applications\Source\scripts" 
- if($scripts -eq $false)
- {
-     New-Item "$Psscriptroot\Applications\Source\scripts" -ItemType 'Directory' -Force | Out-Null
- }
+#Download des files pour Remove  et delete
+function Remove
+{
+    $delete = test-path "$env:SystemDrive\Temp\delete.ps1"
+    if($delete -eq $false)
+    {
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/delete.ps1' -OutFile "$env:SystemDrive\Temp\delete.ps1" | Out-Null
+    }
+    $remove = test-path "$env:SystemDrive\Temp\Remove.bat"
+    if($remove -eq $false)
+    {
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$env:SystemDrive\Temp\Remove.bat" | Out-Null
+    } 
+}
 
- $modules = test-path "$Psscriptroot\Applications\Source\modules" 
- if($modules -eq $false)
- {
-     New-Item "$Psscriptroot\Applications\Source\modules" -ItemType 'Directory' -Force | Out-Null
- }
- 
- $images = test-path "$Psscriptroot\Applications\Source\images" 
- if($images -eq $false)
- {
-     New-Item "$Psscriptroot\Applications\Source\images" -ItemType 'Directory' -Force | Out-Null
- }
-
- #Download des files
- $delete = test-path "$Psscriptroot\applications\source\scripts\delete.ps1"
- if($delete -eq $false)
- {
-     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/delete.ps1' -OutFile "$Psscriptroot\applications\source\scripts\delete.ps1"
- }
- $remove = test-path "$Psscriptroot\Remove.bat"
- if($remove -eq $false)
- {
-     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$Psscriptroot\Remove.bat" | Out-Null
- } 
+function modules
+{
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/choco.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\choco.psm1" | Out-Null  
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\task.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\update.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/winget.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\winget.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Voice.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Voice.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Logs.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Logs.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/source.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\source.psm1" | Out-Null
 }
     
 function Zipsource #Download et création des fondamentaux
 {
-$fondpath = test-Path "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
-$iconepath = test-path "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" #vérifie si l'icone existe
-    if($fondpath -eq $false) #si fond pas présent
-    {
-        New-Item "$env:SystemDrive\_Tech\Applications\Source\Images" -ItemType Directory -Force | Out-Null #créé les dossiers source\images
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
-    }
-    if($iconepath -eq $false)
-    {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
-    } 
+    Preinstall #Va créer les dossiers
+    $fondpath = test-Path "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
+    $iconepath = test-path "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" #vérifie si l'icone existe
+        if($fondpath -eq $false) #si fond pas présent
+        {
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
+        }
+        if($iconepath -eq $false) #si icone pas présent
+        {
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
+        } 
+    Remove #Va download remove
+    modules #Va download les modules
 }
 
-Admin
+Admin #emet en admin si pas executer en admin
 Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #met la policy a unrestricted a cause de intermediate .ps1
 set-location "$env:SystemDrive\_Tech" #met la location au repertoir actuel
-Preinstall
 Zipsource #install les fichiers sources
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/choco.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\choco.psm1" | Out-Null  
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\task.psm1" | Out-Null
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\update.psm1" | Out-Null
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/winget.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\winget.psm1" | Out-Null
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Voice.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Voice.psm1" | Out-Null
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Logs.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Logs.psm1" | Out-Null
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/source.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\source.psm1" | Out-Null
 Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
-New-Item -ItemType Directory -Name "Temp" -Path "$env:SystemDrive\" -Force -ErrorAction SilentlyContinue | Out-Null #Creer dossier Temp  pour y copier/coller remove.
-copy-item "$env:SystemDrive\_TECH\Applications\source\scripts\delete.ps1" -Destination "$env:SystemDrive\Temp" -Force | Out-Null #Copier delete dans $env:SystemDrive\temp
-copy-item "$env:SystemDrive\_TECH\Remove.bat" -Destination "$env:SystemDrive\Temp" -Force | Out-Null #Copier remove dans c:\temp
 
 $img = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Source\Images\fondpluiesize.gif") #Il faut mettre le chemin complet pour éviter des erreurs.
 $pictureBoxBackGround = new-object Windows.Forms.PictureBox #permet d'afficher un gif
@@ -124,7 +129,7 @@ function Zipinstallation
     $instapath = Test-Path "$env:SystemDrive\_Tech\Applications\Installation" #vérifie si le dossier existe 
     if($instapath -eq $false)
     {
-        New-Item -Path "$env:SystemDrive\_Tech\Applications\Installation" -ItemType directory | Out-Null #s'il n'existe pas le créé
+        New-Item -Path "$env:SystemDrive\_Tech\Applications\Installation" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
     }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Installation\Installation.ps1" | Out-Null #download le .exe
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsInstallation.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #download le .exe
@@ -167,7 +172,7 @@ function ZipOpti
     $optipath = Test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage" #vérifie si le dossier existe 
     if($optipath -eq $false)
     {
-        New-Item -Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage" -ItemType directory | Out-Null #s'il n'existe pas le créé
+        New-Item -Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
     }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #download le .exe
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsOptimisation_Nettoyage.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #download le .exe
@@ -209,7 +214,7 @@ function Zipdiag
     $diagpath = Test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique"  #vérifie si le dossier existe 
     if($diagpath -eq $false)
     {
-        New-Item -Path "$env:SystemDrive\_Tech\Applications\Diagnostique" -ItemType directory | Out-Null #s'il n'existe pas le créé
+        New-Item -Path "$env:SystemDrive\_Tech\Applications\Diagnostique" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
     }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\Diagnostique.ps1" | Out-Null #download le .exe
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsDiagnostique.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #download le .exe
@@ -250,7 +255,7 @@ function Zipdesinfection
     $desinfectionpath = Test-Path "$env:SystemDrive\_Tech\Applications\Securite"  #vérifie si le dossier existe 
     if($desinfectionpath -eq $false)
     {
-        New-Item -Path "$env:SystemDrive\_Tech\Applications\Securite" -ItemType directory | Out-Null #s'il n'existe pas le créé
+        New-Item -Path "$env:SystemDrive\_Tech\Applications\Securite" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
     }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Desinfection.ps1" | Out-Null #download le .exe
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsDesinfection.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #download le .exe
@@ -291,7 +296,7 @@ function Zipfix
     $fixpath = Test-Path "$env:SystemDrive\_Tech\Applications\Fix" #vérifie si le dossier existe 
     if($fixpath -eq $false)
     {
-        New-Item -Path "$env:SystemDrive\_Tech\Applications\Fix" -ItemType directory | Out-Null #s'il n'existe pas le créé
+        New-Item -Path "$env:SystemDrive\_Tech\Applications\Fix" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
     }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Fix\Fix.ps1" | Out-Null #download le .ps1
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsFix.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #download le .ps1
