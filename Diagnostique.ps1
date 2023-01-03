@@ -12,20 +12,12 @@ set-location "$env:SystemDrive\_Tech\Applications\Diagnostique" #met la location
 
 Import-Module "$root\_Tech\Applications\Source\update.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
-
-$logfilepath = "$root\_Tech\Applications\Diagnostique\Source\Log.txt"
-function AddLog ($message)
-{
-(Get-Date).ToString() + " - " + $message + "`r`n" | Out-file -filepath $logfilepath -append -force
-}
+Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
+Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
 
 function zipsourcediag #Ce qui va toujours être redownloader à neuf à chaque lancement. Le pack obligatoire pour le fonctionnement + le reset des logs
 {
-    $sourcepath = test-Path "$root\_Tech\Applications\Diagnostique\Source"
-    if($sourcepath -eq $false)
-    {
-        New-Item "$root\_Tech\Applications\Diagnostique\Source" -ItemType Directory | Out-Null #Créer le dossier source si il n'est pas là
-    }
+    Sourceexist
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' -OutFile "$root\_Tech\Applications\Diagnostique\Source\fondDiag.jpg" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Icone.ico' -OutFile "$root\_Tech\Applications\Diagnostique\Source\Icone.ico" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Log.txt' -OutFile "$root\_Tech\Applications\Diagnostique\Source\Log.txt" | Out-Null
@@ -223,7 +215,7 @@ $Battinfo.Add_MouseEnter({$Battinfo.ForeColor = 'White'})
 $Battinfo.Add_MouseLeave({$Battinfo.ForeColor = 'black'})
 $Battinfo.Add_Click({
 Start-Process "$root\_Tech\Applications\Diagnostique\Source\Batterie\battinfoview\batteryinfoview.exe"
-AddLog "Usure de la batterie vérifié"
+Addlog "diagnostiquelog.txt" "Usure de la batterie vérifié"
 })
 #Tooltip
 $tooltipBattinfo = New-Object System.Windows.Forms.ToolTip
@@ -260,7 +252,7 @@ $Dontsleep.Add_MouseEnter({$Dontsleep.ForeColor = 'White'})
 $Dontsleep.Add_MouseLeave({$Dontsleep.ForeColor = 'black'})
 $Dontsleep.Add_Click({
 Start-Process "$root\_Tech\Applications\Diagnostique\Source\Batterie\DontSleep\DontSleep_x64_p.exe"
-AddLog "Dontsleep a été utilisé pour tester la batterie"
+Addlog "diagnostiquelog.txt" "Dontsleep a été utilisé pour tester la batterie"
 })
 #Tooltip
 $tooltipDontsleep = New-Object System.Windows.Forms.ToolTip
@@ -326,7 +318,7 @@ $Aida.Add_MouseEnter({$Aida.ForeColor = 'White'})
 $Aida.Add_MouseLeave({$Aida.ForeColor = 'black'})
 $Aida.Add_Click({
 Start-Process "$root\_Tech\Applications\Diagnostique\\Source\CPU\Aida64\aida64.exe"
-AddLog "Test de stabilité du système effectué"oh i sd
+Addlog "diagnostiquelog.txt" "Test de stabilité du système effectué"oh i sd
 })
 #tooltip
 $tooltipAida = New-Object System.Windows.Forms.ToolTip
@@ -362,7 +354,7 @@ $Coretemp.Add_MouseEnter({$Coretemp.ForeColor = 'White'})
 $Coretemp.Add_MouseLeave({$Coretemp.ForeColor = 'black'})
 $Coretemp.Add_Click({
 Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\Core_Temp\Core Temp.exe"
-AddLog "Température du CPU vérifié"
+Addlog "diagnostiquelog.txt" "Température du CPU vérifié"
 })
 #Tooltip
 $tooltipCoretemp = New-Object System.Windows.Forms.ToolTip
@@ -399,7 +391,7 @@ $Prime95.Add_MouseEnter({$Prime95.ForeColor = 'White'})
 $Prime95.Add_MouseLeave({$Prime95.ForeColor = 'black'})
 $Prime95.Add_Click(
 {Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\Prime95\prime95.exe"
-AddLog "Stress test du CPU effectué"
+Addlog "diagnostiquelog.txt" "Stress test du CPU effectué"
 })
 #Tooltip
 $tooltipPrime95 = New-Object System.Windows.Forms.ToolTip
@@ -471,7 +463,7 @@ $HeavyLoad.Add_MouseEnter({$HeavyLoad.ForeColor = 'White'})
 $HeavyLoad.Add_MouseLeave({$HeavyLoad.ForeColor = 'black'})
 $HeavyLoad.Add_Click({
 Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\HeavyLoad\HeavyLoad.exe" -ArgumentList "/start /cpu"
-AddLog "Test de stabilité du système effectué"
+Addlog "diagnostiquelog.txt" "Test de stabilité du système effectué"
 })
 #Tooltip
 $tooltipHeavyLoad = New-Object System.Windows.Forms.ToolTip
@@ -520,7 +512,7 @@ $BoutonHDD.Add_Click({$docASSD.visible = $true})
 function HDSentinel
 {
 start-process -wait "$root\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\_HDSentinel.exe" -ArgumentList "/report"
-AddLog "Vérifier la santé du disque dur"
+Addlog "diagnostiquelog.txt" "Vérifier la santé du disque dur"
 #hdsslog | Out-File $logfilepath -Append
 }
 
@@ -609,7 +601,7 @@ foreach ($ligne in $contentlogfile) #pour chaque ligne dans le fichier, car chaq
 function HDTune
 {
 Start-Process "$root\_Tech\Applications\Diagnostique\Source\HDD\HD_Tune\_HDTune.exe"
-AddLog "Vérifier la Vitesse du disque dur"
+Addlog "diagnostiquelog.txt" "Vérifier la Vitesse du disque dur"
 }
 
 #HDSentinnel
@@ -738,7 +730,7 @@ $Diskmark.Add_MouseEnter({$Diskmark.ForeColor = 'White'})
 $Diskmark.Add_MouseLeave({$Diskmark.ForeColor = 'black'})
 $Diskmark.Add_Click({
 Start-Process -wait  "$root\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"  -ArgumentList "/copy"
-AddLog "Vérifier la santé du disque dur"
+Addlog "diagnostiquelog.txt" "Vérifier la santé du disque dur"
 #diskmarkinfolog | Out-File $logfilepath -Append
 })
 #Tooltip
@@ -803,7 +795,7 @@ $Furmark.Add_Click({
 Start-Process "$root\_Tech\Applications\Diagnostique\Source\GPU\FurMark\FurMark.exe"
 #Log
 #$root\_Tech\Applications\Diagnostique\GPU\FurMark\FurMark_0001.txt
-AddLog "Stress test du GPU"
+Addlog "diagnostiquelog.txt" "Stress test du GPU"
 })
 #Tooltip
 $tooltipFurmark = New-Object System.Windows.Forms.ToolTip
@@ -879,7 +871,7 @@ $Unigine.Add_Click({
 #start "C:\Users\$env:UserName\Downloads\Unigine_Superposition-1.1.exe"
 Start-Process "https://benchmark.unigine.com/"
 #https://assets.unigine.com/d/Unigine_Superposition-1.1.exe
-AddLog "Vérifier les performances du GPU"
+Addlog "diagnostiquelog.txt" "Vérifier les performances du GPU"
 })
 #Tooltip
 $tooltipUnigine = New-Object System.Windows.Forms.ToolTip
@@ -1058,7 +1050,7 @@ $RAM.Add_MouseEnter({$RAM.ForeColor = 'White'})
 $RAM.Add_MouseLeave({$RAM.ForeColor = 'black'})
 $RAM.Add_Click({
 mdsched.exe
-addlog "Memtest effectué"
+Addlog "diagnostiquelog.txt" "Memtest effectué"
 })
 #Tooltip
 $tooltipRAM = New-Object System.Windows.Forms.ToolTip
@@ -1106,7 +1098,7 @@ $Menuprincipal.FlatAppearance.MouseOverBackColor = 'gray'
 $Menuprincipal.Add_MouseEnter({$Menuprincipal.ForeColor = 'White'})
 $Menuprincipal.Add_MouseLeave({$Menuprincipal.ForeColor = 'black'})
 $Menuprincipal.Add_Click({
-start-process "$root\\_Tech\Menu.bat" -verb Runas
+start-process "$root\_Tech\Menu.bat" -verb Runas
 $Form.Close()
 })
 

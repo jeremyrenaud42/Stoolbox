@@ -14,7 +14,7 @@ Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Mo
 Import-Module "$root\_Tech\Applications\Source\modules\choco.psm1" | Out-Null #Module pour chocolatey
 Import-Module "$root\_Tech\Applications\Source\modules\winget.psm1" | Out-Null #Module pour Winget
 Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
-Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour les logs
+Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
 
 function zipsourcevirus #Ce qui va toujours être redownloader à neuf à chaque lancement. Le pack obligatoire pour le fonctionnement + le reset des logs
 {

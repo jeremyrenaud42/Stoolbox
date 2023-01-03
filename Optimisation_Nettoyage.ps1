@@ -13,6 +13,8 @@ $root = "$driveletter" + ":"
 set-location "$root\\_Tech\\Applications\\Optimisation_Nettoyage" -ErrorAction stop   #met la location au repertoir actuel
 Import-Module "$root\_Tech\Applications\Source\update.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
+Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
+Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
 
 #Import-Module -Name "$root\\_TECH\\Applications\\Source\\Excel\\ImportExcel" #import le module Excel situ� dans la cl�
 #$excel = Open-ExcelPackage -Path "$root\\_TECH\\Applications\\Source\\Excel\\Rapport.xlsm" #ouvre la grille Excel
@@ -29,27 +31,11 @@ A25 � A41 = Notes
 Cases � cocher: B = Bon.  C = Jaune.  D= Rouge. E = Notes.
 #>
 
-$logfilepath = ".\Source\Logs\Log.txt"
-function AddLog ($message)
-{
-    (Get-Date).ToString() + " - " + $message + "`r`n" | Out-File $logfilepath -Append
-}
-
 function zipsourceopti #Ce qui va toujours être redownloader à neuf à chaque lancement. Le pack obligatoire pour le fonctionnement + le reset des logs
 {
-    $sourcepath = test-Path ".\Source"
-    if($sourcepath -eq $false)
-    {
-        New-Item ".\Source" -ItemType Directory | Out-Null #Créer le dossier source si il n'est pas là
-    }
-    $logpath = test-Path ".\source\Logs"
-    if($logpath -eq $false)
-    {
-        New-Item ".\Source\Logs" -ItemType Directory | Out-Null #Créer le dossier Logs s'il n'est pas là
-    }
+    Sourceexist
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' -OutFile .\Source\fondopti.jpg | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Icone.ico' -OutFile .\Source\Icone.ico | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Logs/Log.txt' -OutFile .\Source\Logs\Log.txt | Out-Null
 }
 zipsourceopti
 
@@ -84,7 +70,7 @@ function zipccleaner
         Copy-Item ".\Source\Ccleaner\*" -Destination "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner" -Force | Out-Null #copy sur le dossier user pour pas bloquer la clé
     }
     Start-Process "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
-    AddLog "Nettoyage CCleaner effectué"
+    Addlog "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
 }
 
 function ziprevo
@@ -103,7 +89,7 @@ function ziprevo
     }
     Update "Optimisation_Nettoyage" "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Optimisation_Nettoyage/RevoUninstaller_Portable.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip'
     Start-Process ".\Source\RevoUninstaller_Portable\RevoUPort.exe"
-    AddLog "Vérifier les programmes nuisibles"
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
 }
 
 function zipsfc
@@ -119,7 +105,7 @@ function zipsfc
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat' -OutFile .\Source\sfcScannow.bat
     }
     Start-Process ".\Source\sfcScannow.bat" -verb runas
-    AddLog "Vérifier les fichiers corrompus"  
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les fichiers corrompus"  
 }
 
 function zipsysevent
@@ -135,7 +121,7 @@ function zipsysevent
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe' -OutFile ".\Source\sysevent.exe"
     }
     Start-Process ".\Source\sysevent.exe"
-    AddLog "Vérifier les evenements"
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les evenements"
 }
 
 function ziphdtune
@@ -153,7 +139,7 @@ function ziphdtune
     Remove-Item "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune.zip"
     }
     Start-Process "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune\\_HDTune.exe"
-    AddLog "Vérifier la Vitesse du disque dur"
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
 }
 
 function zipcdi
@@ -171,7 +157,7 @@ function zipcdi
     Remove-Item "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\CrystalDiskInfoPortable.zip"
         }
     Start-Process "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"
-    AddLog "Vérifier la santé du HDD"
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la santé du HDD"
 }
 
 function zipHitmanPro
@@ -187,7 +173,7 @@ function zipHitmanPro
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' -OutFile "$root\\_Tech\\Applications\\Securite\\Source\\HitmanPro.exe"
     }
     Start-Process "$root\\_Tech\\Applications\\Securite\\Source\\HitmanPro.exe"
-    AddLog "Vérifier les virus avec HitmanPro"
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les virus avec HitmanPro"
 }
 
 function zipautoruns
@@ -205,7 +191,7 @@ function zipautoruns
     Start-Process ".\Source\autoruns.exe"
     start-sleep 5
     taskmgr
-    AddLog "Vérifier les logiciels au démarrage"
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les logiciels au démarrage"
 }
 #choco install hdtune
 #choco install hdsentinel
@@ -283,7 +269,7 @@ function HDTune
 {
 $PathHDTune = "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune\\_HDTune.exe"
 Start-Process "$PathHDTune"
-AddLog "Vérifier la Vitesse du disque dur"
+Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
 }
 
 Function Revo
@@ -292,7 +278,7 @@ $revobefore = "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\Logs\
 $revoafter = "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\Logs\\RevoAfter.txt"
 Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*","HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName  | Sort-Object -Property DisplayName | Format-Table �AutoSize | Out-File $revobefore
 Start-Process "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoUninstaller_Portable\\RevoUPort.exe"
-AddLog "Vérifier les programmes nuisibles"
+Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
 Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*","HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName  | Sort-Object -Property DisplayName | Format-Table �AutoSize | Out-File $revoafter
 Compare-Object -ReferenceObject (Get-Content -path $revobefore) -DifferenceObject (Get-Content -path $revoafter) | Out-File $logfilepath -Append
 Clear-Content $revobefore
@@ -317,7 +303,7 @@ $Updates.Add_MouseEnter({$Updates.ForeColor = 'White'})
 $Updates.Add_MouseLeave({$Updates.ForeColor = 'black'})
 $Updates.Add_Click({
 start-Process "ms-settings:windowsupdate"
-AddLog "Mises à jours de Windows effectuées"
+Addlog "Optimisation_Nettoyagelog.txt" "Mises à jours de Windows effectuées"
 })
 
 #Autoruns
@@ -379,7 +365,7 @@ $HDD.Add_MouseEnter({$HDD.ForeColor = 'White'})
 $HDD.Add_MouseLeave({$HDD.ForeColor = 'black'})
 $HDD.Add_Click({
 Start-Process "$env:SystemDrive\Windows\SYSTEM32\cleanmgr.exe"
-AddLog "Nettoyage du disque effectué"
+Addlog "Optimisation_Nettoyagelog.txt" "Nettoyage du disque effectué"
 })
 
 #Ccleaner

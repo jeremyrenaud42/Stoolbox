@@ -78,6 +78,8 @@ $root = "$driveletter" + ":"
 set-location "$root\\_Tech\\Applications\\fix" #met la location au repertoir actuel
 Import-Module "$root\_Tech\Applications\Source\update.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
+Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
+Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
 
 $scriptDir = 
     if (-not $PSScriptRoot) 
@@ -91,18 +93,7 @@ $scriptDir =
     }
 $lettre = [System.IO.path]::GetPathRoot($scriptDir)
 
-$logfilepath="$PSScriptRoot\Source\Log.txt"
-function AddLog ($message)
-{
-(Get-Date).ToString() + " - " + $message + "`r`n">> $logfilepath
-}
-
-$sourcepath = test-Path "$root\\_Tech\\Applications\\fix\Source"
-    if($sourcepath -eq $false)
-    {
-        New-Item "$root\\_Tech\\Applications\\fix\Source" -ItemType Directory | Out-Null #Créer le dossier source si il n'est pas là
-    }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Log.txt' -OutFile $root\\_Tech\\Applications\\fix\Source\Log.txt
+Sourceexist
 
 function zipComIntRep
 {
@@ -119,7 +110,7 @@ function zipComIntRep
     Remove-Item $root\\_Tech\\Applications\\fix\Source\ComIntRep.zip
     }
     Start-Process "$root\\_Tech\\Applications\\fix\Source\ComIntRep\ComIntRep_X64.exe"
-    AddLog "Réparer Internet"
+    Addlog "Fixlog.txt" "Réparer Internet"
 }
 
 function zipsecudossier
@@ -202,7 +193,7 @@ function zipDDU
     Remove-Item $root\\_Tech\\Applications\\fix\Source\DDU.zip
     }
     Start-Process "$root\\_Tech\\Applications\\fix\Source\DDU\Display Driver Uninstaller.exe"
-    addlog "Désinstallation du pilote graphique avec DDU"
+    Addlog "Fixlog.txt" "Désinstallation du pilote graphique avec DDU"
 }
 
 function zipMinitool
@@ -334,10 +325,10 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{set-location "$lettre\\_Tech\\applications\\fix"; menu; break}
-1{Start-Process "$PSScriptRoot\Source\Scripts\sfcScannow.bat" | addlog "Réparation des fichiers corrompus" ;Break}
-2{Start-Process "$PSScriptRoot\Source\Scripts\DISM.bat" | addlog "Réparation du Windows" ;Break}
-3{Start-Process "$PSScriptRoot\Source\Scripts\CHKDSK.BAT" | addlog "Réparation du HDD";Break}
-4{Start-Process "$PSScriptRoot\Source\Scripts\creer_session.txt" | addlog "Nouvelle session créé" ;Break}
+1{Start-Process "$PSScriptRoot\Source\Scripts\sfcScannow.bat" | Addlog "Fixlog.txt" "Réparation des fichiers corrompus" ;Break}
+2{Start-Process "$PSScriptRoot\Source\Scripts\DISM.bat" | Addlog "Fixlog.txt" "Réparation du Windows" ;Break}
+3{Start-Process "$PSScriptRoot\Source\Scripts\CHKDSK.BAT" | Addlog "Fixlog.txt" "Réparation du HDD";Break}
+4{Start-Process "$PSScriptRoot\Source\Scripts\creer_session.txt" | Addlog "Fixlog.txt" "Nouvelle session créé" ;Break}
 }
 start-sleep 1
 submenuHDD

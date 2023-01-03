@@ -14,16 +14,7 @@ Import-Module "$root\_Tech\Applications\Source\modules\choco.psm1" | Out-Null #M
 Import-Module "$root\_Tech\Applications\Source\modules\winget.psm1" | Out-Null #Module pour Winget
 import-module "$root\_Tech\Applications\Source\modules\Voice.psm1" | Out-Null #Module pour musicdebut et getvoice
 import-module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
-
-#Vérifier la présence du dossier source
-function Sourceexist
-{
-$sourcefolder = Test-path "$root\_Tech\Applications\Installation\Source" #chemin du dossier source
-    if(!($sourcefolder))
-    {
-        New-Item "$root\_Tech\Applications\Installation\Source" -ItemType Directory | Out-Null #Créer le dossier source si il n'est pas là
-    }
-}
+Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
 
 function zipinstallation
 {
@@ -99,7 +90,7 @@ function Debut
     Testconnexion #appel la fonction qui test la connexion internet
     $version = (Get-WmiObject -class Win32_OperatingSystem).Caption
     $date = (Get-Date).ToString()
-    addlog "installationlog.txt" "Installation de $version le $date"#ajoute la date dans le fichier texte de log
+    Addlog "installationlog.txt" "Installation de $version le $date"#ajoute la date dans le fichier texte de log
     $progres.Text = "Préparation"
     $Labeloutput.Text = "" #effacer le texte qui serait déja écrit par la fonction testconnexion
     $Labeloutput.Text += "Lancement de la configuration du Windows`r`n"
@@ -123,7 +114,7 @@ function Msupdate
     Import-Module PSWindowsUpdate | out-null #Import le module
     Get-WindowsUpdate -MaxSize 250mb -Install -AcceptAll -IgnoreReboot | out-null #download et install les updates de moins de 250mb sans reboot
     $Labeloutput.Text += " -Mises à jour de Windows effectuées`r`n"
-    addlog "installationlog.txt" "Mises à jour de Windows effectuées"
+    Addlog "installationlog.txt" "Mises à jour de Windows effectuées"
 }
 
 function Cortana
@@ -150,7 +141,7 @@ Function LabelHDD
     Set-Volume -DriveLetter 'C' -NewFileSystemLabel "OS" #Renomme le disque C: par OS
     $Labeloutput.Text += "`r`nLe disque C: a été renommé OS`r`n"
     #Get-Volume -DriveLetter 'C' | Select-Object -expand FileSystemLabel | Out-Null #donne comme résultat le nom du disque C.
-    addlog "installationlog.txt" "Le disque C: a été renommé OS"
+    Addlog "installationlog.txt" "Le disque C: a été renommé OS"
 }
 
 #Dossiers
@@ -163,7 +154,7 @@ Function Dossiers
     $Labeloutput.Text += "Le fournisseur de synchronisation a été decoché`r`n"
     #Get-ItemPropertyValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo'   
     #Get-ItemPropertyValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications'   
-    addlog "installationlog.txt" "Explorateur de fichiers configuré"  
+    Addlog "installationlog.txt" "Explorateur de fichiers configuré"  
 }
 
  #Désactiver bitlocker
@@ -178,7 +169,7 @@ Function Dossiers
             $Labeloutput.Text += "Bitlocker a été désactivé`r`n"
         }
     #Get-BitLockerVolume | Select-Object -expand VolumeStatus #FullyDecrypted
-    addlog "installationlog.txt" "Bitlocker a été désactivé"
+    Addlog "installationlog.txt" "Bitlocker a été désactivé"
 }
 
 #Fast boot
@@ -187,7 +178,7 @@ Function DisableFastBoot
     $progres.Text = "Desactivation du demarrage rapide"
     powercfg /h off #désactive l'hibernation
     $Labeloutput.Text += "Le démarrage rapide a été désactivé`r`n"
-    addlog "installationlog.txt" "Le démarrage rapide a été désactivé"
+    Addlog "installationlog.txt" "Le démarrage rapide a été désactivé"
 }
 <#
 $a = powercfg /a 
@@ -207,7 +198,7 @@ Function Langue
     Set-WinUserLanguageList $LangList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
     #if($AnglaisCanada) {write-host "erreur"}
     $Labeloutput.Text += "Le clavier Anglais a été supprimé`r`n"
-    addlog "installationlog.txt" "Le clavier Anglais a été supprimé"
+    Addlog "installationlog.txt" "Le clavier Anglais a été supprimé"
 }
 <#
 Ne survit pas à 22h2
@@ -243,7 +234,7 @@ Function Privacy
     #get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs"
 
     $Labeloutput.Text += "Les options de confidentialité ont été configuré`r`n"
-    addlog "installationlog.txt" "Les options de confidentialité ont été configuré"  
+    Addlog "installationlog.txt" "Les options de confidentialité ont été configuré"  
 }
 
 #Icones sur le bureau
@@ -262,7 +253,7 @@ Function IconeBureau
     #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" 
     #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" 
     $Labeloutput.Text += "Les icones systèmes ont été installés sur le bureau`r`n"
-    addlog "installationlog.txt" "Les icones systèmes ont été installés sur le bureau"
+    Addlog "installationlog.txt" "Les icones systèmes ont été installés sur le bureau"
     $Labeloutput.Text += " `r`n" #Permet de créé un espace avant les logiciels
 }
 
@@ -276,7 +267,7 @@ function Msstore
     $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
     $wmiObj.UpdateScanMethod()
     $Labeloutput.Text += " -Mises à jour du Microsoft Store lancées`r`n"
-    addlog "installationlog.txt" "Mises à jour de Microsoft Store"
+    Addlog "installationlog.txt" "Mises à jour de Microsoft Store"
 }
  
 function Preverifsoft($softname,$softpath,$softpath32,$softpathdata)
@@ -320,7 +311,7 @@ function Software($softname,$softpath,$softpath32,$softpathdata,$wingetname,$cho
                 Postverifsoft $softname $softpath $softpath32 $softpathdata $choconame
             }
         }       
-    addlog "installationlog.txt" "Installation de $softname"      
+    Addlog "installationlog.txt" "Installation de $softname"      
 }
 
 function plancgoogle($softpath,$softpath32,$softpathdata)
@@ -389,7 +380,7 @@ function SystemUpdate
                 PostverifSystemUpdate
             }         
         }             
-    addlog "installationlog.txt" "Installation de Lenovo System Update"      
+    Addlog "installationlog.txt" "Installation de Lenovo System Update"      
 }
 
 Lenovo Vantage
@@ -399,7 +390,7 @@ function LenovoVantage
     $Labeloutput.Text += "Installation de Lenovo Vantage"
     winget install -e --id 9WZDNCRFJ4MV --accept-package-agreements --accept-source-agreements --silent | out-null
     $Labeloutput.Text += " -Lenovo Vantage installé avec succès`r`n" 
-    addlog "installationlog.txt" "Installation de Lenovo Vantage" 
+    Addlog "installationlog.txt" "Installation de Lenovo Vantage" 
 }
 
 <#
@@ -462,7 +453,7 @@ function DellSA
                 PostverifDellSA
             }  
         }         
-    addlog "installationlog.txt" "Installation de  Dell Command Update"      
+    Addlog "installationlog.txt" "Installation de  Dell Command Update"      
 }
 
 #HP
@@ -498,7 +489,7 @@ function HPSA
                 $Labeloutput.Text += " -Hp Support Assistant a échoué`r`n"
             }  
         }  
-    addlog "installationlog.txt" "Installation de Hp Support Assistant"      
+    Addlog "installationlog.txt" "Installation de Hp Support Assistant"      
 }
 
 Function Pilotes
@@ -581,7 +572,7 @@ function GeForce
                     PostverifGeForce
                 } 
             }                     
-        addlog "installationlog.txt" "Installation de GeForce Experience"
+        Addlog "installationlog.txt" "Installation de GeForce Experience"
     }      
 }
 
@@ -641,7 +632,7 @@ function Postverif
 
 function End
 {
-    addlog "installationlog.txt" "Installation de Windows effectué avec Succès"
+    Addlog "installationlog.txt" "Installation de Windows effectué avec Succès"
     Copy-Item "$root\_Tech\Applications\Installation\Source\Log.txt" -Destination "$env:SystemDrive\TEMP" -Force | out-null     
     [Audio]::Volume = 0.25
     [console]::beep(1000,666)
