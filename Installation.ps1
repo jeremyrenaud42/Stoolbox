@@ -13,7 +13,7 @@ Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #im
 Import-Module "$root\_Tech\Applications\Source\modules\choco.psm1" | Out-Null #Module pour chocolatey
 Import-Module "$root\_Tech\Applications\Source\modules\winget.psm1" | Out-Null #Module pour Winget
 import-module "$root\_Tech\Applications\Source\modules\Voice.psm1" | Out-Null #Module pour musicdebut et getvoice
-import-module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour musicdebut et getvoice
+import-module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
 
 #Vérifier la présence du dossier source
 function Sourceexist
@@ -263,6 +263,7 @@ Function IconeBureau
     #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" 
     $Labeloutput.Text += "Les icones systèmes ont été installés sur le bureau`r`n"
     addlog "installationlog.txt" "Les icones systèmes ont été installés sur le bureau"
+    $Labeloutput.Text += " `r`n" #Permet de créé un espace avant les logiciels
 }
 
 #Mises à jour des applis du Microsoft store
@@ -273,12 +274,11 @@ function Msstore
     $namespaceName = "root\cimv2\mdm\dmmap"
     $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
     $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
-    $result = $wmiObj.UpdateScanMethod()
+    $wmiObj.UpdateScanMethod()
     $Labeloutput.Text += " -Mises à jour du Microsoft Store lancées`r`n"
     addlog "installationlog.txt" "Mises à jour de Microsoft Store"
 }
  
-
 function Preverifsoft($softname,$softpath,$softpath32,$softpathdata)
 {
    $pathexist = $false
