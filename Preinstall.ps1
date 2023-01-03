@@ -12,6 +12,7 @@ Admin #Nécéssaire car si on dit non a la fenetre admin via Menu.ps1, ca downlo
 
 function SourceMenu
 {
+<#
     #Création des dossiers
     $Applications = test-path "$Psscriptroot\Applications" 
     if($Applications -eq $false)
@@ -54,21 +55,14 @@ function SourceMenu
     {
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$Psscriptroot\Remove.bat" | Out-Null
     }
+#>
     $menubat = test-path "$Psscriptroot\Menu.bat"
     if($menubat -eq $false)
     {
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.bat' -OutFile "$Psscriptroot\Menu.bat" | Out-Null
     }
+
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' -OutFile "$Psscriptroot\Menu.ps1" | Out-Null     
-    <#
-    $a = Test-Path "$Psscriptroot\applications\source\Images\fondpluiesize.gif"
-    $b = Test-path  "$Psscriptroot\applications\source\Images\Icone.ico" 
-    if($a -and $b -eq $false)
-    {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$Psscriptroot\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$Psscriptroot\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
-    }
-    #>
     Start-Process "$env:SystemDrive\_Tech\Menu.bat" -WindowStyle Hidden #On va pouvoir juste executer menu, car runasmenu est rendu stoolbox.bat
     exit
 }

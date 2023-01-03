@@ -15,6 +15,49 @@ function Admin
     }
 }
 
+    #Création des dossiers
+    $Applications = test-path "$Psscriptroot\Applications" 
+    if($Applications -eq $false)
+    {
+        New-Item "$Psscriptroot\Applications" -ItemType 'Directory' -Force | Out-Null
+    }
+
+    $Source = test-path "$Psscriptroot\Applications\Source"  
+    if($Source -eq $false)
+    {
+        New-Item "$Psscriptroot\Applications\Source" -ItemType 'Directory' -Force | Out-Null
+    }
+    
+    $scripts = test-path "$Psscriptroot\Applications\Source\scripts" 
+    if($scripts -eq $false)
+    {
+        New-Item "$Psscriptroot\Applications\Source\scripts" -ItemType 'Directory' -Force | Out-Null
+    }
+
+    $modules = test-path "$Psscriptroot\Applications\Source\modules" 
+    if($modules -eq $false)
+    {
+        New-Item "$Psscriptroot\Applications\Source\modules" -ItemType 'Directory' -Force | Out-Null
+    }
+    
+    $images = test-path "$Psscriptroot\Applications\Source\images" 
+    if($images -eq $false)
+    {
+        New-Item "$Psscriptroot\Applications\Source\images" -ItemType 'Directory' -Force | Out-Null
+    }
+
+    #Download des files
+    $delete = test-path "$Psscriptroot\applications\source\scripts\delete.ps1"
+    if($delete -eq $false)
+    {
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/delete.ps1' -OutFile "$Psscriptroot\applications\source\scripts\delete.ps1"
+    }
+    $remove = test-path "$Psscriptroot\Remove.bat"
+    if($remove -eq $false)
+    {
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$Psscriptroot\Remove.bat" | Out-Null
+    }
+
 function Zipsource #Download et création des fondamentaux
 {
 $fondpath = test-Path "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
