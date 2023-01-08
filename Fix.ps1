@@ -23,6 +23,7 @@ Import-Module "$root\_Tech\Applications\Source\modules\update.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
 Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
+Import-Module "$root\_Tech\Applications\Source\modules\winget.psm1" | Out-Null #Module pour Winget
 
 $scriptDir = 
     if (-not $PSScriptRoot) 
@@ -112,14 +113,29 @@ function zipDDU
 
 function zipMinitool
 {
-    $sminitoolpath = test-Path "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard"
-    if($sminitoolpath -eq $false)
+    $minitoolpath = test-Path "$root\_Tech\Applications\fix\Source\Partition_Wizard"
+    $minitoolpath2 = test-Path "$root\Program Files\MiniTool Partition*\partitionwizard.exe"
+    if($minitoolpath)
     {
-    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/hUDD8v1EW0awbjwCip3xkg/Partition_Wizard.zip' -OutFile "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard.zip"
-    Expand-Archive "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard.zip" "$root\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard.zip"
+        Start-Process "$root\_Tech\Applications\fix\Source\Partition_Wizard\partitionwizard.exe"
     }
-    Start-Process "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard\partitionwizard.exe"
+    elseif($minitoolpath2)
+    {
+        Start-Process "$root\Program Files\MiniTool Partition*\partitionwizard.exe"
+    }
+    elseif($minitoolpath -eq $false -and $minitoolpath2 -eq $false)
+    {
+    Wingetinstall  
+    winget install -e --id  MiniTool.PartitionWizard.Free --accept-package-agreements --accept-source-agreements --silent | Out-Null
+    $minitoolpath2 = test-Path "$root\Program Files\MiniTool Partition*\partitionwizard.exe"
+        if($minitoolpath2 -eq $false)
+        {
+            Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/hUDD8v1EW0awbjwCip3xkg/Partition_Wizard.zip' -OutFile "$root\_Tech\Applications\fix\Source\Partition_Wizard.zip"
+            Expand-Archive "$root\_Tech\Applications\fix\Source\Partition_Wizard.zip" "$root\_Tech\Applications\fix\Source"
+            Remove-Item "$root\_Tech\Applications\fix\Source\Partition_Wizard.zip"
+            Start-Process "$root\_Tech\Applications\fix\Source\Partition_Wizard\partitionwizard.exe"
+        }
+    }
 }
 function zipTweak
 {
