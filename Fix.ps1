@@ -204,7 +204,8 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
     }
     else
     {
-        stop-process AliyunWrapExe -ErrorAction SilentlyContinue #gérer easeUS removal
+        Get-Process -Name AliyunWrapExe   
+        stop-process -Name AliyunWrapExe -ErrorAction SilentlyContinue #gérer easeUS removal
         Task
         exit
     }
