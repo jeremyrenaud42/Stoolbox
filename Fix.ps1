@@ -167,8 +167,8 @@ write-host "[2] Windows Tweak et Fix" -ForegroundColor 'Green'
 write-host "[3] Obtenir MDP et licenses" -ForegroundColor 'darkcyan'
 write-host "[4] Desinstaller les pilotes graphiques (DDU)" -ForegroundColor 'DarkGreen'
 write-host "[5] Supprimer un dossier" -ForegroundColor 'magenta'
-write-host "[6] Windirstat" -ForegroundColor 'red'
-write-host "[7] Partition Wizard" -ForegroundColor 'green'
+write-host "[6] Verifier taille des dossiers" -ForegroundColor 'red'
+write-host "[7] Gerer les partitions" -ForegroundColor 'green'
 write-host "[8] Reparer Internet" -ForegroundColor 'DarkRed'
 write-host "[9] Recuperer des donnees" -ForegroundColor 'Yellow'
 write-host ""
@@ -204,8 +204,8 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
     }
     else
     {
-        Get-Process -Name AliyunWrapExe   
-        stop-process -Name AliyunWrapExe -ErrorAction SilentlyContinue #gérer easeUS removal
+        Get-Process -Name AliyunWrapExe | Out-Null   
+        stop-process -Name AliyunWrapExe -ErrorAction SilentlyContinue | Out-Null #gérer easeUS removal
         Task
         exit
     }
