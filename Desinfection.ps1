@@ -21,19 +21,13 @@ function zipsourcevirus #Ce qui va toujours être redownloader à neuf à chaque
     Sourceexist
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' -OutFile ".\Source\fondvirus.png" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Icone.ico' -OutFile ".\Source\Icone.ico" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Log.txt' -OutFile ".\Source\Log.txt" | Out-Null
 }
 
 function zipHitmanPro
 {
-    $sourcepath = test-Path ".\Source"
     $PathHitmanPro = test-Path ".\Source\\HitmanPro.exe"
     if($PathHitmanPro -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item ".\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' -OutFile ".\Source\HitmanPro.exe"
     }
     Start-Process ".\Source\HitmanPro.exe"
@@ -60,14 +54,9 @@ function zipautoruns
 
 function zipprocessexplorer
 {
-    $sourcepath = test-Path ".\Source"
     $pathprocexp = test-Path ".\Source\procexp64.exe"
     if($pathprocexp -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item ".\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/procexp64.exe' -OutFile ".\Source\procexp64.exe"
     }
     Start-Process ".\Source\procexp64.exe"
@@ -76,14 +65,9 @@ function zipprocessexplorer
 
 function ziprkill
 {
-    $sourcepath = test-Path ".\Source"
     $pathrkill= test-Path ".\Source\rkill64.exe"
     if($pathrkill -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item ".\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/rkill64.exe' -OutFile ".\Source\rkill64.exe"
     }
     Start-Process ".\Source\rkill64.exe"
@@ -92,14 +76,9 @@ function ziprkill
 
 function zipadw
 {
-    $sourcepath = test-Path ".\Source"
     $pathadw = test-Path ".\Source\adwcleaner.exe"
     if($pathadw -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item ".\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/adwcleaner.exe' -OutFile ".\Source\adwcleaner.exe"
     }
     Start-Process ".\Source\adwcleaner.exe"
@@ -108,14 +87,9 @@ function zipadw
 
 function ziproguekiller
 {
-    $sourcepath = test-Path ".\Source"
     $pathroguekiller= test-Path ".\Source\Roguekiller\RogueKiller_Portable64.exe"
     if($pathroguekiller -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item ".\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Roguekiller.zip' -OutFile ".\Source\Roguekiller.zip"
     Expand-Archive ".\Source\Roguekiller.zip" ".\Source"
     Remove-Item ".\Source\Roguekiller.zip"
@@ -164,32 +138,6 @@ function zipccleaner
     }
     Start-Process "$env:SystemDrive\Temp\CCleaner\CCleaner64.exe"
     Addlog "desinfectionlog.txt" "Nettoyage CCleaner effectué"
-}
-
-function zipsas
-{
-    $sourcepath = test-Path ".\Source"
-    $pathsaskeyexe = test-Path ".\Source\sas\SUPERAntiSpywarePro.exe"
-    if($pathsaskeyexe -eq $false)
-    {
-        if($sourcepath -eq $false)
-        {
-            New-Item ".\Source" -ItemType Directory
-        }
-    Invoke-WebRequest https://ftp.alexchato9.com/public/file/fW_5VPlNykulXCXmtBaLYw/SAS.zip -OutFile ".\Source\sas.zip"
-    Expand-Archive ".\Source\sas.zip" ".\Source"
-    Remove-Item ".\Source\sas.zip"
-    }
-    $path = Test-Path "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
-    if($path)
-    {
-        Start-Process "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
-    }
-    else 
-    {
-        Start-Process ".\Source\sas\SUPERAntiSpywarePro.exe"
-    }    
-    Addlog "desinfectionlog.txt" "Analyse SuperAntiSpyware effectué"
 }
 
 zipsourcevirus
@@ -329,7 +277,7 @@ Function Revo
 $PathRevo= "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoUninstaller_Portable\\RevoUPort.exe"
 Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*","HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName  | Sort-Object -Property DisplayName | Format-Table �AutoSize > "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoBefore.txt"
 Start-Process -wait "$PathRevo"
-AddLog "Vérifier les programmes nuisibles"
+AddLog "desinfectionlog.txt" "Vérifier les programmes nuisibles"
 Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*","HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName  | Sort-Object -Property DisplayName | Format-Table �AutoSize > "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoAfter.txt"
 Compare-Object -ReferenceObject (Get-Content -path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoBefore.txt") -DifferenceObject (Get-Content -path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoAfter.txt") | Out-File ".\Source\Logs\Log.txt" -Append
 }
@@ -393,6 +341,7 @@ if($path -eq $false)
     winget install -e --id  Malwarebytes.Malwarebytes --accept-package-agreements --accept-source-agreements --silent
     Start-Process "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
 }
+Addlog "desinfectionlog.txt" "Analyse Malwarebyte effectué"
 })
 
 #SuperAntiSpyware
@@ -410,7 +359,14 @@ $SuperAntiSpyware.FlatAppearance.BorderColor = 'darkred'
 $SuperAntiSpyware.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $SuperAntiSpyware.FlatAppearance.MouseOverBackColor = 'gray'
 $SuperAntiSpyware.Add_Click({
-zipsas
+Wingetinstall
+$path = Test-Path "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
+if($path -eq $false)
+{
+    winget install -e --id  SUPERAntiSpyware.SUPERAntiSpyware --accept-package-agreements --accept-source-agreements --silent
+    Start-Process "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
+}
+Addlog "desinfectionlog.txt" "Analyse SuperAntiSpyware effectué"
 })
 
 #HitmanPro
