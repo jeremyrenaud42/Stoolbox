@@ -123,26 +123,28 @@ function zipMinitool
 }
 function zipTweak
 {
-    $tweakpath = test-Path "$root\\_Tech\\Applications\\fix\Source\Tweak"
+    $tweakpath = test-Path "$root\_Tech\\Applications\fix\Source\Tweak"
     if($tweakpath -eq $false)
     {
-    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/YRbvPvpuCkO0OmxvzU_w4A/Tweak.zip' -OutFile "$root\\_Tech\\Applications\\fix\Source\Tweak.zip"
-    Expand-Archive "$root\\_Tech\\Applications\\fix\Source\Tweak.zip" "$root\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$root\\_Tech\\Applications\\fix\Source\Tweak.zip"
+    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/Z4xt79_g8k6pp7uEkQQMzg/Tweak.zip' -OutFile "$root\_Tech\Applications\fix\Source\Tweak.zip"
+    Expand-Archive "$root\_Tech\Applications\fix\Source\Tweak.zip" "$root\_Tech\Applications\fix\Source"
+    Remove-Item "$root\_Tech\Applications\fix\Source\Tweak.zip"
     }
 }
 
 function Tweaking
 {
-    $path = Test-Path "$root\\_Tech\\Applications\\fix\Source\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
-    $desktoppath = test-path "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
-    if($path)
+    $path = Test-Path "$root\_Tech\Applications\fix\Source\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
+    if($path -eq $false)
     {
-        if($desktoppath)
-        {
-            Start-Process "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
-        }
-        Copy-Item "$root\\_Tech\\Applications\\fix\Source\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair"
+        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/xOQ0JbscWkmQZ-5Zfwzpnw/tweaking.com%20-%20Windows%20Repair.zip' -OutFile "$root\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip"
+        Expand-Archive "$root\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip" "$root\_Tech\Applications\fix\Source\Tweak"
+        Remove-Item "$root\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip"
+        Copy-Item "$root\_Tech\Applications\fix\Source\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair"
+        Start-Process "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
+    }    
+    elseif($path)
+    {
         Start-Process "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
     }
 }
@@ -267,10 +269,9 @@ function submenuTweak
 Clear-Host
 write-host "[1] Fix w10"
 write-host "[2] Fix w8"
-write-host "[3] Fix w7"
-write-host "[4] Tweaking - Windows Repair"
-write-host "[5] Ultimate Windows Tweaker W10"
-write-host "[6] Ultimate Windows Tweaker W11"
+write-host "[3] Ultimate Windows Tweaker W10"
+write-host "[4] Ultimate Windows Tweaker W11"
+write-host "[5] Tweaking Windows Repair"
 write-host ""
 Write-host "[0] Retour au menu precedent" -ForegroundColor 'red'
 $choix = read-host "Choisissez une option"
@@ -280,10 +281,9 @@ switch ($choix)
 0{menu}
 1{Start-Process "$PSScriptRoot\Source\Tweak\FixWin10\FixWin 10.2.2.exe";Break}
 2{Start-Process "$PSScriptRoot\Source\Tweak\FixWin8\FixWin 2.2.exe";break}
-3{Start-Process "$PSScriptRoot\Source\Tweak\FixWin7\FixWin v 1.2.exe";Break}
-4{Tweaking;Break} 
-5{Start-Process "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe";Break}
-6{Start-Process "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.0.exe";break}
+3{Start-Process "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe";Break}
+4{Start-Process "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.0.exe";break}
+5{Tweaking;Break} 
 }
 Start-Sleep 1
 submenuTweak
