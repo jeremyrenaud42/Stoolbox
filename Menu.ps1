@@ -330,7 +330,7 @@ $changelog = New-Object System.Windows.Forms.Button
 $changelog.Location = New-Object System.Drawing.Point(026,600)
 $changelog.Width = '115'
 $changelog.Height = '40'
-$changelog.ForeColor= 'darkred'
+$changelog.ForeColor= 'white'
 $changelog.BackColor = 'black'
 $changelog.Text = "Changelog"
 $changelog.Font= 'Microsoft Sans Serif,10'
@@ -342,8 +342,11 @@ $quit.FlatAppearance.MouseOverBackColor = 'darkred'
 $changelog.Add_MouseEnter({$changelog.ForeColor = 'black'})
 $changelog.Add_MouseLeave({$changelog.ForeColor = 'darkred'})
 $changelog.Add_Click({
+    $form.TopMost = $false
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' -OutFile "$env:SystemDrive\_Tech\changelog.txt" | Out-Null #download le .ps1
     Start-Process "$env:SystemDrive\_Tech\changelog.txt"
+    Start-Sleep -s 5
+    $form.TopMost = $true
 })
 
 #quitter
