@@ -339,6 +339,17 @@ $path = Test-Path "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam
 if($path -eq $false)
 {
     winget install -e --id  Malwarebytes.Malwarebytes --accept-package-agreements --accept-source-agreements --silent
+    if($path -eq $false)
+    {
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite Malwarebytes Installer.exe' -OutFile ".\Source\Ninite Malwarebytes Installer.exe"
+    }
+    else
+    {
+        Start-Process "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
+    } 
+}
+else 
+{
     Start-Process "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
 }
 Addlog "desinfectionlog.txt" "Analyse Malwarebyte effectué"
@@ -364,6 +375,17 @@ $path = Test-Path "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyw
 if($path -eq $false)
 {
     winget install -e --id  SUPERAntiSpyware.SUPERAntiSpyware --accept-package-agreements --accept-source-agreements --silent
+    if($path -eq $false)
+    {
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite SUPERAntiSpyware Installer.exe' -OutFile ".\Source\Ninite SUPERAntiSpyware Installer.exe"
+    }
+    else 
+    {
+        Start-Process "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe" 
+    }  
+}
+else 
+{
     Start-Process "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
 }
 Addlog "desinfectionlog.txt" "Analyse SuperAntiSpyware effectué"
