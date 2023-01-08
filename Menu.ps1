@@ -17,30 +17,30 @@ function Admin
 
 function  Preinstall  #Création des dossiers
 {
-    $Applications = test-path "$Psscriptroot\Applications" 
+    $Applications = test-path "$env:SystemDrive\_Tech\Applications" 
     if($Applications -eq $false)
     {
-        New-Item "$Psscriptroot\Applications" -ItemType 'Directory' -Force | Out-Null
+        New-Item "$env:SystemDrive\_Tech\Applications" -ItemType 'Directory' -Force | Out-Null
     }
-    $Source = test-path "$Psscriptroot\Applications\Source"  
+    $Source = test-path "$env:SystemDrive\_Tech\Applications\Source"  
     if($Source -eq $false)
     {
-        New-Item "$Psscriptroot\Applications\Source" -ItemType 'Directory' -Force | Out-Null
+        New-Item "$env:SystemDrive\_Tech\Applications\Source" -ItemType 'Directory' -Force | Out-Null
     }
-    $scripts = test-path "$Psscriptroot\Applications\Source\scripts" 
+    $scripts = test-path "$env:SystemDrive\_Tech\Applications\Source\scripts" 
     if($scripts -eq $false)
     {
-        New-Item "$Psscriptroot\Applications\Source\scripts" -ItemType 'Directory' -Force | Out-Null
+        New-Item "$env:SystemDrive\_Tech\Applications\Source\scripts" -ItemType 'Directory' -Force | Out-Null
     }
-    $modules = test-path "$Psscriptroot\Applications\Source\modules" 
+    $modules = test-path "$env:SystemDrive\_Tech\Applications\Source\modules" 
     if($modules -eq $false)
     {
-        New-Item "$Psscriptroot\Applications\Source\modules" -ItemType 'Directory' -Force | Out-Null
+        New-Item "$env:SystemDrive\_Tech\Applications\Source\modules" -Force | Out-Null
     }
-    $images = test-path "$Psscriptroot\Applications\Source\images" 
+    $images = test-path "$env:SystemDrive\_Tech\Applications\Source\images" 
     if($images -eq $false)
     {
-        New-Item "$Psscriptroot\Applications\Source\images" -ItemType 'Directory' -Force | Out-Null
+        New-Item "$env:SystemDrive\_Tech\Applications\Source\images" -ItemType 'Directory' -Force | Out-Null
     }
     $Tempfodler = Test-Path "$env:SystemDrive\Temp"
     if($Tempfodler -eq $false)
@@ -325,6 +325,26 @@ Zipfix
 $form.Close()
 })
 
+#changelog
+$changelog = New-Object System.Windows.Forms.Button
+$changelog.Location = New-Object System.Drawing.Point(026,600)
+$changelog.Width = '115'
+$changelog.Height = '40'
+$changelog.ForeColor= 'darkred'
+$changelog.BackColor = 'black'
+$changelog.Text = "Changelog"
+$changelog.Font= 'Microsoft Sans Serif,10'
+$changelog.FlatStyle = 'Flat'
+$changelog.FlatAppearance.BorderSize = 3
+$changelog.FlatAppearance.BorderColor = 'black'
+$changelog.FlatAppearance.MouseDownBackColor = 'Darkcyan'
+$quit.FlatAppearance.MouseOverBackColor = 'darkred'
+$changelog.Add_MouseEnter({$changelog.ForeColor = 'black'})
+$changelog.Add_MouseLeave({$changelog.ForeColor = 'darkred'})
+$changelog.Add_Click({
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' -OutFile "$env:SystemDrive\_Tech\changelog.txt" | Out-Null #download le .ps1
+    Start-Process "$env:SystemDrive\_Tech\changelog.txt"
+})
 
 #quitter
 $quit = New-Object System.Windows.Forms.Button
@@ -373,5 +393,5 @@ $signatureSTO.Text = "Propriété de Jérémy Renaud"
 $signatureSTO.TextAlign = 'Middleleft'
 
 #afficher la form
-$form.controls.AddRange(@($signatureSTO,$labelchoisiroption,$boutonInstall,$boutonOptiNett,$diagnostic,$desinfection,$fix,$quit,$pictureBoxBackGround))
+$form.controls.AddRange(@($signatureSTO,$labelchoisiroption,$boutonInstall,$boutonOptiNett,$diagnostic,$desinfection,$fix,$quit,$changelog,$pictureBoxBackGround))
 $form.ShowDialog() | out-null
