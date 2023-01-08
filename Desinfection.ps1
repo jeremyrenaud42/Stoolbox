@@ -334,14 +334,15 @@ $MalwareByte.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $MalwareByte.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $MalwareByte.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $MalwareByte.Add_Click({
-Wingetinstall
 $path = Test-Path "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
 if($path -eq $false)
 {
+    Wingetinstall
     winget install -e --id  Malwarebytes.Malwarebytes --accept-package-agreements --accept-source-agreements --silent
     if($path -eq $false)
     {
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite Malwarebytes Installer.exe' -OutFile ".\Source\Ninite Malwarebytes Installer.exe"
+        Start-Process ".\Source\Ninite Malwarebytes Installer.exe"
     }
     else
     {
@@ -370,14 +371,15 @@ $SuperAntiSpyware.FlatAppearance.BorderColor = 'darkred'
 $SuperAntiSpyware.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $SuperAntiSpyware.FlatAppearance.MouseOverBackColor = 'gray'
 $SuperAntiSpyware.Add_Click({
-Wingetinstall
 $path = Test-Path "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
 if($path -eq $false)
 {
+    Wingetinstall
     winget install -e --id  SUPERAntiSpyware.SUPERAntiSpyware --accept-package-agreements --accept-source-agreements --silent
     if($path -eq $false)
     {
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite SUPERAntiSpyware Installer.exe' -OutFile ".\Source\Ninite SUPERAntiSpyware Installer.exe"
+        Start-Process ".\Source\Ninite SUPERAntiSpyware Installer.exe"
     }
     else 
     {
