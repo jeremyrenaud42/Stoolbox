@@ -35,7 +35,7 @@ function  Preinstall  #Création des dossiers
     $modules = test-path "$env:SystemDrive\_Tech\Applications\Source\modules" 
     if($modules -eq $false)
     {
-        New-Item "$env:SystemDrive\_Tech\Applications\Source\modules" -Force | Out-Null
+        New-Item "$env:SystemDrive\_Tech\Applications\Source\modules" -ItemType 'Directory' -Force | Out-Null
     }
     $images = test-path "$env:SystemDrive\_Tech\Applications\Source\images" 
     if($images -eq $false)
