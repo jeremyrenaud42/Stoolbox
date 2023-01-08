@@ -115,7 +115,7 @@ function zipMinitool
     $sminitoolpath = test-Path "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard"
     if($sminitoolpath -eq $false)
     {
-    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/XqWu-SWMYUK0NIeIeo9hLA/Partition_Wizard.zip' -OutFile "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard.zip"
+    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/hUDD8v1EW0awbjwCip3xkg/Partition_Wizard.zip' -OutFile "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard.zip"
     Expand-Archive "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard.zip" "$root\\_Tech\\Applications\\fix\Source"
     Remove-Item "$root\\_Tech\\Applications\\fix\Source\Partition_Wizard.zip"
     }
@@ -126,7 +126,7 @@ function zipTweak
     $tweakpath = test-Path "$root\_Tech\\Applications\fix\Source\Tweak"
     if($tweakpath -eq $false)
     {
-    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/Z4xt79_g8k6pp7uEkQQMzg/Tweak.zip' -OutFile "$root\_Tech\Applications\fix\Source\Tweak.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' -OutFile "$root\_Tech\Applications\fix\Source\Tweak.zip"
     Expand-Archive "$root\_Tech\Applications\fix\Source\Tweak.zip" "$root\_Tech\Applications\fix\Source"
     Remove-Item "$root\_Tech\Applications\fix\Source\Tweak.zip"
     }
