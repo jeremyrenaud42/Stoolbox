@@ -1,0 +1,5 @@
+Version :
+
+2020-01-07:
+- Ajout du bouton changelog à Menu
+- Améliorer Secu_Dossier de Fix
