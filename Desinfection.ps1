@@ -15,6 +15,7 @@ Import-Module "$root\_Tech\Applications\Source\modules\choco.psm1" | Out-Null #M
 Import-Module "$root\_Tech\Applications\Source\modules\winget.psm1" | Out-Null #Module pour Winget
 Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
 Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
+Import-Module "$root\_Tech\Applications\Source\modules\restore.psm1" | Out-Null #Module pour créer source
 
 function zipsourcevirus #Ce qui va toujours être redownloader à neuf à chaque lancement. Le pack obligatoire pour le fonctionnement + le reset des logs
 {
@@ -142,6 +143,7 @@ function zipccleaner
 
 zipsourcevirus
 
+<#
 function Restore
 {
 write-host "création du point de restauration"
@@ -152,15 +154,16 @@ REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V "Sy
 Checkpoint-Computer -Description "STO" -RestorePointType "MODIFY_SETTINGS"
 [System.Windows.MessageBox]::Show("Point de restauration créé avec succès","Point de restauration",0) | Out-Null
 }
+#>
 
-$image = [system.drawing.image]::FromFile(".\Source\fondvirus.png") 
+$image = [system.drawing.image]::FromFile("$root\_Tech\\Applications\Securite\Source\fondvirus.png") 
 $Form = New-Object System.Windows.Forms.Form
 $Form.Text = "Desinfection"
 $Form.BackgroundImage = $image
 $Form.Width = $image.Width
 $Form.height = $image.height
 $Form.MaximizeBox = $false
-$Form.icon = New-Object system.drawing.icon (".\Source\Icone.ico") 
+$Form.icon = New-Object system.drawing.icon ("$root\_Tech\\Applications\Securite\Source\Icone.ico") 
 #$Form.add_FormClosed({Task;$Form.Close()}) #Supprimer le dossier _Tech lorsque la form se ferme
 
 
@@ -268,7 +271,7 @@ $Restauration.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $Restauration.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $Restauration.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Restauration.Add_Click({
-Restore | Out-Null
+CreateRestorePoint #| Out-Null
 Addlog "desinfectionlog.txt" "Point de restauration effectué"
 })
 
@@ -337,12 +340,19 @@ $MalwareByte.Add_Click({
 $path = Test-Path "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
 if($path -eq $false)
 {
-    Wingetinstall
-    winget install -e --id  Malwarebytes.Malwarebytes --accept-package-agreements --accept-source-agreements --silent
+    Chocoinstall
+    choco install malwarebytes -y | Out-Null
     if($path -eq $false)
     {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite Malwarebytes Installer.exe' -OutFile ".\Source\Ninite Malwarebytes Installer.exe"
-        Start-Process ".\Source\Ninite Malwarebytes Installer.exe"
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite Malwarebytes Installer.exe' -OutFile "$root\_Tech\Applications\Securite\Source\Ninite Malwarebytes Installer.exe"
+        Start-Process "$root\_Tech\\Applications\Securite\Source\Ninite Malwarebytes Installer.exe"
+        $path = Test-Path "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
+        if($path -eq $false)
+        {
+            Wingetinstall
+            winget install -e --id  Malwarebytes.Malwarebytes --accept-package-agreements --accept-source-agreements --silent
+            Start-Process "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
+        }  
     }
     else
     {
@@ -374,12 +384,19 @@ $SuperAntiSpyware.Add_Click({
 $path = Test-Path "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
 if($path -eq $false)
 {
-    Wingetinstall
-    winget install -e --id  SUPERAntiSpyware.SUPERAntiSpyware --accept-package-agreements --accept-source-agreements --silent
+    Chocoinstall
+    choco install superantispyware -y | out-null
+    Start-Process "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe" 
     if($path -eq $false)
     {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite SUPERAntiSpyware Installer.exe' -OutFile ".\Source\Ninite SUPERAntiSpyware Installer.exe"
-        Start-Process ".\Source\Ninite SUPERAntiSpyware Installer.exe"
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite SUPERAntiSpyware Installer.exe' -OutFile "$root\_Tech\Applications\Securite\Source\Ninite SUPERAntiSpyware Installer.exe"
+        Start-Process "$root\_Tech\\Applications\Securite\Source\Ninite SUPERAntiSpyware Installer.exe"
+        $path = Test-Path "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
+        if($path -eq $false)
+        {
+            Wingetinstall
+            winget install -e --id  SUPERAntiSpyware.SUPERAntiSpyware --accept-package-agreements --accept-source-agreements --silent
+        } 
     }
     else 
     {
