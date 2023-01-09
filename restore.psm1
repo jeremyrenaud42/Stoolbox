@@ -3,11 +3,11 @@ function VerifRestorepoint
     $listrestorepoint = Get-ComputerRestorePoint | Select-Object Description
     if($listrestorepoint -match "STO")
     {
-        [System.Windows.MessageBox]::Show("Point de restauration créé avec succès","Point de restauration",0) | Out-Null
+        [System.Windows.MessageBox]::Show("Point de restauration cree avec succes","Point de restauration",0) | Out-Null
     }
     else 
     {
-        [System.Windows.MessageBox]::Show("Erreur lors de la création du point de restauration","Point de restauration",0) | Out-Null
+        [System.Windows.MessageBox]::Show("Erreur lors de la creation du point de restauration","Point de restauration",0) | Out-Null
     }
 }
 function CreateRestorePoint
