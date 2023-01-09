@@ -66,14 +66,14 @@ function Remove
 
 function modules
 {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/choco.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\choco.psm1" | Out-Null  
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/task.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\task.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/update.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\update.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/winget.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\winget.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Voice.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Voice.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Logs.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Logs.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/source.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\source.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/restore.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\restore.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/choco.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\choco.psm1" | Out-Null  
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/task.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\task.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/update.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\update.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/winget.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\winget.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/Voice.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Voice.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/Logs.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Logs.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/source.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\source.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/restore.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\restore.psm1" | Out-Null
 }
     
 function Zipsource #Download et création des fondamentaux
