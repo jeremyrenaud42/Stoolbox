@@ -73,6 +73,7 @@ function modules
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Voice.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Voice.psm1" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Logs.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Logs.psm1" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/source.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\source.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/restore.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\restore.psm1" | Out-Null
 }
     
 function Zipsource #Download et création des fondamentaux
