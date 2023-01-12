@@ -24,7 +24,9 @@ Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Mo
 Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
 Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
 Import-Module "$root\_Tech\Applications\Source\modules\winget.psm1" | Out-Null #Module pour Winget
+Import-Module "$root\_Tech\Applications\Source\modules\choco.psm1" | Out-Null #Module pour chocolatey
 
+<#
 $scriptDir = 
     if (-not $PSScriptRoot) 
     {
@@ -36,6 +38,7 @@ $scriptDir =
         $PSScriptRoot
     }
 $lettre = [System.IO.path]::GetPathRoot($scriptDir)
+#>
 
 Sourceexist
 
@@ -113,27 +116,20 @@ function zipDDU
 
 function zipMinitool
 {
-    $minitoolpath = test-Path "$root\_Tech\Applications\fix\Source\Partition_Wizard"
-    $minitoolpath2 = test-Path "$root\Program Files\MiniTool Partition*\partitionwizard.exe"
+    $minitoolpath = test-Path "$root\Program Files\MiniTool Partition*\partitionwizard.exe"
     if($minitoolpath)
-    {
-        Start-Process "$root\_Tech\Applications\fix\Source\Partition_Wizard\partitionwizard.exe"
-    }
-    elseif($minitoolpath2)
     {
         Start-Process "$root\Program Files\MiniTool Partition*\partitionwizard.exe"
     }
-    elseif($minitoolpath -eq $false -and $minitoolpath2 -eq $false)
+    elseif($minitoolpath -eq $false)
     {
     Wingetinstall  
     winget install -e --id  MiniTool.PartitionWizard.Free --accept-package-agreements --accept-source-agreements --silent | Out-Null
-    $minitoolpath2 = test-Path "$root\Program Files\MiniTool Partition*\partitionwizard.exe"
-        if($minitoolpath2 -eq $false)
+    $minitoolpath = test-Path "$root\Program Files\MiniTool Partition*\partitionwizard.exe"
+        if($minitoolpath -eq $false)
         {
-            Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/hUDD8v1EW0awbjwCip3xkg/Partition_Wizard.zip' -OutFile "$root\_Tech\Applications\fix\Source\Partition_Wizard.zip"
-            Expand-Archive "$root\_Tech\Applications\fix\Source\Partition_Wizard.zip" "$root\_Tech\Applications\fix\Source"
-            Remove-Item "$root\_Tech\Applications\fix\Source\Partition_Wizard.zip"
-            Start-Process "$root\_Tech\Applications\fix\Source\Partition_Wizard\partitionwizard.exe"
+            Chocoinstall
+            choco install partitionwizard -y | Out-Null
         }
     }
 }
@@ -216,16 +212,20 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
 
     if($sortie -eq "o")
     {   
-        Set-Location "$lettre\\_Tech"
-        start-process "$lettre\\_Tech\Menu.bat" -verb Runas
+        Set-Location "$root\_Tech"
+        start-process "$root\_Tech\Menu.bat" -verb Runas
         exit
     }
-    else
+    elseif($sortie -eq "n")
     {
         Get-Process -Name AliyunWrapExe -ErrorAction SilentlyContinue | Out-Null   
         stop-process -Name AliyunWrapExe -ErrorAction SilentlyContinue | Out-Null #gérer easeUS removal
         Task
         exit
+    }
+    else 
+    {
+        sortie
     }
 }
 
@@ -243,7 +243,7 @@ $choix = read-host "Choisissez une option"
 
 switch ($choix)
 {
-0{set-location "$lettre\\_Tech\\applications\\fix";menu;break}
+0{set-location "$root\_Tech\\applications\fix";menu;break}
 1{Start-Process "$PSScriptRoot\Source\Scripts\sfcScannow.bat" | Addlog "Fixlog.txt" "Réparation des fichiers corrompus";Break}
 2{Start-Process "$PSScriptRoot\Source\Scripts\DISM.bat" | Addlog "Fixlog.txt" "Réparation du Windows";Break}
 3{Start-Process "$PSScriptRoot\Source\Scripts\CHKDSK.BAT" | Addlog "Fixlog.txt" "Réparation du HDD";Break}
