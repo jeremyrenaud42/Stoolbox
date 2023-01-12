@@ -1,177 +1,62 @@
-﻿Add-Type -AssemblyName PresentationFramework
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName System.speech
-Add-Type -AssemblyName System.Drawing
-Add-Type -AssemblyName presentationCore
+﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
-
-$driveletter = $pwd.drive.name
-$root = "$driveletter" + ":"
 
 set-location "$env:SystemDrive\_Tech\Applications\Diagnostique" #met la location au repertoir actuel
 
-Import-Module "$root\_Tech\Applications\Source\modules\update.psm1" | Out-Null
-Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
-Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
-Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
+Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\update.psm1" | Out-Null
+Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
+Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
+Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
 
-function zipsourcediag #Ce qui va toujours être redownloader à neuf à chaque lancement. Le pack obligatoire pour le fonctionnement + le reset des logs
+function zipsourcediag
 {
     Sourceexist
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' -OutFile "$root\_Tech\Applications\Diagnostique\Source\fondDiag.jpg" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Icone.ico' -OutFile "$root\_Tech\Applications\Diagnostique\Source\Icone.ico" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Log.txt' -OutFile "$root\_Tech\Applications\Diagnostique\Source\Log.txt" | Out-Null
+    $fondpath = test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\fondDiag.jpg" #Vérifie si le fond écran est présent
+    $iconepath = test-path "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Icone.ico" #vérifie si l'icone existe
+    if($fondpath -eq $false) #si fond pas présent
+    {
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\fondDiag.jpg" | Out-Null #Download le fond
+    }
+    if($iconepath -eq $false) #si icone pas présent
+    {
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Icone.ico" | Out-Null #Download l'icone
+    } 
 }
 zipsourcediag
 
-function zipbatterie
+function Unzip($app, $lien)
 {
-    $sourcepath = test-Path "$root\_Tech\Applications\Diagnostique\Source\"
-    $batteriepath = test-Path "$root\_Tech\Applications\Diagnostique\Source\Batterie"
-    if($batteriepath -eq $false)
+    $path = test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app"
+    $zip = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app.zip"
+    if($path -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\_Tech\Applications\Diagnostique\Source" -ItemType Directory
-        }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip' -OutFile $root\_Tech\Applications\Diagnostique\Source\Batterie.zip
-    Expand-Archive $root\_Tech\Applications\Diagnostique\Source\Batterie.zip $root\_Tech\Applications\Diagnostique\Source
-    Remove-Item $root\_Tech\Applications\Diagnostique\Source\Batterie.zip
+        Invoke-WebRequest $lien -OutFile $zip
+        Expand-Archive $zip "$env:SystemDrive\_Tech\Applications\Diagnostique\Source"
+        Remove-Item $zip
     }
-    Update "Diagnostique" "batterie" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Diagnostique/batterie.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip'
 }
 
-function zipGPU
+function UnzipLaunch($app, $lien, $exe)
 {
-    $sourcepath = test-Path "$root\_Tech\Applications\Diagnostique\Source\"
-    $gpupath = test-Path "$root\_Tech\Applications\Diagnostique\Source\GPU"
-    if($gpupath -eq $false)
+    $path = test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app"
+    $zip = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app.zip"
+    if($path -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\_Tech\Applications\Diagnostique\Source" -ItemType Directory
-        }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' -OutFile $root\_Tech\Applications\Diagnostique\Source\GPU.zip
-    Expand-Archive $root\_Tech\Applications\Diagnostique\Source\GPU.zip $root\_Tech\Applications\Diagnostique\Source
-    Remove-Item $root\_Tech\Applications\Diagnostique\Source\GPU.zip
+        Invoke-WebRequest $lien -OutFile $zip
+        Expand-Archive $zip "$env:SystemDrive\_Tech\Applications\Diagnostique\Source"
+        Remove-Item $zip
     }
-    Update "Diagnostique" "GPU" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Diagnostique/GPU.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip'
-}
-function zipcpu
-{
-    $sourcepath = test-Path "$root\_Tech\Applications\Diagnostique\Source\"
-    $cpupath = test-Path "$root\_Tech\Applications\Diagnostique\Source\cpu"
-    if($cpupath -eq $false)
-    {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\_Tech\Applications\Diagnostique\Source" -ItemType Directory
-        }
-    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/BB4NxwBawUmDufbDNKEJAA/CPU.zip' -OutFile $root\_Tech\Applications\Diagnostique\Source\cpu.zip
-    Expand-Archive $root\_Tech\Applications\Diagnostique\Source\cpu.zip $root\_Tech\Applications\Diagnostique\Source
-    Remove-Item $root\_Tech\Applications\Diagnostique\Source\cpu.zip
-    }
-    Update "Diagnostique" "CPU" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Diagnostique/CPU.version.txt' 'https://ftp.alexchato9.com/public/file/BB4NxwBawUmDufbDNKEJAA/CPU.zip'
-}
+    Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app\$exe"
+} 
 
-function ziphdd
-{
-    $sourcepath = test-Path "$root\_Tech\Applications\Diagnostique\Source"
-    $hddpath = test-Path "$root\_Tech\Applications\Diagnostique\Source\hdd\As_SSD" #Vérifie asSSD car deja créé HDD par opti
-    if($hddpath -eq $false)
-    {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\_Tech\Applications\Diagnostique\Source" -ItemType Directory
-        }
-    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/t6QQNrPcLk6gruXnTEr1fA/HDD.zip' -OutFile $root\_Tech\Applications\Diagnostique\Source\hdd.zip
-    Expand-Archive $root\_Tech\Applications\Diagnostique\Source\hdd.zip $root\_Tech\Applications\Diagnostique\Source -Force
-    Remove-Item $root\_Tech\Applications\Diagnostique\Source\hdd.zip
-    }
-    Update "Diagnostique" "HDD" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Diagnostique/HDD.version.txt' 'https://ftp.alexchato9.com/public/file/t6QQNrPcLk6gruXnTEr1fA/HDD.zip'
-}
-
-function zipspeccy
-{
-    $sourcepath = test-Path "$root\_Tech\Applications\Diagnostique\Source\"
-    $speccypath = test-Path "$root\_Tech\Applications\Diagnostique\Source\speccy"
-    if($speccypath -eq $false)
-    {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\_Tech\Applications\Diagnostique\Source" -ItemType Directory
-        }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip' -OutFile $root\_Tech\Applications\Diagnostique\Source\speccy.zip
-    Expand-Archive $root\_Tech\Applications\Diagnostique\Source\speccy.zip $root\_Tech\Applications\Diagnostique\Source
-    Remove-Item $root\_Tech\Applications\Diagnostique\Source\speccy.zip
-    }
-    Update "Diagnostique" "Speccy" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Diagnostique/speccy.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip'
-    Start-Process "$root\_Tech\Applications\Diagnostique\Source\Speccy\Speccy.exe"
-}
-
-function ziphwmonitor
-{
-    $sourcepath = test-Path "$root\_Tech\Applications\Diagnostique\Source\"
-    $hwmonitorpath = test-Path "$root\_Tech\Applications\Diagnostique\Source\hwmonitor"
-    if($hwmonitorpath -eq $false)
-    {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\_Tech\Applications\Diagnostique\Source" -ItemType Directory
-        }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor.zip' -OutFile $root\_Tech\Applications\Diagnostique\Source\hwmonitor.zip
-    Expand-Archive $root\_Tech\Applications\Diagnostique\Source\hwmonitor.zip $root\_Tech\Applications\Diagnostique\Source
-    Remove-Item $root\_Tech\Applications\Diagnostique\Source\hwmonitor.zip
-    }
-    Update "Diagnostique" "HWMonitor" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Diagnostique/HWMonitor.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor.zip'
-    Start-Process "$root\_Tech\Applications\Diagnostique\Source\HWMonitor\HWMonitor_x64.exe"
-}
-
-function zipsysinfo
-{
-    $sourcepath = test-Path "$root\_Tech\Applications\Diagnostique\Source\"
-    $sysinfopath = test-Path "$root\_Tech\Applications\Diagnostique\Source\sysinfo"
-    if($sysinfopath -eq $false)
-    {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\_Tech\Applications\Diagnostique\Source" -ItemType Directory
-        }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Sysinfo.zip' -OutFile $root\_Tech\Applications\Diagnostique\Source\sysinfo.zip
-    Expand-Archive $root\_Tech\Applications\Diagnostique\Source\sysinfo.zip $root\_Tech\Applications\Diagnostique\Source
-    Remove-Item $root\_Tech\Applications\Diagnostique\Source\sysinfo.zip
-    }
-    Update "Diagnostique" "Sysinfo" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Diagnostique/Sysinfo.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Sysinfo.zip'
-    Start-Process "$root\_Tech\Applications\Diagnostique\Source\Sysinfo\sysinfoz.exe"
-}
-
-function zipwhocrashed
-{
-    $sourcepath = test-Path "$root\_Tech\Applications\Diagnostique\Source\"
-    $whocrashedpath = test-Path "$root\_Tech\Applications\Diagnostique\Source\whocrashed"
-    if($whocrashedpath -eq $false)
-    {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\_Tech\Applications\Diagnostique\Source" -ItemType Directory
-        }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashed.zip' -OutFile $root\_Tech\Applications\Diagnostique\Source\whocrashed.zip
-    Expand-Archive $root\_Tech\Applications\Diagnostique\Source\whocrashed.zip $root\_Tech\Applications\Diagnostique\Source
-    Remove-Item $root\_Tech\Applications\Diagnostique\Source\whocrashed.zip
-    }
-    Update "Diagnostique" "WhoCrashed" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Diagnostique/WhoCrashed.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashed.zip'
-    Start-Process "$root\_Tech\Applications\Diagnostique\Source\Whocrashed\WhoCrashedEx.exe"
-}
-
-$image = [system.drawing.image]::FromFile("$root\_Tech\Applications\Diagnostique\Source\fondDiag.jpg")
+$image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Diagnostique\Source\fondDiag.jpg")
 $Form = New-Object System.Windows.Forms.Form
 $Form.Text = "Diagnostiques"
 $Form.BackgroundImage = $image
 $Form.Width = $image.Width
 $Form.height = $image.height
 $Form.MaximizeBox = $false
-$Form.icon = New-Object system.drawing.icon ("$root\_Tech\Applications\Diagnostique\Source\Icone.ico") 
-
+$Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Icone.ico") 
 
 #Boutonbat
 $Boutonbat = New-Object System.Windows.Forms.Button
@@ -189,13 +74,12 @@ $Boutonbat.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $Boutonbat.FlatAppearance.MouseOverBackColor = 'gray'
 $Boutonbat.Add_MouseEnter({$Boutonbat.ForeColor = 'White'})
 $Boutonbat.Add_MouseLeave({$Boutonbat.ForeColor = 'black'})
-$Boutonbat.Add_Click({zipbatterie})
+$Boutonbat.Add_Click({Unzip "Batterie" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip"})
 $Boutonbat.Add_Click({$Battinfo.visible = $true})
 $Boutonbat.Add_Click({$Dontsleep.visible = $true})
 $Boutonbat.Add_Click({$Boutonbat.visible = $false})
 $Boutonbat.Add_Click({$docbattinfo.visible = $true})
 $Boutonbat.Add_Click({$Dontsleepinfo.visible = $true})
-
 
 #Battinfo
 $Battinfo = New-Object System.Windows.Forms.Button
@@ -214,7 +98,7 @@ $Battinfo.FlatAppearance.MouseOverBackColor = 'gray'
 $Battinfo.Add_MouseEnter({$Battinfo.ForeColor = 'White'})
 $Battinfo.Add_MouseLeave({$Battinfo.ForeColor = 'black'})
 $Battinfo.Add_Click({
-Start-Process "$root\_Tech\Applications\Diagnostique\Source\Batterie\battinfoview\batteryinfoview.exe"
+Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\battinfoview\batteryinfoview.exe"
 Addlog "diagnostiquelog.txt" "Usure de la batterie vérifié"
 })
 #Tooltip
@@ -229,10 +113,9 @@ $docbattinfo = New-Object System.Windows.Forms.Button
 $docbattinfo.Location = New-Object System.Drawing.Point(445,140)
 $docbattinfo.size = '33,18'
 $docbattinfo.Text = "Doc"
-$docbattinfo.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\Batterie\battinfoview\docs.txt"})
+$docbattinfo.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\battinfoview\docs.txt"})
 $docbattinfo.visible = $false
 #$Form.Controls.Add($docbattinfo)
-
 
 #Dontsleep
 $Dontsleep = New-Object System.Windows.Forms.Button
@@ -251,7 +134,7 @@ $Dontsleep.FlatAppearance.MouseOverBackColor = 'gray'
 $Dontsleep.Add_MouseEnter({$Dontsleep.ForeColor = 'White'})
 $Dontsleep.Add_MouseLeave({$Dontsleep.ForeColor = 'black'})
 $Dontsleep.Add_Click({
-Start-Process "$root\_Tech\Applications\Diagnostique\Source\Batterie\DontSleep\DontSleep_x64_p.exe"
+Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\DontSleep\DontSleep_x64_p.exe"
 Addlog "diagnostiquelog.txt" "Dontsleep a été utilisé pour tester la batterie"
 })
 #Tooltip
@@ -265,10 +148,9 @@ $Dontsleepinfo = New-Object System.Windows.Forms.Button
 $Dontsleepinfo.Location = New-Object System.Drawing.Point(445,215)
 $Dontsleepinfo.size = '33,18'
 $Dontsleepinfo.Text = "Doc"
-$Dontsleepinfo.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Batterie\DontSleep\docs.txt"})
+$Dontsleepinfo.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Batterie\DontSleep\docs.txt"})
 $Dontsleepinfo.visible = $false
 #$Form.Controls.Add($Dontsleepinfo)
-
 
 #BoutonCPU
 $BoutonCPU = New-Object System.Windows.Forms.Button
@@ -286,7 +168,7 @@ $BoutonCPU.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonCPU.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonCPU.Add_MouseEnter({$BoutonCPU.ForeColor = 'White'})
 $BoutonCPU.Add_MouseLeave({$BoutonCPU.ForeColor = 'black'})
-$BoutonCPU.Add_Click({zipcpu})
+$BoutonCPU.Add_Click({Unzip "CPU" 'https://ftp.alexchato9.com/public/file/BB4NxwBawUmDufbDNKEJAA/CPU.zip'})
 $BoutonCPU.Add_Click({$BoutonCPU.visible = $false})
 $BoutonCPU.Add_Click({$Aida.visible = $true})
 $BoutonCPU.Add_Click({$Prime95.visible = $true})
@@ -298,7 +180,6 @@ $BoutonCPU.Add_Click({$docCoretemp.visible = $true})
 $BoutonCPU.Add_Click({$docPrime95.visible = $true})
 $BoutonCPU.Add_Click({$docCPUZ.visible = $true})
 $BoutonCPU.Add_Click({$docHeavyLoad.visible = $true})
-
 
 #Aida
 $Aida = New-Object System.Windows.Forms.Button
@@ -317,7 +198,7 @@ $Aida.FlatAppearance.MouseOverBackColor = 'gray'
 $Aida.Add_MouseEnter({$Aida.ForeColor = 'White'})
 $Aida.Add_MouseLeave({$Aida.ForeColor = 'black'})
 $Aida.Add_Click({
-Start-Process "$root\_Tech\Applications\Diagnostique\\Source\CPU\Aida64\aida64.exe"
+Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Aida64\aida64.exe"
 Addlog "diagnostiquelog.txt" "Test de stabilité du système effectué"oh i sd
 })
 #tooltip
@@ -332,7 +213,7 @@ $docAida = New-Object System.Windows.Forms.Button
 $docAida.Location = New-Object System.Drawing.Point(105,145)
 $docAida.size = '33,18'
 $docAida.Text = "Doc"
-$docAida.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\Aida64\docs.txt"})
+$docAida.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Aida64\docs.txt"})
 $docAida.visible = $false
 #$Form.Controls.Add($docAida)
 
@@ -353,7 +234,7 @@ $Coretemp.FlatAppearance.MouseOverBackColor = 'gray'
 $Coretemp.Add_MouseEnter({$Coretemp.ForeColor = 'White'})
 $Coretemp.Add_MouseLeave({$Coretemp.ForeColor = 'black'})
 $Coretemp.Add_Click({
-Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\Core_Temp\Core Temp.exe"
+Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Core_Temp\Core Temp.exe"
 Addlog "diagnostiquelog.txt" "Température du CPU vérifié"
 })
 #Tooltip
@@ -368,10 +249,9 @@ $docCoretemp = New-Object System.Windows.Forms.Button
 $docCoretemp.Location = New-Object System.Drawing.Point(105,215)
 $docCoretemp.size = '33,18'
 $docCoretemp.Text = "Doc"
-$docCoretemp.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\Core_Temp\docs.txt"})
+$docCoretemp.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Core_Temp\docs.txt"})
 $docCoretemp.visible = $false
 #$Form.Controls.Add($docCoretemp)
-
 
 #Prime95
 $Prime95 = New-Object System.Windows.Forms.Button
@@ -390,7 +270,7 @@ $Prime95.FlatAppearance.MouseOverBackColor = 'gray'
 $Prime95.Add_MouseEnter({$Prime95.ForeColor = 'White'})
 $Prime95.Add_MouseLeave({$Prime95.ForeColor = 'black'})
 $Prime95.Add_Click(
-{Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\Prime95\prime95.exe"
+{Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Prime95\prime95.exe"
 Addlog "diagnostiquelog.txt" "Stress test du CPU effectué"
 })
 #Tooltip
@@ -405,10 +285,9 @@ $docPrime95 = New-Object System.Windows.Forms.Button
 $docPrime95.Location = New-Object System.Drawing.Point(105,440)
 $docPrime95.size = '33,18'
 $docPrime95.Text = "Doc"
-$docPrime95.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\Prime95\docs.txt"})
+$docPrime95.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Prime95\docs.txt"})
 $docPrime95.visible = $false
 #$Form.Controls.Add($docPrime95)
-
 
 #CPUZ
 $CPUZ = New-Object System.Windows.Forms.Button
@@ -427,7 +306,7 @@ $CPUZ.FlatAppearance.MouseOverBackColor = 'gray'
 $CPUZ.Add_MouseEnter({$CPUZ.ForeColor = 'White'})
 $CPUZ.Add_MouseLeave({$CPUZ.ForeColor = 'black'})
 $CPUZ.Add_Click({
-Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\CPUZ\cpuz.exe"
+Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\CPUZ\cpuz.exe"
 })
 #Tooltip
 $tooltipCPUZ = New-Object System.Windows.Forms.ToolTip
@@ -441,7 +320,7 @@ $docCPUZ = New-Object System.Windows.Forms.Button
 $docCPUZ.Location = New-Object System.Drawing.Point(105,290)
 $docCPUZ.size = '33,18'
 $docCPUZ.Text = "Doc"
-$docCPUZ.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\CPUZ\docs.txt"})
+$docCPUZ.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\CPUZ\docs.txt"})
 $docCPUZ.visible = $false
 #$Form.Controls.Add($docCPUZ)
 
@@ -462,7 +341,7 @@ $HeavyLoad.FlatAppearance.MouseOverBackColor = 'gray'
 $HeavyLoad.Add_MouseEnter({$HeavyLoad.ForeColor = 'White'})
 $HeavyLoad.Add_MouseLeave({$HeavyLoad.ForeColor = 'black'})
 $HeavyLoad.Add_Click({
-Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\HeavyLoad\HeavyLoad.exe" -ArgumentList "/start /cpu"
+Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\HeavyLoad\HeavyLoad.exe" -ArgumentList "/start /cpu"
 Addlog "diagnostiquelog.txt" "Test de stabilité du système effectué"
 })
 #Tooltip
@@ -477,7 +356,7 @@ $docHeavyLoad = New-Object System.Windows.Forms.Button
 $docHeavyLoad.Location = New-Object System.Drawing.Point(105,365)
 $docHeavyLoad.size = '33,18'
 $docHeavyLoad.Text = "Doc"
-$docHeavyLoad.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\CPU\HeavyLoad\docs.txt"})
+$docHeavyLoad.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\HeavyLoad\docs.txt"})
 $docHeavyLoad.visible = $false
 #$Form.Controls.Add($docHeavyLoad)
 
@@ -497,7 +376,7 @@ $BoutonHDD.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonHDD.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonHDD.Add_MouseEnter({$BoutonHDD.ForeColor = 'White'})
 $BoutonHDD.Add_MouseLeave({$BoutonHDD.ForeColor = 'black'})
-$BoutonHDD.Add_Click({ziphdd})
+$BoutonHDD.Add_Click({Unzip "HDD" 'https://ftp.alexchato9.com/public/file/t6QQNrPcLk6gruXnTEr1fA/HDD.zip'})
 $BoutonHDD.Add_Click({$BoutonHDD.visible = $false})
 $BoutonHDD.Add_Click({$HDTune.visible = $true})
 $BoutonHDD.Add_Click({$HDSentinnel.visible = $true})
@@ -508,19 +387,17 @@ $BoutonHDD.Add_Click({$docHDSentinnel.visible = $true})
 $BoutonHDD.Add_Click({$docHDTune.visible = $true})
 $BoutonHDD.Add_Click({$docASSD.visible = $true})
 
-
 function HDSentinel
 {
-start-process -wait "$root\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\_HDSentinel.exe" -ArgumentList "/report"
+start-process -wait "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\_HDSentinel.exe" -ArgumentList "/report"
 Addlog "diagnostiquelog.txt" "Vérifier la santé du disque dur"
 #hdsslog | Out-File $logfilepath -Append
 }
 
 function hdsslog
 {
-$PathHDSentinelData = Get-Content "$root\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\HDSData\HDSentinel_5.70 PRO_report.txt"
+$PathHDSentinelData = Get-Content "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\HDSData\HDSentinel_5.70 PRO_report.txt"
 $lignedisk = "" #initialise la variable vide
-
 
 foreach ($ligne in $PathHDSentinelData) #pour chaque ligne dans le fichier, car chaque ligne est un objet
 {
@@ -529,7 +406,6 @@ foreach ($ligne in $PathHDSentinelData) #pour chaque ligne dans le fichier, car 
         $lignedisk = $ligne  #$lignedisk contient la ligne drive x
     }
    
-
     elseif($lignedisk -and $ligne -match "size") #si ma ligne drive x est $TRUe et ma ligne qui match size
     {
         $lignedisk,$ligne #afficher drive x et la size
@@ -571,7 +447,7 @@ foreach ($ligne in $PathHDSentinelData) #pour chaque ligne dans le fichier, car 
 
 function diskmarkinfoLog
 {
-$logfile = "$root\\_Tech\\Applications\\Diagnostique\\Source\HDD\CrystalDiskInfoPortable\App\CrystalDiskInfo\diskinfo.txt"
+$logfile = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\App\CrystalDiskInfo\diskinfo.txt"
 $contentlogfile = Get-Content $logfile
 $lignedisk = "" #initialise la variable vide
 
@@ -597,10 +473,9 @@ foreach ($ligne in $contentlogfile) #pour chaque ligne dans le fichier, car chaq
 }
 }
 
-
 function HDTune
 {
-Start-Process "$root\_Tech\Applications\Diagnostique\Source\HDD\HD_Tune\_HDTune.exe"
+Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Tune\_HDTune.exe"
 Addlog "diagnostiquelog.txt" "Vérifier la Vitesse du disque dur"
 }
 
@@ -635,10 +510,9 @@ $docHDSentinnel = New-Object System.Windows.Forms.Button
 $docHDSentinnel.Location = New-Object System.Drawing.Point(280,140)
 $docHDSentinnel.size = '33,18'
 $docHDSentinnel.Text = "Doc"
-$docHDSentinnel.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\docs.txt"})
+$docHDSentinnel.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\docs.txt"})
 $docHDSentinnel.visible = $false
 #$Form.Controls.Add($docHDSentinnel)
-
 
 #HDTune
 $HDTune = New-Object System.Windows.Forms.Button
@@ -671,10 +545,9 @@ $docHDTune = New-Object System.Windows.Forms.Button
 $docHDTune.Location = New-Object System.Drawing.Point(280,365)
 $docHDTune.size = '33,18'
 $docHDTune.Text = "Doc"
-$docHDTune.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Diagnostique\\Source\HDD\HD_Tune\hdtune.html"})
+$docHDTune.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Diagnostique\\Source\HDD\HD_Tune\hdtune.html"})
 $docHDTune.visible = $false
 #$Form.Controls.Add($docHDTune)
-
 
 #AS_SSD
 $ASSD = New-Object System.Windows.Forms.Button
@@ -693,7 +566,7 @@ $ASSD.FlatAppearance.MouseOverBackColor = 'gray'
 $ASSD.Add_MouseEnter({$ASSD.ForeColor = 'White'})
 $ASSD.Add_MouseLeave({$ASSD.ForeColor = 'black'})
 $ASSD.Add_Click({
-Start-Process "$root\_Tech\Applications\Diagnostique\Source\HDD\As_SSD\AS SSD Benchmark.exe"
+Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\As_SSD\AS SSD Benchmark.exe"
 })
 #Tooltip
 $tooltipASSD = New-Object System.Windows.Forms.ToolTip
@@ -707,10 +580,9 @@ $docASSD = New-Object System.Windows.Forms.Button
 $docASSD.Location = New-Object System.Drawing.Point(280,290)
 $docASSD.size = '33,18'
 $docASSD.Text = "Doc"
-$docASSD.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\HDD\As_SSD\docs.txt"})
+$docASSD.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\As_SSD\docs.txt"})
 $docASSD.visible = $false
 #$Form.Controls.Add($docASSD)
-
 
 #Diskmark
 $Diskmark = New-Object System.Windows.Forms.Button
@@ -729,7 +601,7 @@ $Diskmark.FlatAppearance.MouseOverBackColor = 'gray'
 $Diskmark.Add_MouseEnter({$Diskmark.ForeColor = 'White'})
 $Diskmark.Add_MouseLeave({$Diskmark.ForeColor = 'black'})
 $Diskmark.Add_Click({
-Start-Process -wait  "$root\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"  -ArgumentList "/copy"
+Start-Process -wait  "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"  -ArgumentList "/copy"
 Addlog "diagnostiquelog.txt" "Vérifier la santé du disque dur"
 #diskmarkinfolog | Out-File $logfilepath -Append
 })
@@ -745,10 +617,9 @@ $docDiskmark = New-Object System.Windows.Forms.Button
 $docDiskmark.Location = New-Object System.Drawing.Point(280,215)
 $docDiskmark.size = '33,18'
 $docDiskmark.Text = "Doc"
-$docDiskmark.Add_Click({Start-Process-Process "$root\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\docs.txt"})
+$docDiskmark.Add_Click({Start-Process-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\docs.txt"})
 $docDiskmark.visible = $false
 #$Form.Controls.Add($docDiskmark)
-
 
 #BoutonGPU
 $BoutonGPU = New-Object System.Windows.Forms.Button
@@ -766,7 +637,7 @@ $BoutonGPU.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonGPU.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonGPU.Add_MouseEnter({$BoutonGPU.ForeColor = 'White'})
 $BoutonGPU.Add_MouseLeave({$BoutonGPU.ForeColor = 'black'})
-$BoutonGPU.Add_Click({zipGPU})
+$BoutonGPU.Add_Click({Unzip "GPU" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip'})
 $BoutonGPU.Add_Click({$Unigine.visible = $true})
 $BoutonGPU.Add_Click({$Furmark.visible = $true})
 #$BoutonGPU.Add_Click({$gpuz.visible = $true})
@@ -792,9 +663,9 @@ $Furmark.FlatAppearance.MouseOverBackColor = 'gray'
 $Furmark.Add_MouseEnter({$Furmark.ForeColor = 'White'})
 $Furmark.Add_MouseLeave({$Furmark.ForeColor = 'black'})
 $Furmark.Add_Click({
-Start-Process "$root\_Tech\Applications\Diagnostique\Source\GPU\FurMark\FurMark.exe"
+Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\FurMark\FurMark.exe"
 #Log
-#$root\_Tech\Applications\Diagnostique\GPU\FurMark\FurMark_0001.txt
+#$env:SystemDrive\_Tech\Applications\Diagnostique\GPU\FurMark\FurMark_0001.txt
 Addlog "diagnostiquelog.txt" "Stress test du GPU"
 })
 #Tooltip
@@ -809,46 +680,9 @@ $docFurmark = New-Object System.Windows.Forms.Button
 $docFurmark.Location = New-Object System.Drawing.Point(760,140)
 $docFurmark.size = '33,18'
 $docFurmark.Text = "Doc"
-$docFurmark.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\GPU\FurMark\docs.txt"})
+$docFurmark.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\FurMark\docs.txt"})
 $docFurmark.visible = $false
 #$Form.Controls.Add($docFurmark)
-
-<#
-#GPUz
-$GPUz = New-Object System.Windows.Forms.Button
-$GPUz.Location = New-Object System.Drawing.Point(760,250)
-$GPUz.Width = '120'
-$GPUz.Height = '55'
-$GPUz.ForeColor='black'
-$GPUz.BackColor = 'green'
-$GPUz.Text = "GPUZ"
-$GPUz.Font= 'Microsoft Sans Serif,12'
-$GPUz.FlatStyle = 'Flat'
-$GPUz.FlatAppearance.BorderSize = 2
-$GPUz.FlatAppearance.BorderColor = 'black'
-$GPUz.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
-$GPUz.FlatAppearance.MouseOverBackColor = 'gray'
-$GPUz.Add_MouseEnter({$GPUz.ForeColor = 'White'})
-$GPUz.Add_MouseLeave({$GPUz.ForeColor = 'black'})
-$GPUz.Add_Click({
-start "$root\\_Tech\\Applications\\Diagnostique\\Source\GPU\GPUZ\GPU-Z.2.40.0.exe"
-})
-#Tooltip
-$tooltipGPUz = New-Object System.Windows.Forms.ToolTip
-$tooltipGPUz.IsBalloon =$true
-$tooltiĜPUzText = "Information sur la GPU"
-$tooltipGPUz.SetToolTip($GPUz, $tooltiĜPUzText)
-$GPUz.Add_MouseEnter({$tooltipGPUz})
-$GPUz.visible = $false
-#info
-$docGPUz = New-Object System.Windows.Forms.Button
-$docGPUz.Location = New-Object System.Drawing.Point(760,290)
-$docGPUz.size = '33,18'
-$docGPUz.Text = "Doc"
-$docGPUz.Add_Click({start "$root\\_Tech\\Applications\\Diagnostique\\Source\GPU\GPUZ\docs.txt"})
-$docGPUz.visible = $false
-$Form.Controls.Add($docGPUz)
-#>
 
 #Unigine
 $Unigine = New-Object System.Windows.Forms.Button
@@ -867,10 +701,7 @@ $Unigine.FlatAppearance.MouseOverBackColor = 'gray'
 $Unigine.Add_MouseEnter({$Unigine.ForeColor = 'White'})
 $Unigine.Add_MouseLeave({$Unigine.ForeColor = 'black'})
 $Unigine.Add_Click({
-#Copy-Item -Path "$root\\_Tech\\Applications\\Diagnostique\\Source\GPU\Unigine\Unigine_Superposition-1.1.exe" -Destination "C:\Users\$env:UserName\Downloads"
-#start "C:\Users\$env:UserName\Downloads\Unigine_Superposition-1.1.exe"
 Start-Process "https://benchmark.unigine.com/"
-#https://assets.unigine.com/d/Unigine_Superposition-1.1.exe
 Addlog "diagnostiquelog.txt" "Vérifier les performances du GPU"
 })
 #Tooltip
@@ -885,10 +716,9 @@ $docUnigine = New-Object System.Windows.Forms.Button
 $docUnigine.Location = New-Object System.Drawing.Point(760,215)
 $docUnigine.size = '33,18'
 $docUnigine.Text = "Doc"
-$docUnigine.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\GPU\Unigine\docs.txt"})
+$docUnigine.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\Unigine\docs.txt"})
 $docUnigine.visible = $false
 #$Form.Controls.Add($docUnigine)
-
 
 #Speccy
 $Speccy = New-Object System.Windows.Forms.Button
@@ -906,8 +736,7 @@ $Speccy.FlatAppearance.MouseDownBackColor = 'gray'
 $Speccy.Add_MouseEnter({$Speccy.ForeColor = 'White'})
 $Speccy.Add_MouseLeave({$Speccy.ForeColor = 'black'})
 $Speccy.Add_Click({
-zipspeccy
-#Start-Process "$root\\_Tech\\Applications\\Diagnostique\\Source\Speccy\Speccy.exe"
+UnzipLaunch "Speccy" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "Speccy.exe"
 })
 #Tooltip
 $tooltipSpeccy = New-Object System.Windows.Forms.ToolTip
@@ -920,10 +749,9 @@ $docSpeccy = New-Object System.Windows.Forms.Button
 $docSpeccy.Location = New-Object System.Drawing.Point(105,565)
 $docSpeccy.size = '33,18'
 $docSpeccy.Text = "Doc"
-$docSpeccy.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\Speccy\docs.txt"})
+$docSpeccy.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Speccy\docs.txt"})
 #$docSpeccy.visible = $false
 #$Form.Controls.Add($docSpeccy)
-
 
 #HWMonitor
 $HWMonitor = New-Object System.Windows.Forms.Button
@@ -942,8 +770,7 @@ $HWMonitor.FlatAppearance.MouseOverBackColor = 'gray'
 $HWMonitor.Add_MouseEnter({$HWMonitor.ForeColor = 'White'})
 $HWMonitor.Add_MouseLeave({$HWMonitor.ForeColor = 'black'})
 $HWMonitor.Add_Click({
-ziphwmonitor
-#Start-Process "$root\\_Tech\\Applications\\Diagnostique\\Source\HWMonitor\HWMonitor_x64.exe"
+UnzipLaunch "HWmonitor" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor.zip" "HWMonitor_x64.exe"
 })
 #Tooltip
 $tooltipHWMonitor = New-Object System.Windows.Forms.ToolTip
@@ -956,10 +783,9 @@ $docHWMonitor = New-Object System.Windows.Forms.Button
 $docHWMonitor.Location = New-Object System.Drawing.Point(325,565)
 $docHWMonitor.size = '33,18'
 $docHWMonitor.Text = "Doc"
-$docHWMonitor.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\HWMonitor\docs.txt"})
+$docHWMonitor.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HWMonitor\docs.txt"})
 #$docHWMonitor.visible = $false
 #$Form.Controls.Add($docHWMonitor)
-
 
 #Whocrashed
 $Whocrashed = New-Object System.Windows.Forms.Button
@@ -978,8 +804,7 @@ $Whocrashed.FlatAppearance.MouseOverBackColor = 'gray'
 $Whocrashed.Add_MouseEnter({$Whocrashed.ForeColor = 'White'})
 $Whocrashed.Add_MouseLeave({$Whocrashed.ForeColor = 'black'})
 $Whocrashed.Add_Click({
-zipwhocrashed
-#Start-Process "$root\\_Tech\\Applications\\Diagnostique\\Source\Whocrashed\WhoCrashedEx.exe"
+UnzipLaunch "WhoCrashed" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashed.zip" "WhoCrashedEx.exe"
 })
 #Tooltip
 $tooltipWhocrashed = New-Object System.Windows.Forms.ToolTip
@@ -992,7 +817,7 @@ $docWhocrashed = New-Object System.Windows.Forms.Button
 $docWhocrashed.Location = New-Object System.Drawing.Point(625,565)
 $docWhocrashed.size = '33,18'
 $docWhocrashed.Text = "Doc"
-$docWhocrashed.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\Whocrashed\docs.txt"})
+$docWhocrashed.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Whocrashed\docs.txt"})
 #$Form.Controls.Add($docWhocrashed)
 
 #sysinfo
@@ -1012,10 +837,7 @@ $sysinfo.FlatAppearance.MouseOverBackColor = 'gray'
 $sysinfo.Add_MouseEnter({$sysinfo.ForeColor = 'White'})
 $sysinfo.Add_MouseLeave({$sysinfo.ForeColor = 'black'})
 $sysinfo.Add_Click({
-#zipsysinfo
 msinfo32
-#Start-Process "$root\\_TECH\\Applications\\Diagnostique\\Source\\SysToolbox\\Sysinfo\\sysinfoz.exe"
-
 })
 #Tooltip
 $tooltipsysinfo = New-Object System.Windows.Forms.ToolTip
@@ -1028,9 +850,8 @@ $docsysinfo = New-Object System.Windows.Forms.Button
 $docsysinfo.Location = New-Object System.Drawing.Point(825,565)
 $docsysinfo.size = '33,18'
 $docsysinfo.Text = "Doc"
-$docsysinfo.Add_Click({Start-Process "$root\_Tech\Applications\Diagnostique\Source\sysinfo\docs.txt"})
+$docsysinfo.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\sysinfo\docs.txt"})
 #$Form.Controls.Add($docsysinfo)
-
 
 #RAM
 $RAM = New-Object System.Windows.Forms.Button
@@ -1058,7 +879,6 @@ $tooltipRAM.IsBalloon =$true
 $tooltipHDRAMText = "Diagnostiquede mémoire de Windows 10, nécéssite un redémarrage"
 $tooltipRAM.SetToolTip($RAM, $tooltipHDRAMText)
 $RAM.Add_MouseEnter({$tooltipRAM})
-
 
 #Quitter
 $quit = New-Object System.Windows.Forms.Button
@@ -1098,10 +918,9 @@ $Menuprincipal.FlatAppearance.MouseOverBackColor = 'gray'
 $Menuprincipal.Add_MouseEnter({$Menuprincipal.ForeColor = 'White'})
 $Menuprincipal.Add_MouseLeave({$Menuprincipal.ForeColor = 'black'})
 $Menuprincipal.Add_Click({
-start-process "$root\_Tech\Menu.bat" -verb Runas
+start-process "$env:SystemDrive\_Tech\Menu.bat" -verb Runas
 $Form.Close()
 })
-
 
 #Label
 $Label = New-Object System.Windows.Forms.Label

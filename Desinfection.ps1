@@ -20,13 +20,21 @@ Import-Module "$root\_Tech\Applications\Source\modules\restore.psm1" | Out-Null 
 function zipsourcevirus #Ce qui va toujours être redownloader à neuf à chaque lancement. Le pack obligatoire pour le fonctionnement + le reset des logs
 {
     Sourceexist
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' -OutFile ".\Source\fondvirus.png" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Icone.ico' -OutFile ".\Source\Icone.ico" | Out-Null
+    $fondpath = test-Path "$env:SystemDrive\_Tech\Applications\Securite\Source\fondopti.jpg" #Vérifie si le fond écran est présent
+    $iconepath = test-path "$env:SystemDrive\_Tech\Applications\Securite\Source\Icone.ico" #vérifie si l'icone existe
+    if($fondpath -eq $false) #si fond pas présent
+    {
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Source\fondvirus.png" | Out-Null
+    }
+    if($iconepath -eq $false) #si icone pas présent
+    {
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Source\Icone.ico" | Out-Null
+    }
 }
 
 function zipHitmanPro
 {
-    $PathHitmanPro = test-Path ".\Source\\HitmanPro.exe"
+    $PathHitmanPro = test-Path ".\Source\HitmanPro.exe"
     if($PathHitmanPro -eq $false)
     {
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' -OutFile ".\Source\HitmanPro.exe"
@@ -37,14 +45,9 @@ function zipHitmanPro
 
 function zipautoruns
 {
-    $sourcepath = test-Path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source"
     $pathautoruns = test-Path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\autoruns.exe"
     if($pathautoruns -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' -OutFile "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\autoruns.exe"
     }
     Start-Process "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\autoruns.exe"
@@ -101,14 +104,9 @@ function ziproguekiller
 
 function ziprevo
 {
-    $sourcepath = test-Path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source"
     $revopath = test-Path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\RevoUninstaller_Portable\RevoUPort.exe"
     if($revopath -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' -OutFile "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\RevoUninstaller_Portable.zip"
     Expand-Archive "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\RevoUninstaller_Portable.zip" "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source"
     Remove-Item "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\RevoUninstaller_Portable.zip"
@@ -119,14 +117,9 @@ function ziprevo
 
 function zipccleaner
 {
-    $sourcepath = test-Path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source"
     $ccleanerpath = test-Path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\CCleaner64.exe"
     if($ccleanerpath -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' -OutFile "$root\\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner.zip"
     Expand-Archive "$root\\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner.zip" "$root\\_Tech\\Applications\Optimisation_Nettoyage\Source" -Force
     Remove-Item "$root\\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner.zip"

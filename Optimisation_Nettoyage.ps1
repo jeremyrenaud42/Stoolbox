@@ -10,7 +10,7 @@ Add-Type -AssemblyName presentationCore
 $driveletter = $pwd.drive.name
 $root = "$driveletter" + ":"
 
-set-location "$root\\_Tech\\Applications\\Optimisation_Nettoyage" -ErrorAction stop   #met la location au repertoir actuel
+set-location "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"  #met la location au repertoir actuel
 Import-Module "$root\_Tech\Applications\Source\modules\update.psm1" | Out-Null
 Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
@@ -31,11 +31,19 @@ A25 � A41 = Notes
 Cases � cocher: B = Bon.  C = Jaune.  D= Rouge. E = Notes.
 #>
 
-function zipsourceopti #Ce qui va toujours être redownloader à neuf à chaque lancement. Le pack obligatoire pour le fonctionnement + le reset des logs
+function zipsourceopti
 {
     Sourceexist
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' -OutFile .\Source\fondopti.jpg | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Icone.ico' -OutFile .\Source\Icone.ico | Out-Null
+    $fondpath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg" #Vérifie si le fond écran est présent
+    $iconepath = test-path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Icone.ico" #vérifie si l'icone existe
+    if($fondpath -eq $false) #si fond pas présent
+    {
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg" | Out-Null
+    }
+    if($iconepath -eq $false) #si icone pas présent
+    {
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Icone.ico" | Out-Null
+    }
 }
 zipsourceopti
 
@@ -50,14 +58,9 @@ $Form.icon = New-Object system.drawing.icon (".\Source\Icone.ico")
 
 function zipccleaner
 {
-    $sourcepath = test-Path ".\Source\"
     $ccleanerpath = test-Path ".\Source\ccleaner\CCleaner64.exe"
     if($ccleanerpath -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item ".\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' -OutFile .\Source\Ccleaner.zip
     Expand-Archive .\Source\Ccleaner.zip .\Source -Force
     Remove-Item .\Source\Ccleaner.zip
@@ -75,14 +78,9 @@ function zipccleaner
 
 function ziprevo
 {
-    $sourcepath = test-Path ".\Source\"
     $revopath = test-Path ".\Source\RevoUninstaller_Portable\RevoUPort.exe"
     if($revopath -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item ".\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' -OutFile .\Source\RevoUninstaller_Portable.zip
     Expand-Archive .\Source\RevoUninstaller_Portable.zip .\Source
     Remove-Item .\Source\RevoUninstaller_Portable.zip
@@ -94,14 +92,9 @@ function ziprevo
 
 function zipsfc
 {
-    $sourcepath = test-Path ".\Source\"
     $sfcpath = test-Path ".\Source\sfcScannow.bat"
     if($sfcpath -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item ".\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat' -OutFile .\Source\sfcScannow.bat
     }
     Start-Process ".\Source\sfcScannow.bat" -verb runas
@@ -110,14 +103,9 @@ function zipsfc
 
 function zipsysevent
 {
-    $sourcepath = test-Path ".\Source\"
     $syseventpath = test-Path ".\Source\sysevent.exe"
     if($syseventpath -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item ".\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe' -OutFile ".\Source\sysevent.exe"
     }
     Start-Process ".\Source\sysevent.exe"
@@ -126,14 +114,9 @@ function zipsysevent
 
 function ziphdtune
 {
-    $sourcepath = test-Path "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD"
     $PathHDTune = test-Path "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune\\_HDTune.exe"
     if($PathHDTune -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' -OutFile "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune.zip"
     Expand-Archive "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune.zip" "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD"
     Remove-Item "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune.zip"
@@ -144,14 +127,9 @@ function ziphdtune
 
 function zipcdi
 {
-    $sourcepath = test-Path "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD"
     $cdipath = test-Path "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe" #path dans diag
     if($cdipath -eq $false)
     {   
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' -OutFile "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\CrystalDiskInfoPortable.zip"
     Expand-Archive "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\CrystalDiskInfoPortable.zip" "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD"
     Remove-Item "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\CrystalDiskInfoPortable.zip"
@@ -162,14 +140,9 @@ function zipcdi
 
 function zipHitmanPro
 {
-    $sourcepath = test-Path "$root\\_Tech\\Applications\\Securite\\Source"
     $PathHitmanPro = test-Path "$root\\_Tech\\Applications\\Securite\\Source\\HitmanPro.exe"
     if($PathHitmanPro -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item "$root\\_Tech\\Applications\\Securite\\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' -OutFile "$root\\_Tech\\Applications\\Securite\\Source\\HitmanPro.exe"
     }
     Start-Process "$root\\_Tech\\Applications\\Securite\\Source\\HitmanPro.exe"
@@ -178,14 +151,9 @@ function zipHitmanPro
 
 function zipautoruns
 {
-    $sourcepath = test-Path ".\Source"
     $pathautoruns = test-Path ".\Source\autoruns.exe"
     if($pathautoruns -eq $false)
     {
-        if($sourcepath -eq $false)
-        {
-            New-Item ".\Source" -ItemType Directory
-        }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' -OutFile ".\Source\autoruns.exe"
     }
     Start-Process ".\Source\autoruns.exe"
@@ -592,9 +560,9 @@ $Sysinfoz.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Sysinfoz.Add_MouseEnter({$Sysinfoz.ForeColor = 'White'})
 $Sysinfoz.Add_MouseLeave({$Sysinfoz.ForeColor = 'black'})
 $Sysinfoz.Add_Click({
-Start-Process "$root\\_TECH\\Applications\\Diagnostique\Source\SysToolbox\Sysinfo\sysinfoz.exe"
+msinfo32.exe
 })
-#$Form.controls.Add($Sysinfoz)
+$Form.controls.Add($Sysinfoz)
 
 #Label
 $Label = New-Object System.Windows.Forms.Label

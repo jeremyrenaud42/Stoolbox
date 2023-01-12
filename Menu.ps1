@@ -15,15 +15,15 @@ function Admin
     }
 }
 
-function  Preinstall  #Création des dossiers
+function Preinstall #Création des dossiers
 {
-    $Applications = test-path "$env:SystemDrive\_Tech\Applications" 
-    if($Applications -eq $false)
+    $applications = test-path "$env:SystemDrive\_Tech\Applications" 
+    if($applications -eq $false)
     {
         New-Item "$env:SystemDrive\_Tech\Applications" -ItemType 'Directory' -Force | Out-Null
     }
-    $Source = test-path "$env:SystemDrive\_Tech\Applications\Source"  
-    if($Source -eq $false)
+    $source = test-path "$env:SystemDrive\_Tech\Applications\Source"  
+    if($source -eq $false)
     {
         New-Item "$env:SystemDrive\_Tech\Applications\Source" -ItemType 'Directory' -Force | Out-Null
     }
@@ -42,8 +42,8 @@ function  Preinstall  #Création des dossiers
     {
         New-Item "$env:SystemDrive\_Tech\Applications\Source\images" -ItemType 'Directory' -Force | Out-Null
     }
-    $Tempfodler = Test-Path "$env:SystemDrive\Temp"
-    if($Tempfodler -eq $false)
+    $tempfolder = Test-Path "$env:SystemDrive\Temp"
+    if($tempfolder -eq $false)
     {
         New-Item -ItemType 'Directory' -Name "Temp" -Path "$env:SystemDrive\" -Force -ErrorAction 'SilentlyContinue' | Out-Null #Creer dossier Temp  pour y copier/coller remove.
     }
