@@ -496,7 +496,7 @@ Function Pilotes
 {
     $progres.Text = "Vérification des pilotes"
     $x = Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -Property Manufacturer #Chercher la marque de l'ordinateur
-    #Get-CimInstance -Class Win32_BaseBoard | Select-Object -Property Manufacturer, product # + rapide
+    #Get-CimInstance -Class Win32_BaseBoard | Select-Object -Property Manufacturer # + rapide
     if($x -match 'LENOVO')
     {
         SystemUpdate
@@ -633,7 +633,7 @@ function Postverif
 function End
 {
     Addlog "installationlog.txt" "Installation de Windows effectué avec Succès"
-    Copy-Item "$root\_Tech\Applications\Installation\Source\Log.txt" -Destination "$env:SystemDrive\TEMP" -Force | out-null     
+    CopyLog "installationlog.txt" "$env:SystemDrive\TEMP"  
     [Audio]::Volume = 0.25
     [console]::beep(1000,666)
     Start-Sleep -s 1
