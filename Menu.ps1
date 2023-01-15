@@ -60,7 +60,7 @@ function Remove
     $remove = test-path "$env:SystemDrive\Temp\Remove.bat"
     if($remove -eq $false)
     {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.bat' -OutFile "$env:SystemDrive\Temp\Remove.bat" | Out-Null
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' -OutFile "$env:SystemDrive\Temp\Remove.bat" | Out-Null
     } 
 }
 
@@ -133,7 +133,7 @@ function Zipinstallation
         New-Item -Path "$env:SystemDrive\_Tech\Applications\Installation" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
     }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Installation\Installation.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsInstallation.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #download le .exe
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsInstallation.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #download le .exe
     set-location "$env:SystemDrive\_Tech\Applications\Installation" #met le path dans le dossier Installation
     Start-Process "$env:SystemDrive\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #Lance le script d'installation
 
@@ -176,7 +176,7 @@ function ZipOpti
         New-Item -Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
     }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsOptimisation_Nettoyage.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #download le .exe
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsOptimisation_Nettoyage.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #download le .exe
     set-location "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage" #met le path dans le dossier Optimisation
     Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #Lance le script d'optimisation
 }
@@ -218,7 +218,7 @@ function Zipdiag
         New-Item -Path "$env:SystemDrive\_Tech\Applications\Diagnostique" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
     }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\Diagnostique.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsDiagnostique.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #download le .exe
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDiagnostique.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #download le .exe
     set-location "$env:SystemDrive\_Tech\Applications\Diagnostique" #met le path dans le dossier Diagnostique
     Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #Lance le script de Diagnostique
 }
@@ -259,7 +259,7 @@ function Zipdesinfection
         New-Item -Path "$env:SystemDrive\_Tech\Applications\Securite" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
     }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Desinfection.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsDesinfection.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #download le .exe
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #download le .exe
     set-location "$env:SystemDrive\_Tech\Applications\Securite" #met le path dans le dossier Securite
     Start-Process "$env:SystemDrive\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #Lance le script de désinfcetion
 }
@@ -300,8 +300,8 @@ function Zipfix
         New-Item -Path "$env:SystemDrive\_Tech\Applications\Fix" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
     }
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Fix\Fix.ps1" | Out-Null #download le .ps1
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/RunAsFix.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #download le .ps1
-    set-location "$env:SystemDrive\_Tech\\Applications\Fix" #met le path dans le dossier Fix
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsFix.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #download le .ps1
+    set-location "$env:SystemDrive\_Tech\Applications\Fix" #met le path dans le dossier Fix
     Start-Process "$env:SystemDrive\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #Lance le script de Fix
 }
 
