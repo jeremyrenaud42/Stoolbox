@@ -1,5 +1,8 @@
 Version :
 
-2020-01-07:
+2023-01-07:
 - Ajout du bouton changelog à Menu
 - Améliorer Secu_Dossier de Fix
+
+2023-01-14:
+- Vitesse et santé HDD download direct dans Optimisation now au lieu de reprendre celui de Diag
