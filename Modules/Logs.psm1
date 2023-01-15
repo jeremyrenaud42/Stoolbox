@@ -13,10 +13,10 @@ function AddErrorsLog ($filename,$message)
 function RemoveLog($filename)
 {
     $logfilepath = ".\Source\$filename" #chemin du fichier texte 
-    Remove-Item $logfilepath -Force
+    Remove-Item $logfilepath -Force | out-null
 }
 
 function CopyLog($filename,$destination)
 {
-    Copy-Item ".\Source\$filename" -destination $destination -Force
+    Copy-Item ".\Source\$filename" -destination $destination -Force | out-null 
 }
