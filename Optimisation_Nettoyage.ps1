@@ -47,14 +47,14 @@ function zipsourceopti
 }
 zipsourceopti
 
-$image = [system.drawing.image]::FromFile(".\Source\fondopti.jpg") 
+$image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg") 
 $Form = New-Object System.Windows.Forms.Form
 $Form.Text = "Optimisation et nettoyage"
 $Form.BackgroundImage = $image
 $Form.Width = $image.Width
 $Form.height = $image.height
 $Form.MaximizeBox = $false
-$Form.icon = New-Object system.drawing.icon (".\Source\Icone.ico") 
+$Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Icone.ico") 
 
 function zipccleaner
 {
@@ -114,27 +114,27 @@ function zipsysevent
 
 function ziphdtune
 {
-    $PathHDTune = test-Path "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune\\_HDTune.exe"
-    if($PathHDTune -eq $false)
+    $pathHDTune = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\HD_Tune\_HDTune.exe"
+    if($pathHDTune -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' -OutFile "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune.zip"
-    Expand-Archive "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune.zip" "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD"
-    Remove-Item "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\HD_Tune.zip"
+    Expand-Archive "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\HD_Tune.zip" "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source"
+    Remove-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\HD_Tune.zip"
     }
-    Start-Process "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune\\_HDTune.exe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\HD_Tune\_HDTune.exe"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
 }
 
 function zipcdi
 {
-    $cdipath = test-Path "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe" #path dans diag
+    $cdipath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"
     if($cdipath -eq $false)
     {   
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' -OutFile "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\CrystalDiskInfoPortable.zip"
-    Expand-Archive "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\CrystalDiskInfoPortable.zip" "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD"
-    Remove-Item "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\CrystalDiskInfoPortable.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable.zip"
+    Expand-Archive "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable.zip" "$root\_Tech\\Applications\Optimisation_Nettoyage\Source"
+    Remove-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable.zip"
         }
-    Start-Process "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la santé du HDD"
 }
 
