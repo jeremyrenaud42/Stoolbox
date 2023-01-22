@@ -15,43 +15,21 @@ function Admin
     }
 }
 
-function Preinstall #Création des dossiers
+function FolderCreation($folder) #Création des dossiers
 {
-    $applications = test-path "$env:SystemDrive\_Tech\Applications" 
-    if($applications -eq $false)
+    $path = "$env:SystemDrive\$folder"
+    $folderexist = test-path $path 
+    if($folderexist -eq $false)
     {
-        New-Item "$env:SystemDrive\_Tech\Applications" -ItemType 'Directory' -Force | Out-Null
-    }
-    $source = test-path "$env:SystemDrive\_Tech\Applications\Source"  
-    if($source -eq $false)
-    {
-        New-Item "$env:SystemDrive\_Tech\Applications\Source" -ItemType 'Directory' -Force | Out-Null
-    }
-    $scripts = test-path "$env:SystemDrive\_Tech\Applications\Source\scripts" 
-    if($scripts -eq $false)
-    {
-        New-Item "$env:SystemDrive\_Tech\Applications\Source\scripts" -ItemType 'Directory' -Force | Out-Null
-    }
-    $modules = test-path "$env:SystemDrive\_Tech\Applications\Source\modules" 
-    if($modules -eq $false)
-    {
-        New-Item "$env:SystemDrive\_Tech\Applications\Source\modules" -ItemType 'Directory' -Force | Out-Null
-    }
-    $images = test-path "$env:SystemDrive\_Tech\Applications\Source\images" 
-    if($images -eq $false)
-    {
-        New-Item "$env:SystemDrive\_Tech\Applications\Source\images" -ItemType 'Directory' -Force | Out-Null
-    }
-    $tempfolder = Test-Path "$env:SystemDrive\Temp"
-    if($tempfolder -eq $false)
-    {
-        New-Item -ItemType 'Directory' -Name "Temp" -Path "$env:SystemDrive\" -Force -ErrorAction 'SilentlyContinue' | Out-Null #Creer dossier Temp  pour y copier/coller remove.
+        New-Item $path -ItemType 'Directory' -Force | Out-Null
     }
 }
- 
+
+
 #Download des files pour Remove  et delete
 function Remove
 {
+    FolderCreation "Temp"
     $delete = test-path "$env:SystemDrive\Temp\delete.ps1"
     if($delete -eq $false)
     {
@@ -64,7 +42,7 @@ function Remove
     } 
 }
 
-function modules
+function Modules
 {
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/choco.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\choco.psm1" | Out-Null  
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/task.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\task.psm1" | Out-Null
@@ -78,7 +56,11 @@ function modules
     
 function Zipsource #Download et création des fondamentaux
 {
-    Preinstall #Va créer les dossiers
+    #Preinstall #Va créer les dossiers
+    FolderCreation "_Tech\Applications"
+    FolderCreation "_Tech\Applications\Source"
+    FolderCreation "_Tech\Applications\Source\modules"
+    FolderCreation "_Tech\Applications\Source\images"
     $fondpath = test-Path "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
     $iconepath = test-path "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" #vérifie si l'icone existe
         if($fondpath -eq $false) #si fond pas présent
@@ -90,7 +72,7 @@ function Zipsource #Download et création des fondamentaux
             Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
         } 
     Remove #Va download remove
-    modules #Va download les modules
+    Modules #Va download les modules
 }
 
 Admin #emet en admin si pas executer en admin
@@ -119,24 +101,13 @@ $form.TopMost = $true
 $form.StartPosition = "CenterScreen"
 $form.BackgroundImageLayout = "Stretch"
 
-function Zipinstallation
+function FolderDownload($folder,$ps1download,$batdownload)
 {
-    $installationexepath = Test-Path "$env:SystemDrive\_Tech\Applications\Installation\installation.ps1" #vérifie si le exe existe
-    if($installationexepath) #S'Il existe
-    {
-        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\Installation\installation.ps1" -Recurse | Out-Null #supprime le .exe
-    }
-    #Créer le dossier vide Installation s'il n'existe pas
-    $instapath = Test-Path "$env:SystemDrive\_Tech\Applications\Installation" #vérifie si le dossier existe 
-    if($instapath -eq $false)
-    {
-        New-Item -Path "$env:SystemDrive\_Tech\Applications\Installation" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
-    }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Installation\Installation.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsInstallation.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #download le .exe
-    set-location "$env:SystemDrive\_Tech\Applications\Installation" #met le path dans le dossier Installation
-    Start-Process "$env:SystemDrive\_Tech\Applications\Installation\RunAsInstallation.bat" | Out-Null #Lance le script d'installation
-
+    FolderCreation "_Tech\Applications\$folder" #Créer le dossier vide s'il n'existe pas
+    Invoke-WebRequest $ps1download -OutFile "$env:SystemDrive\_Tech\Applications\$folder\$folder.ps1" | Out-Null #download le .exe
+    Invoke-WebRequest $batdownload -OutFile "$env:SystemDrive\_Tech\Applications\$folder\RunAs$folder.bat" | Out-Null #download le .exe
+    set-location "$env:SystemDrive\_Tech\Applications\$folder" #met le path dans le dossier 
+    Start-Process "$env:SystemDrive\_Tech\Applications\$folder\RunAs$folder.bat" | Out-Null #Lance le script
 }
 
 #Installation
@@ -157,29 +128,9 @@ $boutonInstall.FlatAppearance.MouseOverBackColor = 'gray'
 $boutonInstall.Add_MouseEnter({$boutonInstall.ForeColor = 'White'})
 $boutonInstall.Add_MouseLeave({$boutonInstall.ForeColor = 'Black'})
 $boutonInstall.Add_Click({
-Zipinstallation
+FolderDownload "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsInstallation.bat'
 $form.Close()
 })
-
-function ZipOpti 
-{
-    #Mettre à jour le .exe s'il existe.
-    $optiexepath = Test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #vérifie si le .exe existe
-    if($optiexepath) #si le .exe existe
-    {
-        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" -Recurse | Out-Null #supprime le .exe
-    }
-     #Créer le dossier vide Optimisation_Nettoyage s'il n'existe pas
-    $optipath = Test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage" #vérifie si le dossier existe 
-    if($optipath -eq $false)
-    {
-        New-Item -Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
-    }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Optimisation_Nettoyage.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsOptimisation_Nettoyage.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #download le .exe
-    set-location "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage" #met le path dans le dossier Optimisation
-    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\RunAsOptimisation_Nettoyage.bat" | Out-Null #Lance le script d'optimisation
-}
 
 #Optimisation et nettoyage
 $boutonOptiNett = New-Object System.Windows.Forms.Button
@@ -199,29 +150,9 @@ $boutonOptiNett.FlatAppearance.MouseOverBackColor = 'gray'
 $boutonOptiNett.Add_MouseEnter({$boutonOptiNett.ForeColor = 'White'})
 $boutonOptiNett.Add_MouseLeave({$boutonOptiNett.ForeColor = 'Black'})
 $boutonOptiNett.Add_Click({
-ZipOpti
+FolderDownload "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsOptimisation_Nettoyage.bat'
 $form.Close()
 })
-
-function Zipdiag
-{
-    #Mettre à jour le .exe s'il existe.
-    $diagexepath = Test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Diagnostique.ps1"  #vérifie si le .exe existe
-    if($diagexepath) #s'il existe supprime le .exe
-    {
-        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Diagnostique.ps1" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
-    }
-    #Créer le dossier vide Diagnostique s'il n'existe pas
-    $diagpath = Test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique"  #vérifie si le dossier existe 
-    if($diagpath -eq $false)
-    {
-        New-Item -Path "$env:SystemDrive\_Tech\Applications\Diagnostique" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
-    }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\Diagnostique.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDiagnostique.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #download le .exe
-    set-location "$env:SystemDrive\_Tech\Applications\Diagnostique" #met le path dans le dossier Diagnostique
-    Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\RunAsDiagnostique.bat" | Out-Null #Lance le script de Diagnostique
-}
 
 #Diagnostic
 $diagnostic = New-Object System.Windows.Forms.Button
@@ -240,24 +171,13 @@ $diagnostic.FlatAppearance.MouseOverBackColor = 'gray'
 $diagnostic.Add_MouseEnter({$diagnostic.ForeColor = 'White'})
 $diagnostic.Add_MouseLeave({$diagnostic.ForeColor = 'Black'})
 $diagnostic.Add_Click({
-Zipdiag
+FolderDownload "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDiagnostique.bat'
 $form.Close()
 })
 
 function Zipdesinfection 
 {
-    #Mettre à jour le .exe s'il existe.
-    $desinfectionexepath = Test-Path "$env:SystemDrive\_Tech\Applications\Securite\Desinfection.ps1"  #vérifie si le .exe existe
-    if($desinfectionexepath) #s'il existe supprime le .exe
-    {
-        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\Securite\Desinfection.ps1" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
-    }
-    #Créer le dossier vide Securite s'il n'existe pas
-    $desinfectionpath = Test-Path "$env:SystemDrive\_Tech\Applications\Securite"  #vérifie si le dossier existe 
-    if($desinfectionpath -eq $false)
-    {
-        New-Item -Path "$env:SystemDrive\_Tech\Applications\Securite" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
-    }
+    FolderCreation "_Tech\Applications\Securite" #Créer le dossier vide Securite s'il n'existe pas
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Desinfection.ps1" | Out-Null #download le .exe
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #download le .exe
     set-location "$env:SystemDrive\_Tech\Applications\Securite" #met le path dans le dossier Securite
@@ -282,28 +202,9 @@ $desinfection.Add_MouseEnter({$desinfection.ForeColor = 'White'})
 $desinfection.Add_MouseLeave({$desinfection.ForeColor = 'Black'})
 $desinfection.Add_Click({
 Zipdesinfection
+#FolderDownload "Securite" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat'
 $form.Close()
 })
-
-function Zipfix
-{
-    #Mettre à jour le .exe s'il existe.
-    $fixexepath = Test-Path "$env:SystemDrive\_Tech\Applications\Fix\Fix.ps1" #vérifie si le .exe existe
-    if($fixexepath) #s'il existe supprime le fichier ps1
-    {
-        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\Fix\Fix.ps1" -Recurse | Out-Null #si le exe existe il supprime tout le dossier
-    }
-     #Créer le dossier vide Fix s'il n'existe pas
-    $fixpath = Test-Path "$env:SystemDrive\_Tech\Applications\Fix" #vérifie si le dossier existe 
-    if($fixpath -eq $false)
-    {
-        New-Item -Path "$env:SystemDrive\_Tech\Applications\Fix" -ItemType 'directory' | Out-Null #s'il n'existe pas le créé
-    }
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Fix\Fix.ps1" | Out-Null #download le .ps1
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsFix.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #download le .ps1
-    set-location "$env:SystemDrive\_Tech\Applications\Fix" #met le path dans le dossier Fix
-    Start-Process "$env:SystemDrive\_Tech\Applications\Fix\RunAsFix.bat" | Out-Null #Lance le script de Fix
-}
 
 #Fix
 $fix = New-Object System.Windows.Forms.Button
@@ -322,7 +223,7 @@ $fix.FlatAppearance.MouseOverBackColor = 'gray'
 $fix.Add_MouseEnter({$fix.ForeColor = 'White'})
 $fix.Add_MouseLeave({$fix.ForeColor = 'Black'})
 $fix.Add_Click({
-Zipfix
+FolderDownload "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsFix.bat'
 $form.Close()
 })
 
