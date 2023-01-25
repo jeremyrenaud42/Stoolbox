@@ -1,8 +1,5 @@
-﻿Add-Type -AssemblyName PresentationFramework
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName System.speech
-Add-Type -AssemblyName System.Drawing
-Add-Type -AssemblyName presentationCore
+﻿#Les assembly sont nécéssaire pour le fonctionnement du script. Ne pas effacer
+Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
 #Cette fonction permet de relancer le script en mode Admin si besoin
@@ -25,7 +22,6 @@ function FolderCreation($folder) #Création des dossiers
     }
 }
 
-
 #Download des files pour Remove  et delete
 function Remove
 {
@@ -42,16 +38,11 @@ function Remove
     } 
 }
 
-function Modules
+function Modules #Dowload les modules
 {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/choco.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\choco.psm1" | Out-Null  
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/task.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\task.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/update.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\update.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/winget.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\winget.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/Voice.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Voice.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/Logs.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\Logs.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/source.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\source.psm1" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules/restore.psm1' -OutFile "$env:SystemDrive\_Tech\applications\source\modules\restore.psm1" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$env:SystemDrive\_Tech\applications\source\Modules.zip" | Out-Null
+    Expand-Archive "$env:SystemDrive\_Tech\applications\source\Modules.zip" "$env:SystemDrive\_Tech\applications\source" -Force
+    Remove-Item "$env:SystemDrive\_Tech\applications\source\Modules.zip"
 }
     
 function Zipsource #Download et création des fondamentaux
@@ -59,7 +50,6 @@ function Zipsource #Download et création des fondamentaux
     #Preinstall #Va créer les dossiers
     FolderCreation "_Tech\Applications"
     FolderCreation "_Tech\Applications\Source"
-    FolderCreation "_Tech\Applications\Source\modules"
     FolderCreation "_Tech\Applications\Source\images"
     $fondpath = test-Path "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
     $iconepath = test-path "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" #vérifie si l'icone existe
