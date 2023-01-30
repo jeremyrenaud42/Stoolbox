@@ -1,45 +1,41 @@
-Add-Type -AssemblyName PresentationFramework
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName System.speech
-Add-Type -AssemblyName System.Drawing
-Add-Type -AssemblyName presentationCore
+#Les assembly sont nécéssaire pour le fonctionnement du script. Ne pas effacer
+Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
 $driveletter = $pwd.drive.name
 $root = "$driveletter" + ":"
 
-set-location "$root\_Tech\\Applications\Securite" #met la location au repertoir actuel
-Import-Module "$root\_Tech\Applications\Source\modules\update.psm1" | Out-Null #Module pour updater les apps
-Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
-Import-Module "$root\_Tech\Applications\Source\modules\choco.psm1" | Out-Null #Module pour chocolatey
-Import-Module "$root\_Tech\Applications\Source\modules\winget.psm1" | Out-Null #Module pour Winget
-Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
-Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
-Import-Module "$root\_Tech\Applications\Source\modules\restore.psm1" | Out-Null #Module pour créer source
+set-location "$env:SystemDrive\_Tech\Applications\Desinfection" #met la location au repertoir actuel
+#Importer tout mes modules
+$modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
+foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
+{
+    Import-Module $modulesFolder\$module
+}
 
 function zipsourcevirus #Ce qui va toujours être redownloader à neuf à chaque lancement. Le pack obligatoire pour le fonctionnement + le reset des logs
 {
     Sourceexist
-    $fondpath = test-Path "$env:SystemDrive\_Tech\Applications\Securite\Source\fondopti.jpg" #Vérifie si le fond écran est présent
-    $iconepath = test-path "$env:SystemDrive\_Tech\Applications\Securite\Source\Icone.ico" #vérifie si l'icone existe
+    $fondpath = test-Path "$env:SystemDrive\_Tech\Applications\Desinfection\Source\fondopti.jpg" #Vérifie si le fond écran est présent
+    $iconepath = test-path "$env:SystemDrive\_Tech\Applications\Desinfection\Source\Icone.ico" #vérifie si l'icone existe
     if($fondpath -eq $false) #si fond pas présent
     {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Source\fondvirus.png" | Out-Null
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' -OutFile "$env:SystemDrive\_Tech\Applications\Desinfection\Source\fondvirus.png" | Out-Null
     }
     if($iconepath -eq $false) #si icone pas présent
     {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Source\Icone.ico" | Out-Null
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\Applications\Desinfection\Source\Icone.ico" | Out-Null
     }
 }
 
 function zipHitmanPro
 {
-    $PathHitmanPro = test-Path ".\Source\HitmanPro.exe"
+    $PathHitmanPro = test-Path "$env:SystemDrive\_Tech\Applications\Desinfection\Source\HitmanPro.exe"
     if($PathHitmanPro -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' -OutFile ".\Source\HitmanPro.exe"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' -OutFile "$env:SystemDrive\_Tech\Applications\Desinfection\Source\HitmanPro.exe"
     }
-    Start-Process ".\Source\HitmanPro.exe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Desinfection\Source\HitmanPro.exe"
     Addlog "desinfectionlog.txt" "Vérifier les virus avec HitmanPro"
 }
 
@@ -58,47 +54,47 @@ function zipautoruns
 
 function zipprocessexplorer
 {
-    $pathprocexp = test-Path ".\Source\procexp64.exe"
+    $pathprocexp = test-Path "$env:SystemDrive\_Tech\Applications\Desinfection\Source\procexp64.exe"
     if($pathprocexp -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/procexp64.exe' -OutFile ".\Source\procexp64.exe"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/procexp64.exe' -OutFile "$env:SystemDrive\_Tech\Applications\Desinfection\Source\procexp64.exe"
     }
-    Start-Process ".\Source\procexp64.exe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Desinfection\Source\procexp64.exe"
     Addlog "desinfectionlog.txt" "Vérifier les process"
 }
 
 function ziprkill
 {
-    $pathrkill= test-Path ".\Source\rkill64.exe"
+    $pathrkill= test-Path "$env:SystemDrive\_Tech\Applications\Desinfection\Source\rkill64.exe"
     if($pathrkill -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/rkill64.exe' -OutFile ".\Source\rkill64.exe"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/rkill64.exe' -OutFile "$env:SystemDrive\_Tech\Applications\Desinfection\Source\rkill64.exe"
     }
-    Start-Process ".\Source\rkill64.exe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Desinfection\Source\rkill64.exe"
     Addlog "desinfectionlog.txt" "Désactiver les process"
 }
 
 function zipadw
 {
-    $pathadw = test-Path ".\Source\adwcleaner.exe"
+    $pathadw = test-Path "$env:SystemDrive\_Tech\Applications\Desinfection\Source\adwcleaner.exe"
     if($pathadw -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/adwcleaner.exe' -OutFile ".\Source\adwcleaner.exe"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/adwcleaner.exe' -OutFile "$env:SystemDrive\_Tech\Applications\Desinfection\Source\adwcleaner.exe"
     }
-    Start-Process ".\Source\adwcleaner.exe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Desinfection\Source\adwcleaner.exe"
     Addlog "desinfectionlog.txt" "Analyse ADW effectué"
 }
 
 function ziproguekiller
 {
-    $pathroguekiller= test-Path ".\Source\Roguekiller\RogueKiller_Portable64.exe"
+    $pathroguekiller= test-Path "$env:SystemDrive\_Tech\Applications\Desinfection\Source\Roguekiller\RogueKiller_Portable64.exe"
     if($pathroguekiller -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Roguekiller.zip' -OutFile ".\Source\Roguekiller.zip"
-    Expand-Archive ".\Source\Roguekiller.zip" ".\Source"
-    Remove-Item ".\Source\Roguekiller.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Roguekiller.zip' -OutFile "$env:SystemDrive\_Tech\Applications\Desinfection\Source\Roguekiller.zip"
+    Expand-Archive "$env:SystemDrive\_Tech\Applications\Desinfection\Source\Roguekiller.zip" "$env:SystemDrive\_Tech\Applications\Desinfection\Source"
+    Remove-Item "$env:SystemDrive\_Tech\Applications\Desinfection\Source\Roguekiller.zip"
     }
-    Start-Process ".\Source\Roguekiller\RogueKiller_portable64.exe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Desinfection\Source\Roguekiller\RogueKiller_portable64.exe"
     Addlog "desinfectionlog.txt" "Analyse RogueKiller effectué"
 }
 
@@ -136,29 +132,15 @@ function zipccleaner
 
 zipsourcevirus
 
-<#
-function Restore
-{
-write-host "création du point de restauration"
-Enable-ComputerRestore -Drive "$env:SystemDrive\" 
-REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" /V "SystemRestorePointCreationFrequency" /T REG_DWORD /D 0 /F
-#https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/reg-add
-#write-host si pas fini apres 1 minute, fermer la fenetre PowerShell
-Checkpoint-Computer -Description "STO" -RestorePointType "MODIFY_SETTINGS"
-[System.Windows.MessageBox]::Show("Point de restauration créé avec succès","Point de restauration",0) | Out-Null
-}
-#>
-
-$image = [system.drawing.image]::FromFile("$root\_Tech\\Applications\Securite\Source\fondvirus.png") 
+$image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Desinfection\Source\fondvirus.png") 
 $Form = New-Object System.Windows.Forms.Form
 $Form.Text = "Desinfection"
 $Form.BackgroundImage = $image
 $Form.Width = $image.Width
 $Form.height = $image.height
 $Form.MaximizeBox = $false
-$Form.icon = New-Object system.drawing.icon ("$root\_Tech\\Applications\Securite\Source\Icone.ico") 
+$Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Desinfection\Source\Icone.ico") 
 #$Form.add_FormClosed({Task;$Form.Close()}) #Supprimer le dossier _Tech lorsque la form se ferme
-
 
 #Process_Explorer
 $Process_Explorer = New-Object System.Windows.Forms.Button
@@ -275,7 +257,7 @@ Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Un
 Start-Process -wait "$PathRevo"
 AddLog "desinfectionlog.txt" "Vérifier les programmes nuisibles"
 Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*","HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName  | Sort-Object -Property DisplayName | Format-Table �AutoSize > "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoAfter.txt"
-Compare-Object -ReferenceObject (Get-Content -path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoBefore.txt") -DifferenceObject (Get-Content -path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoAfter.txt") | Out-File ".\Source\Logs\Log.txt" -Append
+Compare-Object -ReferenceObject (Get-Content -path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoBefore.txt") -DifferenceObject (Get-Content -path "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoAfter.txt") | Out-File "$env:SystemDrive\_Tech\Applications\Desinfection\Source\Logs\Log.txt" -Append
 }
 
 #Revo
@@ -337,8 +319,8 @@ if($path -eq $false)
     choco install malwarebytes -y | Out-Null
     if($path -eq $false)
     {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite Malwarebytes Installer.exe' -OutFile "$root\_Tech\Applications\Securite\Source\Ninite Malwarebytes Installer.exe"
-        Start-Process "$root\_Tech\\Applications\Securite\Source\Ninite Malwarebytes Installer.exe"
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite Malwarebytes Installer.exe' -OutFile "$root\_Tech\Applications\Desinfection\Source\Ninite Malwarebytes Installer.exe"
+        Start-Process "$root\_Tech\\Applications\Desinfection\Source\Ninite Malwarebytes Installer.exe"
         $path = Test-Path "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
         if($path -eq $false)
         {
@@ -382,8 +364,8 @@ if($path -eq $false)
     Start-Process "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe" 
     if($path -eq $false)
     {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite SUPERAntiSpyware Installer.exe' -OutFile "$root\_Tech\Applications\Securite\Source\Ninite SUPERAntiSpyware Installer.exe"
-        Start-Process "$root\_Tech\\Applications\Securite\Source\Ninite SUPERAntiSpyware Installer.exe"
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite SUPERAntiSpyware Installer.exe' -OutFile "$root\_Tech\Applications\Desinfection\Source\Ninite SUPERAntiSpyware Installer.exe"
+        Start-Process "$root\_Tech\\Applications\Desinfection\Source\Ninite SUPERAntiSpyware Installer.exe"
         $path = Test-Path "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
         if($path -eq $false)
         {
