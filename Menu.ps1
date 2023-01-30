@@ -2,238 +2,248 @@
 Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-#Cette fonction permet de relancer le script en mode Admin si besoin
-function Admin
+function CheckAdminStatus
 {
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator'))
-     {
-        Start-Process powershell.exe -ArgumentList ("-NoProfile -windowstyle hidden -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-        Exit #permet de fermer la session non-Admin
+    $adminStatus = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator') 
+    return $adminStatus
+}
+function ReloadAsAdmin
+{
+    Start-Process powershell.exe -ArgumentList ("-NoProfile -windowstyle hidden -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+    Exit #permet de fermer la session non-Admin
+}
+
+function CreateFolder($folder) 
+{
+    $folderPath = "$env:SystemDrive\$folder"
+    $folderExist = test-path $folderPath 
+    if($folderExist -eq $false)
+    {
+        New-Item $folderPath -ItemType 'Directory' -Force | Out-Null
     }
 }
 
-function FolderCreation($folder) #Création des dossiers
+function DownloadFolder($appName,$remotePs1Link,$remoteBatLink)
 {
-    $path = "$env:SystemDrive\$folder"
-    $folderexist = test-path $path 
-    if($folderexist -eq $false)
-    {
-        New-Item $path -ItemType 'Directory' -Force | Out-Null
-    }
+    Invoke-WebRequest $remotePs1Link -OutFile "$env:SystemDrive\_Tech\Applications\$appName\$appName.ps1" | Out-Null 
+    Invoke-WebRequest $remoteBatLink -OutFile "$env:SystemDrive\_Tech\Applications\$appName\RunAs$appName.bat" | Out-Null
 }
 
-#Download des files pour Remove  et delete
-function Remove
+function DeployApp($appName,$remotePs1Link,$remoteBatLink)
 {
-    FolderCreation "Temp"
-    $delete = test-path "$env:SystemDrive\Temp\delete.ps1"
-    if($delete -eq $false)
+    CreateFolder "_Tech\Applications\$appName"
+    DownloadFolder $appName $remotePs1Link $remoteBatLink
+    set-location "$env:SystemDrive\_Tech\Applications\$appName" 
+    Start-Process "$env:SystemDrive\_Tech\Applications\$appName\RunAs$appName.bat" | Out-Null
+}
+
+function DownloadRemoveScript
+{
+    CreateFolder "Temp"
+    $deletePath = test-path "$env:SystemDrive\Temp\remove.ps1"
+    $removePath = test-path "$env:SystemDrive\Temp\Remove.bat"
+    if(($deletePath) -eq $false -and ($removePath -eq $false))
     {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/delete.ps1' -OutFile "$env:SystemDrive\Temp\delete.ps1" | Out-Null
-    }
-    $remove = test-path "$env:SystemDrive\Temp\Remove.bat"
-    if($remove -eq $false)
-    {
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' -OutFile "$env:SystemDrive\Temp\Remove.ps1" | Out-Null
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' -OutFile "$env:SystemDrive\Temp\Remove.bat" | Out-Null
-    } 
+    }
 }
 
-function Modules #Dowload les modules
+function DownloadModules
 {
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$env:SystemDrive\_Tech\applications\source\Modules.zip" | Out-Null
     Expand-Archive "$env:SystemDrive\_Tech\applications\source\Modules.zip" "$env:SystemDrive\_Tech\applications\source" -Force
     Remove-Item "$env:SystemDrive\_Tech\applications\source\Modules.zip"
 }
-    
-function Zipsource #Download et création des fondamentaux
+
+function DownloadImages
 {
-    #Preinstall #Va créer les dossiers
-    FolderCreation "_Tech\Applications"
-    FolderCreation "_Tech\Applications\Source"
-    FolderCreation "_Tech\Applications\Source\images"
-    $fondpath = test-Path "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" #Vérifie si le fond écran est présent
-    $iconepath = test-path "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" #vérifie si l'icone existe
-        if($fondpath -eq $false) #si fond pas présent
+    CreateFolder "_Tech\Applications\Source\images"
+    $fondpath = test-Path "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif"
+    $iconepath = test-path "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico"
+        if($fondpath -eq $false) 
         {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" | Out-Null #Download le fond
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" | Out-Null
         }
-        if($iconepath -eq $false) #si icone pas présent
+        if($iconepath -eq $false) 
         {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" | Out-Null #Download l'icone
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" | Out-Null
         } 
-    Remove #Va download remove
-    Modules #Va download les modules
+}
+    
+function PrepareDependencies
+{
+    CreateFolder "_Tech\Applications"
+    CreateFolder "_Tech\Applications\Source" 
+    DownloadImages
+    DownloadRemoveScript
+    DownloadModules
 }
 
-Admin #emet en admin si pas executer en admin
-Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force #met la policy a unrestricted a cause de intermediate .ps1
-set-location "$env:SystemDrive\_Tech" #met la location au repertoir actuel
-Zipsource #install les fichiers sources
-Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
+$adminStatus = CheckAdminStatus
+if($adminStatus -eq $false)
+{
+    ReloadAsAdmin
+}
+Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force
+set-location "$env:SystemDrive\_Tech" 
+PrepareDependencies
+$importTaskModule = Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 
-$img = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Source\Images\fondpluiesize.gif") #Il faut mettre le chemin complet pour éviter des erreurs.
+$imgFile = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Source\Images\fondpluiesize.gif") #Il faut mettre le chemin complet pour éviter des erreurs.
 $pictureBoxBackGround = new-object Windows.Forms.PictureBox #permet d'afficher un gif
-$pictureBoxBackGround.width = $img.width 
-$pictureBoxBackGround.height = $img.height
-$pictureBoxBackGround.Image = $img #contient l'image gif de background
+$pictureBoxBackGround.width = $imgFile.width 
+$pictureBoxBackGround.height = $imgFile.height
+$pictureBoxBackGround.Image = $imgFile #contient l'image gif de background
 $pictureBoxBackGround.AutoSize = $true 
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = "Menu - Boite à outils du technicien"
-$form.Width = $img.Width
-$form.height = $img.height
+$form.Width = $imgFile.Width
+$form.height = $imgFile.height
 $form.MaximizeBox = $false
 $form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Source\Images\Icone.ico") #Il faut mettre le chemin complet pour éviter des erreurs.
 $form.KeyPreview = $True
-$form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {Task;$form.Close()}}) #si on fait échape sa ferme la fenetre
-#$form.add_FormClosed({Task;$form.Close()})
+$form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {$importTaskModule;Task;$form.Close()}}) #si on fait échape sa ferme la fenetre
 $form.TopMost = $true
 $form.StartPosition = "CenterScreen"
 $form.BackgroundImageLayout = "Stretch"
 
-function FolderDownload($folder,$ps1download,$batdownload)
-{
-    FolderCreation "_Tech\Applications\$folder" #Créer le dossier vide s'il n'existe pas
-    Invoke-WebRequest $ps1download -OutFile "$env:SystemDrive\_Tech\Applications\$folder\$folder.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest $batdownload -OutFile "$env:SystemDrive\_Tech\Applications\$folder\RunAs$folder.bat" | Out-Null #download le .exe
-    set-location "$env:SystemDrive\_Tech\Applications\$folder" #met le path dans le dossier 
-    Start-Process "$env:SystemDrive\_Tech\Applications\$folder\RunAs$folder.bat" | Out-Null #Lance le script
-}
-
 #Installation
-$boutonInstall = New-Object System.Windows.Forms.Button
-$boutonInstall.Location = New-Object System.Drawing.Point(446,100)
-$boutonInstall.AutoSize = $false
-$boutonInstall.Width = '150'
-$boutonInstall.Height = '65'
-$boutonInstall.ForeColor='black'
-$boutonInstall.BackColor = 'darkred'
-$boutonInstall.Text = "Installation Windows"
-$boutonInstall.Font= 'Microsoft Sans Serif,16'
-$boutonInstall.FlatStyle = 'Flat'
-$boutonInstall.FlatAppearance.BorderSize = 2
-$boutonInstall.FlatAppearance.BorderColor = 'black'
-$boutonInstall.FlatAppearance.MouseDownBackColor = 'darkcyan'
-$boutonInstall.FlatAppearance.MouseOverBackColor = 'gray'
-$boutonInstall.Add_MouseEnter({$boutonInstall.ForeColor = 'White'})
-$boutonInstall.Add_MouseLeave({$boutonInstall.ForeColor = 'Black'})
-$boutonInstall.Add_Click({
-FolderDownload "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsInstallation.bat'
+$btnInstall = New-Object System.Windows.Forms.Button
+$btnInstall.Location = New-Object System.Drawing.Point(446,100)
+$btnInstall.AutoSize = $false
+$btnInstall.Width = '150'
+$btnInstall.Height = '65'
+$btnInstall.ForeColor='black'
+$btnInstall.BackColor = 'darkred'
+$btnInstall.Text = "Installation Windows"
+$btnInstall.Font= 'Microsoft Sans Serif,16'
+$btnInstall.FlatStyle = 'Flat'
+$btnInstall.FlatAppearance.BorderSize = 2
+$btnInstall.FlatAppearance.BorderColor = 'black'
+$btnInstall.FlatAppearance.MouseDownBackColor = 'darkcyan'
+$btnInstall.FlatAppearance.MouseOverBackColor = 'gray'
+$btnInstall.Add_MouseEnter({$btnInstall.ForeColor = 'White'})
+$btnInstall.Add_MouseLeave({$btnInstall.ForeColor = 'Black'})
+$btnInstall.Add_Click({
+DeployApp "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsInstallation.bat'
 $form.Close()
 })
 
 #Optimisation et nettoyage
-$boutonOptiNett = New-Object System.Windows.Forms.Button
-$boutonOptiNett.Location = New-Object System.Drawing.Point(446,175)
-$boutonOptiNett.AutoSize = $false
-$boutonOptiNett.Width = '150'
-$boutonOptiNett.Height = '65'
-$boutonOptiNett.ForeColor='black'
-$boutonOptiNett.BackColor = 'darkred'
-$boutonOptiNett.Text = "Optimisation et Nettoyage"
-$boutonOptiNett.Font= 'Microsoft Sans Serif,16'
-$boutonOptiNett.FlatStyle = 'Flat'
-$boutonOptiNett.FlatAppearance.BorderSize = 3
-$boutonOptiNett.FlatAppearance.BorderColor = 'black'
-$boutonOptiNett.FlatAppearance.MouseDownBackColor = 'darkcyan'
-$boutonOptiNett.FlatAppearance.MouseOverBackColor = 'gray'
-$boutonOptiNett.Add_MouseEnter({$boutonOptiNett.ForeColor = 'White'})
-$boutonOptiNett.Add_MouseLeave({$boutonOptiNett.ForeColor = 'Black'})
-$boutonOptiNett.Add_Click({
-FolderDownload "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsOptimisation_Nettoyage.bat'
+$btnOptiNett = New-Object System.Windows.Forms.Button
+$btnOptiNett.Location = New-Object System.Drawing.Point(446,175)
+$btnOptiNett.AutoSize = $false
+$btnOptiNett.Width = '150'
+$btnOptiNett.Height = '65'
+$btnOptiNett.ForeColor='black'
+$btnOptiNett.BackColor = 'darkred'
+$btnOptiNett.Text = "Optimisation et Nettoyage"
+$btnOptiNett.Font= 'Microsoft Sans Serif,16'
+$btnOptiNett.FlatStyle = 'Flat'
+$btnOptiNett.FlatAppearance.BorderSize = 3
+$btnOptiNett.FlatAppearance.BorderColor = 'black'
+$btnOptiNett.FlatAppearance.MouseDownBackColor = 'darkcyan'
+$btnOptiNett.FlatAppearance.MouseOverBackColor = 'gray'
+$btnOptiNett.Add_MouseEnter({$btnOptiNett.ForeColor = 'White'})
+$btnOptiNett.Add_MouseLeave({$btnOptiNett.ForeColor = 'Black'})
+$btnOptiNett.Add_Click({
+DeployApp "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsOptimisation_Nettoyage.bat'
 $form.Close()
 })
 
 #Diagnostic
-$diagnostic = New-Object System.Windows.Forms.Button
-$diagnostic.Location = New-Object System.Drawing.Point(446,250)
-$diagnostic.Width = '150'
-$diagnostic.Height = '65'
-$diagnostic.ForeColor='black'
-$diagnostic.BackColor = 'darkred'
-$diagnostic.Text = "Diagnostique"
-$diagnostic.Font= 'Microsoft Sans Serif,16'
-$diagnostic.FlatStyle = 'Flat'
-$diagnostic.FlatAppearance.BorderSize = 3
-$diagnostic.FlatAppearance.BorderColor = 'black'
-$diagnostic.FlatAppearance.MouseDownBackColor = 'darkcyan'
-$diagnostic.FlatAppearance.MouseOverBackColor = 'gray'
-$diagnostic.Add_MouseEnter({$diagnostic.ForeColor = 'White'})
-$diagnostic.Add_MouseLeave({$diagnostic.ForeColor = 'Black'})
-$diagnostic.Add_Click({
-FolderDownload "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDiagnostique.bat'
+$btnDiagnostic = New-Object System.Windows.Forms.Button
+$btnDiagnostic.Location = New-Object System.Drawing.Point(446,250)
+$btnDiagnostic.Width = '150'
+$btnDiagnostic.Height = '65'
+$btnDiagnostic.ForeColor='black'
+$btnDiagnostic.BackColor = 'darkred'
+$btnDiagnostic.Text = "Diagnostique"
+$btnDiagnostic.Font= 'Microsoft Sans Serif,16'
+$btnDiagnostic.FlatStyle = 'Flat'
+$btnDiagnostic.FlatAppearance.BorderSize = 3
+$btnDiagnostic.FlatAppearance.BorderColor = 'black'
+$btnDiagnostic.FlatAppearance.MouseDownBackColor = 'darkcyan'
+$btnDiagnostic.FlatAppearance.MouseOverBackColor = 'gray'
+$btnDiagnostic.Add_MouseEnter({$btnDiagnostic.ForeColor = 'White'})
+$btnDiagnostic.Add_MouseLeave({$btnDiagnostic.ForeColor = 'Black'})
+$btnDiagnostic.Add_Click({
+DeployApp "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDiagnostique.bat'
 $form.Close()
 })
 
+<#
 function Zipdesinfection 
 {
-    FolderCreation "_Tech\Applications\Securite" #Créer le dossier vide Securite s'il n'existe pas
+    CreateFolder "_Tech\Applications\Securite" #Créer le dossier vide Securite s'il n'existe pas
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Desinfection.ps1" | Out-Null #download le .exe
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #download le .exe
     set-location "$env:SystemDrive\_Tech\Applications\Securite" #met le path dans le dossier Securite
     Start-Process "$env:SystemDrive\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #Lance le script de désinfcetion
 }
+#>
 
 #Desinfection
-$desinfection = New-Object System.Windows.Forms.Button
-$desinfection.Location = New-Object System.Drawing.Point(446,325)
-$desinfection.Width = '150'
-$desinfection.Height = '65'
-$desinfection.ForeColor='black'
-$desinfection.BackColor = 'darkred'
-$desinfection.Text = "Désinfection"
-$desinfection.Font= 'Microsoft Sans Serif,16'
-$desinfection.FlatStyle = 'Flat'
-$desinfection.FlatAppearance.BorderSize = 3
-$desinfection.FlatAppearance.BorderColor = 'black'
-$desinfection.FlatAppearance.MouseDownBackColor = 'darkcyan'
-$desinfection.FlatAppearance.MouseOverBackColor = 'gray'
-$desinfection.Add_MouseEnter({$desinfection.ForeColor = 'White'})
-$desinfection.Add_MouseLeave({$desinfection.ForeColor = 'Black'})
-$desinfection.Add_Click({
-Zipdesinfection
-#FolderDownload "Securite" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat'
+$btnDesinfection = New-Object System.Windows.Forms.Button
+$btnDesinfection.Location = New-Object System.Drawing.Point(446,325)
+$btnDesinfection.Width = '150'
+$btnDesinfection.Height = '65'
+$btnDesinfection.ForeColor='black'
+$btnDesinfection.BackColor = 'darkred'
+$btnDesinfection.Text = "Désinfection"
+$btnDesinfection.Font= 'Microsoft Sans Serif,16'
+$btnDesinfection.FlatStyle = 'Flat'
+$btnDesinfection.FlatAppearance.BorderSize = 3
+$btnDesinfection.FlatAppearance.BorderColor = 'black'
+$btnDesinfection.FlatAppearance.MouseDownBackColor = 'darkcyan'
+$btnDesinfection.FlatAppearance.MouseOverBackColor = 'gray'
+$btnDesinfection.Add_MouseEnter({$btnDesinfection.ForeColor = 'White'})
+$btnDesinfection.Add_MouseLeave({$btnDesinfection.ForeColor = 'Black'})
+$btnDesinfection.Add_Click({
+DeployApp "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat'
 $form.Close()
 })
 
 #Fix
-$fix = New-Object System.Windows.Forms.Button
-$fix.Location = New-Object System.Drawing.Point(446,400)
-$fix.Width = '150'
-$fix.Height = '65'
-$fix.ForeColor='black'
-$fix.BackColor = 'darkred'
-$fix.Text = "Fix"
-$fix.Font= 'Microsoft Sans Serif,16'
-$fix.FlatStyle = 'Flat'
-$fix.FlatAppearance.BorderSize = 3
-$fix.FlatAppearance.BorderColor = 'black'
-$fix.FlatAppearance.MouseDownBackColor = 'darkcyan'
-$fix.FlatAppearance.MouseOverBackColor = 'gray'
-$fix.Add_MouseEnter({$fix.ForeColor = 'White'})
-$fix.Add_MouseLeave({$fix.ForeColor = 'Black'})
-$fix.Add_Click({
-FolderDownload "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsFix.bat'
+$btnFix = New-Object System.Windows.Forms.Button
+$btnFix.Location = New-Object System.Drawing.Point(446,400)
+$btnFix.Width = '150'
+$btnFix.Height = '65'
+$btnFix.ForeColor='black'
+$btnFix.BackColor = 'darkred'
+$btnFix.Text = "Fix"
+$btnFix.Font= 'Microsoft Sans Serif,16'
+$btnFix.FlatStyle = 'Flat'
+$btnFix.FlatAppearance.BorderSize = 3
+$btnFix.FlatAppearance.BorderColor = 'black'
+$btnFix.FlatAppearance.MouseDownBackColor = 'darkcyan'
+$btnFix.FlatAppearance.MouseOverBackColor = 'gray'
+$btnFix.Add_MouseEnter({$btnFix.ForeColor = 'White'})
+$btnFix.Add_MouseLeave({$btnFix.ForeColor = 'Black'})
+$btnFix.Add_Click({
+DeployApp "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsFix.bat'
 $form.Close()
 })
 
 #changelog
-$changelog = New-Object System.Windows.Forms.Button
-$changelog.Location = New-Object System.Drawing.Point(026,600)
-$changelog.Width = '115'
-$changelog.Height = '40'
-$changelog.ForeColor= 'white'
-$changelog.BackColor = 'black'
-$changelog.Text = "Changelog"
-$changelog.Font= 'Microsoft Sans Serif,10'
-$changelog.FlatStyle = 'Flat'
-$changelog.FlatAppearance.BorderSize = 3
-$changelog.FlatAppearance.BorderColor = 'black'
-$changelog.FlatAppearance.MouseDownBackColor = 'Darkcyan'
-$quit.FlatAppearance.MouseOverBackColor = 'darkred'
-$changelog.Add_MouseEnter({$changelog.ForeColor = 'black'})
-$changelog.Add_MouseLeave({$changelog.ForeColor = 'darkred'})
-$changelog.Add_Click({
+$btnChangeLog = New-Object System.Windows.Forms.Button
+$btnChangeLog.Location = New-Object System.Drawing.Point(026,600)
+$btnChangeLog.Width = '115'
+$btnChangeLog.Height = '40'
+$btnChangeLog.ForeColor= 'white'
+$btnChangeLog.BackColor = 'black'
+$btnChangeLog.Text = "Changelog"
+$btnChangeLog.Font= 'Microsoft Sans Serif,10'
+$btnChangeLog.FlatStyle = 'Flat'
+$btnChangeLog.FlatAppearance.BorderSize = 3
+$btnChangeLog.FlatAppearance.BorderColor = 'black'
+$btnChangeLog.FlatAppearance.MouseDownBackColor = 'Darkcyan'
+$btnChangeLog.FlatAppearance.MouseOverBackColor = 'darkred'
+$btnChangeLog.Add_MouseEnter({$btnChangeLog.ForeColor = 'black'})
+$btnChangeLog.Add_MouseLeave({$btnChangeLog.ForeColor = 'darkred'})
+$btnChangeLog.Add_Click({
     $form.TopMost = $false
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' -OutFile "$env:SystemDrive\_Tech\changelog.txt" | Out-Null #download le .ps1
     Start-Process "$env:SystemDrive\_Tech\changelog.txt"
@@ -242,51 +252,52 @@ $changelog.Add_Click({
 })
 
 #quitter
-$quit = New-Object System.Windows.Forms.Button
-$quit.Location = New-Object System.Drawing.Point(446,575)
-$quit.Width = '150'
-$quit.Height = '65'
-$quit.ForeColor= 'darkred'
-$quit.BackColor = 'black'
-$quit.Text = "Quitter"
-$quit.Font= 'Microsoft Sans Serif,16'
-$quit.FlatStyle = 'Flat'
-$quit.FlatAppearance.BorderSize = 3
-$quit.FlatAppearance.BorderColor = 'black'
-$quit.FlatAppearance.MouseDownBackColor = 'Darkcyan'
-$quit.FlatAppearance.MouseOverBackColor = 'darkred'
-$quit.Add_MouseEnter({$quit.ForeColor = 'black'})
-$quit.Add_MouseLeave({$quit.ForeColor = 'darkred'})
-$quit.Add_Click({
+$btnQuit = New-Object System.Windows.Forms.Button
+$btnQuit.Location = New-Object System.Drawing.Point(446,575)
+$btnQuit.Width = '150'
+$btnQuit.Height = '65'
+$btnQuit.ForeColor= 'darkred'
+$btnQuit.BackColor = 'black'
+$btnQuit.Text = "Quitter"
+$btnQuit.Font= 'Microsoft Sans Serif,16'
+$btnQuit.FlatStyle = 'Flat'
+$btnQuit.FlatAppearance.BorderSize = 3
+$btnQuit.FlatAppearance.BorderColor = 'black'
+$btnQuit.FlatAppearance.MouseDownBackColor = 'Darkcyan'
+$btnQuit.FlatAppearance.MouseOverBackColor = 'darkred'
+$btnQuit.Add_MouseEnter({$btnQuit.ForeColor = 'black'})
+$btnQuit.Add_MouseLeave({$btnQuit.ForeColor = 'darkred'})
+$btnQuit.Add_Click({
+$importTaskModule
 Task
 $form.Close()
 })
  
 #Choisissez une option
-$labelchoisiroption = New-Object System.Windows.Forms.label
-$labelchoisiroption.Location = New-Object System.Drawing.Point(359,35)
-$labelchoisiroption.AutoSize = $true
-$labelchoisiroption.width = 325
-$labelchoisiroption.height = 55
-$labelchoisiroption.TextAlign = 'MiddleCenter'
-$labelchoisiroption.Font= 'Microsoft Sans Serif,22'
-$labelchoisiroption.ForeColor='white'
-$labelchoisiroption.BackColor = 'darkred'
-$labelchoisiroption.Text = "Choisissez une option"
-$labelchoisiroption.BorderStyle = 'fixed3D'
+$lblChoisirOption = New-Object System.Windows.Forms.label
+$lblChoisirOption.Location = New-Object System.Drawing.Point(359,35)
+$lblChoisirOption.AutoSize = $true
+$lblChoisirOption.width = 325
+$lblChoisirOption.height = 55
+$lblChoisirOption.TextAlign = 'MiddleCenter'
+$lblChoisirOption.Font= 'Microsoft Sans Serif,22'
+$lblChoisirOption.ForeColor='white'
+$lblChoisirOption.BackColor = 'darkred'
+$lblChoisirOption.Text = "Choisissez une option"
+$lblChoisirOption.BorderStyle = 'fixed3D'
 
 #signatureSTO
-$signatureSTO = New-Object System.Windows.Forms.label
-$signatureSTO.Location = New-Object System.Drawing.Point(861,633)
-$signatureSTO.AutoSize = $true
-$signatureSTO.width = 180
-$signatureSTO.height = 20
-$signatureSTO.Font= 'Centau,10'
-$signatureSTO.ForeColor='gray'
-$signatureSTO.BackColor = 'black'
-$signatureSTO.Text = "Propriété de Jérémy Renaud"
-$signatureSTO.TextAlign = 'Middleleft'
+$lblSignatureSTO = New-Object System.Windows.Forms.label
+$lblSignatureSTO.Location = New-Object System.Drawing.Point(861,633)
+$lblSignatureSTO.AutoSize = $true
+$lblSignatureSTO.width = 180
+$lblSignatureSTO.height = 20
+$lblSignatureSTO.Font= 'Centau,10'
+$lblSignatureSTO.ForeColor='gray'
+$lblSignatureSTO.BackColor = 'black'
+$lblSignatureSTO.Text = "Propriété de Jérémy Renaud"
+$lblSignatureSTO.TextAlign = 'Middleleft'
 
 #afficher la form
-$form.controls.AddRange(@($signatureSTO,$labelchoisiroption,$boutonInstall,$boutonOptiNett,$diagnostic,$desinfection,$fix,$quit,$changelog,$pictureBoxBackGround))
+$form.controls.AddRange(@($lblSignatureSTO,$lblChoisirOption,$btnInstall,$btnOptiNett ,$btnDiagnostic,$btnDesinfection,$btnFix,$btnQuit,$btnChangeLog,$pictureBoxBackGround))
 $form.ShowDialog() | out-null
