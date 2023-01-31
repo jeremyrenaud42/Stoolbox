@@ -23,26 +23,27 @@ function CreateFolder($folder)
     }
 }
 
+$applicationPath = "$env:SystemDrive\_Tech\Applications"
 function DownloadFolder($appName,$remotePs1Link,$remoteBatLink)
 {
-    Invoke-WebRequest $remotePs1Link -OutFile "$env:SystemDrive\_Tech\Applications\$appName\$appName.ps1" | Out-Null 
-    Invoke-WebRequest $remoteBatLink -OutFile "$env:SystemDrive\_Tech\Applications\$appName\RunAs$appName.bat" | Out-Null
+    Invoke-WebRequest $remotePs1Link -OutFile "$applicationPath\$appName\$appName.ps1" | Out-Null 
+    Invoke-WebRequest $remoteBatLink -OutFile "$applicationPath\$appName\RunAs$appName.bat" | Out-Null
 }
 
 function DeployApp($appName,$remotePs1Link,$remoteBatLink)
 {
     CreateFolder "_Tech\Applications\$appName"
     DownloadFolder $appName $remotePs1Link $remoteBatLink
-    set-location "$env:SystemDrive\_Tech\Applications\$appName" 
-    Start-Process "$env:SystemDrive\_Tech\Applications\$appName\RunAs$appName.bat" | Out-Null
+    set-location "$applicationPath\$appName" 
+    Start-Process "$applicationPath\$appName\RunAs$appName.bat" | Out-Null
 }
 
 function DownloadRemoveScript
 {
     CreateFolder "Temp"
-    $deletePath = test-path "$env:SystemDrive\Temp\remove.ps1"
-    $removePath = test-path "$env:SystemDrive\Temp\Remove.bat"
-    if(($deletePath) -eq $false -and ($removePath -eq $false))
+    $removePs1Exist = test-path "$env:SystemDrive\Temp\remove.ps1"
+    $removeBatExist = test-path "$env:SystemDrive\Temp\Remove.bat"
+    if($removePs1Exist -eq $false -and $removeBatExist -eq $false)
     {
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' -OutFile "$env:SystemDrive\Temp\Remove.ps1" | Out-Null
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' -OutFile "$env:SystemDrive\Temp\Remove.bat" | Out-Null
@@ -51,23 +52,23 @@ function DownloadRemoveScript
 
 function DownloadModules
 {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$env:SystemDrive\_Tech\applications\source\Modules.zip" | Out-Null
-    Expand-Archive "$env:SystemDrive\_Tech\applications\source\Modules.zip" "$env:SystemDrive\_Tech\applications\source" -Force
-    Remove-Item "$env:SystemDrive\_Tech\applications\source\Modules.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$applicationPath\source\Modules.zip" | Out-Null
+    Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
+    Remove-Item "$applicationPath\source\Modules.zip"
 }
 
 function DownloadImages
 {
     CreateFolder "_Tech\Applications\Source\images"
-    $fondpath = test-Path "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif"
-    $iconepath = test-path "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico"
+    $fondpath = test-Path "$applicationPath\source\Images\fondpluiesize.gif"
+    $iconepath = test-path "$applicationPath\source\Images\Icone.ico"
         if($fondpath -eq $false) 
         {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\fondpluiesize.gif" | Out-Null
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$applicationPath\source\Images\fondpluiesize.gif" | Out-Null
         }
         if($iconepath -eq $false) 
         {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\applications\source\Images\Icone.ico" | Out-Null
+            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$applicationPath\source\Images\Icone.ico" | Out-Null
         } 
 }
     
@@ -88,9 +89,9 @@ if($adminStatus -eq $false)
 Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force
 set-location "$env:SystemDrive\_Tech" 
 PrepareDependencies
-$importTaskModule = Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
+$importTaskModule = Import-Module "$applicationPath\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 
-$imgFile = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Source\Images\fondpluiesize.gif") #Il faut mettre le chemin complet pour éviter des erreurs.
+$imgFile = [system.drawing.image]::FromFile("$applicationPath\Source\Images\fondpluiesize.gif") #Il faut mettre le chemin complet pour éviter des erreurs.
 $pictureBoxBackGround = new-object Windows.Forms.PictureBox #permet d'afficher un gif
 $pictureBoxBackGround.width = $imgFile.width 
 $pictureBoxBackGround.height = $imgFile.height
@@ -102,7 +103,7 @@ $form.Text = "Menu - Boite à outils du technicien"
 $form.Width = $imgFile.Width
 $form.height = $imgFile.height
 $form.MaximizeBox = $false
-$form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Source\Images\Icone.ico") #Il faut mettre le chemin complet pour éviter des erreurs.
+$form.icon = New-Object system.drawing.icon ("$applicationPath\Source\Images\Icone.ico") #Il faut mettre le chemin complet pour éviter des erreurs.
 $form.KeyPreview = $True
 $form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {$importTaskModule;Task;$form.Close()}}) #si on fait échape sa ferme la fenetre
 $form.TopMost = $true
@@ -173,17 +174,6 @@ $btnDiagnostic.Add_Click({
 DeployApp "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDiagnostique.bat'
 $form.Close()
 })
-
-<#
-function Zipdesinfection 
-{
-    CreateFolder "_Tech\Applications\Securite" #Créer le dossier vide Securite s'il n'existe pas
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Desinfection.ps1" | Out-Null #download le .exe
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #download le .exe
-    set-location "$env:SystemDrive\_Tech\Applications\Securite" #met le path dans le dossier Securite
-    Start-Process "$env:SystemDrive\_Tech\Applications\Securite\RunAsDesinfection.bat" | Out-Null #Lance le script de désinfcetion
-}
-#>
 
 #Desinfection
 $btnDesinfection = New-Object System.Windows.Forms.Button
