@@ -1,5 +1,5 @@
 ﻿#Les assembly sont nécéssaire pour le fonctionnement du script. Ne pas effacer
-Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
+Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
 function CheckAdminStatus
@@ -7,10 +7,20 @@ function CheckAdminStatus
     $adminStatus = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator') 
     return $adminStatus
 }
+
 function ReloadAsAdmin
 {
     Start-Process powershell.exe -ArgumentList ("-NoProfile -windowstyle hidden -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
     Exit #permet de fermer la session non-Admin
+}
+
+function CheckInternetStatus
+{
+    while (!(test-connection 8.8.8.8 -Count 1 -quiet)) #Ping Google et recommence jusqu'a ce qu'il y est internet
+    {
+    [Microsoft.VisualBasic.Interaction]::MsgBox("Veuillez vous connecter à Internet et cliquer sur OK",'OKOnly,SystemModal,Information', "Menu - Boite à outils du technicien") | Out-Null
+    start-sleep 5
+    }
 }
 
 function CreateFolder($folder) 
@@ -38,6 +48,13 @@ function DeployApp($appName,$remotePs1Link,$remoteBatLink)
     Start-Process "$applicationPath\$appName\RunAs$appName.bat" | Out-Null
 }
 
+function DownloadModules
+{
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$applicationPath\source\Modules.zip" | Out-Null
+    Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
+    Remove-Item "$applicationPath\source\Modules.zip"
+}
+
 function DownloadRemoveScript
 {
     CreateFolder "Temp"
@@ -48,13 +65,6 @@ function DownloadRemoveScript
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' -OutFile "$env:SystemDrive\Temp\Remove.ps1" | Out-Null
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' -OutFile "$env:SystemDrive\Temp\Remove.bat" | Out-Null
     }
-}
-
-function DownloadModules
-{
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$applicationPath\source\Modules.zip" | Out-Null
-    Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
-    Remove-Item "$applicationPath\source\Modules.zip"
 }
 
 function DownloadImages
@@ -74,11 +84,10 @@ function DownloadImages
     
 function PrepareDependencies
 {
-    CreateFolder "_Tech\Applications"
     CreateFolder "_Tech\Applications\Source" 
+    DownloadModules
     DownloadImages
     DownloadRemoveScript
-    DownloadModules
 }
 
 $adminStatus = CheckAdminStatus
@@ -86,7 +95,7 @@ if($adminStatus -eq $false)
 {
     ReloadAsAdmin
 }
-Set-ExecutionPolicy unrestricted -Scope CurrentUser -Force
+CheckInternetStatus
 set-location "$env:SystemDrive\_Tech" 
 PrepareDependencies
 $importTaskModule = Import-Module "$applicationPath\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
