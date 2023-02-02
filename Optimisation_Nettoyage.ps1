@@ -79,6 +79,7 @@ function UnzipAppLaunch($app, $lienGithub, $appExe)
 #Piriform.CCleaner
 #SingularLabs.CCEnhancer
 
+<#
 function hdsslog
 {
     $PathHDSentinelData = Get-Content "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\HDSData\HDSentinel_5.70 PRO_report.txt"
@@ -139,13 +140,6 @@ function HDSentinel
     hdsslog | Out-File $logfilepath -Append
 }
 
-function HDTune
-{
-$PathHDTune = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Tune\_HDTune.exe"
-Start-Process "$PathHDTune"
-Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
-}
-
 Function Revo
 {
 $revobefore = "$env:SystemDrive\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\Logs\\RevoBefore.txt"
@@ -158,6 +152,7 @@ Compare-Object -ReferenceObject (Get-Content -path $revobefore) -DifferenceObjec
 Clear-Content $revobefore
 Clear-Content $revoafter
 }
+#>
 
 #Windows Updates
 $Updates = New-Object System.Windows.Forms.Button
