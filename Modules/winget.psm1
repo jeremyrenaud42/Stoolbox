@@ -1,12 +1,12 @@
 #Download fichiers winget depuis github
 function zipwinget
 {
-$wingetpath = test-Path "$root\_Tech\Applications\Source\winget"
+$wingetpath = test-Path "$env:SystemDrive\_Tech\Applications\Source\winget"
     if($wingetpath -eq $false) #Si dossier Winget n'existe pas, va le download
     {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Winget.zip' -OutFile "$root\_Tech\Applications\Source\Winget.zip"
-        Expand-Archive "$root\_Tech\Applications\Source\Winget.zip" "$root\_Tech\Applications\Source"
-        Remove-Item "$root\_Tech\Applications\Source\Winget.zip" 
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Winget.zip' -OutFile "$env:SystemDrive\_Tech\Applications\Source\Winget.zip"
+        Expand-Archive "$env:SystemDrive\_Tech\Applications\Source\Winget.zip" "$env:SystemDrive\_Tech\Applications\Source"
+        Remove-Item "$env:SystemDrive\_Tech\Applications\Source\Winget.zip" 
     }
 }
 
@@ -30,9 +30,9 @@ function Wingetinstall
     if($wingetpath -eq $false)
     {
         zipwinget
-        Add-AppxPackage -path "$root\_Tech\Applications\Source\winget\Microsoft.VCLibs.x64.14.00.Desktop.appx"  | out-null #prérequis pour winget
-        Add-AppxPackage -path "$root\_Tech\Applications\Source\winget\Microsoft.UI.Xaml.2.7.appx" | out-null #prérequis pour winget
-        Add-AppPackage -path "$root\_Tech\Applications\Source\winget\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" | out-null #installeur de winget
+        Add-AppxPackage -path "$env:SystemDrive\_Tech\Applications\Source\winget\Microsoft.VCLibs.x64.14.00.Desktop.appx"  | out-null #prérequis pour winget
+        Add-AppxPackage -path "$env:SystemDrive\_Tech\Applications\Source\winget\Microsoft.UI.Xaml.2.7.appx" | out-null #prérequis pour winget
+        Add-AppPackage -path "$env:SystemDrive\_Tech\Applications\Source\winget\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" | out-null #installeur de winget
     }
     Postverifwinget
 }

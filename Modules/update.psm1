@@ -1,13 +1,11 @@
-$driveletter = $pwd.drive.name #retourne la lettre du disque actuel
-$root = "$driveletter" + ":" #rajoute  : pour que sa fit dans le path
-$applications = "$root\\_Tech\applications" #chemin du dossier applications
+$applications = "$env:SystemDrive\_Tech\applications" #chemin du dossier applications
 
 function Update($categorie,$nomApplicationAMettreAJour,$liengithub,$lienappligithub)
 {
-    $dossierTemp = "$root\_Tech\applications\$categorie\source\$nomApplicationAMettreAJour\Temp" #path du dossier Temp
+    $dossierTemp = "$env:SystemDrive\_Tech\applications\$categorie\source\$nomApplicationAMettreAJour\Temp" #path du dossier Temp
     try 
     {
-        New-Item -Path $dossierTemp -ItemType Directory -Force | Out-Null #créer dossier temp
+        New-Item -Path $dossierTemp -ItemType 'Directory' -Force | Out-Null #créer dossier temp
     }   
     catch 
     {
@@ -44,5 +42,5 @@ function Update($categorie,$nomApplicationAMettreAJour,$liengithub,$lienappligit
 }
 
 #exemple de call
-#Import-Module "$root\_Tech\Applications\Source\update.psm1"
+#Import-Module "$env:SystemDrive\_Tech\Applications\Source\update.psm1"
 #Update "Diagnostique" "Speccy" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Diagnostique/speccy.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip'

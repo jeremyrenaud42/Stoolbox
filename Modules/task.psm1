@@ -1,4 +1,4 @@
-function Task()
+function Task() #$name, $triggertime
 {
     $t = Get-ScheduledTask 'delete _tech' | Select-Object -expand state
     if($t -match 'Ready')
