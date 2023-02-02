@@ -1,131 +1,104 @@
-Add-Type -AssemblyName PresentationFramework
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName System.speech
-Add-Type -AssemblyName System.Drawing
-Add-Type -AssemblyName presentationCore
+#Les assembly sont nécéssaire pour le fonctionnement du script. Ne pas effacer
+Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-function admin
+function ImportModules
 {
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator'))
-     {
-        Start-Process powershell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-        Exit #permet de fermer la session non-admin
+    $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
+    foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
+    {
+        Import-Module $modulesFolder\$module
     }
 }
-admin
 
-$driveletter = $pwd.drive.name
-$root = "$driveletter" + ":"
-
-set-location "$root\_Tech\Applications\fix" #met la location au repertoir actuel
-Import-Module "$root\_Tech\Applications\Source\modules\update.psm1" | Out-Null
-Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
-Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
-Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
-Import-Module "$root\_Tech\Applications\Source\modules\winget.psm1" | Out-Null #Module pour Winget
-Import-Module "$root\_Tech\Applications\Source\modules\choco.psm1" | Out-Null #Module pour chocolatey
-
-<#
-$scriptDir = 
-    if (-not $PSScriptRoot) 
-    {
-        Split-Path -Parent (Convert-Path ([environment]::GetCommandLineArgs()[0]))
-    } 
-
-    else 
-    {
-        $PSScriptRoot
-    }
-$lettre = [System.IO.path]::GetPathRoot($scriptDir)
-#>
-
-Sourceexist
+set-location "$env:SystemDrive\_Tech\Applications\fix"
+ImportModules
+CreateFolder "_Tech\Applications\fix\source"
 
 function zipComIntRep
 {
-    $ComIntReppath = test-Path "$root\\_Tech\\Applications\\fix\Source\ComIntRep\ComIntRep_X64.exe"
+    $ComIntReppath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\ComIntRep\ComIntRep_X64.exe"
     if($ComIntReppath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' -OutFile "$root\\_Tech\\Applications\\fix\Source\ComIntRep.zip"
-    Expand-Archive "$root\\_Tech\\Applications\\fix\Source\ComIntRep.zip" "$root\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$root\\_Tech\\Applications\\fix\Source\ComIntRep.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\\fix\Source\ComIntRep.zip"
+    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\ComIntRep.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
+    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\ComIntRep.zip"
     }
-    Start-Process "$root\\_Tech\\Applications\\fix\Source\ComIntRep\ComIntRep_X64.exe"
+    Start-Process "$env:SystemDrive\\_Tech\\Applications\\fix\Source\ComIntRep\ComIntRep_X64.exe"
     Addlog "Fixlog.txt" "Réparer Internet"
 }
 
 function zipsecudossier
 {
-    $SecuriteDossierpath = test-Path "$root\\_Tech\\Applications\\fix\Source\Securite_Dossier"
+    $SecuriteDossierpath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Securite_Dossier"
     if($SecuriteDossierpath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Securite_Dossier.zip' -OutFile "$root\\_Tech\\Applications\fix\Source\Securite_Dossier.zip"
-    Expand-Archive "$root\\_Tech\\Applications\fix\Source\Securite_Dossier.zip" "$root\\_Tech\\Applications\fix\Source"
-    Remove-Item "$root\\_Tech\\Applications\fix\Source\Securite_Dossier.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Securite_Dossier.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\fix\Source\Securite_Dossier.zip"
+    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\fix\Source\Securite_Dossier.zip" "$env:SystemDrive\\_Tech\\Applications\fix\Source"
+    Remove-Item "$env:SystemDrive\\_Tech\\Applications\fix\Source\Securite_Dossier.zip"
     }
     Start-Process "$PSScriptRoot\Source\Securite_Dossier\Wise Force Deleter\WiseDeleter.exe"
 }
 
 function zipsterjo
 {
-    $Sterjopath = test-Path "$root\\_Tech\\Applications\\fix\Source\Sterjo"
+    $Sterjopath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Sterjo"
     if($Sterjopath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' -OutFile "$root\\_Tech\\Applications\\fix\Source\Sterjo.zip"
-    Expand-Archive "$root\\_Tech\\Applications\\fix\Source\Sterjo.zip" "$root\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$root\\_Tech\\Applications\\fix\Source\Sterjo.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Sterjo.zip"
+    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Sterjo.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
+    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Sterjo.zip"
     }
 }
 
 function zipWinDirStat
 {
-    $WinDirStatpath = test-Path "$root\\_Tech\\Applications\\fix\Source\WinDirStat\WinDirStatPortable.exe"
+    $WinDirStatpath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\WinDirStat\WinDirStatPortable.exe"
     if($WinDirStatpath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' -OutFile "$root\\_Tech\\Applications\\fix\Source\WinDirStat.zip"
-    Expand-Archive "$root\\_Tech\\Applications\\fix\Source\WinDirStat.zip" "$root\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$root\\_Tech\\Applications\\fix\Source\WinDirStat.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\\fix\Source\WinDirStat.zip"
+    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\WinDirStat.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
+    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\WinDirStat.zip"
     }
-    Start-Process "$root\\_Tech\\Applications\\fix\Source\WinDirStat\WinDirStatPortable.exe"
+    Start-Process "$env:SystemDrive\\_Tech\\Applications\\fix\Source\WinDirStat\WinDirStatPortable.exe"
 }
 
 function zipscripts
 {
-    $scriptspath = test-Path "$root\\_Tech\\Applications\\fix\Source\scripts"
+    $scriptspath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\scripts"
     if($scriptspath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' -OutFile "$root\_Tech\Applications\fix\Source\scripts.zip"
-    Expand-Archive "$root\\_Tech\\Applications\\fix\Source\scripts.zip" "$root\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$root\\_Tech\\Applications\\fix\Source\scripts.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' -OutFile "$env:SystemDrive\_Tech\Applications\fix\Source\scripts.zip"
+    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\scripts.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
+    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\scripts.zip"
     }
 }
 
 function zipDDU
 {
-    $DDUpath = test-Path "$root\\_Tech\\Applications\\fix\Source\DDU\Display Driver Uninstaller.exe"
+    $DDUpath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\DDU\Display Driver Uninstaller.exe"
     if($DDUpath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/DDU.zip' -OutFile "$root\\_Tech\\Applications\\fix\Source\DDU.zip"
-    Expand-Archive "$root\\_Tech\\Applications\\fix\Source\DDU.zip" "$root\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$root\\_Tech\\Applications\\fix\Source\DDU.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/DDU.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\\fix\Source\DDU.zip"
+    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\DDU.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
+    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\DDU.zip"
     }
-    Start-Process "$root\\_Tech\\Applications\\fix\Source\DDU\Display Driver Uninstaller.exe"
+    Start-Process "$env:SystemDrive\\_Tech\\Applications\\fix\Source\DDU\Display Driver Uninstaller.exe"
     Addlog "Fixlog.txt" "Désinstallation du pilote graphique avec DDU"
 }
 
 function zipMinitool
 {
-    $minitoolpath = test-Path "$root\Program Files\MiniTool Partition*\partitionwizard.exe"
+    $minitoolpath = test-Path "$env:SystemDrive\Program Files\MiniTool Partition*\partitionwizard.exe"
     if($minitoolpath)
     {
-        Start-Process "$root\Program Files\MiniTool Partition*\partitionwizard.exe"
+        Start-Process "$env:SystemDrive\Program Files\MiniTool Partition*\partitionwizard.exe"
     }
     elseif($minitoolpath -eq $false)
     {
     Wingetinstall  
     winget install -e --id  MiniTool.PartitionWizard.Free --accept-package-agreements --accept-source-agreements --silent | Out-Null
-    $minitoolpath = test-Path "$root\Program Files\MiniTool Partition*\partitionwizard.exe"
+    $minitoolpath = test-Path "$env:SystemDrive\Program Files\MiniTool Partition*\partitionwizard.exe"
         if($minitoolpath -eq $false)
         {
             Chocoinstall
@@ -135,24 +108,24 @@ function zipMinitool
 }
 function zipTweak
 {
-    $tweakpath = test-Path "$root\_Tech\\Applications\fix\Source\Tweak"
+    $tweakpath = test-Path "$env:SystemDrive\_Tech\\Applications\fix\Source\Tweak"
     if($tweakpath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' -OutFile "$root\_Tech\Applications\fix\Source\Tweak.zip"
-    Expand-Archive "$root\_Tech\Applications\fix\Source\Tweak.zip" "$root\_Tech\Applications\fix\Source"
-    Remove-Item "$root\_Tech\Applications\fix\Source\Tweak.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' -OutFile "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak.zip"
+    Expand-Archive "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak.zip" "$env:SystemDrive\_Tech\Applications\fix\Source"
+    Remove-Item "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak.zip"
     }
 }
 
 function Tweaking
 {
-    $path = Test-Path "$root\_Tech\Applications\fix\Source\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
+    $path = Test-Path "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
     if($path -eq $false)
     {
-        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/xOQ0JbscWkmQZ-5Zfwzpnw/tweaking.com%20-%20Windows%20Repair.zip' -OutFile "$root\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip"
-        Expand-Archive "$root\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip" "$root\_Tech\Applications\fix\Source\Tweak"
-        Remove-Item "$root\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip"
-        Copy-Item "$root\_Tech\Applications\fix\Source\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair"
+        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/xOQ0JbscWkmQZ-5Zfwzpnw/tweaking.com%20-%20Windows%20Repair.zip' -OutFile "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip"
+        Expand-Archive "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip" "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak"
+        Remove-Item "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip"
+        Copy-Item "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair"
         Start-Process "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
     }    
     elseif($path)
@@ -163,14 +136,14 @@ function Tweaking
 
 function zipRecup
 {
-    $recuppath = test-Path "$root\\_Tech\\Applications\\fix\Source\Recup_donnees"
+    $recuppath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Recup_donnees"
     if($recuppath -eq $false)
     {
-    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/x_25M6QRJUSCC3KDhnBGxg/Recup_donnees.zip' -OutFile "$root\\_Tech\\Applications\\fix\Source\Recup_donnees.zip"
-    Expand-Archive "$root\\_Tech\\Applications\\fix\Source\Recup_donnees.zip" "$root\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$root\\_Tech\\Applications\\fix\Source\Recup_donnees.zip"
+    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/x_25M6QRJUSCC3KDhnBGxg/Recup_donnees.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Recup_donnees.zip"
+    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Recup_donnees.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
+    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Recup_donnees.zip"
     }
-    Start-Process "$root\\_Tech\\Applications\\fix\Source\Recup_donnees\EaseUS Data Recovery Wizard\DRW.exe"
+    Start-Process "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Recup_donnees\EaseUS Data Recovery Wizard\DRW.exe"
 }
 
 Function menu
@@ -212,8 +185,8 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
 
     if($sortie -eq "o")
     {   
-        Set-Location "$root\_Tech"
-        start-process "$root\_Tech\Menu.bat" -verb Runas
+        Set-Location "$env:SystemDrive\_Tech"
+        start-process "$env:SystemDrive\_Tech\Menu.bat" -verb Runas
         exit
     }
     elseif($sortie -eq "n")
@@ -243,7 +216,7 @@ $choix = read-host "Choisissez une option"
 
 switch ($choix)
 {
-0{set-location "$root\_Tech\\applications\fix";menu;break}
+0{set-location "$env:SystemDrive\_Tech\\applications\fix";menu;break}
 1{Start-Process "$PSScriptRoot\Source\Scripts\sfcScannow.bat" | Addlog "Fixlog.txt" "Réparation des fichiers corrompus";Break}
 2{Start-Process "$PSScriptRoot\Source\Scripts\DISM.bat" | Addlog "Fixlog.txt" "Réparation du Windows";Break}
 3{Start-Process "$PSScriptRoot\Source\Scripts\CHKDSK.BAT" | Addlog "Fixlog.txt" "Réparation du HDD";Break}

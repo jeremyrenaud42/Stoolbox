@@ -1,35 +1,15 @@
-Add-Type -AssemblyName PresentationFramework
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName System.speech
-Add-Type -AssemblyName System.Drawing
-Add-Type -AssemblyName presentationCore
+#Les assembly sont nécéssaire pour le fonctionnement du script. Ne pas effacer
+Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-#Set-ExecutionPolicy RemoteSigned
-
-$driveletter = $pwd.drive.name
-$root = "$driveletter" + ":"
-
 set-location "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"  #met la location au repertoir actuel
-Import-Module "$root\_Tech\Applications\Source\modules\update.psm1" | Out-Null
-Import-Module "$root\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
-Import-Module "$root\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
-Import-Module "$root\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
 
-#Import-Module -Name "$root\\_TECH\\Applications\\Source\\Excel\\ImportExcel" #import le module Excel situ� dans la cl�
-#$excel = Open-ExcelPackage -Path "$root\\_TECH\\Applications\\Source\\Excel\\Rapport.xlsm" #ouvre la grille Excel
-#$worksheet = $excel.Workbook.Worksheets['Gabarit'] #pr�cise quelle grille Excel sera utilis�
-
-<#
-$worksheet.Cells['A1'].Value #get une valeur
-$worksheet.Cells['B2'].Value = "4" #set une valeur
-
-B2 = num_tel
-4 � 13 = OS
-16 � 20 = Composantes
-A25 � A41 = Notes
-Cases � cocher: B = Bon.  C = Jaune.  D= Rouge. E = Notes.
-#>
+#Importer tout mes modules
+$modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
+foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
+{
+    Import-Module $modulesFolder\$module
+}
 
 function zipsourceopti
 {
@@ -58,19 +38,19 @@ $Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Application
 
 function zipccleaner
 {
-    $ccleanerpath = test-Path ".\Source\ccleaner\CCleaner64.exe"
+    $ccleanerpath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\ccleaner\CCleaner64.exe"
     if($ccleanerpath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' -OutFile .\Source\Ccleaner.zip
-    Expand-Archive .\Source\Ccleaner.zip .\Source -Force
-    Remove-Item .\Source\Ccleaner.zip
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner.zip"
+    Expand-Archive "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner.zip" "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source" -Force
+    Remove-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner.zip"
     }
     Update "Optimisation_Nettoyage" "Ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Optimisation_Nettoyage/ccleaner.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip'
     $ccleanerpostpath = test-Path "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
     if(!($ccleanerpostpath))
     {
-        New-Item "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner" -ItemType Directory
-        Copy-Item ".\Source\Ccleaner\*" -Destination "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner" -Force | Out-Null #copy sur le dossier user pour pas bloquer la clé
+        New-Item "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner" -ItemType 'Directory'
+        Copy-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner\*" -Destination "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner" -Force | Out-Null #copy sur le dossier user pour pas bloquer la clé
     }
     Start-Process "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
     Addlog "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
@@ -78,37 +58,37 @@ function zipccleaner
 
 function ziprevo
 {
-    $revopath = test-Path ".\Source\RevoUninstaller_Portable\RevoUPort.exe"
+    $revopath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\RevoUninstaller_Portable\RevoUPort.exe"
     if($revopath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' -OutFile .\Source\RevoUninstaller_Portable.zip
-    Expand-Archive .\Source\RevoUninstaller_Portable.zip .\Source
-    Remove-Item .\Source\RevoUninstaller_Portable.zip
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\RevoUninstaller_Portable.zip"
+    Expand-Archive "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\RevoUninstaller_Portable.zip" "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source"
+    Remove-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\RevoUninstaller_Portable.zip"
     }
     Update "Optimisation_Nettoyage" "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Optimisation_Nettoyage/RevoUninstaller_Portable.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip'
-    Start-Process ".\Source\RevoUninstaller_Portable\RevoUPort.exe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\RevoUninstaller_Portable\RevoUPort.exe"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
 }
 
 function zipsfc
 {
-    $sfcpath = test-Path ".\Source\sfcScannow.bat"
+    $sfcpath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sfcScannow.bat"
     if($sfcpath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat' -OutFile .\Source\sfcScannow.bat
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sfcScannow.bat"
     }
-    Start-Process ".\Source\sfcScannow.bat" -verb runas
+    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sfcScannow.bat" -verb runas
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les fichiers corrompus"  
 }
 
 function zipsysevent
 {
-    $syseventpath = test-Path ".\Source\sysevent.exe"
+    $syseventpath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sysevent.exe"
     if($syseventpath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe' -OutFile ".\Source\sysevent.exe"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sysevent.exe"
     }
-    Start-Process ".\Source\sysevent.exe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sysevent.exe"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les evenements"
 }
 
@@ -131,7 +111,7 @@ function zipcdi
     if($cdipath -eq $false)
     {   
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable.zip"
-    Expand-Archive "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable.zip" "$root\_Tech\\Applications\Optimisation_Nettoyage\Source"
+    Expand-Archive "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable.zip" "$env:SystemDrive\_Tech\\Applications\Optimisation_Nettoyage\Source"
     Remove-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable.zip"
         }
     Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"
@@ -140,23 +120,23 @@ function zipcdi
 
 function zipHitmanPro
 {
-    $PathHitmanPro = test-Path "$root\\_Tech\\Applications\\Securite\\Source\\HitmanPro.exe"
+    $PathHitmanPro = test-Path "$env:SystemDrive\_Tech\Applications\Securite\Source\HitmanPro.exe"
     if($PathHitmanPro -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' -OutFile "$root\\_Tech\\Applications\\Securite\\Source\\HitmanPro.exe"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Source\HitmanPro.exe"
     }
-    Start-Process "$root\\_Tech\\Applications\\Securite\\Source\\HitmanPro.exe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Securite\Source\HitmanPro.exe"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les virus avec HitmanPro"
 }
 
 function zipautoruns
 {
-    $pathautoruns = test-Path ".\Source\autoruns.exe"
+    $pathautoruns = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\autoruns.exe"
     if($pathautoruns -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' -OutFile ".\Source\autoruns.exe"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\autoruns.exe"
     }
-    Start-Process ".\Source\autoruns.exe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\autoruns.exe"
     start-sleep 5
     taskmgr
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les logiciels au démarrage"
@@ -175,7 +155,7 @@ function zipautoruns
 
 function hdsslog
 {
-    $PathHDSentinelData = Get-Content "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\\HD_Sentinnel\\HDSData\\HDSentinel_5.70 PRO_report.txt"
+    $PathHDSentinelData = Get-Content "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\HDSData\HDSentinel_5.70 PRO_report.txt"
     $lignedisk = "" #initialise la variable vide
 
     foreach ($ligne in $PathHDSentinelData) #pour chaque ligne dans le fichier, car chaque ligne est un objet
@@ -226,7 +206,7 @@ function hdsslog
 
 function HDSentinel
 {
-    $PathHDSentinel= "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\\HD_Sentinnel\\_HDSentinel.exe"
+    $PathHDSentinel= "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\_HDSentinel.exe"
     Start-Process "$PathHDSentinel"  -ArgumentList "/report"
     Start-Sleep -s 15
     Stop-Process -name _HDSentinel -Force
@@ -235,17 +215,17 @@ function HDSentinel
 
 function HDTune
 {
-$PathHDTune = "$root\\_Tech\\Applications\\Diagnostique\\Source\\HDD\HD_Tune\\_HDTune.exe"
+$PathHDTune = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Tune\_HDTune.exe"
 Start-Process "$PathHDTune"
 Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
 }
 
 Function Revo
 {
-$revobefore = "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\Logs\\RevoBefore.txt"
-$revoafter = "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\Logs\\RevoAfter.txt"
+$revobefore = "$env:SystemDrive\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\Logs\\RevoBefore.txt"
+$revoafter = "$env:SystemDrive\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\Logs\\RevoAfter.txt"
 Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*","HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName  | Sort-Object -Property DisplayName | Format-Table �AutoSize | Out-File $revobefore
-Start-Process "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoUninstaller_Portable\\RevoUPort.exe"
+Start-Process "$env:SystemDrive\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoUninstaller_Portable\\RevoUPort.exe"
 Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
 Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*","HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName  | Sort-Object -Property DisplayName | Format-Table �AutoSize | Out-File $revoafter
 Compare-Object -ReferenceObject (Get-Content -path $revobefore) -DifferenceObject (Get-Content -path $revoafter) | Out-File $logfilepath -Append
@@ -517,10 +497,26 @@ $Menuprincipal.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Menuprincipal.Add_MouseEnter({$Menuprincipal.ForeColor = 'White'})
 $Menuprincipal.Add_MouseLeave({$Menuprincipal.ForeColor = 'black'})
 $Menuprincipal.Add_Click({
-start-process "$root\\_Tech\\Menu.bat" -verb Runas
+start-process "$env:SystemDrive\\_Tech\\Menu.bat" -verb Runas
 $Form.Close()
 #Close-ExcelPackage $excel #Ferme la grille Excel
 })
+
+<#
+Import-Module -Name "$env:SystemDrive\\_TECH\\Applications\\Source\\Excel\\ImportExcel" #import le module Excel situ� dans la cl�
+$excel = Open-ExcelPackage -Path "$env:SystemDrive\\_TECH\\Applications\\Source\\Excel\\Rapport.xlsm" #ouvre la grille Excel
+$worksheet = $excel.Workbook.Worksheets['Gabarit'] #pr�cise quelle grille Excel sera utilis�
+
+$worksheet.Cells['A1'].Value #get une valeur
+$worksheet.Cells['B2'].Value = "4" #set une valeur
+
+B2 = num_tel
+4 � 13 = OS
+16 � 20 = Composantes
+A25 � A41 = Notes
+Cases � cocher: B = Bon.  C = Jaune.  D= Rouge. E = Notes.
+#>
+
 
 #Ouvrir Grille Excel
 $OuvrirGrilleExcel = New-Object System.Windows.Forms.Button
@@ -539,7 +535,7 @@ $OuvrirGrilleExcel.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::g
 $OuvrirGrilleExcel.Add_MouseEnter({$OuvrirGrilleExcel.ForeColor = 'White'})
 $OuvrirGrilleExcel.Add_MouseLeave({$OuvrirGrilleExcel.ForeColor = 'black'})
 $OuvrirGrilleExcel.Add_Click({
-Start-Process "$root\\_TECH\\Applications\\Source\\Excel\\Rapport.xlsm"
+Start-Process "$env:SystemDrive\\_TECH\\Applications\\Source\\Excel\\Rapport.xlsm"
 })
 #$Form.controls.Add($OuvrirGrilleExcel)
 

@@ -1,53 +1,38 @@
-﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
+﻿#Les assembly sont nécéssaire pour le fonctionnement du script. Ne pas effacer
+Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-set-location "$env:SystemDrive\_Tech\Applications\Diagnostique" #met la location au repertoir actuel
-
-Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\update.psm1" | Out-Null
-Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
-Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\Logs.psm1" | Out-Null #Module pour les logs
-Import-Module "$env:SystemDrive\_Tech\Applications\Source\modules\source.psm1" | Out-Null #Module pour créer source
-
-function zipsourcediag
+function ImportModules
 {
-    Sourceexist
-    $fondpath = test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\fondDiag.jpg" #Vérifie si le fond écran est présent
-    $iconepath = test-path "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Icone.ico" #vérifie si l'icone existe
-    if($fondpath -eq $false) #si fond pas présent
+    $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
+    foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
     {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\fondDiag.jpg" | Out-Null #Download le fond
-    }
-    if($iconepath -eq $false) #si icone pas présent
-    {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Icone.ico" | Out-Null #Download l'icone
-    } 
-}
-zipsourcediag
-
-function Unzip($app, $lien)
-{
-    $path = test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app"
-    $zip = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app.zip"
-    if($path -eq $false)
-    {
-        Invoke-WebRequest $lien -OutFile $zip
-        Expand-Archive $zip "$env:SystemDrive\_Tech\Applications\Diagnostique\Source"
-        Remove-Item $zip
+        Import-Module $modulesFolder\$module
     }
 }
 
-function UnzipLaunch($app, $lien, $exe)
+function UnzipApp($app, $lienGithub)
 {
-    $path = test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app"
-    $zip = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app.zip"
-    if($path -eq $false)
+    $appPath = test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app"
+    $zipFile = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app.zip"
+    if($appPath -eq $false)
     {
-        Invoke-WebRequest $lien -OutFile $zip
-        Expand-Archive $zip "$env:SystemDrive\_Tech\Applications\Diagnostique\Source"
-        Remove-Item $zip
+        Invoke-WebRequest $lienGithub -OutFile $zipFile
+        Expand-Archive $zipFile "$env:SystemDrive\_Tech\Applications\Diagnostique\Source"
+        Remove-Item $zipFile
     }
-    Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app\$exe"
+}
+
+function UnzipAppLaunch($app, $lienGithub, $appExe)
+{
+    UnzipApp $app $lienGithub
+    Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app\$appExe"
 } 
+
+set-location "$env:SystemDrive\_Tech\Applications\Diagnostique"
+ImportModules
+CreateFolder "_Tech\Applications\Diagnostique\source"
+DownloadBackground "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "fondDiag.jpg"
 
 $image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Diagnostique\Source\fondDiag.jpg")
 $Form = New-Object System.Windows.Forms.Form
@@ -56,7 +41,7 @@ $Form.BackgroundImage = $image
 $Form.Width = $image.Width
 $Form.height = $image.height
 $Form.MaximizeBox = $false
-$Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Icone.ico") 
+$Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Source\Images\Icone.ico") 
 
 #Boutonbat
 $Boutonbat = New-Object System.Windows.Forms.Button
@@ -74,7 +59,7 @@ $Boutonbat.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $Boutonbat.FlatAppearance.MouseOverBackColor = 'gray'
 $Boutonbat.Add_MouseEnter({$Boutonbat.ForeColor = 'White'})
 $Boutonbat.Add_MouseLeave({$Boutonbat.ForeColor = 'black'})
-$Boutonbat.Add_Click({Unzip "Batterie" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip"})
+$Boutonbat.Add_Click({UnzipApp "Batterie" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip"})
 $Boutonbat.Add_Click({$Battinfo.visible = $true})
 $Boutonbat.Add_Click({$Dontsleep.visible = $true})
 $Boutonbat.Add_Click({$Boutonbat.visible = $false})
@@ -168,7 +153,7 @@ $BoutonCPU.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonCPU.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonCPU.Add_MouseEnter({$BoutonCPU.ForeColor = 'White'})
 $BoutonCPU.Add_MouseLeave({$BoutonCPU.ForeColor = 'black'})
-$BoutonCPU.Add_Click({Unzip "CPU" 'https://ftp.alexchato9.com/public/file/BB4NxwBawUmDufbDNKEJAA/CPU.zip'})
+$BoutonCPU.Add_Click({UnzipApp "CPU" 'https://ftp.alexchato9.com/public/file/BB4NxwBawUmDufbDNKEJAA/CPU.zip'})
 $BoutonCPU.Add_Click({$BoutonCPU.visible = $false})
 $BoutonCPU.Add_Click({$Aida.visible = $true})
 $BoutonCPU.Add_Click({$Prime95.visible = $true})
@@ -376,7 +361,7 @@ $BoutonHDD.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonHDD.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonHDD.Add_MouseEnter({$BoutonHDD.ForeColor = 'White'})
 $BoutonHDD.Add_MouseLeave({$BoutonHDD.ForeColor = 'black'})
-$BoutonHDD.Add_Click({Unzip "HDD" 'https://ftp.alexchato9.com/public/file/t6QQNrPcLk6gruXnTEr1fA/HDD.zip'})
+$BoutonHDD.Add_Click({UnzipApp "HDD" 'https://ftp.alexchato9.com/public/file/t6QQNrPcLk6gruXnTEr1fA/HDD.zip'})
 $BoutonHDD.Add_Click({$BoutonHDD.visible = $false})
 $BoutonHDD.Add_Click({$HDTune.visible = $true})
 $BoutonHDD.Add_Click({$HDSentinnel.visible = $true})
@@ -637,7 +622,7 @@ $BoutonGPU.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonGPU.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonGPU.Add_MouseEnter({$BoutonGPU.ForeColor = 'White'})
 $BoutonGPU.Add_MouseLeave({$BoutonGPU.ForeColor = 'black'})
-$BoutonGPU.Add_Click({Unzip "GPU" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip'})
+$BoutonGPU.Add_Click({UnzipApp "GPU" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip'})
 $BoutonGPU.Add_Click({$Unigine.visible = $true})
 $BoutonGPU.Add_Click({$Furmark.visible = $true})
 #$BoutonGPU.Add_Click({$gpuz.visible = $true})
@@ -736,7 +721,7 @@ $Speccy.FlatAppearance.MouseDownBackColor = 'gray'
 $Speccy.Add_MouseEnter({$Speccy.ForeColor = 'White'})
 $Speccy.Add_MouseLeave({$Speccy.ForeColor = 'black'})
 $Speccy.Add_Click({
-UnzipLaunch "Speccy" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "Speccy.exe"
+UnzipAppLaunch "Speccy" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "Speccy.exe"
 })
 #Tooltip
 $tooltipSpeccy = New-Object System.Windows.Forms.ToolTip
@@ -770,7 +755,7 @@ $HWMonitor.FlatAppearance.MouseOverBackColor = 'gray'
 $HWMonitor.Add_MouseEnter({$HWMonitor.ForeColor = 'White'})
 $HWMonitor.Add_MouseLeave({$HWMonitor.ForeColor = 'black'})
 $HWMonitor.Add_Click({
-UnzipLaunch "HWmonitor" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor.zip" "HWMonitor_x64.exe"
+UnzipAppLaunch "HWmonitor" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor.zip" "HWMonitor_x64.exe"
 })
 #Tooltip
 $tooltipHWMonitor = New-Object System.Windows.Forms.ToolTip
@@ -804,7 +789,7 @@ $Whocrashed.FlatAppearance.MouseOverBackColor = 'gray'
 $Whocrashed.Add_MouseEnter({$Whocrashed.ForeColor = 'White'})
 $Whocrashed.Add_MouseLeave({$Whocrashed.ForeColor = 'black'})
 $Whocrashed.Add_Click({
-UnzipLaunch "WhoCrashed" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashed.zip" "WhoCrashedEx.exe"
+UnzipAppLaunch "WhoCrashed" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashed.zip" "WhoCrashedEx.exe"
 })
 #Tooltip
 $tooltipWhocrashed = New-Object System.Windows.Forms.ToolTip

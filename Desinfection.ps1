@@ -2,31 +2,19 @@
 Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-$driveletter = $pwd.drive.name
-$root = "$driveletter" + ":"
+function ImportModules
+{
+    $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
+    foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
+    {
+        Import-Module $modulesFolder\$module
+    }
+}
 
 set-location "$env:SystemDrive\_Tech\Applications\Desinfection" #met la location au repertoir actuel
-#Importer tout mes modules
-$modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
-foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
-{
-    Import-Module $modulesFolder\$module
-}
-
-function zipsourcevirus #Ce qui va toujours être redownloader à neuf à chaque lancement. Le pack obligatoire pour le fonctionnement + le reset des logs
-{
-    Sourceexist
-    $fondpath = test-Path "$env:SystemDrive\_Tech\Applications\Desinfection\Source\fondopti.jpg" #Vérifie si le fond écran est présent
-    $iconepath = test-path "$env:SystemDrive\_Tech\Applications\Desinfection\Source\Icone.ico" #vérifie si l'icone existe
-    if($fondpath -eq $false) #si fond pas présent
-    {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' -OutFile "$env:SystemDrive\_Tech\Applications\Desinfection\Source\fondvirus.png" | Out-Null
-    }
-    if($iconepath -eq $false) #si icone pas présent
-    {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\Applications\Desinfection\Source\Icone.ico" | Out-Null
-    }
-}
+ImportModules
+CreateFolder "_Tech\Applications\Desinfection\source"
+DownloadBackground "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' "fondvirus.png"
 
 function zipHitmanPro
 {
@@ -130,8 +118,6 @@ function zipccleaner
     Addlog "desinfectionlog.txt" "Nettoyage CCleaner effectué"
 }
 
-zipsourcevirus
-
 $image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Desinfection\Source\fondvirus.png") 
 $Form = New-Object System.Windows.Forms.Form
 $Form.Text = "Desinfection"
@@ -139,7 +125,7 @@ $Form.BackgroundImage = $image
 $Form.Width = $image.Width
 $Form.height = $image.height
 $Form.MaximizeBox = $false
-$Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Desinfection\Source\Icone.ico") 
+$Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Source\Images\Icone.ico") 
 #$Form.add_FormClosed({Task;$Form.Close()}) #Supprimer le dossier _Tech lorsque la form se ferme
 
 #Process_Explorer

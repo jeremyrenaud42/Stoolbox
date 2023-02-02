@@ -23,7 +23,7 @@ function CheckInternetStatus
 function PrepareDependencies
 {
     set-location $pathInstallation
-    Sourceexist
+    CreateFolder "_Tech\Applications\Installation\source"
     ImportModules
     CheckInternetStatus
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Source.zip' -OutFile "$pathInstallation\source.zip" | Out-Null
@@ -42,7 +42,7 @@ $form.Text = "Installation Windows" #Titre de la GUI (apparait en haut à gauche
 $form.StartPosition = 'Centerscreen' #position de démarrage
 $form.MaximizeBox = $false #Ne peut pas s'agrandir
 $form.AutoSize = $false #Ne peut pas modifier la taille de la fenêtre
-$form.icon = New-Object system.drawing.icon ("$pathInstallation\Source\Icone.ico") #chemin de l'icone. 
+$form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Source\Images\Icone.ico") #chemin de l'icone. 
 
 #titre du champ texte de la fenêtre (en dessous du titre de la Form)
 $lblTitre = New-Object System.Windows.Forms.Label #Creer la label du titre
