@@ -2,30 +2,19 @@
 Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-set-location "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"  #met la location au repertoir actuel
-
-#Importer tout mes modules
-$modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
-foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
+function ImportModules
 {
-    Import-Module $modulesFolder\$module
-}
-
-function zipsourceopti
-{
-    Sourceexist
-    $fondpath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg" #Vérifie si le fond écran est présent
-    $iconepath = test-path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Icone.ico" #vérifie si l'icone existe
-    if($fondpath -eq $false) #si fond pas présent
+    $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
+    foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
     {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg" | Out-Null
-    }
-    if($iconepath -eq $false) #si icone pas présent
-    {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Icone.ico' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Icone.ico" | Out-Null
+        Import-Module $modulesFolder\$module
     }
 }
-zipsourceopti
+
+set-location "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
+ImportModules
+CreateFolder "_Tech\Applications\Optimisation_Nettoyage\source"
+DownloadBackground "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "fondopti.jpg"
 
 $image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg") 
 $Form = New-Object System.Windows.Forms.Form
@@ -34,7 +23,7 @@ $Form.BackgroundImage = $image
 $Form.Width = $image.Width
 $Form.height = $image.height
 $Form.MaximizeBox = $false
-$Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Icone.ico") 
+$Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Source\Images\Icone.ico") 
 
 function zipccleaner
 {
