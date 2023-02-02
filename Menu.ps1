@@ -23,17 +23,18 @@ function CheckInternetStatus
     }
 }
 
-function CreateFolder($folder) 
+$applicationPath = "$env:SystemDrive\_Tech\Applications"
+function DownloadModules
 {
-    $folderPath = "$env:SystemDrive\$folder"
-    $folderExist = test-path $folderPath 
-    if($folderExist -eq $false)
+    $modulepath = test-path "$applicationPath\source\Modules"
+    if($modulepath -eq $false)
     {
-        New-Item $folderPath -ItemType 'Directory' -Force | Out-Null
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$applicationPath\source\Modules.zip" | Out-Null
+        Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
+        Remove-Item "$applicationPath\source\Modules.zip"
     }
 }
 
-$applicationPath = "$env:SystemDrive\_Tech\Applications"
 function DownloadFolder($appName,$remotePs1Link,$remoteBatLink)
 {
     Invoke-WebRequest $remotePs1Link -OutFile "$applicationPath\$appName\$appName.ps1" | Out-Null 
@@ -47,45 +48,15 @@ function DeployApp($appName,$remotePs1Link,$remoteBatLink)
     set-location "$applicationPath\$appName" 
     Start-Process "$applicationPath\$appName\RunAs$appName.bat" | Out-Null
 }
-
-function DownloadModules
-{
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$applicationPath\source\Modules.zip" | Out-Null
-    Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
-    Remove-Item "$applicationPath\source\Modules.zip"
-}
-
-function DownloadRemoveScript
-{
-    CreateFolder "Temp"
-    $removePs1Exist = test-path "$env:SystemDrive\Temp\remove.ps1"
-    $removeBatExist = test-path "$env:SystemDrive\Temp\Remove.bat"
-    if($removePs1Exist -eq $false -and $removeBatExist -eq $false)
-    {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' -OutFile "$env:SystemDrive\Temp\Remove.ps1" | Out-Null
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' -OutFile "$env:SystemDrive\Temp\Remove.bat" | Out-Null
-    }
-}
-
-function DownloadImages
-{
-    CreateFolder "_Tech\Applications\Source\images"
-    $fondpath = test-Path "$applicationPath\source\Images\fondpluiesize.gif"
-    $iconepath = test-path "$applicationPath\source\Images\Icone.ico"
-        if($fondpath -eq $false) 
-        {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' -OutFile "$applicationPath\source\Images\fondpluiesize.gif" | Out-Null
-        }
-        if($iconepath -eq $false) 
-        {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' -OutFile "$applicationPath\source\Images\Icone.ico" | Out-Null
-        } 
-}
     
 function PrepareDependencies
 {
-    CreateFolder "_Tech\Applications\Source" 
+    New-Item "$env:SystemDrive\_Tech\Applications\Source"  -ItemType 'Directory' -Force | Out-Null   
     DownloadModules
+    Import-Module "$applicationPath\Source\modules\Folder.psm1" | Out-Null
+    Import-Module "$applicationPath\Source\modules\Remove.psm1" | Out-Null
+    Import-Module "$applicationPath\Source\modules\Images.psm1" | Out-Null
+    Import-Module "$applicationPath\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
     DownloadImages
     DownloadRemoveScript
 }
@@ -98,13 +69,12 @@ if($adminStatus -eq $false)
 CheckInternetStatus
 set-location "$env:SystemDrive\_Tech" 
 PrepareDependencies
-$importTaskModule = Import-Module "$applicationPath\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
 
 $imgFile = [system.drawing.image]::FromFile("$applicationPath\Source\Images\fondpluiesize.gif") #Il faut mettre le chemin complet pour éviter des erreurs.
 $pictureBoxBackGround = new-object Windows.Forms.PictureBox #permet d'afficher un gif
 $pictureBoxBackGround.width = $imgFile.width 
 $pictureBoxBackGround.height = $imgFile.height
-$pictureBoxBackGround.Image = $imgFile #contient l'image gif de background
+$pictureBoxBackGround.Image = $imgFile 
 $pictureBoxBackGround.AutoSize = $true 
 
 $form = New-Object System.Windows.Forms.Form
@@ -114,7 +84,7 @@ $form.height = $imgFile.height
 $form.MaximizeBox = $false
 $form.icon = New-Object system.drawing.icon ("$applicationPath\Source\Images\Icone.ico") #Il faut mettre le chemin complet pour éviter des erreurs.
 $form.KeyPreview = $True
-$form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {$importTaskModule;Task;$form.Close()}}) #si on fait échape sa ferme la fenetre
+$form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {Task;$form.Close()}}) #si on fait échape sa ferme la fenetre
 $form.TopMost = $true
 $form.StartPosition = "CenterScreen"
 $form.BackgroundImageLayout = "Stretch"
@@ -267,7 +237,6 @@ $btnQuit.FlatAppearance.MouseOverBackColor = 'darkred'
 $btnQuit.Add_MouseEnter({$btnQuit.ForeColor = 'black'})
 $btnQuit.Add_MouseLeave({$btnQuit.ForeColor = 'darkred'})
 $btnQuit.Add_Click({
-$importTaskModule
 Task
 $form.Close()
 })
