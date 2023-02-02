@@ -27,14 +27,7 @@ $Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Application
 
 function zipccleaner
 {
-    $ccleanerpath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\ccleaner\CCleaner64.exe"
-    if($ccleanerpath -eq $false)
-    {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner.zip"
-    Expand-Archive "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner.zip" "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source" -Force
-    Remove-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner.zip"
-    }
-    Update "Optimisation_Nettoyage" "Ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Optimisation_Nettoyage/ccleaner.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip'
+    UnzipApp "ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip'
     $ccleanerpostpath = test-Path "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
     if(!($ccleanerpostpath))
     {
@@ -45,91 +38,35 @@ function zipccleaner
     Addlog "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
 }
 
-function ziprevo
+function DownloadLaunchApp($app, $liengithub)
 {
-    $revopath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\RevoUninstaller_Portable\RevoUPort.exe"
-    if($revopath -eq $false)
+    $apppath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app"
+    if($apppath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\RevoUninstaller_Portable.zip"
-    Expand-Archive "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\RevoUninstaller_Portable.zip" "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source"
-    Remove-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\RevoUninstaller_Portable.zip"
+    Invoke-WebRequest $liengithub -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app"
     }
-    Update "Optimisation_Nettoyage" "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/versions/main/Optimisation_Nettoyage/RevoUninstaller_Portable.version.txt' 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip'
-    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\RevoUninstaller_Portable\RevoUPort.exe"
-    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
+    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app" -verb runas
+  
 }
 
-function zipsfc
+function UnzipApp($app, $lienGithub)
 {
-    $sfcpath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sfcScannow.bat"
-    if($sfcpath -eq $false)
+    $appPath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app"
+    $zipFile = "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app.zip"
+    if($appPath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sfcScannow.bat"
+        Invoke-WebRequest $lienGithub -OutFile $zipFile
+        Expand-Archive $zipFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source"
+        Remove-Item $zipFile
     }
-    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sfcScannow.bat" -verb runas
-    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les fichiers corrompus"  
 }
 
-function zipsysevent
+function UnzipAppLaunch($app, $lienGithub, $appExe)
 {
-    $syseventpath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sysevent.exe"
-    if($syseventpath -eq $false)
-    {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sysevent.exe"
-    }
-    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\sysevent.exe"
-    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les evenements"
-}
+    UnzipApp $app $lienGithub
+    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app\$appExe"
+} 
 
-function ziphdtune
-{
-    $pathHDTune = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\HD_Tune\_HDTune.exe"
-    if($pathHDTune -eq $false)
-    {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\HD_Tune.zip"
-    Expand-Archive "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\HD_Tune.zip" "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source"
-    Remove-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\HD_Tune.zip"
-    }
-    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\HD_Tune\_HDTune.exe"
-    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
-}
-
-function zipcdi
-{
-    $cdipath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"
-    if($cdipath -eq $false)
-    {   
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable.zip"
-    Expand-Archive "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable.zip" "$env:SystemDrive\_Tech\\Applications\Optimisation_Nettoyage\Source"
-    Remove-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable.zip"
-        }
-    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"
-    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la santé du HDD"
-}
-
-function zipHitmanPro
-{
-    $PathHitmanPro = test-Path "$env:SystemDrive\_Tech\Applications\Securite\Source\HitmanPro.exe"
-    if($PathHitmanPro -eq $false)
-    {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' -OutFile "$env:SystemDrive\_Tech\Applications\Securite\Source\HitmanPro.exe"
-    }
-    Start-Process "$env:SystemDrive\_Tech\Applications\Securite\Source\HitmanPro.exe"
-    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les virus avec HitmanPro"
-}
-
-function zipautoruns
-{
-    $pathautoruns = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\autoruns.exe"
-    if($pathautoruns -eq $false)
-    {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\autoruns.exe"
-    }
-    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\autoruns.exe"
-    start-sleep 5
-    taskmgr
-    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les logiciels au démarrage"
-}
 #choco install hdtune
 #choco install hdsentinel
 #choco install revo-uninstaller
@@ -260,7 +197,10 @@ $Autoruns.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Autoruns.Add_MouseEnter({$Autoruns.ForeColor = 'White'})
 $Autoruns.Add_MouseLeave({$Autoruns.ForeColor = 'black'})
 $Autoruns.Add_Click({
-zipautoruns
+    DownloadLaunchApp "autoruns.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe'
+    start-sleep 5
+    taskmgr
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les logiciels au démarrage"
 })
 
 #Revo
@@ -280,7 +220,8 @@ $Revo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Revo.Add_MouseEnter({$Revo.ForeColor = 'White'})
 $Revo.Add_MouseLeave({$Revo.ForeColor = 'black'})
 $Revo.Add_Click({
-ziprevo
+    UnzipAppLaunch "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "RevoUPort.exe"
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
 })
 
 
@@ -342,7 +283,8 @@ $sfc.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $sfc.Add_MouseEnter({$sfc.ForeColor = 'White'})
 $sfc.Add_MouseLeave({$sfc.ForeColor = 'black'})
 $sfc.Add_Click({
-zipsfc
+    DownloadLaunchApp "sfcScannow.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat'
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les fichiers corrompus"
 })
 
 #HitmanPro
@@ -362,7 +304,8 @@ $HitmanPro.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HitmanPro.Add_MouseEnter({$HitmanPro.ForeColor = 'White'})
 $HitmanPro.Add_MouseLeave({$HitmanPro.ForeColor = 'black'})
 $HitmanPro.Add_Click({
-zipHitmanPro
+    DownloadLaunchApp "HitmanPro.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe'
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les virus avec HitmanPro"
 })
 
 #sysevent
@@ -382,7 +325,8 @@ $sysevent.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $sysevent.Add_MouseEnter({$sysevent.ForeColor = 'White'})
 $sysevent.Add_MouseLeave({$sysevent.ForeColor = 'black'})
 $sysevent.Add_Click({
-zipsysevent
+    DownloadLaunchApp "sysevent.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe'
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les evenements"
 })
 
 
@@ -423,7 +367,8 @@ $CrystalDiskInfo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gra
 $CrystalDiskInfo.Add_MouseEnter({$CrystalDiskInfo.ForeColor = 'White'})
 $CrystalDiskInfo.Add_MouseLeave({$CrystalDiskInfo.ForeColor = 'black'})
 $CrystalDiskInfo.Add_Click({
-zipcdi
+    UnzipAppLaunch "CrystalDiskInfoPortable" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "CrystalDiskInfoPortable.exe"
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la santé du HDD"
 })
 
 #HDTune
@@ -443,8 +388,8 @@ $HDTune.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HDTune.Add_MouseEnter({$HDTune.ForeColor = 'White'})
 $HDTune.Add_MouseLeave({$HDTune.ForeColor = 'black'})
 $HDTune.Add_Click({
-ziphdtune
-#HDTune
+    UnzipAppLaunch "HD_Tune" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' "_HDTune.exe"
+    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
 })
 
 #Quitter
