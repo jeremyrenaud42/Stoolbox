@@ -71,14 +71,14 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{sortie;break}
-1{UnzipApp "scripts" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip'; submenuHDD;Break}
-2{UnzipApp "Tweak" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip'; submenuTweak;Break}
-3{UnzipApp "Sterjo" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip'; submenuMDP;Break}
-4{UnzipAppLaunch "DDU" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/DDU.zip' "Display Driver Uninstaller.exe";Addlog "Fixlog.txt" "Désinstallation du pilote graphique avec DDU";Break}
-5{UnzipAppLaunch "WiseForceDeleter" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleter.zip' "WiseDeleter.exe";Break}
-6{UnzipAppLaunch "WinDirStat" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' "WinDirStatPortable.exe";Break}
+1{UnzipApp "scripts" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' "Fix"; submenuHDD;Break}
+2{UnzipApp "Tweak" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "Fix"; submenuTweak;Break}
+3{UnzipApp "Sterjo" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "Fix"; submenuMDP;Break}
+4{UnzipAppLaunch "DDU" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/DDU.zip' "Display Driver Uninstaller.exe" "Fix";Addlog "Fixlog.txt" "Désinstallation du pilote graphique avec DDU";Break}
+5{UnzipAppLaunch "WiseForceDeleter" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleter.zip' "WiseDeleter.exe" "Fix";Break}
+6{UnzipAppLaunch "WinDirStat" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' "WinDirStatPortable.exe" "Fix";Break}
 7{zipMinitool;Break} 
-8{UnzipAppLaunch "ComIntRep" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' "ComIntRep_X64.exe";Addlog "Fixlog.txt" "Réparer Internet";Break}
+8{UnzipAppLaunch "ComIntRep" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' "ComIntRep_X64.exe" "Fix";Addlog "Fixlog.txt" "Réparer Internet";Break}
 9{menu;Break}
 }
 start-sleep 1

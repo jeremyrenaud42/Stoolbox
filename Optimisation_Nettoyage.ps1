@@ -163,7 +163,7 @@ $Autoruns.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Autoruns.Add_MouseEnter({$Autoruns.ForeColor = 'White'})
 $Autoruns.Add_MouseLeave({$Autoruns.ForeColor = 'black'})
 $Autoruns.Add_Click({
-    DownloadLaunchApp "autoruns.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe'
+    DownloadLaunchApp "autoruns.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' "Optimisation_Nettoyage"
     start-sleep 5
     taskmgr
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les logiciels au démarrage"
@@ -186,7 +186,7 @@ $Revo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Revo.Add_MouseEnter({$Revo.ForeColor = 'White'})
 $Revo.Add_MouseLeave({$Revo.ForeColor = 'black'})
 $Revo.Add_Click({
-    UnzipAppLaunch "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "RevoUPort.exe"
+    UnzipAppLaunch "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "RevoUPort.exe" "Optimisation_Nettoyage"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
 })
 
@@ -249,7 +249,7 @@ $sfc.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $sfc.Add_MouseEnter({$sfc.ForeColor = 'White'})
 $sfc.Add_MouseLeave({$sfc.ForeColor = 'black'})
 $sfc.Add_Click({
-    DownloadLaunchApp "sfcScannow.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat'
+    DownloadLaunchApp "sfcScannow.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat' "Optimisation_Nettoyage"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les fichiers corrompus"
 })
 
@@ -270,7 +270,7 @@ $HitmanPro.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HitmanPro.Add_MouseEnter({$HitmanPro.ForeColor = 'White'})
 $HitmanPro.Add_MouseLeave({$HitmanPro.ForeColor = 'black'})
 $HitmanPro.Add_Click({
-    DownloadLaunchApp "HitmanPro.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe'
+    DownloadLaunchApp "HitmanPro.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' "Optimisation_Nettoyage"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les virus avec HitmanPro"
 })
 
@@ -291,7 +291,7 @@ $sysevent.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $sysevent.Add_MouseEnter({$sysevent.ForeColor = 'White'})
 $sysevent.Add_MouseLeave({$sysevent.ForeColor = 'black'})
 $sysevent.Add_Click({
-    DownloadLaunchApp "sysevent.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe'
+    DownloadLaunchApp "sysevent.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe' "Optimisation_Nettoyage"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les evenements"
 })
 
@@ -333,7 +333,7 @@ $CrystalDiskInfo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gra
 $CrystalDiskInfo.Add_MouseEnter({$CrystalDiskInfo.ForeColor = 'White'})
 $CrystalDiskInfo.Add_MouseLeave({$CrystalDiskInfo.ForeColor = 'black'})
 $CrystalDiskInfo.Add_Click({
-    UnzipAppLaunch "CrystalDiskInfoPortable" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "CrystalDiskInfoPortable.exe"
+    UnzipAppLaunch "CrystalDiskInfoPortable" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "CrystalDiskInfoPortable.exe" "Optimisation_Nettoyage"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la santé du HDD"
 })
 
@@ -354,7 +354,7 @@ $HDTune.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HDTune.Add_MouseEnter({$HDTune.ForeColor = 'White'})
 $HDTune.Add_MouseLeave({$HDTune.ForeColor = 'black'})
 $HDTune.Add_Click({
-    UnzipAppLaunch "HD_Tune" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' "_HDTune.exe"
+    UnzipAppLaunch "HD_Tune" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' "_HDTune.exe" "Optimisation_Nettoyage"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
 })
 
