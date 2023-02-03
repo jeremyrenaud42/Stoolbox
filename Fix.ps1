@@ -15,24 +15,6 @@ set-location "$env:SystemDrive\_Tech\Applications\fix"
 ImportModules
 CreateFolder "_Tech\Applications\fix\source"
 
-function UnzipApp($app, $lienGithub)
-{
-    $appPath = test-Path "$env:SystemDrive\_Tech\Applications\fix\Source\$app"
-    $zipFile = "$env:SystemDrive\_Tech\Applications\fix\Source\$app.zip"
-    if($appPath -eq $false)
-    {
-        Invoke-WebRequest $lienGithub -OutFile $zipFile
-        Expand-Archive $zipFile "$env:SystemDrive\_Tech\Applications\fix\Source"
-        Remove-Item $zipFile
-    }
-}
-
-function UnzipAppLaunch($app, $lienGithub, $appExe)
-{
-    UnzipApp $app $lienGithub
-    Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\$app\$appExe"
-}
-
 function zipMinitool
 {
     $minitoolpath = test-Path "$env:SystemDrive\Program Files\MiniTool Partition*\partitionwizard.exe"

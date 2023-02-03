@@ -11,24 +11,6 @@ function ImportModules
     }
 }
 
-function UnzipApp($app, $lienGithub)
-{
-    $appPath = test-Path "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app"
-    $zipFile = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app.zip"
-    if($appPath -eq $false)
-    {
-        Invoke-WebRequest $lienGithub -OutFile $zipFile
-        Expand-Archive $zipFile "$env:SystemDrive\_Tech\Applications\Diagnostique\Source"
-        Remove-Item $zipFile
-    }
-}
-
-function UnzipAppLaunch($app, $lienGithub, $appExe)
-{
-    UnzipApp $app $lienGithub
-    Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\$app\$appExe"
-} 
-
 set-location "$env:SystemDrive\_Tech\Applications\Diagnostique"
 ImportModules
 CreateFolder "_Tech\Applications\Diagnostique\source"

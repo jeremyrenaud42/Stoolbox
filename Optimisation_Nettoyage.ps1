@@ -38,35 +38,6 @@ function zipccleaner
     Addlog "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
 }
 
-function DownloadLaunchApp($app, $liengithub)
-{
-    $apppath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app"
-    if($apppath -eq $false)
-    {
-    Invoke-WebRequest $liengithub -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app"
-    }
-    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app" -verb runas
-  
-}
-
-function UnzipApp($app, $lienGithub)
-{
-    $appPath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app"
-    $zipFile = "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app.zip"
-    if($appPath -eq $false)
-    {
-        Invoke-WebRequest $lienGithub -OutFile $zipFile
-        Expand-Archive $zipFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source"
-        Remove-Item $zipFile
-    }
-}
-
-function UnzipAppLaunch($app, $lienGithub, $appExe)
-{
-    UnzipApp $app $lienGithub
-    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app\$appExe"
-} 
-
 #choco install hdtune
 #choco install hdsentinel
 #choco install revo-uninstaller

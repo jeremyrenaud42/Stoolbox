@@ -16,34 +16,6 @@ ImportModules
 CreateFolder "_Tech\Applications\Desinfection\source"
 DownloadBackground "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' "fondvirus.png"
 
-function DownloadLaunchApp($app, $liengithub)
-{
-    $apppath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app"
-    if($apppath -eq $false)
-    {
-    Invoke-WebRequest $liengithub -OutFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app"
-    }
-    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app" -verb runas
-}
-
-function UnzipApp($app, $lienGithub)
-{
-    $appPath = test-Path "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app"
-    $zipFile = "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app.zip"
-    if($appPath -eq $false)
-    {
-        Invoke-WebRequest $lienGithub -OutFile $zipFile
-        Expand-Archive $zipFile "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source"
-        Remove-Item $zipFile
-    }
-}
-
-function UnzipAppLaunch($app, $lienGithub, $appExe)
-{
-    UnzipApp $app $lienGithub
-    Start-Process "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\$app\$appExe"
-} 
-
 function zipccleaner
 {
     UnzipApp "ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip'
