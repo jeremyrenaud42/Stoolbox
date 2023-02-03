@@ -23,6 +23,6 @@ function UnzipApp($app, $lienGithub, $current)
 
 function UnzipAppLaunch($app, $lienGithub, $appExe, $current)
 {
-    UnzipApp $app $lienGithub
+    UnzipApp $app $lienGithub $current
     Start-Process "$env:SystemDrive\_Tech\Applications\$current\Source\$app\$appExe"
 } 
