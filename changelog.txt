@@ -10,3 +10,6 @@ Version :
 2023-01-31:
 - Menu vérifie la connexion Internet
 - Installation shutdown ordi après 5 minutes au lieu de 1 minute
+
+2023-02-02:
+- Enlever EaseUS de Fix
