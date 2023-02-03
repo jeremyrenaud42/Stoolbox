@@ -15,76 +15,22 @@ set-location "$env:SystemDrive\_Tech\Applications\fix"
 ImportModules
 CreateFolder "_Tech\Applications\fix\source"
 
-function zipComIntRep
+function UnzipApp($app, $lienGithub)
 {
-    $ComIntReppath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\ComIntRep\ComIntRep_X64.exe"
-    if($ComIntReppath -eq $false)
+    $appPath = test-Path "$env:SystemDrive\_Tech\Applications\fix\Source\$app"
+    $zipFile = "$env:SystemDrive\_Tech\Applications\fix\Source\$app.zip"
+    if($appPath -eq $false)
     {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\\fix\Source\ComIntRep.zip"
-    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\ComIntRep.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\ComIntRep.zip"
-    }
-    Start-Process "$env:SystemDrive\\_Tech\\Applications\\fix\Source\ComIntRep\ComIntRep_X64.exe"
-    Addlog "Fixlog.txt" "Réparer Internet"
-}
-
-function zipsecudossier
-{
-    $SecuriteDossierpath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Securite_Dossier"
-    if($SecuriteDossierpath -eq $false)
-    {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Securite_Dossier.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\fix\Source\Securite_Dossier.zip"
-    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\fix\Source\Securite_Dossier.zip" "$env:SystemDrive\\_Tech\\Applications\fix\Source"
-    Remove-Item "$env:SystemDrive\\_Tech\\Applications\fix\Source\Securite_Dossier.zip"
-    }
-    Start-Process "$PSScriptRoot\Source\Securite_Dossier\Wise Force Deleter\WiseDeleter.exe"
-}
-
-function zipsterjo
-{
-    $Sterjopath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Sterjo"
-    if($Sterjopath -eq $false)
-    {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Sterjo.zip"
-    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Sterjo.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Sterjo.zip"
+        Invoke-WebRequest $lienGithub -OutFile $zipFile
+        Expand-Archive $zipFile "$env:SystemDrive\_Tech\Applications\fix\Source"
+        Remove-Item $zipFile
     }
 }
 
-function zipWinDirStat
+function UnzipAppLaunch($app, $lienGithub, $appExe)
 {
-    $WinDirStatpath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\WinDirStat\WinDirStatPortable.exe"
-    if($WinDirStatpath -eq $false)
-    {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\\fix\Source\WinDirStat.zip"
-    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\WinDirStat.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\WinDirStat.zip"
-    }
-    Start-Process "$env:SystemDrive\\_Tech\\Applications\\fix\Source\WinDirStat\WinDirStatPortable.exe"
-}
-
-function zipscripts
-{
-    $scriptspath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\scripts"
-    if($scriptspath -eq $false)
-    {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' -OutFile "$env:SystemDrive\_Tech\Applications\fix\Source\scripts.zip"
-    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\scripts.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\scripts.zip"
-    }
-}
-
-function zipDDU
-{
-    $DDUpath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\DDU\Display Driver Uninstaller.exe"
-    if($DDUpath -eq $false)
-    {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/DDU.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\\fix\Source\DDU.zip"
-    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\DDU.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\DDU.zip"
-    }
-    Start-Process "$env:SystemDrive\\_Tech\\Applications\\fix\Source\DDU\Display Driver Uninstaller.exe"
-    Addlog "Fixlog.txt" "Désinstallation du pilote graphique avec DDU"
+    UnzipApp $app $lienGithub
+    Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\$app\$appExe"
 }
 
 function zipMinitool
@@ -106,16 +52,6 @@ function zipMinitool
         }
     }
 }
-function zipTweak
-{
-    $tweakpath = test-Path "$env:SystemDrive\_Tech\\Applications\fix\Source\Tweak"
-    if($tweakpath -eq $false)
-    {
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' -OutFile "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak.zip"
-    Expand-Archive "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak.zip" "$env:SystemDrive\_Tech\Applications\fix\Source"
-    Remove-Item "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak.zip"
-    }
-}
 
 function Tweaking
 {
@@ -134,18 +70,6 @@ function Tweaking
     }
 }
 
-function zipRecup
-{
-    $recuppath = test-Path "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Recup_donnees"
-    if($recuppath -eq $false)
-    {
-    Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/x_25M6QRJUSCC3KDhnBGxg/Recup_donnees.zip' -OutFile "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Recup_donnees.zip"
-    Expand-Archive "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Recup_donnees.zip" "$env:SystemDrive\\_Tech\\Applications\\fix\Source"
-    Remove-Item "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Recup_donnees.zip"
-    }
-    Start-Process "$env:SystemDrive\\_Tech\\Applications\\fix\Source\Recup_donnees\EaseUS Data Recovery Wizard\DRW.exe"
-}
-
 Function menu
 {
 Clear-Host
@@ -153,11 +77,11 @@ write-host "[1] Fichiers corrompues" -ForegroundColor 'Cyan'
 write-host "[2] Windows Tweak et Fix" -ForegroundColor 'Green'
 write-host "[3] Obtenir MDP et licenses" -ForegroundColor 'darkcyan'
 write-host "[4] Desinstaller les pilotes graphiques (DDU)" -ForegroundColor 'DarkGreen'
-write-host "[5] Supprimer un dossier" -ForegroundColor 'magenta'
+write-host "[5] Supprimer un dossier [Temp Unavailable]" -ForegroundColor 'magenta'
 write-host "[6] Verifier taille des dossiers" -ForegroundColor 'red'
 write-host "[7] Gerer les partitions" -ForegroundColor 'green'
 write-host "[8] Reparer Internet" -ForegroundColor 'DarkRed'
-write-host "[9] Recuperer des donnees" -ForegroundColor 'Yellow'
+write-host "[9] Recuperer des donnees [Removed]" -ForegroundColor 'Yellow'
 write-host ""
 write-host "[0] Quitter" -ForegroundColor 'red'
 $choix = read-host "Choisissez une option" 
@@ -165,15 +89,15 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{sortie;break}
-1{zipscripts; submenuHDD;Break}
-2{zipTweak; submenuTweak;Break}
-3{zipsterjo; submenuMDP;Break}
-4{zipDDU;Break}
-5{zipsecudossier;Break}
-6{zipWinDirStat;Break}
+1{UnzipApp "scripts" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip'; submenuHDD;Break}
+2{UnzipApp "Tweak" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip'; submenuTweak;Break}
+3{UnzipApp "Sterjo" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip'; submenuMDP;Break}
+4{UnzipAppLaunch "DDU" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/DDU.zip' "Display Driver Uninstaller.exe";Addlog "Fixlog.txt" "Désinstallation du pilote graphique avec DDU";Break}
+5{UnzipAppLaunch "WiseForceDeleter" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleter.zip' "WiseDeleter.exe";Break}
+6{UnzipAppLaunch "WinDirStat" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' "WinDirStatPortable.exe";Break}
 7{zipMinitool;Break} 
-8{zipComIntRep;Break}
-9{zipRecup;Break}
+8{UnzipAppLaunch "ComIntRep" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' "ComIntRep_X64.exe";Addlog "Fixlog.txt" "Réparer Internet";Break}
+9{menu;Break}
 }
 start-sleep 1
 menu
@@ -191,8 +115,8 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
     }
     elseif($sortie -eq "n")
     {
-        Get-Process -Name AliyunWrapExe -ErrorAction SilentlyContinue | Out-Null   
-        stop-process -Name AliyunWrapExe -ErrorAction SilentlyContinue | Out-Null #gérer easeUS removal
+        #Get-Process -Name AliyunWrapExe -ErrorAction SilentlyContinue | Out-Null   
+        #stop-process -Name AliyunWrapExe -ErrorAction SilentlyContinue | Out-Null #gérer easeUS removal
         Task
         exit
     }
