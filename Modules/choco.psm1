@@ -3,7 +3,7 @@ function Preverifchoco
 {
     $chocoexist = $false
     $chocopath = Test-Path "$env:SystemDrive\ProgramData\chocolatey"
-    if ($chocopath -eq $true)
+    if ($chocopath)
     {
        $chocoexist = $true 
     } 
