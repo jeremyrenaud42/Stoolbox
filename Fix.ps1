@@ -111,7 +111,6 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
 function submenuHDD
 {
 Clear-Host
-set-location "$env:SystemDrive\"
 write-host "[1] Sfc /scannow"
 write-host "[2] DISM"
 write-host "[3] CHKDSK"
@@ -122,11 +121,11 @@ $choix = read-host "Choisissez une option"
 
 switch ($choix)
 {
-0{set-location "$env:SystemDrive\_Tech\\applications\fix";menu;break}
-1{Start-Process "$PSScriptRoot\Source\Scripts\sfcScannow.bat" | Addlog "Fixlog.txt" "Réparation des fichiers corrompus";Break}
-2{Start-Process "$PSScriptRoot\Source\Scripts\DISM.bat" | Addlog "Fixlog.txt" "Réparation du Windows";Break}
-3{Start-Process "$PSScriptRoot\Source\Scripts\CHKDSK.BAT" | Addlog "Fixlog.txt" "Réparation du HDD";Break}
-4{Start-Process "$PSScriptRoot\Source\Scripts\creer_session.txt" | Addlog "Fixlog.txt" "Nouvelle session créé";Break}
+0{menu}
+1{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\sfcScannow.bat";Addlog "Fixlog.txt" "Réparation des fichiers corrompus";Break}
+2{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\DISM.bat";Addlog "Fixlog.txt" "Réparation du Windows";Break}
+3{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\CHKDSK.BAT";Addlog "Fixlog.txt" "Réparation du HDD";Break}
+4{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\creer_session.txt";Addlog "Fixlog.txt" "Nouvelle session créé";Break}
 }
 start-sleep 1
 submenuHDD
