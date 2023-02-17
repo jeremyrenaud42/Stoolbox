@@ -329,7 +329,7 @@ function InstallSoftware($appInfo)
         {  
             installSoftwareWithWinget $appInfo
         }
-    Addlog "installationlog.txt" "Installation de $appInfo.appName" 
+    Addlog "installationlog.txt" "Installation de $appName" 
 }
 
 function installSoftwareWithWinget($appInfo)
