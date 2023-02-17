@@ -1,5 +1,4 @@
-﻿#Les assembly sont nécéssaire pour le fonctionnement du script. Ne pas effacer
-Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
+﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
 [System.Windows.Forms.Application]::EnableVisualStyles() #it will use the built-in Windows theming to style controls instead of the "classic Windows" look and feel
 
 function ImportModules
@@ -35,6 +34,7 @@ $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cel
 $pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
 $windowsVersion = (Get-WmiObject -class Win32_OperatingSystem).Caption
 PrepareDependencies
+#LaunchWPFApp
 
 $form = New-Object System.Windows.Forms.Form #Créer la fenêtre GUI
 $form.ClientSize = '1041,688' #Taille de la GUI
@@ -81,11 +81,10 @@ $form.Controls.Add($lblOutput) #ajoute officiellement le label. Il suffit de met
 
 $form.Show() | out-null #afficher la form, ne jamais enlever sinon plus d'affichage GUI
 
-######Vrai début du script######
 function Debut
 {
     $actualDate = (Get-Date).ToString()
-    Addlog "installationlog.txt" "Installation de $windowsVersion le $actualDate"#ajoute la date dans le fichier texte de log
+    Addlog "installationlog.txt" "Installation de $windowsVersion le $actualDate"
     $lblProgres.Text = "Préparation"
     $lblOutput.Text += "Lancement de la configuration du Windows`r`n"
     MusicDebut "$pathInstallation\Source\Intro.mp3" 
@@ -135,9 +134,8 @@ function DisableCortanaStartup
 Function RenameSystemDrive
 {
     $lblProgres.Text = "Renommage du disque"
-    Set-Volume -DriveLetter 'C' -NewFileSystemLabel "OS" #Renomme le disque C: par OS
+    Set-Volume -DriveLetter 'C' -NewFileSystemLabel "OS"
     $lblOutput.Text += "`r`nLe disque C: a été renommé OS`r`n"
-    #Get-Volume -DriveLetter 'C' | Select-Object -expand FileSystemLabel | Out-Null #donne comme résultat le nom du disque C.
     Addlog "installationlog.txt" "Le disque C: a été renommé OS"
 }
 
@@ -147,9 +145,7 @@ Function ConfigureExplorer
     set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo' -Type 'DWord' -Value '1'
     $lblOutput.Text += "L'accès rapide a été remplacé par Ce PC`r`n"
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications' -Type 'DWord' -Value '0'
-    $lblOutput.Text += "Le fournisseur de synchronisation a été decoché`r`n"
-    #Get-ItemPropertyValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo'   
-    #Get-ItemPropertyValue -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications'   
+    $lblOutput.Text += "Le fournisseur de synchronisation a été decoché`r`n" 
     Addlog "installationlog.txt" "Explorateur de fichiers configuré"  
 }
 
@@ -163,24 +159,16 @@ Function ConfigureExplorer
             Disable-BitLocker -MountPoint $bitlockerVolume | Out-Null
             $lblOutput.Text += "Bitlocker a été désactivé`r`n"
         }
-    #Get-BitLockerVolume | Select-Object -expand VolumeStatus #FullyDecrypted
     Addlog "installationlog.txt" "Bitlocker a été désactivé"
 }
 
 Function DisableFastBoot
 {
     $lblProgres.Text = "Desactivation du demarrage rapide"
-    powercfg /h off #désactive l'hibernation
+    powercfg /h off
     $lblOutput.Text += "Le démarrage rapide a été désactivé`r`n"
     Addlog "installationlog.txt" "Le démarrage rapide a été désactivé"
 }
-<#
-$a = powercfg /a 
-if(!($a -match "Hibernation is not available"))
-{
-    write-host "erreur"
-}
-#>
 
 Function RemoveEngKeyboard
 {
@@ -189,28 +177,9 @@ Function RemoveEngKeyboard
     $anglaisCanada = $langList | Where-Object LanguageTag -eq "en-CA" #sélectionne le clavier anglais canada de la liste
     $langList.Remove($anglaisCanada) | Out-Null #supprimer la clavier sélectionner
     Set-WinUserLanguageList $langList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
-    #if($anglaisCanada) {write-host "erreur"}
     $lblOutput.Text += "Le clavier Anglais a été supprimé`r`n"
     Addlog "installationlog.txt" "Le clavier Anglais a été supprimé"
 }
-<#
-Ne survit pas à 22h2
-# Set WinUserLanguageList as a variable
-$lang = Get-WinUserLanguageList 
-$lang
-# Clear the WinUserLanguageList
-$lang.Clear()
-# Add language to the language list
-$lang.add("fr-CA")
-$lang
-# Remove whatever input method is present
-$lang[0].InputMethodTips.Clear()
-# Add this keyboard as keyboard language
-$lang[0].InputMethodTips.Add('0C0C:00001009')
-# Set this language list as default
-Set-WinUserLanguageList $lang -Force
-#https://scribbleghost.net/2018/04/30/add-keyboard-language-to-windows-10-with-powershell/
-#>
 
 Function ConfigurePrivacy
 {
@@ -219,12 +188,6 @@ Function ConfigurePrivacy
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type 'DWord' -Value 0 
-
-    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled" 
-    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled"  
-    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" 
-    #get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs"
-
     $lblOutput.Text += "Les options de confidentialité ont été configuré`r`n"
     Addlog "installationlog.txt" "Les options de confidentialité ont été configuré"  
 }
@@ -232,17 +195,13 @@ Function ConfigurePrivacy
 Function DisplayDesktopIcon
 {
     $lblProgres.Text = "Installation des icones systèmes sur le bureau"
-    if (!(Test-Path -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel")) #vérifie si le chemin du registre existe
+    if (!(Test-Path -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel"))
 		{
-			New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Force #s'il n'existe pas le créé
+			New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Force
 		}
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type 'DWord' -Value 0
-
-    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}"
-    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" 
-    #get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" 
     $lblOutput.Text += "Les icones systèmes ont été installés sur le bureau`r`n"
     Addlog "installationlog.txt" "Les icones systèmes ont été installés sur le bureau"
     $lblOutput.Text += " `r`n" #Permet de créé un espace avant les logiciels
@@ -260,53 +219,152 @@ function UpdateMsStore
     Addlog "installationlog.txt" "Mises à jour de Microsoft Store"
 }
  
-function Preverifsoft($softname,$softpath,$softpath32,$softpathdata)
+<#
+$32bitsApp.add("VLC", "Path32")
+$32bitsApp.add("7Zip", "Path32")
+$32bitsApp.add("Armoury Crate", "Path32")
+$32bitsApp.add("Steam", "Path32")
+$32bitsApp.add("MyAsus", "Path32")
+$32bitsApp.add("MSI Center", "Path32")
+$32bitsApp.add("Zoom", "Path32")
+$32bitsApp.add("Discord", "Path32")
+$32bitsApp.add("Firefox", "Path32")
+$32bitsApp.add("Libre Office", "Path32")
+$32bitsApp.add("CDBurnerXP", "Path32")
+#>
+
+$64bitsApp = @{} #initialiser la hashtable
+$64bitsApp.add("Adobe Reader", "$env:SystemDrive\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe")
+$64bitsApp.add("Google chrome", "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe")
+$64bitsApp.add("Teamviewer", "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe")
+$64bitsApp.add("Lenovo Vantage", '""')
+$64bitsApp.add("Lenovo System Update", '""')
+$64bitsApp.add("GeForce Experience", "$env:SystemDrive\Program Files\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe")
+$64bitsApp.add("Dell Command Update", '""')
+$64bitsApp.add("HP Support Assistant", '""')
+
+$32bitsApp = @{} #initialiser la hashtable
+$32bitsApp.add("Adobe Reader", "$env:SystemDrive\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe")
+$32bitsApp.add("Google chrome", "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe")
+$32bitsApp.add("Teamviewer", "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe")
+$32bitsApp.add("Lenovo Vantage", '""')
+$32bitsApp.add("Lenovo System Update", "$env:SystemDrive\Program Files (x86)\Lenovo\System Update\tvsu.exe")
+$32bitsApp.add("GeForce Experience", '""')
+$32bitsApp.add("Dell Command Update", "$env:SystemDrive\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe")
+$32bitsApp.add("HP Support Assistant", "$env:SystemDrive\Program Files (x86)\HP\HP Support Framework\hpsupportassistant.dll")
+
+$appDataApp = @{} #initialiser la hashtable
+$appDataApp.add("Adobe Reader", "$env:SystemDrive\Users\$env:username\AppData\Roaming\Adobe\Acrobat\DC")
+$appDataApp.add("Google chrome", "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe")
+$appDataApp.add("Teamviewer", "$env:SystemDrive\Users\$env:username\AppData\Roaming\TeamViewer")
+$appDataApp.add("Lenovo Vantage", "$env:SystemDrive\Users\$env:username\AppData\Local\Packages\E046963F.LenovoCompanion_k1h2ywk1493x8")
+$appDataApp.add("Lenovo System Update", '""')
+$appDataApp.add("GeForce Experience", '""')
+$appDataApp.add("Dell Command Update", '""')
+$appDataApp.add("HP Support Assistant", '""')
+
+$wingetName = @{} #initialiser la hashtable
+$wingetName.add("Adobe Reader", "Adobe.Acrobat.Reader.64-bit")
+$wingetName.add("Google chrome", "Google.Chrome")
+$wingetName.add("Teamviewer", "TeamViewer.TeamViewer")
+$wingetName.add("Lenovo Vantage", "9WZDNCRFJ4MV")
+$wingetName.add("Lenovo System Update", "Lenovo.SystemUpdate")
+$wingetName.add("GeForce Experience", "Nvidia.GeForceExperience")
+$wingetName.add("Dell Command Update", "Dell.CommandUpdate")
+$wingetName.add("HP Support Assistant", '""')
+
+$chocoName = @{} #initialiser la hashtable
+$chocoName.add("Adobe Reader", "adobereader")
+$chocoName.add("Google chrome", "googlechrome")
+$chocoName.add("Teamviewer", "teamviewer")
+$chocoName.add("Lenovo Vantage", '""')
+$chocoName.add("Lenovo System Update", "lenovo-thinkvantage-system-update")
+$chocoName.add("GeForce Experience", "geforce-experience")
+$chocoName.add("Dell Command Update", "dellcommandupdate")
+$chocoName.add("HP Support Assistant", "hpsupportassistant")
+
+$ninite = @{} #initialiser la hashtable
+$ninite.add("Adobe Reader", '""')
+$ninite.add("Google chrome", '""')
+$ninite.add("Teamviewer", '""')
+$ninite.add("Lenovo Vantage", '""')
+$ninite.add("Lenovo System Update", '""')
+$ninite.add("GeForce Experience", '""')
+$ninite.add("Dell Command Update", '""')
+$ninite.add("HP Support Assistant", '""')
+
+
+function AppInfo($appName)
 {
-   $pathexist = $false
-   if((Test-Path $softpath) -OR (Test-Path $softpath32) -OR (Test-Path $softpathdata))
-   {
-     $pathexist = $true
-     $lblOutput.Text += " -$softname est déja installé`r`n"
-   }
-   return $pathexist
+    $appInfo = [PSCustomObject]@{
+        path64 = $64bitsApp[$appName]
+        path32 = $32bitsApp[$appName]
+        pathAppData = $appDataApp[$appName]
+        WingetName = $wingetName[$appName]
+        ChocoName = $chocoName[$appName]
+    }
+    return $appInfo
 }
 
-function Postverifsoft ($softname,$softpath,$softpath32,$softpathdata,$choconame)
+ function CheckSoftwarePresence($appInfo)
 {
-    choco install $choconame -y | out-null
-    if((Test-Path $softpath) -OR (Test-Path $softpath32) -OR (Test-Path $softpathdata))
+   $SoftwareInstallationStatus= $false
+   if((Test-Path $appInfo.path64) -OR (Test-Path $appInfo.path32) -OR (Test-Path $appInfo.pathAppData))
+   {
+     $SoftwareInstallationStatus = $true
+   }
+   return $SoftwareInstallationStatus
+}
+
+function InstallSoftware($appInfo)
+{
+    $lblProgres.Text = "Installation de $appName"
+    $lblOutput.Text += "Installation de $appName en cours"
+    $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo #s'il est déja installé il ne va pas poursuivre
+        if($SoftwareInstallationStatus)
+        {
+            $lblOutput.Text += " -$appName est déja installé`r`n"
+        }
+        elseif($SoftwareInstallationStatus -eq $false)
+        {  
+            installSoftwareWithWinget $appInfo
+        }
+    Addlog "installationlog.txt" "Installation de $appInfo.appName" 
+}
+
+function installSoftwareWithWinget($appInfo)
+{
+    winget install -e --id $appInfo.wingetname --accept-package-agreements --accept-source-agreements --silent | out-null 
+    $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo #s'il est déja installé il ne va pas poursuivre
+        if($SoftwareInstallationStatus)
+        {
+            $lblOutput.Text += " -$appName installé avec succès`r`n"  
+        } 
+        else
+        {
+            installSoftwareWithChoco $appInfo
+        }     
+}
+
+function installSoftwareWithChoco($appInfo)
+{
+    choco install $appInfo.ChocoName -y | out-null
+    $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
+    if($SoftwareInstallationStatus)
     {   
-        $lblOutput.Text += " -$softname installé avec succès`r`n"
+        $lblOutput.Text += " -$appName installé avec succès`r`n"
     }
     else
     {
-        $lblOutput.Text += " -$softname a échoué`r`n"
+        $lblOutput.Text += " -$appName a échoué`r`n"
     } 
 }
-    
-function InstallSoftware($softname,$softpath,$softpath32,$softpathdata,$wingetname,$choconame)
-{   
-    $lblProgres.Text = "Installation de $softname"
-    $lblOutput.Text += "Installation de $softname en cours"
-    $pathexist = Preverifsoft $softname $softpath $softpath32 $softpathdata #s'il est déja installé il ne va pas poursuivre
-        if($pathexist -eq $false)
-        {  
-            winget install -e --id $wingetname --accept-package-agreements --accept-source-agreements --silent | out-null 
-            if((Test-Path $softpath) -OR (Test-Path $softpath32) -OR (Test-Path $softpathdata))
-            {
-                $lblOutput.Text += " -$softname installé avec succès`r`n"  
-            } 
-            else
-            {
-                Postverifsoft $softname $softpath $softpath32 $softpathdata $choconame
-            }
-        }       
-    Addlog "installationlog.txt" "Installation de $softname"      
-}
 
-function plancgoogle($softpath,$softpath32,$softpathdata)
+#voir pour fonction avec parametres
+function plancgoogle($appInfo)
 {
-    if((Test-Path $softpath) -OR (Test-Path $softpath32) -OR (Test-Path $softpathdata))
+    $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
+    if($SoftwareInstallationStatus)
     {}
     else
     {   
@@ -314,61 +372,16 @@ function plancgoogle($softpath,$softpath32,$softpathdata)
         Start-Process "$pathInstallation\Source\Ninite Chrome Installer.exe" -Verb runAs #escape pour terminer
     }
 }
-function plancteamviewer($softpath,$softpath32,$softpathdata)
+function plancteamviewer($appInfo)
 {
-    if((Test-Path $softpath) -OR (Test-Path $softpath32) -OR (Test-Path $softpathdata))
+    $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
+    if($SoftwareInstallationStatus)
     {}
     else
     {
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite TeamViewer 15 Installer.exe' -OutFile "$pathInstallation\Source\Ninite TeamViewer 15 Installer.exe" | Out-Null
         Start-Process "$pathInstallation\Source\Ninite TeamViewer 15 Installer.exe" -Verb runAs #escape pour terminer
     }
-}
-
-function PreverifSystemUpdate
-{
-   $pathexist = $false
-   $SystemUpdatepath = Test-Path "$env:SystemDrive\Program Files (x86)\Lenovo\System Update\tvsu.exe" 
-   if($SystemUpdatepath -eq $true)
-   {
-     $pathexist = $true
-     $lblOutput.Text += " -Lenovo System Update est déja installé`r`n"
-   }
-   return $pathexist
-}
-function PostverifSystemUpdate
-{
-    choco install lenovo-thinkvantage-system-update -y | out-null
-    $SystemUpdatepath = Test-Path "$env:SystemDrive\Program Files (x86)\Lenovo\System Update\tvsu.exe"         
-    if($SystemUpdatepath -eq $true)
-    {   
-        $lblOutput.Text += " -Lenovo System Update installé avec succès`r`n"
-    }
-    else
-    {
-        $lblOutput.Text += " -Lenovo System Update a échoué`r`n"
-    } 
-}
-
-function InstallSystemUpdate
-{   
-    $lblProgres.Text = "Installation de Lenovo System Update"
-    $lblOutput.Text += "Installation de Lenovo System Update en cours"
-    $pathexist = PreverifSystemUpdate
-        if($pathexist -eq $false)
-        {   
-            winget install -e --id Lenovo.SystemUpdate --accept-package-agreements --accept-source-agreements --silent | out-null  
-            $SystemUpdatepath = Test-Path "$env:SystemDrive\Program Files (x86)\Lenovo\System Update\tvsu.exe"
-            if($SystemUpdatepath)
-            {
-                $lblOutput.Text += " -Lenovo System Update installé avec succès`r`n"  
-            } 
-            else
-            {
-                PostverifSystemUpdate
-            }         
-        }             
-    Addlog "installationlog.txt" "Installation de Lenovo System Update"      
 }
 
 function InstallLenovoVantage
@@ -395,85 +408,18 @@ function PreverifVantage
 }
 #>
 
-function PreverifDellSA
-{
-   $pathexist = $false
-   $DellSApath = Test-Path "$env:SystemDrive\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe" 
-   if($DellSApath -eq $true)
-   {
-     $pathexist = $true
-     $lblOutput.Text += " -Dell Command Update est déja installé`r`n"
-   }
-   return $pathexist
-}
-
-function PostverifDellSA
-{
-    choco install dellcommandupdate -y | out-null
-    $DellSApath = Test-Path "$env:SystemDrive\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe"         
-    if($DellSApath -eq $true)
-    {   
-        $lblOutput.Text += " -Dell Command Update installé avec succès`r`n"
-    }
-    else
-    {
-        $lblOutput.Text += " -Dell Command Update a échoué`r`n"
-    } 
-}
- 
 function InstallDellSA
-{   
-    $lblProgres.Text = "Installation de  Dell Command Update"
-    $lblOutput.Text += "Installation de  Dell Command Update en cours"
-    $pathexist = PreverifDellSA #s'il est déja installé il ne va pas poursuivre
-        if($pathexist -eq $false)
-        {   
-            winget install -e --id Dell.CommandUpdate --accept-package-agreements --accept-source-agreements --silent | out-null
-            $DellSApath = Test-Path "$env:SystemDrive\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe"         
-            if($DellSApath)
-            {
-                $lblOutput.Text += " -Dell Command Update installé avec succès`r`n" 
-            } 
-            else
-            {
-                PostverifDellSA
-            }  
-        }         
-    Addlog "installationlog.txt" "Installation de  Dell Command Update"      
-}
-
-function PreverifHP
 {
-   $pathexist = $false
-   $HPpath = Test-Path "$env:SystemDrive\Program Files (x86)\HP\HP Support Framework\hpsupportassistant.dll" 
-   if($HPpath -eq $true)
-   {
-     $pathexist = $true
-     $lblOutput.Text += " -Hp Support Assistant est déja installé`r`n"
-   }
-   return $pathexist
+    $appName = "Dell Command Update"
+    $appInfo = AppInfo $appName
+    InstallSoftware $appInfo
 }
 
 function InstallHPSA
-{   
-    $lblProgres.Text = "Installation de Hp Support Assistant"
-    $lblOutput.Text += "Installation de Hp Support Assistant en cours"
-    $pathexist = PreverifHP #s'il est déja installé il ne va pas poursuivre
-        if($pathexist -eq $false)
-        {   
-            choco install hpsupportassistant -y | out-null
-            $HPpath = Test-Path "$env:SystemDrive\Program Files (x86)\HP\HP Support Framework\hpsupportassistant.dll" 
-            if($HPpath) #Pas de winget de dispo, donc pas de postverif
-            {
-                $lblOutput.Text += " -Hp Support Assistant avec succès`r`n"
-                
-            }
-            else 
-            {
-                $lblOutput.Text += " -Hp Support Assistant a échoué`r`n"
-            }  
-        }  
-    Addlog "installationlog.txt" "Installation de Hp Support Assistant"      
+{  
+    $appName = "Hp Support Assistant"
+    $appInfo = AppInfo $appName
+    InstallSoftware $appInfo
 }
 
 Function UpdateDrivers
@@ -483,8 +429,17 @@ Function UpdateDrivers
     #Get-CimInstance -Class Win32_BaseBoard | Select-Object -Property Manufacturer # + rapide
     if($x -match 'LENOVO')
     {
-        InstallSystemUpdate
-        InstallLenovoVantage
+        <#
+        $appName = "Lenovo Vantage"
+        $appInfo = AppInfo $appName
+        InstallSoftware $appInfo
+        #>
+        $appName = "Lenovo System Update"
+        $appInfo = AppInfo $appName
+        InstallSoftware $appInfo
+
+         #InstallSystemUpdate
+         InstallLenovoVantage
     }
 
     elseif($x -match 'HP')
@@ -508,55 +463,15 @@ Function UpdateDrivers
     #>
 }
 
-function PreverifGeForce
-{
-   $pathexist = $false
-   $GeForcepath = Test-Path "$env:SystemDrive\Program Files\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe" 
-   if($GeForcepath -eq $true)
-   {
-     $pathexist = $true
-     $lblOutput.Text += " -GeForce Experience est déja installé`r`n"
-   }
-   return $pathexist
-}
-
-function PostverifGeForce
-{
-    winget install -e --id Nvidia.GeForceExperience --accept-package-agreements --accept-source-agreements --silent | out-null
-    $GeForcepath = Test-Path "$env:SystemDrive\Program Files\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe"         
-    if($GeForcepath -eq $true)
-    {   
-        $lblOutput.Text += " -GeForce Experience installé avec succès`r`n"
-    }
-    else
-    {
-        $lblOutput.Text += " -GeForce Experience a échoué`r`n"
-    } 
-}
- 
-function InstallGeForce
+function InstallGeForceExperience
 {   
-    $nvidia = Get-WmiObject win32_VideoController | Select-Object -Property name
-    if($nvidia -match 'NVIDIA')
+$VideoController = Get-WmiObject win32_VideoController | Select-Object -Property name
+    if($VideoController -match 'NVIDIA')
     {
-        $lblProgres.Text = "Installation de GeForce Experience"
-        $lblOutput.Text += "Installation de GeForce Experience en cours"
-        $pathexist = PreverifGeForce #s'il est déja installé il ne va pas poursuivre
-            if($pathexist -eq $false)
-            {   
-                choco install geforce-experience -y | out-null 
-                $GeForcepath = Test-Path "$env:SystemDrive\Program Files\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe"     
-                if($GeForcepath)
-                {
-                    $lblOutput.Text += " -GeForce Experience installé avec succès`r`n"  
-                } 
-                else
-                {
-                    PostverifGeForce
-                } 
-            }                     
-        Addlog "installationlog.txt" "Installation de GeForce Experience"
-    }      
+        $appName = "GeForce Experience"
+        $appInfo = AppInfo $appName
+        InstallSoftware $appInfo
+    }
 }
 
 #Function Antivirus
@@ -617,7 +532,7 @@ function PinGoogleTaskbar
     } 
 }
 
-function End
+function Fin
 {
     Addlog "installationlog.txt" "Installation de Windows effectué avec Succès"
     CopyLog "installationlog.txt" "$env:SystemDrive\TEMP"  
@@ -656,16 +571,26 @@ DisableFastBoot
 RemoveEngKeyboard
 ConfigurePrivacy
 DisplayDesktopIcon
-InstallSoftware "Adobe Reader" "$env:SystemDrive\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe" "$env:SystemDrive\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe" "$env:SystemDrive\Users\$env:username\AppData\Roaming\Adobe\Acrobat\DC" "Adobe.Acrobat.Reader.64-bit" "adobereader"
-InstallSoftware "Google chrome" "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe" "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe" "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe" "Google.Chrome" "googlechrome"
-plancgoogle "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe" "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe" "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe"
-InstallSoftware "Teamviewer" "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe" "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe" "$env:SystemDrive\Users\$env:username\AppData\Roaming\TeamViewer" "TeamViewer.TeamViewer" "teamviewer"
-plancteamviewer "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe" "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe" "$env:SystemDrive\Users\$env:username\AppData\Roaming\TeamViewer"
+
+$appName = "Adobe Reader"
+$appInfo = AppInfo $appName
+InstallSoftware $appInfo
+
+$appName = "Google chrome"
+$appInfo = AppInfo $appName
+InstallSoftware $appInfo
+plancgoogle $appInfo
+
+$appName = "Teamviewer"
+$appInfo = AppInfo $appName
+InstallSoftware $appInfo
+plancteamviewer $appInfo
+
 UpdateDrivers
-InstallGeForce
+InstallGeForceExperience
 CheckActivationStatus
 UpdateMsStore
 GetWindowsUpdate
-End
+Fin
 }
 Main
