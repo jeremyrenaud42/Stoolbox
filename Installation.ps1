@@ -22,8 +22,8 @@ function CheckInternetStatus
 function PrepareDependencies
 {
     set-location $pathInstallation
-    CreateFolder "_Tech\Applications\Installation\source"
     ImportModules
+    CreateFolder "_Tech\Applications\Installation\source"
     CheckInternetStatus
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Intro.mp3' -OutFile "$pathInstallation\Intro.mp3" | Out-Null
 }
