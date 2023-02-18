@@ -43,5 +43,5 @@ function DownloadLaunchApp($exe,$downloadLink,$current)
 function UnzipAppLaunch($appfolder,$downloadLink,$appExe,$current)
 {
     UnzipApp $appfolder $downloadLink $current
-    Start-Process "$env:SystemDrive\_Tech\Applications\$current\Source\$app\$appExe"
+    Start-Process "$env:SystemDrive\_Tech\Applications\$current\Source\$appfolder\$appExe"
 } 
