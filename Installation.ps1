@@ -25,9 +25,7 @@ function PrepareDependencies
     CreateFolder "_Tech\Applications\Installation\source"
     ImportModules
     CheckInternetStatus
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Source.zip' -OutFile "$pathInstallation\source.zip" | Out-Null
-    Expand-Archive "$pathInstallation\source.zip" "$pathInstallation\Source" -Force | Out-Null
-    Remove-Item "$pathInstallation\source.zip" | Out-Null 
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Intro.mp3' -OutFile "$pathInstallation\Intro.mp3" | Out-Null
 }
 
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que el scripte se ferme s'il rencontre une erreur
