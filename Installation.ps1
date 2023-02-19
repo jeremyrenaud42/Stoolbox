@@ -291,6 +291,16 @@ $niniteName.add("GeForce Experience", '""')
 $niniteName.add("Dell Command Update", '""')
 $niniteName.add("HP Support Assistant", '""')
 
+$niniteGithubLink = @{} #initialiser la hashtable
+$niniteGithubLink.add("Adobe Reader", '""')
+$niniteGithubLink.add("Google chrome", "https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite Chrome Installer.exe")
+$niniteGithubLink.add("Teamviewer", "https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite TeamViewer 15 Installer.exe")
+$niniteGithubLink.add("Lenovo Vantage", '""')
+$niniteGithubLink.add("Lenovo System Update", '""')
+$niniteGithubLink.add("GeForce Experience", '""')
+$niniteGithubLink.add("Dell Command Update", '""')
+$niniteGithubLink.add("HP Support Assistant", '""')
+
 function AppInfo($appName)
 {
     $appInfo = [PSCustomObject]@{
@@ -300,6 +310,7 @@ function AppInfo($appName)
         WingetName = $wingetName[$appName]
         ChocoName = $chocoName[$appName]
         NiniteName = $niniteName[$appName]
+        NiniteGithubLink= $niniteGithubLink[$appName]
     }
     return $appInfo
 }
@@ -355,17 +366,14 @@ function InstallSoftwareWithChoco($appInfo)
     else
     {
         $lblOutput.Text += " -$appName a échoué`r`n"
+        InstallSoftwareWithNinite $appInfo
     } 
 }
 
-function InstallSoftwareWithNinite($appInfo,$lienGithub)
+function InstallSoftwareWithNinite($appInfo)
 {
-    $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
-    if($SoftwareInstallationStatus -eq $false)
-    {   
-        Invoke-WebRequest $lienGithub -OutFile $appInfo.NiniteName | Out-Null
-        Start-Process $appInfo.NiniteName -Verb runAs
-    }
+    Invoke-WebRequest $appInfo.NiniteGithubLink -OutFile $appInfo.NiniteName | Out-Null
+    Start-Process $appInfo.NiniteName -Verb runAs
 }
 
 function InstallLenovoVantage
@@ -549,12 +557,10 @@ InstallSoftware $appInfo
 $appName = "Google chrome"
 $appInfo = AppInfo $appName
 InstallSoftware $appInfo
-InstallSoftwareWithNinite $appInfo 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite Chrome Installer.exe'
 
 $appName = "Teamviewer"
 $appInfo = AppInfo $appName
 InstallSoftware $appInfo
-InstallSoftwareWithNinite $appInfo 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite TeamViewer 15 Installer.exe'
 
 UpdateDrivers
 InstallGeForceExperience
