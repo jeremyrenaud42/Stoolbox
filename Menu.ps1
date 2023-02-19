@@ -55,7 +55,7 @@ function PrepareDependencies
     DownloadModules
     Import-Module "$applicationPath\Source\modules\Folder.psm1" | Out-Null
     Import-Module "$applicationPath\Source\modules\Remove.psm1" | Out-Null
-    Import-Module "$applicationPath\Source\modules\Images.psm1" | Out-Null
+    Import-Module "$applicationPath\Source\modules\AppManagement.psm1" | Out-Null
     Import-Module "$applicationPath\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
     CreateFolder "_Tech\Applications\Source\images"
     DownloadFile "Images\fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' 
