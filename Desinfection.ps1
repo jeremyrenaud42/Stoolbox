@@ -20,7 +20,7 @@ DownloadFile "fondvirus.png" 'https://raw.githubusercontent.com/jeremyrenaud42/D
 
 function zipccleaner
 {
-    UnzipApp "ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip'
+    UnzipApp "ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' $pathDesinfectionSource
     $ccleanerpostpath = test-Path "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
     if(!($ccleanerpostpath))
     {
@@ -179,7 +179,7 @@ $Revo.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $Revo.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $Revo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Revo.Add_Click({
-    UnzipAppLaunch "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "RevoUPort.exe" "Desinfection"
+    UnzipAppLaunch "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "RevoUPort.exe" "$pathDesinfectionSource"
     Addlog "desinfectionlog.txt" "Vérifier les programmes nuisibles"
 })
 
@@ -324,7 +324,7 @@ $RogueKiller.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $RogueKiller.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $RogueKiller.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $RogueKiller.Add_Click({
-    UnzipAppLaunch "Roguekiller" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Roguekiller.zip' "RogueKiller_portable64.exe" "Desinfection"
+    UnzipAppLaunch "Roguekiller" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Roguekiller.zip' "RogueKiller_portable64.exe" "$pathDesinfectionSource"
     Addlog "desinfectionlog.txt" "Analyse RogueKiller effectué"
 })
 #via le cmd, aller a l'emplacement RogueKillerCMD.exe -scan -no-interact -deleteall #-debuglog {path}

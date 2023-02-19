@@ -43,7 +43,7 @@ $Boutonbat.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $Boutonbat.FlatAppearance.MouseOverBackColor = 'gray'
 $Boutonbat.Add_MouseEnter({$Boutonbat.ForeColor = 'White'})
 $Boutonbat.Add_MouseLeave({$Boutonbat.ForeColor = 'black'})
-$Boutonbat.Add_Click({UnzipApp "Batterie" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "Diagnostique"})
+$Boutonbat.Add_Click({UnzipApp "Batterie" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "$pathDiagnostiqueSource"})
 $Boutonbat.Add_Click({$Battinfo.visible = $true})
 $Boutonbat.Add_Click({$Dontsleep.visible = $true})
 $Boutonbat.Add_Click({$Boutonbat.visible = $false})
@@ -137,7 +137,7 @@ $BoutonCPU.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonCPU.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonCPU.Add_MouseEnter({$BoutonCPU.ForeColor = 'White'})
 $BoutonCPU.Add_MouseLeave({$BoutonCPU.ForeColor = 'black'})
-$BoutonCPU.Add_Click({UnzipApp "CPU" 'https://ftp.alexchato9.com/public/file/BB4NxwBawUmDufbDNKEJAA/CPU.zip' "Diagnostique"})
+$BoutonCPU.Add_Click({UnzipApp "CPU" 'https://ftp.alexchato9.com/public/file/BB4NxwBawUmDufbDNKEJAA/CPU.zip' "$pathDiagnostiqueSource"})
 $BoutonCPU.Add_Click({$BoutonCPU.visible = $false})
 $BoutonCPU.Add_Click({$Aida.visible = $true})
 $BoutonCPU.Add_Click({$Prime95.visible = $true})
@@ -345,7 +345,7 @@ $BoutonHDD.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonHDD.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonHDD.Add_MouseEnter({$BoutonHDD.ForeColor = 'White'})
 $BoutonHDD.Add_MouseLeave({$BoutonHDD.ForeColor = 'black'})
-$BoutonHDD.Add_Click({UnzipApp "HDD" 'https://ftp.alexchato9.com/public/file/t6QQNrPcLk6gruXnTEr1fA/HDD.zip' "Diagnostique"})
+$BoutonHDD.Add_Click({UnzipApp "HDD" 'https://ftp.alexchato9.com/public/file/t6QQNrPcLk6gruXnTEr1fA/HDD.zip' "$pathDiagnostiqueSource"})
 $BoutonHDD.Add_Click({$BoutonHDD.visible = $false})
 $BoutonHDD.Add_Click({$HDTune.visible = $true})
 $BoutonHDD.Add_Click({$HDSentinnel.visible = $true})
@@ -606,7 +606,7 @@ $BoutonGPU.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonGPU.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonGPU.Add_MouseEnter({$BoutonGPU.ForeColor = 'White'})
 $BoutonGPU.Add_MouseLeave({$BoutonGPU.ForeColor = 'black'})
-$BoutonGPU.Add_Click({UnzipApp "GPU" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "Diagnostique"})
+$BoutonGPU.Add_Click({UnzipApp "GPU" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "$pathDiagnostiqueSource"})
 $BoutonGPU.Add_Click({$Unigine.visible = $true})
 $BoutonGPU.Add_Click({$Furmark.visible = $true})
 #$BoutonGPU.Add_Click({$gpuz.visible = $true})
@@ -705,7 +705,7 @@ $Speccy.FlatAppearance.MouseDownBackColor = 'gray'
 $Speccy.Add_MouseEnter({$Speccy.ForeColor = 'White'})
 $Speccy.Add_MouseLeave({$Speccy.ForeColor = 'black'})
 $Speccy.Add_Click({
-UnzipAppLaunch "Speccy" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "Speccy.exe" "Diagnostique"
+UnzipAppLaunch "Speccy" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "Speccy.exe" "$pathDiagnostiqueSource"
 })
 #Tooltip
 $tooltipSpeccy = New-Object System.Windows.Forms.ToolTip
@@ -739,7 +739,7 @@ $HWMonitor.FlatAppearance.MouseOverBackColor = 'gray'
 $HWMonitor.Add_MouseEnter({$HWMonitor.ForeColor = 'White'})
 $HWMonitor.Add_MouseLeave({$HWMonitor.ForeColor = 'black'})
 $HWMonitor.Add_Click({
-UnzipAppLaunch "HWmonitor" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor.zip" "HWMonitor_x64.exe" "Diagnostique"
+UnzipAppLaunch "HWmonitor" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor.zip" "HWMonitor_x64.exe" "$pathDiagnostiqueSource"
 })
 #Tooltip
 $tooltipHWMonitor = New-Object System.Windows.Forms.ToolTip
@@ -773,7 +773,7 @@ $Whocrashed.FlatAppearance.MouseOverBackColor = 'gray'
 $Whocrashed.Add_MouseEnter({$Whocrashed.ForeColor = 'White'})
 $Whocrashed.Add_MouseLeave({$Whocrashed.ForeColor = 'black'})
 $Whocrashed.Add_Click({
-UnzipAppLaunch "WhoCrashed" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashed.zip" "WhoCrashedEx.exe" "Diagnostique"
+UnzipAppLaunch "WhoCrashed" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashed.zip" "WhoCrashedEx.exe" "$pathDiagnostiqueSource"
 })
 #Tooltip
 $tooltipWhocrashed = New-Object System.Windows.Forms.ToolTip

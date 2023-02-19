@@ -29,7 +29,7 @@ $Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Application
 
 function zipccleaner
 {
-    UnzipApp "ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip'
+    UnzipApp "ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' $pathOptimisation_NettoyageSource
     $ccleanerpostpath = test-Path "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
     if(!($ccleanerpostpath))
     {
@@ -188,7 +188,7 @@ $Revo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Revo.Add_MouseEnter({$Revo.ForeColor = 'White'})
 $Revo.Add_MouseLeave({$Revo.ForeColor = 'black'})
 $Revo.Add_Click({
-    UnzipAppLaunch "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "RevoUPort.exe" "Optimisation_Nettoyage"
+    UnzipAppLaunch "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "RevoUPort.exe" "$pathOptimisation_NettoyageSource"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
 })
 
@@ -335,7 +335,7 @@ $CrystalDiskInfo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gra
 $CrystalDiskInfo.Add_MouseEnter({$CrystalDiskInfo.ForeColor = 'White'})
 $CrystalDiskInfo.Add_MouseLeave({$CrystalDiskInfo.ForeColor = 'black'})
 $CrystalDiskInfo.Add_Click({
-    UnzipAppLaunch "CrystalDiskInfoPortable" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "CrystalDiskInfoPortable.exe" "Optimisation_Nettoyage"
+    UnzipAppLaunch "CrystalDiskInfoPortable" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "CrystalDiskInfoPortable.exe" "$pathOptimisation_NettoyageSource"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la santé du HDD"
 })
 
@@ -356,7 +356,7 @@ $HDTune.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HDTune.Add_MouseEnter({$HDTune.ForeColor = 'White'})
 $HDTune.Add_MouseLeave({$HDTune.ForeColor = 'black'})
 $HDTune.Add_Click({
-    UnzipAppLaunch "HD_Tune" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' "_HDTune.exe" "Optimisation_Nettoyage"
+    UnzipAppLaunch "HD_Tune" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' "_HDTune.exe" "$pathOptimisation_NettoyageSource"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
 })
 
