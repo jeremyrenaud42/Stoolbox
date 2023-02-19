@@ -14,7 +14,7 @@ function ImportModules
 set-location "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
 ImportModules
 CreateFolder "_Tech\Applications\Optimisation_Nettoyage\source"
-DownloadBackground "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "fondopti.jpg"
+DownloadFile "fondopti.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "Optimisation_Nettoyage" 
 
 $image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg") 
 $Form = New-Object System.Windows.Forms.Form

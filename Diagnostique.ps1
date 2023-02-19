@@ -14,7 +14,7 @@ function ImportModules
 set-location "$env:SystemDrive\_Tech\Applications\Diagnostique"
 ImportModules
 CreateFolder "_Tech\Applications\Diagnostique\source"
-DownloadBackground "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "fondDiag.jpg"
+DownloadFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "Diagnostique" 
 
 $image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Diagnostique\Source\fondDiag.jpg")
 $Form = New-Object System.Windows.Forms.Form
@@ -843,8 +843,8 @@ Addlog "diagnostiquelog.txt" "Memtest effectué"
 #Tooltip
 $tooltipRAM = New-Object System.Windows.Forms.ToolTip
 $tooltipRAM.IsBalloon =$true
-$tooltipHDRAMText = "Diagnostiquede mémoire de Windows 10, nécéssite un redémarrage"
-$tooltipRAM.SetToolTip($RAM, $tooltipHDRAMText)
+$tooltipRAMText = "Diagnostiquede mémoire, nécéssite un redémarrage"
+$tooltipRAM.SetToolTip($RAM, $tooltipRAMText)
 $RAM.Add_MouseEnter({$tooltipRAM})
 
 #Quitter

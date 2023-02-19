@@ -14,7 +14,7 @@ function ImportModules
 set-location "$env:SystemDrive\_Tech\Applications\Desinfection" #met la location au repertoir actuel
 ImportModules
 CreateFolder "_Tech\Applications\Desinfection\source"
-DownloadBackground "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' "fondvirus.png"
+DownloadFile "fondvirus.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' "Desinfection"  
 
 function zipccleaner
 {
