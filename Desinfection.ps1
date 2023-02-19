@@ -11,10 +11,12 @@ function ImportModules
     }
 }
 
-set-location "$env:SystemDrive\_Tech\Applications\Desinfection" #met la location au repertoir actuel
+$pathDesinfection = "$env:SystemDrive\_Tech\Applications\Desinfection"
+$pathDesinfectionSource = "$env:SystemDrive\_Tech\Applications\Desinfection\source"
+set-location $pathDesinfection
 ImportModules
 CreateFolder "_Tech\Applications\Desinfection\source"
-DownloadFile "fondvirus.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' "Desinfection"  
+DownloadFile "fondvirus.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' "$pathDesinfectionSource"  
 
 function zipccleaner
 {
@@ -53,7 +55,7 @@ $Process_Explorer.FlatAppearance.BorderColor = 'darkred'
 $Process_Explorer.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $Process_Explorer.FlatAppearance.MouseOverBackColor = 'gray'
 $Process_Explorer.Add_Click({
-    DownloadLaunchApp "procexp64.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/procexp64.exe' "Desinfection"
+    DownloadLaunchApp "procexp64.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/procexp64.exe' "$pathDesinfectionSource"
     Addlog "desinfectionlog.txt" "Vérifier les process"
 })
 
@@ -72,7 +74,7 @@ $RKill.FlatAppearance.BorderColor = 'darkred'
 $RKill.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $RKill.FlatAppearance.MouseOverBackColor = 'gray'
 $RKill.Add_Click({
-    DownloadLaunchApp "rkill64.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/rkill64.exe' "Desinfection"
+    DownloadLaunchApp "rkill64.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/rkill64.exe' "$pathDesinfectionSource"
     Addlog "desinfectionlog.txt" "Désactiver les process"
 })
 
@@ -90,10 +92,10 @@ $Autoruns.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $Autoruns.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $Autoruns.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Autoruns.Add_Click({
-    DownloadLaunchApp "autoruns.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' "Desinfection"
+    DownloadLaunchApp "autoruns.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' "$pathDesinfectionSource"
     start-sleep 5
     taskmgr
-    Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les logiciels au démarrage"
+    Addlog "DesinfectionLog.txt" "Vérifier les logiciels au démarrage"
 })
 
 #Nettoyage
@@ -196,7 +198,7 @@ $ADWcleaner.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $ADWcleaner.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $ADWcleaner.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $ADWcleaner.Add_Click({
-    DownloadLaunchApp "adwcleaner.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/adwcleaner.exe' "Desinfection"
+    DownloadLaunchApp "adwcleaner.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/adwcleaner.exe' "$pathDesinfectionSource"
     Addlog "desinfectionlog.txt" "Analyse ADW effectué"
 })
 
@@ -303,7 +305,7 @@ $HitmanPro.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $HitmanPro.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $HitmanPro.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HitmanPro.Add_Click({
-    DownloadLaunchApp "HitmanPro.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' "Desinfection"
+    DownloadLaunchApp "HitmanPro.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' "$pathDesinfectionSource"
     Addlog "desinfectionlog.txt" "Vérifier les virus avec HitmanPro"
 })
 

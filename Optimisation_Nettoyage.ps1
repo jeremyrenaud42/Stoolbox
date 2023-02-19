@@ -11,10 +11,12 @@ function ImportModules
     }
 }
 
-set-location "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
+$pathOptimisation_Nettoyage = "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
+$pathOptimisation_NettoyageSource = "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\source"
+set-location $pathOptimisation_Nettoyage
 ImportModules
 CreateFolder "_Tech\Applications\Optimisation_Nettoyage\source"
-DownloadFile "fondopti.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "Optimisation_Nettoyage" 
+DownloadFile "fondopti.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "$pathOptimisation_NettoyageSource" 
 
 $image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg") 
 $Form = New-Object System.Windows.Forms.Form
@@ -163,7 +165,7 @@ $Autoruns.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Autoruns.Add_MouseEnter({$Autoruns.ForeColor = 'White'})
 $Autoruns.Add_MouseLeave({$Autoruns.ForeColor = 'black'})
 $Autoruns.Add_Click({
-    DownloadLaunchApp "autoruns.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' "Optimisation_Nettoyage"
+    DownloadLaunchApp "autoruns.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' "$pathOptimisation_NettoyageSource"
     start-sleep 5
     taskmgr
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les logiciels au démarrage"
@@ -249,7 +251,7 @@ $sfc.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $sfc.Add_MouseEnter({$sfc.ForeColor = 'White'})
 $sfc.Add_MouseLeave({$sfc.ForeColor = 'black'})
 $sfc.Add_Click({
-    DownloadLaunchApp "sfcScannow.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat' "Optimisation_Nettoyage"
+    DownloadLaunchApp "sfcScannow.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat' "$pathOptimisation_NettoyageSource"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les fichiers corrompus"
 })
 
@@ -270,7 +272,7 @@ $HitmanPro.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HitmanPro.Add_MouseEnter({$HitmanPro.ForeColor = 'White'})
 $HitmanPro.Add_MouseLeave({$HitmanPro.ForeColor = 'black'})
 $HitmanPro.Add_Click({
-    DownloadLaunchApp "HitmanPro.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' "Optimisation_Nettoyage"
+    DownloadLaunchApp "HitmanPro.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' "$pathOptimisation_NettoyageSource"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les virus avec HitmanPro"
 })
 
@@ -291,7 +293,7 @@ $sysevent.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $sysevent.Add_MouseEnter({$sysevent.ForeColor = 'White'})
 $sysevent.Add_MouseLeave({$sysevent.ForeColor = 'black'})
 $sysevent.Add_Click({
-    DownloadLaunchApp "sysevent.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe' "Optimisation_Nettoyage"
+    DownloadLaunchApp "sysevent.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe' "$pathOptimisation_NettoyageSource"
     Addlog "Optimisation_Nettoyagelog.txt" "Vérifier les evenements"
 })
 

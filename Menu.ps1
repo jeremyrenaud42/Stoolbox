@@ -51,16 +51,17 @@ function DeployApp($appName,$remotePs1Link,$remoteBatLink)
     
 function PrepareDependencies
 {
-    New-Item "$env:SystemDrive\_Tech\Applications\Source"  -ItemType 'Directory' -Force | Out-Null   
+    New-Item "$env:SystemDrive\_Tech\Applications\Source" -ItemType 'Directory' -Force | Out-Null   
     DownloadModules
     Import-Module "$applicationPath\Source\modules\Folder.psm1" | Out-Null
-    Import-Module "$applicationPath\Source\modules\Remove.psm1" | Out-Null
     Import-Module "$applicationPath\Source\modules\AppManagement.psm1" | Out-Null
     Import-Module "$applicationPath\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
     CreateFolder "_Tech\Applications\Source\images"
-    DownloadFile "Images\fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' 
-    DownloadFile "Images\Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico'
-    DownloadRemoveScript
+    DownloadFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$applicationPath\Source\Images"
+    DownloadFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$applicationPath\source\Images"
+    CreateFolder "Temp"
+    DownloadFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
+    DownloadFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp"
 }
 
 $adminStatus = CheckAdminStatus

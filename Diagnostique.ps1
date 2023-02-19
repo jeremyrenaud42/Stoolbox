@@ -11,10 +11,12 @@ function ImportModules
     }
 }
 
-set-location "$env:SystemDrive\_Tech\Applications\Diagnostique"
+$pathDiagnostique = "$env:SystemDrive\_Tech\Applications\Diagnostique"
+$pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\source"
+set-location $pathDiagnostique
 ImportModules
 CreateFolder "_Tech\Applications\Diagnostique\source"
-DownloadFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "Diagnostique" 
+DownloadFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "$pathDiagnostiqueSource" 
 
 $image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Diagnostique\Source\fondDiag.jpg")
 $Form = New-Object System.Windows.Forms.Form
