@@ -57,7 +57,9 @@ function PrepareDependencies
     Import-Module "$applicationPath\Source\modules\Remove.psm1" | Out-Null
     Import-Module "$applicationPath\Source\modules\Images.psm1" | Out-Null
     Import-Module "$applicationPath\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
-    DownloadImages
+    CreateFolder "_Tech\Applications\Source\images"
+    DownloadFile "Images\fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' 
+    DownloadFile "Images\Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico'
     DownloadRemoveScript
 }
 
