@@ -1,47 +1,53 @@
-function DownloadExeFile($exe,$downloadLink,$current)
+<#
+function DownloadFile($file,$downloadLink,$category)
 {
-    $appExist = test-Path "$env:SystemDrive\_Tech\Applications\$current\Source\$exe"
+    $appExist = test-Path "$env:SystemDrive\_Tech\Applications\$category\Source\$file"
     if($appExist -eq $false)
     {
-        Invoke-WebRequest $downloadLink -OutFile "$env:SystemDrive\_Tech\Applications\$current\Source\$exe"
+        Invoke-WebRequest $downloadLink -OutFile "$env:SystemDrive\_Tech\Applications\$category\Source\$file"
+    }
+}
+#>
+
+function DownloadFile($file,$downloadLink,$path)
+{
+    $appExist = test-Path "$path\$file"
+    if($appExist -eq $false)
+    {
+        Invoke-WebRequest $downloadLink -OutFile "$path\$file"
     }
 }
 
-function StartExeFile($exe,$current)
+function StartExeFile($exe,$path)
 {
-    Start-Process "$env:SystemDrive\_Tech\Applications\$current\Source\$exe" -verb runas
+    Start-Process "$path\$exe" -verb runas
 }
 
-function StartApp($appExe,$current)
+function StartApp($appExe,$appFolder,$category)
 {
-    Start-Process "$env:SystemDrive\_Tech\Applications\$current\Source\$app\$appExe" -verb runas
+    Start-Process "$env:SystemDrive\_Tech\Applications\$category\Source\$appFolder\$appExe" -verb runas
 }
 
-function UnzipApp($appfolder,$downloadLink,$current)
+function UnzipApp($appfolder,$downloadLink,$category)
 {
-    $appExist = test-Path "$env:SystemDrive\_Tech\Applications\$current\Source\$appfolder"
-    $zipFile = "$env:SystemDrive\_Tech\Applications\$current\Source\$appfolder.zip"
+    $appExist = test-Path "$env:SystemDrive\_Tech\Applications\$category\Source\$appfolder"
+    $zipFile = "$env:SystemDrive\_Tech\Applications\$category\Source\$appfolder.zip"
     if($appExist -eq $false)
     {
         Invoke-WebRequest $downloadLink -OutFile $zipFile
-        Expand-Archive $zipFile "$env:SystemDrive\_Tech\Applications\$current\Source"
+        Expand-Archive $zipFile "$env:SystemDrive\_Tech\Applications\$category\Source"
         Remove-Item $zipFile
     }
 }
 
-#Legacy support
-function DownloadLaunchApp($exe,$downloadLink,$current)
+function DownloadLaunchApp($exe,$downloadLink,$path)
 {
-    $appExist = test-Path "$env:SystemDrive\_Tech\Applications\$current\Source\$exe"
-    if($appExist -eq $false)
-    {
-        Invoke-WebRequest $downloadLink -OutFile "$env:SystemDrive\_Tech\Applications\$current\Source\$exe"
-    }
-    Start-Process "$env:SystemDrive\_Tech\Applications\$current\Source\$exe" -verb runas
+    DownloadFile $exe $downloadLink $path
+    StartExeFile $exe $path
 }
 
-function UnzipAppLaunch($appfolder,$downloadLink,$appExe,$current)
+function UnzipAppLaunch($appfolder,$downloadLink,$appExe,$category)
 {
-    UnzipApp $appfolder $downloadLink $current
-    Start-Process "$env:SystemDrive\_Tech\Applications\$current\Source\$appfolder\$appExe"
+    UnzipApp $appfolder $downloadLink $category
+    StartApp $appExe $appFolder $category
 } 
