@@ -25,7 +25,7 @@ function PrepareDependencies
     ImportModules
     CreateFolder "_Tech\Applications\Installation\source"
     CheckInternetStatus
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Intro.mp3' -OutFile "$pathInstallation\Intro.mp3" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Intro.mp3' -OutFile "$pathInstallation\Source\Intro.mp3" | Out-Null
 }
 
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que el scripte se ferme s'il rencontre une erreur
@@ -281,16 +281,15 @@ $chocoName.add("GeForce Experience", "geforce-experience")
 $chocoName.add("Dell Command Update", "dellcommandupdate")
 $chocoName.add("HP Support Assistant", "hpsupportassistant")
 
-$ninite = @{} #initialiser la hashtable
-$ninite.add("Adobe Reader", '""')
-$ninite.add("Google chrome", '""')
-$ninite.add("Teamviewer", '""')
-$ninite.add("Lenovo Vantage", '""')
-$ninite.add("Lenovo System Update", '""')
-$ninite.add("GeForce Experience", '""')
-$ninite.add("Dell Command Update", '""')
-$ninite.add("HP Support Assistant", '""')
-
+$niniteName = @{} #initialiser la hashtable
+$niniteName.add("Adobe Reader", '""')
+$niniteName.add("Google chrome", "$pathInstallation\Source\Ninite Chrome Installer.exe")
+$niniteName.add("Teamviewer", "$pathInstallation\Source\Ninite TeamViewer 15 Installer.exe")
+$niniteName.add("Lenovo Vantage", '""')
+$niniteName.add("Lenovo System Update", '""')
+$niniteName.add("GeForce Experience", '""')
+$niniteName.add("Dell Command Update", '""')
+$niniteName.add("HP Support Assistant", '""')
 
 function AppInfo($appName)
 {
@@ -300,6 +299,7 @@ function AppInfo($appName)
         pathAppData = $appDataApp[$appName]
         WingetName = $wingetName[$appName]
         ChocoName = $chocoName[$appName]
+        NiniteName = $niniteName[$appName]
     }
     return $appInfo
 }
@@ -325,12 +325,12 @@ function InstallSoftware($appInfo)
         }
         elseif($SoftwareInstallationStatus -eq $false)
         {  
-            installSoftwareWithWinget $appInfo
+            InstallSoftwareWithWinget $appInfo
         }
     Addlog "installationlog.txt" "Installation de $appName" 
 }
 
-function installSoftwareWithWinget($appInfo)
+function InstallSoftwareWithWinget($appInfo)
 {
     winget install -e --id $appInfo.wingetname --accept-package-agreements --accept-source-agreements --silent | out-null 
     $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo #s'il est déja installé il ne va pas poursuivre
@@ -340,11 +340,11 @@ function installSoftwareWithWinget($appInfo)
         } 
         else
         {
-            installSoftwareWithChoco $appInfo
+            InstallSoftwareWithChoco $appInfo
         }     
 }
 
-function installSoftwareWithChoco($appInfo)
+function InstallSoftwareWithChoco($appInfo)
 {
     choco install $appInfo.ChocoName -y | out-null
     $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
@@ -358,27 +358,13 @@ function installSoftwareWithChoco($appInfo)
     } 
 }
 
-#voir pour fonction avec parametres
-function plancgoogle($appInfo)
+function InstallSoftwareWithNinite($appInfo,$lienGithub)
 {
     $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
-    if($SoftwareInstallationStatus)
-    {}
-    else
+    if($SoftwareInstallationStatus -eq $false)
     {   
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite Chrome Installer.exe' -OutFile "$pathInstallation\Source\Ninite Chrome Installer.exe" | Out-Null
-        Start-Process "$pathInstallation\Source\Ninite Chrome Installer.exe" -Verb runAs #escape pour terminer
-    }
-}
-function plancteamviewer($appInfo)
-{
-    $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
-    if($SoftwareInstallationStatus)
-    {}
-    else
-    {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite TeamViewer 15 Installer.exe' -OutFile "$pathInstallation\Source\Ninite TeamViewer 15 Installer.exe" | Out-Null
-        Start-Process "$pathInstallation\Source\Ninite TeamViewer 15 Installer.exe" -Verb runAs #escape pour terminer
+        Invoke-WebRequest $lienGithub -OutFile $appInfo.NiniteName | Out-Null
+        Start-Process $appInfo.NiniteName -Verb runAs
     }
 }
 
@@ -390,22 +376,8 @@ function InstallLenovoVantage
     $lblOutput.Text += " -Lenovo Vantage installé avec succès`r`n" 
     Addlog "installationlog.txt" "Installation de Lenovo Vantage" 
 }
-
-<#
-function PreverifVantage
-{
-   $pathexist = $false
-   $Vantagepath = Test-Path "C:\ProgramData\Lenovo\Vantage" #si déja ouvert.
-   #$Prevantagepsth Test-Path "C:\Users\test\AppData\Local\Packages\E046963F.LenovoCompanion_k1h2ywk1493x8" #si jamais ouvert
-   if($Vantagepath -eq $true)
-   {
-     $pathexist = $true
-     $lblOutput.Text += " -Lenovo Vantage est déja installé`r`n"
-   }
-   return $pathexist
-}
-#>
-
+#$Vantagepath = Test-Path "C:\ProgramData\Lenovo\Vantage" #si déja ouvert.
+#$Prevantagepath Test-Path "C:\Users\test\AppData\Local\Packages\E046963F.LenovoCompanion_k1h2ywk1493x8" #si jamais ouvert
 function InstallDellSA
 {
     $appName = "Dell Command Update"
@@ -577,12 +549,12 @@ InstallSoftware $appInfo
 $appName = "Google chrome"
 $appInfo = AppInfo $appName
 InstallSoftware $appInfo
-plancgoogle $appInfo
+InstallSoftwareWithNinite $appInfo 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite Chrome Installer.exe'
 
 $appName = "Teamviewer"
 $appInfo = AppInfo $appName
 InstallSoftware $appInfo
-plancteamviewer $appInfo
+InstallSoftwareWithNinite $appInfo 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite TeamViewer 15 Installer.exe'
 
 UpdateDrivers
 InstallGeForceExperience
