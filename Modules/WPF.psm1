@@ -39,7 +39,7 @@ function GetWPFObjects($formatedXaml, $window)
     $formatedXaml.SelectNodes("//*[@Name]") | ForEach-Object {
         try 
         {
-            $formControls | Add-Member -MemberType 'NoteProperty' -Name "var_$($_.Name)" -Value $window.FindName($_.Name) -ErrorAction Stop
+            $formControls | Add-Member -MemberType 'NoteProperty' -Name "$($_.Name)" -Value $window.FindName($_.Name) -ErrorAction Stop
         } 
         catch 
         {
