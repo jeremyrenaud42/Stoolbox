@@ -1,17 +1,27 @@
-<#
-function DownloadFile($file,$downloadLink,$category)
+function VerifPresenceApp($appPath)
 {
-    $appExist = test-Path "$env:SystemDrive\_Tech\Applications\$category\Source\$file"
-    if($appExist -eq $false)
+    $appExistStatus = $false
+    $appExist = Test-Path $appPath
+    if($appExist)
     {
-        Invoke-WebRequest $downloadLink -OutFile "$env:SystemDrive\_Tech\Applications\$category\Source\$file"
+       $appExistStatus = $true 
+    } 
+    return $appExistStatus
+}
+
+function CreateFolder($folder) 
+{
+    $folderPath = "$env:SystemDrive\$folder"
+    $folderExist = VerifPresenceApp $folderPath 
+    if($folderExist -eq $false)
+    {
+        New-Item $folderPath -ItemType 'Directory' -Force | Out-Null
     }
 }
-#>
 
 function DownloadFile($file,$downloadLink,$path)
 {
-    $appExist = test-Path "$path\$file"
+    $appExist = VerifPresenceApp "$path\$file"
     if($appExist -eq $false)
     {
         Invoke-WebRequest $downloadLink -OutFile "$path\$file"
@@ -23,31 +33,36 @@ function StartExeFile($exe,$path)
     Start-Process "$path\$exe" -verb runas
 }
 
-function StartApp($appExe,$appFolder,$category)
-{
-    Start-Process "$env:SystemDrive\_Tech\Applications\$category\Source\$appFolder\$appExe" -verb runas
-}
-
-function UnzipApp($appfolder,$downloadLink,$category)
-{
-    $appExist = test-Path "$env:SystemDrive\_Tech\Applications\$category\Source\$appfolder"
-    $zipFile = "$env:SystemDrive\_Tech\Applications\$category\Source\$appfolder.zip"
-    if($appExist -eq $false)
-    {
-        Invoke-WebRequest $downloadLink -OutFile $zipFile
-        Expand-Archive $zipFile "$env:SystemDrive\_Tech\Applications\$category\Source"
-        Remove-Item $zipFile
-    }
-}
-
 function DownloadLaunchApp($exe,$downloadLink,$path)
 {
     DownloadFile $exe $downloadLink $path
     StartExeFile $exe $path
 }
 
-function UnzipAppLaunch($appfolder,$downloadLink,$appExe,$category)
+function UnzipApp($appFolder,$downloadLink,$path)
 {
-    UnzipApp $appfolder $downloadLink $category
-    StartApp $appExe $appFolder $category
+    $appExist = VerifPresenceApp "$path\$appFolder"
+    $zipFile = "$path\$appFolder.zip"
+    if($appExist -eq $false)
+    {
+        Invoke-WebRequest $downloadLink -OutFile $zipFile
+        Expand-Archive $zipFile $path
+        Remove-Item $zipFile
+    }
+}
+
+function StartApp($appExe,$appFolder,$path)
+{
+    Start-Process "$path\$appFolder\$appExe" -verb runas
+}
+
+function UnzipAppLaunch($appFolder,$downloadLink,$appExe,$path)
+{
+    UnzipApp $appFolder $downloadLink $path
+    StartApp $appExe $appFolder $path
 } 
+
+function RemoveApp($path)
+{
+    Remove-Item $path -Force | out-null
+}
