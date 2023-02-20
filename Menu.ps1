@@ -23,7 +23,6 @@ function CheckInternetStatus
     }
 }
 
-$applicationPath = "$env:SystemDrive\_Tech\Applications"
 function DownloadModules
 {
     $modulepath = test-path "$applicationPath\source\Modules"
@@ -34,18 +33,30 @@ function DownloadModules
         Remove-Item "$applicationPath\source\Modules.zip"
     }
 }
-    
-function PrepareDependencies
+
+function ImportModules
 {
-    New-Item "$env:SystemDrive\_Tech\Applications\Source" -ItemType 'Directory' -Force | Out-Null   
+    $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
+    foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
+    {
+        Import-Module $modulesFolder\$module
+    }
+}
+
+function DownloadAndImportModules
+{
     DownloadModules
-    Import-Module "$applicationPath\Source\modules\Folder.psm1" | Out-Null
-    Import-Module "$applicationPath\Source\modules\AppManagement.psm1" | Out-Null
-    Import-Module "$applicationPath\Source\modules\task.psm1" | Out-Null #Module pour supprimer C:\_Tech
-    CreateFolder "_Tech\Applications\Source\images"
+    ImportModules
+}
+
+function DownloadBackgroundAndIcone
+{
     DownloadFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$applicationPath\Source\Images"
     DownloadFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$applicationPath\source\Images"
-    CreateFolder "Temp"
+}
+
+function DownloadRemoveScripts
+{
     DownloadFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
     DownloadFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp"
 }
@@ -65,8 +76,14 @@ if($adminStatus -eq $false)
     ReloadAsAdmin
 }
 CheckInternetStatus
+$applicationPath = "$env:SystemDrive\_Tech\Applications"
 set-location "$env:SystemDrive\_Tech" 
-PrepareDependencies
+New-Item "$applicationPath\Source" -ItemType 'Directory' -Force | Out-Null   
+DownloadAndImportModules
+CreateFolder "_Tech\Applications\Source\images"
+DownloadBackgroundAndIcone
+CreateFolder "Temp"
+DownloadRemoveScripts
 
 $imgFile = [system.drawing.image]::FromFile("$applicationPath\Source\Images\fondpluiesize.gif") #Il faut mettre le chemin complet pour éviter des erreurs.
 $pictureBoxBackGround = new-object Windows.Forms.PictureBox #permet d'afficher un gif
@@ -87,7 +104,6 @@ $form.TopMost = $true
 $form.StartPosition = "CenterScreen"
 $form.BackgroundImageLayout = "Stretch"
 
-#Installation
 $btnInstall = New-Object System.Windows.Forms.Button
 $btnInstall.Location = New-Object System.Drawing.Point(446,100)
 $btnInstall.AutoSize = $false
@@ -109,7 +125,6 @@ DeployApp "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/m
 $form.Close()
 })
 
-#Optimisation et nettoyage
 $btnOptiNett = New-Object System.Windows.Forms.Button
 $btnOptiNett.Location = New-Object System.Drawing.Point(446,175)
 $btnOptiNett.AutoSize = $false
@@ -131,7 +146,6 @@ DeployApp "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrena
 $form.Close()
 })
 
-#Diagnostic
 $btnDiagnostic = New-Object System.Windows.Forms.Button
 $btnDiagnostic.Location = New-Object System.Drawing.Point(446,250)
 $btnDiagnostic.Width = '150'
@@ -152,7 +166,6 @@ DeployApp "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/m
 $form.Close()
 })
 
-#Desinfection
 $btnDesinfection = New-Object System.Windows.Forms.Button
 $btnDesinfection.Location = New-Object System.Drawing.Point(446,325)
 $btnDesinfection.Width = '150'
@@ -173,7 +186,6 @@ DeployApp "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/m
 $form.Close()
 })
 
-#Fix
 $btnFix = New-Object System.Windows.Forms.Button
 $btnFix.Location = New-Object System.Drawing.Point(446,400)
 $btnFix.Width = '150'
@@ -194,7 +206,6 @@ DeployApp "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.p
 $form.Close()
 })
 
-#changelog
 $btnChangeLog = New-Object System.Windows.Forms.Button
 $btnChangeLog.Location = New-Object System.Drawing.Point(026,600)
 $btnChangeLog.Width = '115'
@@ -218,7 +229,6 @@ $btnChangeLog.Add_Click({
     $form.TopMost = $true
 })
 
-#quitter
 $btnQuit = New-Object System.Windows.Forms.Button
 $btnQuit.Location = New-Object System.Drawing.Point(446,575)
 $btnQuit.Width = '150'
@@ -239,7 +249,6 @@ Task
 $form.Close()
 })
  
-#Choisissez une option
 $lblChoisirOption = New-Object System.Windows.Forms.label
 $lblChoisirOption.Location = New-Object System.Drawing.Point(359,35)
 $lblChoisirOption.AutoSize = $true
@@ -252,18 +261,16 @@ $lblChoisirOption.BackColor = 'darkred'
 $lblChoisirOption.Text = "Choisissez une option"
 $lblChoisirOption.BorderStyle = 'fixed3D'
 
-#signatureSTO
-$lblSignatureSTO = New-Object System.Windows.Forms.label
-$lblSignatureSTO.Location = New-Object System.Drawing.Point(861,633)
-$lblSignatureSTO.AutoSize = $true
-$lblSignatureSTO.width = 180
-$lblSignatureSTO.height = 20
-$lblSignatureSTO.Font= 'Centau,10'
-$lblSignatureSTO.ForeColor='gray'
-$lblSignatureSTO.BackColor = 'black'
-$lblSignatureSTO.Text = "Propriété de Jérémy Renaud"
-$lblSignatureSTO.TextAlign = 'Middleleft'
+$lblSignature = New-Object System.Windows.Forms.label
+$lblSignature.Location = New-Object System.Drawing.Point(861,633)
+$lblSignature.AutoSize = $true
+$lblSignature.width = 180
+$lblSignature.height = 20
+$lblSignature.Font= 'Centau,10'
+$lblSignature.ForeColor='gray'
+$lblSignature.BackColor = 'black'
+$lblSignature.Text = "Propriété de Jérémy Renaud"
+$lblSignature.TextAlign = 'Middleleft'
 
-#afficher la form
-$form.controls.AddRange(@($lblSignatureSTO,$lblChoisirOption,$btnInstall,$btnOptiNett ,$btnDiagnostic,$btnDesinfection,$btnFix,$btnQuit,$btnChangeLog,$pictureBoxBackGround))
+$form.controls.AddRange(@($lblSignature,$lblChoisirOption,$btnInstall,$btnOptiNett,$btnDiagnostic,$btnDesinfection,$btnFix,$btnQuit,$btnChangeLog,$pictureBoxBackGround))
 $form.ShowDialog() | out-null
