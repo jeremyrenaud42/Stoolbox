@@ -34,20 +34,6 @@ function DownloadModules
         Remove-Item "$applicationPath\source\Modules.zip"
     }
 }
-
-function DownloadFolder($appName,$remotePs1Link,$remoteBatLink)
-{
-    Invoke-WebRequest $remotePs1Link -OutFile "$applicationPath\$appName\$appName.ps1" | Out-Null 
-    Invoke-WebRequest $remoteBatLink -OutFile "$applicationPath\$appName\RunAs$appName.bat" | Out-Null
-}
-
-function DeployApp($appName,$remotePs1Link,$remoteBatLink)
-{
-    CreateFolder "_Tech\Applications\$appName"
-    DownloadFolder $appName $remotePs1Link $remoteBatLink
-    set-location "$applicationPath\$appName" 
-    Start-Process "$applicationPath\$appName\RunAs$appName.bat" | Out-Null
-}
     
 function PrepareDependencies
 {
@@ -62,6 +48,15 @@ function PrepareDependencies
     CreateFolder "Temp"
     DownloadFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
     DownloadFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp"
+}
+
+function DeployApp($appName,$githubPs1Link,$githubBatLink)
+{
+    CreateFolder "_Tech\Applications\$appName"
+    set-location "$applicationPath\$appName" 
+    DownloadFile "$appName\$appName.ps1" $githubPs1Link $applicationPath
+    DownloadFile "$appName\RunAs$appName.bat" $githubBatLink $applicationPath
+    Start-Process "$applicationPath\$appName\RunAs$appName.bat" | Out-Null
 }
 
 $adminStatus = CheckAdminStatus
