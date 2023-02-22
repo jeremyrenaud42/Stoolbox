@@ -89,5 +89,4 @@ function Wingetinstall
         Add-AppxPackage -path "$env:SystemDrive\_Tech\Applications\Source\winget\Microsoft.UI.Xaml.2.7.appx" | out-null #prérequis pour winget
         Add-AppPackage -path "$env:SystemDrive\_Tech\Applications\Source\winget\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" | out-null #installeur de winget
     }
-    Postverifwinget
 }
