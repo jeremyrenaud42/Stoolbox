@@ -235,19 +235,19 @@ $64bitsApp = @{} #initialiser la hashtable
 $64bitsApp.add("Adobe Reader", "$env:SystemDrive\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe")
 $64bitsApp.add("Google chrome", "$env:SystemDrive\Program Files\Google\Chrome\Application\chrome.exe")
 $64bitsApp.add("Teamviewer", "$env:SystemDrive\Program Files\TeamViewer\TeamViewer.exe")
-$64bitsApp.add("Lenovo Vantage", '""')
-$64bitsApp.add("Lenovo System Update", '""')
+$64bitsApp.add("Lenovo Vantage", $null)
+$64bitsApp.add("Lenovo System Update", $null)
 $64bitsApp.add("GeForce Experience", "$env:SystemDrive\Program Files\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe")
-$64bitsApp.add("Dell Command Update", '""')
-$64bitsApp.add("HP Support Assistant", '""')
+$64bitsApp.add("Dell Command Update", $null)
+$64bitsApp.add("HP Support Assistant", $null)
 
 $32bitsApp = @{} #initialiser la hashtable
 $32bitsApp.add("Adobe Reader", "$env:SystemDrive\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe")
 $32bitsApp.add("Google chrome", "$env:SystemDrive\Program Files (x86)\Google\Chrome\Application\chrome.exe")
 $32bitsApp.add("Teamviewer", "$env:SystemDrive\Program Files (x86)\TeamViewer\TeamViewer.exe")
-$32bitsApp.add("Lenovo Vantage", '""')
+$32bitsApp.add("Lenovo Vantage", $null)
 $32bitsApp.add("Lenovo System Update", "$env:SystemDrive\Program Files (x86)\Lenovo\System Update\tvsu.exe")
-$32bitsApp.add("GeForce Experience", '""')
+$32bitsApp.add("GeForce Experience", $null)
 $32bitsApp.add("Dell Command Update", "$env:SystemDrive\Program Files (x86)\Dell\CommandUpdate\dellcommandupdate.exe")
 $32bitsApp.add("HP Support Assistant", "$env:SystemDrive\Program Files (x86)\HP\HP Support Framework\hpsupportassistant.dll")
 
@@ -256,10 +256,10 @@ $appDataApp.add("Adobe Reader", "$env:SystemDrive\Users\$env:username\AppData\Ro
 $appDataApp.add("Google chrome", "$env:SystemDrive\Users\$env:username\AppData\Local\Google\Chrome\Application\chrome.exe")
 $appDataApp.add("Teamviewer", "$env:SystemDrive\Users\$env:username\AppData\Roaming\TeamViewer")
 $appDataApp.add("Lenovo Vantage", "$env:SystemDrive\Users\$env:username\AppData\Local\Packages\E046963F.LenovoCompanion_k1h2ywk1493x8")
-$appDataApp.add("Lenovo System Update", '""')
-$appDataApp.add("GeForce Experience", '""')
-$appDataApp.add("Dell Command Update", '""')
-$appDataApp.add("HP Support Assistant", '""')
+#$appDataApp.add("Lenovo System Update", "$env:SystemDrive\Users\$env:username\AppData\Local\Packages\E046963F.LenovoCompanion_k1h2ywk1493x8")
+$appDataApp.add("GeForce Experience", $null)
+$appDataApp.add("Dell Command Update", $null)
+$appDataApp.add("HP Support Assistant", $null)
 
 $wingetName = @{} #initialiser la hashtable
 $wingetName.add("Adobe Reader", "Adobe.Acrobat.Reader.64-bit")
@@ -269,38 +269,59 @@ $wingetName.add("Lenovo Vantage", "9WZDNCRFJ4MV")
 $wingetName.add("Lenovo System Update", "Lenovo.SystemUpdate")
 $wingetName.add("GeForce Experience", "Nvidia.GeForceExperience")
 $wingetName.add("Dell Command Update", "Dell.CommandUpdate")
-$wingetName.add("HP Support Assistant", '""')
+$wingetName.add("HP Support Assistant", $null)
 
 $chocoName = @{} #initialiser la hashtable
 $chocoName.add("Adobe Reader", "adobereader")
 $chocoName.add("Google chrome", "googlechrome")
 $chocoName.add("Teamviewer", "teamviewer")
-$chocoName.add("Lenovo Vantage", '""')
+$chocoName.add("Lenovo Vantage", $null)
 $chocoName.add("Lenovo System Update", "lenovo-thinkvantage-system-update")
 $chocoName.add("GeForce Experience", "geforce-experience")
 $chocoName.add("Dell Command Update", "dellcommandupdate")
 $chocoName.add("HP Support Assistant", "hpsupportassistant")
 
 $niniteName = @{} #initialiser la hashtable
-$niniteName.add("Adobe Reader", '""')
+$niniteName.add("Adobe Reader", $null)
 $niniteName.add("Google chrome", "$pathInstallation\Source\Ninite Chrome Installer.exe")
 $niniteName.add("Teamviewer", "$pathInstallation\Source\Ninite TeamViewer 15 Installer.exe")
-$niniteName.add("Lenovo Vantage", '""')
-$niniteName.add("Lenovo System Update", '""')
-$niniteName.add("GeForce Experience", '""')
-$niniteName.add("Dell Command Update", '""')
-$niniteName.add("HP Support Assistant", '""')
+$niniteName.add("Lenovo Vantage", $null)
+$niniteName.add("Lenovo System Update", $null)
+$niniteName.add("GeForce Experience", $null)
+$niniteName.add("Dell Command Update", $null)
+$niniteName.add("HP Support Assistant", $null)
 
 $niniteGithubLink = @{} #initialiser la hashtable
-$niniteGithubLink.add("Adobe Reader", '""')
+$niniteGithubLink.add("Adobe Reader", $null)
 $niniteGithubLink.add("Google chrome", "https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite Chrome Installer.exe")
 $niniteGithubLink.add("Teamviewer", "https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Ninite TeamViewer 15 Installer.exe")
-$niniteGithubLink.add("Lenovo Vantage", '""')
-$niniteGithubLink.add("Lenovo System Update", '""')
-$niniteGithubLink.add("GeForce Experience", '""')
-$niniteGithubLink.add("Dell Command Update", '""')
-$niniteGithubLink.add("HP Support Assistant", '""')
+$niniteGithubLink.add("Lenovo Vantage", $null)
+$niniteGithubLink.add("Lenovo System Update", $null)
+$niniteGithubLink.add("GeForce Experience", $null)
+$niniteGithubLink.add("Dell Command Update", $null)
+$niniteGithubLink.add("HP Support Assistant", $null)
 
+<#
+#JSON
+$JSONFilePath = "$env:SystemDrive\_Tech\Applications\Installation\Source\Apps.JSON"
+$jsonString = Get-Content -Raw $JSONFilePath
+$appsInfo = ConvertFrom-Json $jsonString
+
+$appNames = $appsInfo.psobject.Properties.Name
+#Iterate over the applications in the JSON and interpolate the variables
+$appNames | ForEach-Object {
+    $appName = $_
+    $appsInfo.$appName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path64)
+    $appsInfo.$appName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path32)
+    $appsInfo.$appName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.pathAppData)
+    $appsInfo.$appName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.NiniteName)
+}
+
+#Access the updated data
+#$appsInfo
+#Test
+#$appsInfo."Google Chrome".path64
+#>
 function AppInfo($appName)
 {
     $appInfo = [PSCustomObject]@{
@@ -318,7 +339,9 @@ function AppInfo($appName)
  function CheckSoftwarePresence($appInfo)
 {
    $SoftwareInstallationStatus= $false
-   if((Test-Path $appInfo.path64) -OR (Test-Path $appInfo.path32) -OR (Test-Path $appInfo.pathAppData))
+   if (($appInfo.path64 -AND (Test-Path $appInfo.path64)) -OR 
+   ($appInfo.path32 -AND (Test-Path $appInfo.path32)) -OR 
+   ($appInfo.pathAppData -AND (Test-Path $appInfo.pathAppData)))
    {
      $SoftwareInstallationStatus = $true
    }
@@ -343,7 +366,10 @@ function InstallSoftware($appInfo)
 
 function InstallSoftwareWithWinget($appInfo)
 {
-    winget install -e --id $appInfo.wingetname --accept-package-agreements --accept-source-agreements --silent | out-null 
+    if($appInfo.WingetName)
+    {
+        winget install -e --id $appInfo.wingetname --accept-package-agreements --accept-source-agreements --silent | out-null
+    } 
     $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo #s'il est déja installé il ne va pas poursuivre
         if($SoftwareInstallationStatus)
         {
@@ -357,7 +383,10 @@ function InstallSoftwareWithWinget($appInfo)
 
 function InstallSoftwareWithChoco($appInfo)
 {
-    choco install $appInfo.ChocoName -y | out-null
+    if($appInfo.ChocoName)
+    {
+        choco install $appInfo.ChocoName -y | out-null
+    }
     $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
     if($SoftwareInstallationStatus)
     {   
@@ -372,20 +401,13 @@ function InstallSoftwareWithChoco($appInfo)
 
 function InstallSoftwareWithNinite($appInfo)
 {
+    if($appInfo.NiniteName)
+    {
     Invoke-WebRequest $appInfo.NiniteGithubLink -OutFile $appInfo.NiniteName | Out-Null
     Start-Process $appInfo.NiniteName -Verb runAs
+    }
 }
 
-function InstallLenovoVantage
-{
-    $lblProgres.Text = "Installation de Lenovo Vantage"
-    $lblOutput.Text += "Installation de Lenovo Vantage"
-    winget install -e --id 9WZDNCRFJ4MV --accept-package-agreements --accept-source-agreements --silent | out-null
-    $lblOutput.Text += " -Lenovo Vantage installé avec succès`r`n" 
-    Addlog "installationlog.txt" "Installation de Lenovo Vantage" 
-}
-#$Vantagepath = Test-Path "C:\ProgramData\Lenovo\Vantage" #si déja ouvert.
-#$Prevantagepath Test-Path "C:\Users\test\AppData\Local\Packages\E046963F.LenovoCompanion_k1h2ywk1493x8" #si jamais ouvert
 function InstallDellSA
 {
     $appName = "Dell Command Update"
@@ -407,17 +429,17 @@ Function UpdateDrivers
     #Get-CimInstance -Class Win32_BaseBoard | Select-Object -Property Manufacturer # + rapide
     if($x -match 'LENOVO')
     {
-        <#
+
         $appName = "Lenovo Vantage"
         $appInfo = AppInfo $appName
         InstallSoftware $appInfo
-        #>
+
         $appName = "Lenovo System Update"
         $appInfo = AppInfo $appName
         InstallSoftware $appInfo
 
          #InstallSystemUpdate
-         InstallLenovoVantage
+         #InstallLenovoVantage
     }
 
     elseif($x -match 'HP')
@@ -472,12 +494,6 @@ function CheckActivationStatus
         [Microsoft.VisualBasic.Interaction]::MsgBox("Windows n'est pas activé",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
         $lblOutput.Text += "`r`nWindows n'est pas activé`r`n"
     }  
-}
-
-function UpdateEdge
-{
-        $lblOutput.Text += "Mise à jour de Microsoft Edge"
-        winget upgrade -e -h --id Microsoft.Edge --accept-package-agreements --accept-source-agreements --silent
 }
 
 function SetDefaultBrowser
