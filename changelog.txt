@@ -13,3 +13,6 @@ Version :
 
 2023-02-02:
 - Enlever EaseUS de Fix
+
+2023-02-22:
+- Ajout raccourci sur le bureau de Menu.bat
