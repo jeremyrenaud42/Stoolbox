@@ -55,6 +55,18 @@ function DownloadBackgroundAndIcone
     DownloadFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$applicationPath\source\Images"
 }
 
+function CreateDesktopShortcut
+{
+    $shortcutExist = Test-Path "$env:SystemDrive\Users\$env:username\desktop\Menu.lnk"
+    if($shortcutExist -eq $false)
+    {
+    $WshShell = New-Object -comObject WScript.Shell
+    $Shortcut = $WshShell.CreateShortcut("$env:SystemDrive\Users\$env:username\desktop\Menu.lnk")
+    $Shortcut.TargetPath = "$env:SystemDrive\_Tech\Menu.bat"
+    $Shortcut.Save()
+    }
+}
+
 function DownloadRemoveScripts
 {
     DownloadFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
@@ -82,6 +94,7 @@ New-Item "$applicationPath\Source" -ItemType 'Directory' -Force | Out-Null
 DownloadAndImportModules
 CreateFolder "_Tech\Applications\Source\images"
 DownloadBackgroundAndIcone
+CreateDesktopShortcut
 CreateFolder "Temp"
 DownloadRemoveScripts
 
