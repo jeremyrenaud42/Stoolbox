@@ -426,7 +426,6 @@ function Fin
     Start-Sleep -s 1
     [Audio]::Volume = 0.75
     Getvoice -Verb runAs
-    Changevoice -Verb runAs
     Speak "Vous avez terminer la configuration du Windows."
     SetDefaultBrowser
     SetDefaultPDFViewer
