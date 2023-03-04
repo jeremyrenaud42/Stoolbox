@@ -57,11 +57,12 @@ function DownloadBackgroundAndIcone
 
 function CreateDesktopShortcut
 {
-    $shortcutExist = Test-Path "$env:SystemDrive\Users\$env:username\desktop\Menu.lnk"
+    $desktop= [Environment]::GetFolderPath("Desktop")
+    $shortcutExist = Test-Path "$desktop\Menu.lnk"
     if($shortcutExist -eq $false)
     {
     $WshShell = New-Object -comObject WScript.Shell
-    $Shortcut = $WshShell.CreateShortcut("$env:SystemDrive\Users\$env:username\desktop\Menu.lnk")
+    $Shortcut = $WshShell.CreateShortcut("$desktop\Menu.lnk")
     $Shortcut.TargetPath = "$env:SystemDrive\_Tech\Menu.bat"
     $Shortcut.IconLocation = "$applicationPath\Source\Images\Icone.ico"
     $Shortcut.Save()
