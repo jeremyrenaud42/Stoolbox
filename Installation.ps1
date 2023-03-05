@@ -27,14 +27,58 @@ function PrepareDependencies
     CheckInternetStatus
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Intro.mp3' -OutFile "$pathInstallation\Source\Intro.mp3" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Apps.JSON' -OutFile "$pathInstallation\Source\Apps.JSON" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' -OutFile "$pathInstallation\Source\MainWindow.xaml" | Out-Null
 }
 
-$ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que el scripte se ferme s'il rencontre une erreur
+function GetManufacturer
+{
+    $manufacturerBrand = Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -Property Manufacturer #Chercher la marque de l'ordinateur
+    #Get-CimInstance -Class Win32_BaseBoard | Select-Object -Property Manufacturer # + rapide
+    return $manufacturerBrand
+}
+
+$ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
 $pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
 $windowsVersion = (Get-WmiObject -class Win32_OperatingSystem).Caption
 PrepareDependencies
-#LaunchWPFApp
+#WPF
+<#
+$inputXML = importXamlFromFile "$pathInstallation\source\MainWindow.xaml"
+$formatedXaml = FormatXamlFile $inputXML
+$ObjectXaml = CreateXamlObject $formatedXaml
+$window = LoadWPFWindowFromXaml $ObjectXaml
+$formControls = GetWPFObjects $formatedXaml $window
+#ajout des events, cases a cocher
+$manufacturerBrand = GetManufacturer
+    if($manufacturerBrand -match 'LENOVO')
+    {
+        $formControls.chkboxLenovoVantage.IsChecked = $true
+        $formControls.chkboxLenovoSystemUpdate.IsChecked = $true
+    }
 
+    elseif($manufacturerBrand -match 'HP')
+    {        
+        $formControls.chkboxHPSA.IsChecked = $true
+    }
+
+    elseif($manufacturerBrand -match 'DELL')
+    {
+        $formControls.chkboxDellsa.IsChecked = $true
+    }
+$VideoController = Get-WmiObject win32_VideoController | Select-Object -Property name
+    if($VideoController -match 'NVIDIA')
+    {
+        $formControls.chkboxGeForce.IsChecked = $true
+    }
+$formControls.chkboxGoogleChrome.IsChecked = $true
+$formControls.chkboxTeamviewer.IsChecked = $true
+$formControls.chkboxAdobe.IsChecked = $true
+
+#$formControls.btnGo.Add_Click({})
+
+#Lancer la fenêtre
+LaunchWPFApp $window
+#>
 $form = New-Object System.Windows.Forms.Form #Créer la fenêtre GUI
 $form.ClientSize = '1041,688' #Taille de la GUI
 $form.Text = "Installation Windows" #Titre de la GUI (apparait en haut à gauche)
@@ -327,28 +371,27 @@ function InstallLenovoSA
 Function UpdateDrivers
 {
     $lblProgres.Text = "Vérification des pilotes"
-    $x = Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -Property Manufacturer #Chercher la marque de l'ordinateur
-    #Get-CimInstance -Class Win32_BaseBoard | Select-Object -Property Manufacturer # + rapide
-    if($x -match 'LENOVO')
+    $manufacturerBrand = GetManufacturer
+    if($manufacturerBrand -match 'LENOVO')
     {
         InstallLenovoSA
     }
 
-    elseif($x -match 'HP')
+    elseif($manufacturerBrand -match 'HP')
     {        
         InstallHPSA
     }
 
-    elseif($x -match 'DELL')
+    elseif($manufacturerBrand -match 'DELL')
     {
         InstallDellSA
     }
     <#
-    elseif($x -match 'MSI')
+    elseif($manufacturerBrand -match 'MSI')
     {
         
     }
-    elseif($x -like 'ASUS*')
+    elseif($manufacturerBrand -like 'ASUS*')
     {
         
     }
