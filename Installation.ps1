@@ -42,43 +42,83 @@ $pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
 $windowsVersion = (Get-WmiObject -class Win32_OperatingSystem).Caption
 PrepareDependencies
 #WPF
-<#
 $inputXML = importXamlFromFile "$pathInstallation\source\MainWindow.xaml"
 $formatedXaml = FormatXamlFile $inputXML
 $ObjectXaml = CreateXamlObject $formatedXaml
 $window = LoadWPFWindowFromXaml $ObjectXaml
 $formControls = GetWPFObjects $formatedXaml $window
+
 #ajout des events, cases a cocher
-$manufacturerBrand = GetManufacturer
-    if($manufacturerBrand -match 'LENOVO')
-    {
-        $formControls.chkboxLenovoVantage.IsChecked = $true
-        $formControls.chkboxLenovoSystemUpdate.IsChecked = $true
-    }
-
-    elseif($manufacturerBrand -match 'HP')
-    {        
-        $formControls.chkboxHPSA.IsChecked = $true
-    }
-
-    elseif($manufacturerBrand -match 'DELL')
-    {
-        $formControls.chkboxDellsa.IsChecked = $true
-    }
-$VideoController = Get-WmiObject win32_VideoController | Select-Object -Property name
-    if($VideoController -match 'NVIDIA')
-    {
-        $formControls.chkboxGeForce.IsChecked = $true
-    }
+#Default Install setup
+$formControls.chkboxAdobe.IsChecked = $true
 $formControls.chkboxGoogleChrome.IsChecked = $true
 $formControls.chkboxTeamviewer.IsChecked = $true
-$formControls.chkboxAdobe.IsChecked = $true
+$manufacturerBrand = GetManufacturer
+if($manufacturerBrand -match 'LENOVO')
+{
+    $formControls.chkboxLenovoVantage.IsChecked = $true
+    $formControls.chkboxLenovoSystemUpdate.IsChecked = $true
+}
+elseif($manufacturerBrand -match 'HP')
+{        
+    $formControls.chkboxHPSA.IsChecked = $true
+}
 
+elseif($manufacturerBrand -match 'DELL')
+{
+    $formControls.chkboxDellsa.IsChecked = $true
+}
+$VideoController = Get-WmiObject win32_VideoController | Select-Object -Property name
+if($VideoController -match 'NVIDIA')
+{
+    $formControls.chkboxGeForce.IsChecked = $true
+}
 #$formControls.btnGo.Add_Click({})
 
-#Lancer la fenêtre
 LaunchWPFApp $window
-#>
+
+function InstallCheckedSoftware
+{
+    if($formControls.chkboxAdobe.IsChecked -eq $true)
+    {
+        $appName = "Adobe Reader"
+        InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkboxGoogleChrome.IsChecked -eq $true)
+    {
+        $appName = "Google chrome"
+        InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkboxTeamviewer.IsChecked -eq $true)
+    {
+        $appName = "Teamviewer"
+    InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkboxLenovoSystemUpdate.IsChecked -eq $true)
+    {
+        $appName = "Lenovo System Update"
+        InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkboxLenovoVantage.IsChecked -eq $true)
+    {
+        $appName = "Lenovo Vantage"
+        InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkboxHPSA.IsChecked -eq $true)
+    {   
+        InstallHPSA
+    }
+    if($formControls.chkboxDellsa.IsChecked -eq $true)
+    {
+        InstallDellSA
+    }
+    if($formControls.chkboxGeForce.IsChecked -eq $true)
+    {
+        $appName = "GeForce Experience"
+        InstallSoftware $appsInfo.$appName
+    }
+}
+
 $form = New-Object System.Windows.Forms.Form #Créer la fenêtre GUI
 $form.ClientSize = '1041,688' #Taille de la GUI
 $form.Text = "Installation Windows" #Titre de la GUI (apparait en haut à gauche)
@@ -499,6 +539,8 @@ RemoveEngKeyboard
 ConfigurePrivacy
 DisplayDesktopIcon
 
+InstallCheckedSoftware
+<#
 $appName = "Adobe Reader"
 InstallSoftware $appsInfo.$appName
 
@@ -510,6 +552,8 @@ InstallSoftware $appsInfo.$appName
 
 UpdateDrivers
 InstallGeForceExperience
+#>
+
 CheckActivationStatus
 UpdateMsStore
 GetWindowsUpdate
