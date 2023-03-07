@@ -92,7 +92,7 @@ function InstallCheckedSoftware
     if($formControls.chkboxTeamviewer.IsChecked -eq $true)
     {
         $appName = "Teamviewer"
-    InstallSoftware $appsInfo.$appName
+        InstallSoftware $appsInfo.$appName
     }
     if($formControls.chkboxLenovoSystemUpdate.IsChecked -eq $true)
     {
@@ -115,6 +115,56 @@ function InstallCheckedSoftware
     if($formControls.chkboxGeForce.IsChecked -eq $true)
     {
         $appName = "GeForce Experience"
+        InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkboxVLC.IsChecked -eq $true)
+    {
+        $appName = "VLC"
+        InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkbox7zip.IsChecked -eq $true)
+    {
+        $appName = "7Zip"
+        InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkboxSteam.IsChecked -eq $true)
+    {
+        $appName = "Steam"
+        InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkboxMyAsus.IsChecked -eq $true)
+    {
+        $appName = "MyAsus"
+        InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkboxZoom.IsChecked -eq $true)
+    {
+        $appName = "Zoom"
+        InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkboxDiscord.IsChecked -eq $true)
+    {
+        $appName = "Discord"
+        InstallSoftware $appsInfo.$appName
+    }    
+    if($formControls.chkboxFirefox.IsChecked -eq $true)
+    {
+        $appName = "Firefox"
+        InstallSoftware $appsInfo.$appName
+    }   
+    if($formControls.chkboxLibreOffice.IsChecked -eq $true)
+    {
+        $appName = "Libre Office"
+        InstallSoftware $appsInfo.$appName
+    }   
+    if($formControls.chkboxCdburnerxp.IsChecked -eq $true)
+    {
+        $appName = "CDBurnerXP"
+        InstallSoftware $appsInfo.$appName
+    }   
+    if($formControls.chkboxMSICenter.IsChecked -eq $true)
+    {
+        $appName = "MSI Cente"
         InstallSoftware $appsInfo.$appName
     }
 }
@@ -429,11 +479,11 @@ Function UpdateDrivers
     <#
     elseif($manufacturerBrand -match 'MSI')
     {
-        
+
     }
     elseif($manufacturerBrand -like 'ASUS*')
     {
-        
+
     }
     #>
 }
