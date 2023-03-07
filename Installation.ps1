@@ -214,7 +214,7 @@ $lblOutput.BorderStyle = 'fixed3D' #Style de la bordure de la zone de texte
 $form.Controls.Add($lblOutput) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
 #>
 
-
+<#
 #Zone ou les étapes s'affiche
 $lblOutput = New-Object System.Windows.Forms.Textbox #Créer la zone
 $lblOutput.Location = New-Object System.Drawing.Point(57,70) #position de la zone
@@ -229,6 +229,26 @@ $lblOutput.ScrollBars = 'Vertical'
 $lblOutput.ReadOnly = $true
 $lblOutput.AcceptsReturn = $false
 $lblOutput.AcceptsTab =$fals
+$lblOutput.Add_TextChanged({
+$lblOutput.SelectionStart = $lblOutput.Text.Length
+$lblOutput.ScrollToCaret()
+})
+$form.Controls.Add($lblOutput) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
+#>
+
+#Zone ou les étapes s'affiche
+$lblOutput = New-Object System.Windows.Forms.RichTextBox #Créer la zone
+$lblOutput.Location = New-Object System.Drawing.Point(57,70) #position de la zone
+$lblOutput.AutoSize = $false #ne peut pas adapter sa taille en fonction de chaque taille d'écran (empêche les déformations)
+$lblOutput.width = 925 #largeur du label
+$lblOutput.height = 600 #hateur du label
+$lblOutput.Font= 'Microsoft Sans Serif,11' #la sorte et taille de police
+$lblOutput.BorderStyle = 'fixed3D' #Style de la bordure de la zone de texte
+$lblOutput.multiline = $true
+$lblOutput.ScrollBars = 'Vertical'
+$lblOutput.ReadOnly = $true
+$lblOutput.AcceptsTab =$false
+$lblOutput.enabled = $false
 $lblOutput.Add_TextChanged({
 $lblOutput.SelectionStart = $lblOutput.Text.Length
 $lblOutput.ScrollToCaret()
