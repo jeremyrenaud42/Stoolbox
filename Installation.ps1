@@ -112,6 +112,16 @@ function InstallCheckedSoftware
     {
         InstallDellSA
     }
+    if($formControls.chkboxMyAsus.IsChecked -eq $true)
+    {
+        $appName = "MyAsus"
+        InstallSoftware $appsInfo.$appName
+    }
+    if($formControls.chkboxMSICenter.IsChecked -eq $true)
+    {
+        $appName = "MSI Cente"
+        InstallSoftware $appsInfo.$appName
+    }
     if($formControls.chkboxGeForce.IsChecked -eq $true)
     {
         $appName = "GeForce Experience"
@@ -130,11 +140,6 @@ function InstallCheckedSoftware
     if($formControls.chkboxSteam.IsChecked -eq $true)
     {
         $appName = "Steam"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControls.chkboxMyAsus.IsChecked -eq $true)
-    {
-        $appName = "MyAsus"
         InstallSoftware $appsInfo.$appName
     }
     if($formControls.chkboxZoom.IsChecked -eq $true)
@@ -162,11 +167,6 @@ function InstallCheckedSoftware
         $appName = "CDBurnerXP"
         InstallSoftware $appsInfo.$appName
     }   
-    if($formControls.chkboxMSICenter.IsChecked -eq $true)
-    {
-        $appName = "MSI Cente"
-        InstallSoftware $appsInfo.$appName
-    }
 }
 
 $form = New-Object System.Windows.Forms.Form #Créer la fenêtre GUI
@@ -201,6 +201,7 @@ $lblProgres.forecolor = 'white' #couleur de la police
 $lblProgres.BackColor = 'darkred' #couleur de l'arriere plan du label
 $form.Controls.Add($lblProgres) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
 
+<#
 #Zone ou les étapes s'affiche
 $lblOutput = New-Object System.Windows.Forms.Label #Créer la zone
 $lblOutput.Location = New-Object System.Drawing.Point(57,70) #position de la zone
@@ -210,6 +211,28 @@ $lblOutput.height = 600 #hateur du label
 $lblOutput.TextAlign = 'topLeft' #comment le texte apparait (en haut à gauche)
 $lblOutput.Font= 'Microsoft Sans Serif,11' #la sorte et taille de police
 $lblOutput.BorderStyle = 'fixed3D' #Style de la bordure de la zone de texte
+$form.Controls.Add($lblOutput) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
+#>
+
+
+#Zone ou les étapes s'affiche
+$lblOutput = New-Object System.Windows.Forms.Textbox #Créer la zone
+$lblOutput.Location = New-Object System.Drawing.Point(57,70) #position de la zone
+$lblOutput.AutoSize = $false #ne peut pas adapter sa taille en fonction de chaque taille d'écran (empêche les déformations)
+$lblOutput.width = 925 #largeur du label
+$lblOutput.height = 600 #hateur du label
+#$lblOutput.TextAlign = 'topLeft' #comment le texte apparait (en haut à gauche)
+$lblOutput.Font= 'Microsoft Sans Serif,11' #la sorte et taille de police
+$lblOutput.BorderStyle = 'fixed3D' #Style de la bordure de la zone de texte
+$lblOutput.multiline = $true
+$lblOutput.ScrollBars = 'Vertical'
+$lblOutput.ReadOnly = $true
+$lblOutput.AcceptsReturn = $false
+$lblOutput.AcceptsTab =$fals
+$lblOutput.Add_TextChanged({
+$lblOutput.SelectionStart = $lblOutput.Text.Length
+$lblOutput.ScrollToCaret()
+})
 $form.Controls.Add($lblOutput) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
 
 $form.Show() | out-null #afficher la form, ne jamais enlever sinon plus d'affichage GUI
