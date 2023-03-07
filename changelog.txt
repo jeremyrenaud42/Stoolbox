@@ -17,5 +17,6 @@ Version :
 2023-02-22:
 - Ajout raccourci sur le bureau de Menu.bat
 
-2023-03-05:
-- Ajout du Menu de choix des applications pour Installation
+2023-03-06:
+- Ajout du Menu de choix des applications pour Installatio
+- Ajout d'une scrollbar pour output de Installation
