@@ -119,7 +119,7 @@ function InstallCheckedSoftware
     }
     if($formControls.chkboxMSICenter.IsChecked -eq $true)
     {
-        $appName = "MSI Cente"
+        $appName = "MSI Center"
         InstallSoftware $appsInfo.$appName
     }
     if($formControls.chkboxGeForce.IsChecked -eq $true)
