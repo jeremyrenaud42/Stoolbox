@@ -68,6 +68,10 @@ elseif($manufacturerBrand -match 'DELL')
 {
     $formControls.chkboxDellsa.IsChecked = $true
 }
+elseif($manufacturerBrand -match 'MSI')
+{
+    $formControls.chkboxMSICenter.IsChecked = $true
+}
 $VideoController = Get-WmiObject win32_VideoController | Select-Object -Property name
 if($VideoController -match 'NVIDIA')
 {
@@ -519,11 +523,13 @@ Function UpdateDrivers
     {
         InstallDellSA
     }
-    <#
+    
     elseif($manufacturerBrand -match 'MSI')
-    {
-
+    {   
+        $appName = "MSI Center"
+        InstallSoftware $appsInfo.$appName
     }
+    <#
     elseif($manufacturerBrand -like 'ASUS*')
     {
 
