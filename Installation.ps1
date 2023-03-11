@@ -68,7 +68,7 @@ elseif($manufacturerBrand -match 'DELL')
 {
     $formControls.chkboxDellsa.IsChecked = $true
 }
-elseif($manufacturerBrand -like 'Micro-Star*')
+elseif($manufacturerBrand -like '*Micro-Star*')
 {
     $formControls.chkboxMSICenter.IsChecked = $true
 }
