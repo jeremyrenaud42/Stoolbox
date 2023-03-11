@@ -11,8 +11,9 @@ function ImportModules
     }
 }
 
-$pathfix = "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
-$pathfixSource = "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\source"
+$desktop = [Environment]::GetFolderPath("Desktop")
+$pathfix = "$env:SystemDrive\_Tech\Applications\fix"
+$pathfixSource = "$env:SystemDrive\_Tech\Applications\fix\source"
 set-location $pathfix
 ImportModules
 CreateFolder "_Tech\Applications\fix\source"
