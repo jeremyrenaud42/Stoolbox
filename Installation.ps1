@@ -1,4 +1,5 @@
-﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
+﻿#V2.55
+Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
 [System.Windows.Forms.Application]::EnableVisualStyles() #it will use the built-in Windows theming to style controls instead of the "classic Windows" look and feel
 
 function ImportModules
@@ -205,59 +206,24 @@ $lblProgres.forecolor = 'white' #couleur de la police
 $lblProgres.BackColor = 'darkred' #couleur de l'arriere plan du label
 $form.Controls.Add($lblProgres) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
 
-<#
 #Zone ou les étapes s'affiche
-$lblOutput = New-Object System.Windows.Forms.Label #Créer la zone
-$lblOutput.Location = New-Object System.Drawing.Point(57,70) #position de la zone
-$lblOutput.AutoSize = $false #ne peut pas adapter sa taille en fonction de chaque taille d'écran (empêche les déformations)
-$lblOutput.width = 925 #largeur du label
-$lblOutput.height = 600 #hateur du label
-$lblOutput.TextAlign = 'topLeft' #comment le texte apparait (en haut à gauche)
-$lblOutput.Font= 'Microsoft Sans Serif,11' #la sorte et taille de police
-$lblOutput.BorderStyle = 'fixed3D' #Style de la bordure de la zone de texte
-$form.Controls.Add($lblOutput) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
-#>
-
-<#
-#Zone ou les étapes s'affiche
-$lblOutput = New-Object System.Windows.Forms.Textbox #Créer la zone
-$lblOutput.Location = New-Object System.Drawing.Point(57,70) #position de la zone
-$lblOutput.AutoSize = $false #ne peut pas adapter sa taille en fonction de chaque taille d'écran (empêche les déformations)
-$lblOutput.width = 925 #largeur du label
-$lblOutput.height = 600 #hateur du label
-#$lblOutput.TextAlign = 'topLeft' #comment le texte apparait (en haut à gauche)
-$lblOutput.Font= 'Microsoft Sans Serif,11' #la sorte et taille de police
-$lblOutput.BorderStyle = 'fixed3D' #Style de la bordure de la zone de texte
-$lblOutput.multiline = $true
-$lblOutput.ScrollBars = 'Vertical'
-$lblOutput.ReadOnly = $true
-$lblOutput.AcceptsReturn = $false
-$lblOutput.AcceptsTab =$fals
-$lblOutput.Add_TextChanged({
-$lblOutput.SelectionStart = $lblOutput.Text.Length
-$lblOutput.ScrollToCaret()
+$richTxtBxOutput = New-Object System.Windows.Forms.RichTextBox #Créer la zone
+$richTxtBxOutput.Location = New-Object System.Drawing.Point(57,70) #position de la zone
+$richTxtBxOutput.AutoSize = $false #ne peut pas adapter sa taille en fonction de chaque taille d'écran (empêche les déformations)
+$richTxtBxOutput.width = 925 #largeur du label
+$richTxtBxOutput.height = 600 #hateur du label
+$richTxtBxOutput.Font= 'Microsoft Sans Serif,11' #la sorte et taille de police
+$richTxtBxOutput.BorderStyle = 'fixed3D' #Style de la bordure de la zone de texte
+$richTxtBxOutput.multiline = $true
+$richTxtBxOutput.ScrollBars = 'Vertical'
+$richTxtBxOutput.ReadOnly = $true
+$richTxtBxOutput.AcceptsTab =$false
+$richTxtBxOutput.enabled = $false
+$richTxtBxOutput.Add_TextChanged({
+$richTxtBxOutput.SelectionStart = $richTxtBxOutput.Text.Length
+$richTxtBxOutput.ScrollToCaret()
 })
-$form.Controls.Add($lblOutput) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
-#>
-
-#Zone ou les étapes s'affiche
-$lblOutput = New-Object System.Windows.Forms.RichTextBox #Créer la zone
-$lblOutput.Location = New-Object System.Drawing.Point(57,70) #position de la zone
-$lblOutput.AutoSize = $false #ne peut pas adapter sa taille en fonction de chaque taille d'écran (empêche les déformations)
-$lblOutput.width = 925 #largeur du label
-$lblOutput.height = 600 #hateur du label
-$lblOutput.Font= 'Microsoft Sans Serif,11' #la sorte et taille de police
-$lblOutput.BorderStyle = 'fixed3D' #Style de la bordure de la zone de texte
-$lblOutput.multiline = $true
-$lblOutput.ScrollBars = 'Vertical'
-$lblOutput.ReadOnly = $true
-$lblOutput.AcceptsTab =$false
-$lblOutput.enabled = $false
-$lblOutput.Add_TextChanged({
-$lblOutput.SelectionStart = $lblOutput.Text.Length
-$lblOutput.ScrollToCaret()
-})
-$form.Controls.Add($lblOutput) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
+$form.Controls.Add($richTxtBxOutput) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
 
 $form.Show() | out-null #afficher la form, ne jamais enlever sinon plus d'affichage GUI
 
@@ -266,7 +232,7 @@ function Debut
     $actualDate = (Get-Date).ToString()
     Addlog "installationlog.txt" "Installation de $windowsVersion le $actualDate"
     $lblProgres.Text = "Préparation"
-    $lblOutput.Text += "Lancement de la configuration du Windows`r`n"
+    $richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")
     MusicDebut "$pathInstallation\Source\Intro.mp3" 
     Chocoinstall
     Wingetinstall
@@ -287,10 +253,10 @@ function PrepareWindowsUpdate
 function GetWindowsUpdate
 {
     $lblProgres.Text = "Mises à jour de Windows"
-    $lblOutput.Text += "Installation des mises à jour de Windows"
+    $richTxtBxOutput.AppendText("Installation des mises à jour de Windows")
     PrepareWindowsUpdate 
     Get-WindowsUpdate -MaxSize 250mb -Install -AcceptAll -IgnoreReboot | out-null #download et install les updates de moins de 250mb sans reboot
-    $lblOutput.Text += " -Mises à jour de Windows effectuées`r`n"
+    $richTxtBxOutput.AppendText(" -Mises à jour de Windows effectuées`r`n")
     Addlog "installationlog.txt" "Mises à jour de Windows effectuées"
 }
 
@@ -315,7 +281,7 @@ Function RenameSystemDrive
 {
     $lblProgres.Text = "Renommage du disque"
     Set-Volume -DriveLetter 'C' -NewFileSystemLabel "OS"
-    $lblOutput.Text += "`r`nLe disque C: a été renommé OS`r`n"
+    $richTxtBxOutput.AppendText("`r`nLe disque C: a été renommé OS`r`n")
     Addlog "installationlog.txt" "Le disque C: a été renommé OS"
 }
 
@@ -323,9 +289,9 @@ Function ConfigureExplorer
 {
     $lblProgres.Text = "Configuration des paramètres de l'explorateur de fichiers"
     set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo' -Type 'DWord' -Value '1'
-    $lblOutput.Text += "L'accès rapide a été remplacé par Ce PC`r`n"
+    $richTxtBxOutput.AppendText("L'accès rapide a été remplacé par Ce PC`r`n")
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications' -Type 'DWord' -Value '0'
-    $lblOutput.Text += "Le fournisseur de synchronisation a été decoché`r`n" 
+    $richTxtBxOutput.AppendText("Le fournisseur de synchronisation a été decoché`r`n")
     Addlog "installationlog.txt" "Explorateur de fichiers configuré"  
 }
 
@@ -337,7 +303,7 @@ Function ConfigureExplorer
         {
             $bitlockerVolume = Get-BitLockerVolume
             Disable-BitLocker -MountPoint $bitlockerVolume | Out-Null
-            $lblOutput.Text += "Bitlocker a été désactivé`r`n"
+            $richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")
         }
     Addlog "installationlog.txt" "Bitlocker a été désactivé"
 }
@@ -346,7 +312,7 @@ Function DisableFastBoot
 {
     $lblProgres.Text = "Desactivation du demarrage rapide"
     powercfg /h off
-    $lblOutput.Text += "Le démarrage rapide a été désactivé`r`n"
+    $richTxtBxOutput.AppendText("Le démarrage rapide a été désactivé`r`n")
     Addlog "installationlog.txt" "Le démarrage rapide a été désactivé"
 }
 
@@ -357,7 +323,7 @@ Function RemoveEngKeyboard
     $anglaisCanada = $langList | Where-Object LanguageTag -eq "en-CA" #sélectionne le clavier anglais canada de la liste
     $langList.Remove($anglaisCanada) | Out-Null #supprimer la clavier sélectionner
     Set-WinUserLanguageList $langList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
-    $lblOutput.Text += "Le clavier Anglais a été supprimé`r`n"
+    $richTxtBxOutput.AppendText("Le clavier Anglais a été supprimé`r`n")
     Addlog "installationlog.txt" "Le clavier Anglais a été supprimé"
 }
 
@@ -368,7 +334,7 @@ Function ConfigurePrivacy
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type 'DWord' -Value 0 
-    $lblOutput.Text += "Les options de confidentialité ont été configuré`r`n"
+    $richTxtBxOutput.AppendText("Les options de confidentialité ont été configuré`r`n")
     Addlog "installationlog.txt" "Les options de confidentialité ont été configuré"  
 }
 
@@ -382,20 +348,20 @@ Function DisplayDesktopIcon
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type 'DWord' -Value 0
-    $lblOutput.Text += "Les icones systèmes ont été installés sur le bureau`r`n"
+    $richTxtBxOutput.AppendText("Les icones systèmes ont été installés sur le bureau`r`n")
     Addlog "installationlog.txt" "Les icones systèmes ont été installés sur le bureau"
-    $lblOutput.Text += " `r`n" #Permet de créé un espace avant les logiciels
+    $richTxtBxOutput.AppendText(" `r`n") #Permet de créé un espace avant les logiciels
 }
 
 function UpdateMsStore
 {
     $lblProgres.Text = "Mises à jour du Microsoft Store"
-    $lblOutput.Text += "`r`nLancement des updates du Microsoft Store"   
+    $richTxtBxOutput.AppendText("`r`nLancement des updates du Microsoft Store")   
     $namespaceName = "root\cimv2\mdm\dmmap"
     $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
     $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
     $wmiObj.UpdateScanMethod() | Out-Null
-    $lblOutput.Text += " -Mises à jour du Microsoft Store lancées`r`n"
+    $richTxtBxOutput.AppendText(" -Mises à jour du Microsoft Store lancées`r`n")
     Addlog "installationlog.txt" "Mises à jour de Microsoft Store"
 }
 
@@ -427,11 +393,11 @@ $appNames | ForEach-Object {
 function InstallSoftware($appInfo)
 {
     $lblProgres.Text = "Installation de $appName"
-    $lblOutput.Text += "Installation de $appName en cours"
+    $richTxtBxOutput.AppendText("Installation de $appName en cours")
     $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
         if($SoftwareInstallationStatus)
         {
-            $lblOutput.Text += " -$appName est déja installé`r`n"
+            $richTxtBxOutput.AppendText(" -$appName est déja installé`r`n")
         }
         elseif($SoftwareInstallationStatus -eq $false)
         {  
@@ -449,7 +415,7 @@ function InstallSoftwareWithWinget($appInfo)
     $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
         if($SoftwareInstallationStatus)
         {
-            $lblOutput.Text += " -$appName installé avec succès`r`n"  
+            $richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")  
         } 
         else
         {
@@ -466,11 +432,11 @@ function InstallSoftwareWithChoco($apsInfo)
     $SoftwareInstallationStatus = CheckSoftwarePresence $apsInfo
     if($SoftwareInstallationStatus)
     {   
-        $lblOutput.Text += " -$appName installé avec succès`r`n"
+        $richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")
     }
     else
     {
-        $lblOutput.Text += " -$appName a échoué`r`n"
+        $richTxtBxOutput.AppendText(" -$appName a échoué`r`n")
         InstallSoftwareWithNinite $appInfo
     } 
 }
@@ -560,12 +526,12 @@ function CheckActivationStatus
     $activated
     if($activated -eq "1")
     {
-        $lblOutput.Text += "`r`n$windowsVersion est activé sur cet ordinateur`r`n"
+        $richTxtBxOutput.AppendText("`r`n$windowsVersion est activé sur cet ordinateur`r`n")
     }
     else 
     {
         [Microsoft.VisualBasic.Interaction]::MsgBox("Windows n'est pas activé",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
-        $lblOutput.Text += "`r`nWindows n'est pas activé`r`n"
+        $richTxtBxOutput.AppendText("`r`nWindows n'est pas activé`r`n")
     }  
 }
 
@@ -615,7 +581,7 @@ function Fin
     $rebootStatus = get-wurebootstatus -Silent #vérifie si ordi doit reboot à cause de windows update
     if($rebootStatus)
     {
-        $lblOutput.Text += "`r`nL'ordinateur devra redémarrer pour finaliser l'installation des mises à jour"
+        $richTxtBxOutput.AppendText("`r`nL'ordinateur devra redémarrer pour finaliser l'installation des mises à jour")
         [Microsoft.VisualBasic.Interaction]::MsgBox("L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
         shutdown /r /t 300
         Task #tâche planifié qui delete tout
@@ -637,22 +603,7 @@ DisableFastBoot
 RemoveEngKeyboard
 ConfigurePrivacy
 DisplayDesktopIcon
-
 InstallCheckedSoftware
-<#
-$appName = "Adobe Reader"
-InstallSoftware $appsInfo.$appName
-
-$appName = "Google chrome"
-InstallSoftware $appsInfo.$appName
-
-$appName = "Teamviewer"
-InstallSoftware $appsInfo.$appName
-
-UpdateDrivers
-InstallGeForceExperience
-#>
-
 CheckActivationStatus
 UpdateMsStore
 GetWindowsUpdate
