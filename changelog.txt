@@ -1,22 +1,20 @@
-Version :
+2023-03-06:
+- Ajout du Menu de choix des applications pour Installation
+- Ajout d'une scrollbar pour output de Installation
 
-2023-01-07:
-- Ajout du bouton changelog à Menu
-- Améliorer Secu_Dossier de Fix
+2023-02-22:
+- Ajout raccourci sur le bureau de Menu.bat
 
-2023-01-14:
-- Vitesse et santé HDD download direct dans Optimisation now au lieu de reprendre celui de Diag
+2023-02-02:
+- Enlever EaseUS de Fix
 
 2023-01-31:
 - Menu vérifie la connexion Internet
 - Installation shutdown ordi après 5 minutes au lieu de 1 minute
 
-2023-02-02:
-- Enlever EaseUS de Fix
+2023-01-14:
+- Vitesse et santé HDD download direct dans Optimisation now au lieu de reprendre celui de Diag
 
-2023-02-22:
-- Ajout raccourci sur le bureau de Menu.bat
-
-2023-03-06:
-- Ajout du Menu de choix des applications pour Installation
-- Ajout d'une scrollbar pour output de Installation
+2023-01-07:
+- Ajout du bouton changelog à Menu
+- Améliorer Secu_Dossier de Fix
