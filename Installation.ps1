@@ -64,7 +64,6 @@ elseif($manufacturerBrand -match 'HP')
 {        
     $formControls.chkboxHPSA.IsChecked = $true
 }
-
 elseif($manufacturerBrand -match 'DELL')
 {
     $formControls.chkboxDellsa.IsChecked = $true
@@ -171,7 +170,27 @@ function InstallCheckedSoftware
     {
         $appName = "CDBurnerXP"
         InstallSoftware $appsInfo.$appName
-    }   
+    } 
+    if($formControls.chkboxIntel.IsChecked -eq $true)
+    {
+        $appName = "IntelDriver"
+        InstallSoftware $appsInfo.$appName
+    }  
+    if($formControls.chkboxMacrium.IsChecked -eq $true)
+    {
+        $appName = "Macrium"
+        InstallSoftware $appsInfo.$appName
+    }  
+    if($formControls.chkboxSpotify.IsChecked -eq $true)
+    {
+        $appName = "Spotify"
+        InstallSoftware $appsInfo.$appName
+    }  
+    if($formControls.chkboxOpera.IsChecked -eq $true)
+    {
+        $appName = "Opera"
+        InstallSoftware $appsInfo.$appName
+    }     
 }
 
 $form = New-Object System.Windows.Forms.Form #Créer la fenêtre GUI
