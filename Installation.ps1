@@ -53,7 +53,7 @@ $formControls = GetWPFObjects $formatedXaml $window
 #Default Install setup
 $formControls.chkboxAdobe.IsChecked = $true
 $formControls.chkboxGoogleChrome.IsChecked = $true
-$formControls.chkboxTeamviewer.IsChecked = $true
+#$formControls.chkboxTeamviewer.IsChecked = $true
 $manufacturerBrand = GetManufacturer
 if($manufacturerBrand -match 'LENOVO')
 {
@@ -330,7 +330,8 @@ Function ConfigureExplorer
 Function DisableFastBoot
 {
     $lblProgres.Text = "Desactivation du demarrage rapide"
-    powercfg /h off
+    set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Name 'HiberbootEnabled' -Type 'DWord' -Value '0'
+    #powercfg /h off
     $richTxtBxOutput.AppendText("Le démarrage rapide a été désactivé`r`n")
     Addlog "installationlog.txt" "Le démarrage rapide a été désactivé"
 }
@@ -597,6 +598,7 @@ function Fin
     SetDefaultBrowser
     SetDefaultPDFViewer
     PinGoogleTaskbar
+    Stop-Process -Name "ninite" -Force -erroraction ignore
     $rebootStatus = get-wurebootstatus -Silent #vérifie si ordi doit reboot à cause de windows update
     if($rebootStatus)
     {
