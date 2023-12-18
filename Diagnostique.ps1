@@ -1,4 +1,4 @@
-﻿#Les assembly sont nécéssaire pour le fonctionnement du script. Ne pas effacer
+﻿#V1.5
 Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
@@ -11,6 +11,7 @@ function ImportModules
     }
 }
 
+$desktop = [Environment]::GetFolderPath("Desktop")
 $pathDiagnostique = "$env:SystemDrive\_Tech\Applications\Diagnostique"
 $pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\source"
 set-location $pathDiagnostique
@@ -168,7 +169,7 @@ $Aida.Add_MouseEnter({$Aida.ForeColor = 'White'})
 $Aida.Add_MouseLeave({$Aida.ForeColor = 'black'})
 $Aida.Add_Click({
 Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Aida64\aida64.exe"
-Addlog "diagnostiquelog.txt" "Test de stabilité du système effectué"oh i sd
+Addlog "diagnostiquelog.txt" "Test de stabilité du système effectué"
 })
 #tooltip
 $tooltipAida = New-Object System.Windows.Forms.ToolTip
@@ -345,7 +346,7 @@ $BoutonHDD.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonHDD.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonHDD.Add_MouseEnter({$BoutonHDD.ForeColor = 'White'})
 $BoutonHDD.Add_MouseLeave({$BoutonHDD.ForeColor = 'black'})
-$BoutonHDD.Add_Click({UnzipApp "HDD" 'https://ftp.alexchato9.com/public/file/t6QQNrPcLk6gruXnTEr1fA/HDD.zip' "$pathDiagnostiqueSource"})
+$BoutonHDD.Add_Click({UnzipApp "HDD" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip' "$pathDiagnostiqueSource"})
 $BoutonHDD.Add_Click({$BoutonHDD.visible = $false})
 $BoutonHDD.Add_Click({$HDTune.visible = $true})
 $BoutonHDD.Add_Click({$HDSentinnel.visible = $true})
@@ -465,7 +466,31 @@ $HDSentinnel.FlatAppearance.MouseOverBackColor = 'gray'
 $HDSentinnel.Add_MouseEnter({$HDSentinnel.ForeColor = 'White'})
 $HDSentinnel.Add_MouseLeave({$HDSentinnel.ForeColor = 'black'})
 $HDSentinnel.Add_Click({
-HDSentinel
+#HDSentinel
+function test
+{
+    VerifPresenceApp "C:\Program Files (x86)\Hard Disk Sentinel\HDSentinel.exe"
+    $apppath = VerifPresenceApp
+    if($apppath)
+    {
+        StartExeFile "HDSentinel.exe" "C:\Program Files (x86)\Hard Disk Sentinel"
+    }
+    elseif($apppath -eq $false)
+    {
+    Wingetinstall  
+    winget install -e --id XPDNXG5333CSVK --accept-package-agreements --accept-source-agreements --silent | Out-Null
+    StartExeFile "HDSentinel.exe" "C:\Program Files (x86)\Hard Disk Sentinel"
+    $apppath = VerifPresenceApp
+        if($apppath -eq $false)
+        {
+            Chocoinstall
+            choco install hdsentinel -y | Out-Null
+            StartExeFile "HDSentinel.exe" "C:\Program Files (x86)\Hard Disk Sentinel"
+        }
+    }
+}
+test
+Addlog "diagnostiquelog.txt" "Vérifier la santé du disque dur"
 })
 #Tooltip
 $tooltipHDSentinnel = New-Object System.Windows.Forms.ToolTip
