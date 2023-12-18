@@ -81,13 +81,13 @@ function Chocoinstall
 function Wingetinstall
 {
     $progressPreference = 'SilentlyContinue' #cache la barre de progres
-    #$wingetPath = VerifPresenceApp "$env:SystemDrive\Users\$env:username\AppData\Local\Microsoft\WindowsApps\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\winget.exe"
-    #if($wingetPath -eq $false)
-    #{  
+    $wingetVersion = winget -v
+    $nb = $wingetVersion.substring(1) 
+    if($nb -le '1.6')
+    {  
         UnzipApp "winget" 'https://ftp.alexchato9.com/public/file/VM7xGR6fyUi4_zILrWwg0w/Winget.zip' "$env:SystemDrive\_Tech\Applications\Source"
-        #UnzipApp "winget" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Winget.zip' "$env:SystemDrive\_Tech\Applications\Source"
         Add-AppxPackage -path "$env:SystemDrive\_Tech\Applications\Source\winget\Microsoft.VCLibs.x64.14.00.Desktop.appx"  | out-null #prérequis pour winget
         Add-AppxPackage -path "$env:SystemDrive\_Tech\Applications\Source\winget\Microsoft.UI.Xaml.2.7.appx" | out-null #prérequis pour winget
         Add-AppPackage -path "$env:SystemDrive\_Tech\Applications\Source\winget\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" | out-null #installeur de winget
-    #}
+    }
 }
