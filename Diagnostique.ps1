@@ -357,63 +357,6 @@ $BoutonHDD.Add_Click({$docHDSentinnel.visible = $true})
 $BoutonHDD.Add_Click({$docHDTune.visible = $true})
 $BoutonHDD.Add_Click({$docASSD.visible = $true})
 
-function HDSentinel
-{
-start-process -wait "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\_HDSentinel.exe" -ArgumentList "/report"
-Addlog "diagnostiquelog.txt" "Vérifier la santé du disque dur"
-#hdsslog | Out-File $logfilepath -Append
-}
-
-function hdsslog
-{
-$PathHDSentinelData = Get-Content "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Sentinnel\HDSData\HDSentinel_5.70 PRO_report.txt"
-$lignedisk = "" #initialise la variable vide
-
-foreach ($ligne in $PathHDSentinelData) #pour chaque ligne dans le fichier, car chaque ligne est un objet
-{
-    if($ligne -match "Drive \d+") #si une ligne match drive + un chiffre
-    {
-        $lignedisk = $ligne  #$lignedisk contient la ligne drive x
-    }
-   
-    elseif($lignedisk -and $ligne -match "size") #si ma ligne drive x est $TRUe et ma ligne qui match size
-    {
-        $lignedisk,$ligne #afficher drive x et la size
-    }
-
-    elseif($lignedisk -and $ligne -match "Temperature" -and $ligne -notmatch "Max. Temperature"  -and $ligne -notmatch "Airflow Temperature" -and $ligne -notmatch "disk Temperature") #si ma ligne drive x est $TRUe et ma ligne qui match temprature
-    {
-        $ligne,$lignesize #la temperature et la taille
-    }
-
-    elseif($lignedisk -and $ligne -match "Power on time" -and $ligne -notmatch "Power on time measure" -and $ligne -notmatch "Power On Time Count") 
-    {
-        $ligne,$lignesize,$lignetemp
-    }
-
-    elseif($lignedisk -and $ligne -match "Remaining lifetime") 
-    {
-        $ligne,$lignesize,$lignetemp,$lignePoweronTime
-    }
-
-    elseif($lignedisk -and $ligne -match "Disk Performance") 
-    {
-        $ligne,$lignesize,$lignetemp,$lignePoweronTime,$ligneremaininglifetime
-    }
-
-    elseif($lignedisk -and $ligne -match "Interface used") 
-    {
-        $ligne,$lignesize,$lignetemp,$lignePoweronTime,$ligneremaininglifetime,$ligneperfo
-    }
-
-    elseif($lignedisk -and $ligne -match "Disk Fitness") 
-    {
-        $ligne,$lignesize,$lignetemp,$lignePoweronTime,$ligneremaininglifetime,$ligneperfo,$ligneInterfaceused
-        [System.Windows.MessageBox]::Show("$lignedisk,$ligne","Santé",0)
-        $lignedisk = "" #flusher une fois la variable a la fin
-    }
-}
-}
 
 function diskmarkinfoLog
 {
@@ -467,8 +410,9 @@ $HDSentinnel.Add_MouseEnter({$HDSentinnel.ForeColor = 'White'})
 $HDSentinnel.Add_MouseLeave({$HDSentinnel.ForeColor = 'black'})
 $HDSentinnel.Add_Click({
 #HDSentinel
-function test
+function HDSentinnel
 {
+    Addlog "diagnostiquelog.txt" "Vérifier la santé du disque dur"
     VerifPresenceApp "C:\Program Files (x86)\Hard Disk Sentinel\HDSentinel.exe"
     $apppath = VerifPresenceApp
     if($apppath)
@@ -479,18 +423,16 @@ function test
     {
     Wingetinstall  
     winget install -e --id XPDNXG5333CSVK --accept-package-agreements --accept-source-agreements --silent | Out-Null
-    StartExeFile "HDSentinel.exe" "C:\Program Files (x86)\Hard Disk Sentinel"
     $apppath = VerifPresenceApp
         if($apppath -eq $false)
         {
             Chocoinstall
             choco install hdsentinel -y | Out-Null
-            StartExeFile "HDSentinel.exe" "C:\Program Files (x86)\Hard Disk Sentinel"
         }
+        StartExeFile "HDSentinel.exe" "C:\Program Files (x86)\Hard Disk Sentinel"
     }
 }
-test
-Addlog "diagnostiquelog.txt" "Vérifier la santé du disque dur"
+HDSentinnel
 })
 #Tooltip
 $tooltipHDSentinnel = New-Object System.Windows.Forms.ToolTip
@@ -891,6 +833,7 @@ $quit.FlatAppearance.MouseOverBackColor = 'gray'
 $quit.Add_MouseEnter({$quit.ForeColor = 'White'})
 $quit.Add_MouseLeave({$quit.ForeColor = 'black'})
 $quit.Add_Click({
+winget uninstall -e --id XPDNXG5333CSVK
 Task
 $Form.Close()
 })
