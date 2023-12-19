@@ -53,7 +53,7 @@ $formControls = GetWPFObjects $formatedXaml $window
 #Default Install setup
 $formControls.chkboxAdobe.IsChecked = $true
 $formControls.chkboxGoogleChrome.IsChecked = $true
-#$formControls.chkboxTeamviewer.IsChecked = $true
+$formControls.chkboxTeamviewer.IsChecked = $true
 $manufacturerBrand = GetManufacturer
 if($manufacturerBrand -match 'LENOVO')
 {
