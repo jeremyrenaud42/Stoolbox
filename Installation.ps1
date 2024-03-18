@@ -53,7 +53,7 @@ $formControls = GetWPFObjects $formatedXaml $window
 #Default Install setup
 $formControls.chkboxAdobe.IsChecked = $true
 $formControls.chkboxGoogleChrome.IsChecked = $true
-$formControls.chkboxTeamviewer.IsChecked = $true
+#$formControls.chkboxTeamviewer.IsChecked = $true
 $manufacturerBrand = GetManufacturer
 if($manufacturerBrand -match 'LENOVO')
 {
@@ -252,7 +252,7 @@ function Debut
     Addlog "installationlog.txt" "Installation de $windowsVersion le $actualDate"
     $lblProgres.Text = "Préparation"
     $richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")
-    MusicDebut "$pathInstallation\Source\Intro.mp3" 
+    #MusicDebut "$pathInstallation\Source\Intro.mp3" 
     Chocoinstall
     Wingetinstall
 }
