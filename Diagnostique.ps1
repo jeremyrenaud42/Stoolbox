@@ -11,7 +11,7 @@ function ImportModules
     }
 }
 
-$desktop = [Environment]::GetFolderPath("Desktop")
+#$desktop = [Environment]::GetFolderPath("Desktop")
 $pathDiagnostique = "$env:SystemDrive\_Tech\Applications\Diagnostique"
 $pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\source"
 set-location $pathDiagnostique
@@ -138,7 +138,7 @@ $BoutonCPU.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonCPU.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonCPU.Add_MouseEnter({$BoutonCPU.ForeColor = 'White'})
 $BoutonCPU.Add_MouseLeave({$BoutonCPU.ForeColor = 'black'})
-$BoutonCPU.Add_Click({UnzipApp "CPU" 'https://ftp.alexchato9.com/public/file/BB4NxwBawUmDufbDNKEJAA/CPU.zip' "$pathDiagnostiqueSource"})
+$BoutonCPU.Add_Click({UnzipApp "CPU" 'https://ftp.alexchato9.com/public/file/fZ4zZStnwkqNBtocga81mw/CPU.zip' "$pathDiagnostiqueSource"})
 $BoutonCPU.Add_Click({$BoutonCPU.visible = $false})
 $BoutonCPU.Add_Click({$Aida.visible = $true})
 $BoutonCPU.Add_Click({$Prime95.visible = $true})
@@ -225,7 +225,7 @@ $docCoretemp.visible = $false
 
 #Prime95
 $Prime95 = New-Object System.Windows.Forms.Button
-$Prime95.Location = New-Object System.Drawing.Point(105,400)
+$Prime95.Location = New-Object System.Drawing.Point(105,250)
 $Prime95.Width = '120'
 $Prime95.Height = '55'
 $Prime95.ForeColor='black'
@@ -252,47 +252,12 @@ $Prime95.Add_MouseEnter({$tooltipPrime95})
 $Prime95.visible = $false
 #info
 $docPrime95 = New-Object System.Windows.Forms.Button
-$docPrime95.Location = New-Object System.Drawing.Point(105,440)
+$docPrime95.Location = New-Object System.Drawing.Point(105,290)
 $docPrime95.size = '33,18'
 $docPrime95.Text = "Doc"
 $docPrime95.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Prime95\docs.txt"})
 $docPrime95.visible = $false
 #$Form.Controls.Add($docPrime95)
-
-#CPUZ
-$CPUZ = New-Object System.Windows.Forms.Button
-$CPUZ.Location = New-Object System.Drawing.Point(105,250)
-$CPUZ.Width = '120'
-$CPUZ.Height = '55'
-$CPUZ.ForeColor='black'
-$CPUZ.BackColor = 'cyan'
-$CPUZ.Text = "CPUZ"
-$CPUZ.Font= 'Microsoft Sans Serif,12'
-$CPUZ.FlatStyle = 'Flat'
-$CPUZ.FlatAppearance.BorderSize = 2
-$CPUZ.FlatAppearance.BorderColor = 'black'
-$CPUZ.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
-$CPUZ.FlatAppearance.MouseOverBackColor = 'gray'
-$CPUZ.Add_MouseEnter({$CPUZ.ForeColor = 'White'})
-$CPUZ.Add_MouseLeave({$CPUZ.ForeColor = 'black'})
-$CPUZ.Add_Click({
-Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\CPUZ\cpuz.exe"
-})
-#Tooltip
-$tooltipCPUZ = New-Object System.Windows.Forms.ToolTip
-$tooltipCPUZ.IsBalloon =$true
-$tooltipCPUZText = "Information sur le CPU,la carte mère et la mémoire"
-$tooltipCPUZ.SetToolTip($CPUZ, $tooltipCPUZText)
-$CPUZ.Add_MouseEnter({$tooltipCPUZ})
-$CPUZ.visible = $false
-#info
-$docCPUZ = New-Object System.Windows.Forms.Button
-$docCPUZ.Location = New-Object System.Drawing.Point(105,290)
-$docCPUZ.size = '33,18'
-$docCPUZ.Text = "Doc"
-$docCPUZ.Add_Click({Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\CPUZ\docs.txt"})
-$docCPUZ.visible = $false
-#$Form.Controls.Add($docCPUZ)
 
 #HeavyLoad
 $HeavyLoad = New-Object System.Windows.Forms.Button
