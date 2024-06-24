@@ -1,4 +1,4 @@
-#Les assembly sont nécéssaire pour le fonctionnement du script. Ne pas effacer
+#V0.5
 Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
@@ -43,7 +43,8 @@ function Tweaking
     $path = Test-Path "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
     if($path -eq $false)
     {
-        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/xOQ0JbscWkmQZ-5Zfwzpnw/tweaking.com%20-%20Windows%20Repair.zip' -OutFile "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip"
+        #choco install windowsrepair , il faudra revoir le start process aussi
+        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/BRP1JxyMI0edKIft_yYt2g/tweaking.com%20-%20Windows%20Repair.zip' -OutFile "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip"
         Expand-Archive "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip" "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak"
         Remove-Item "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip"
         Copy-Item "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair"
