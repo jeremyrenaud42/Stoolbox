@@ -138,7 +138,8 @@ $BoutonCPU.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $BoutonCPU.FlatAppearance.MouseOverBackColor = 'gray'
 $BoutonCPU.Add_MouseEnter({$BoutonCPU.ForeColor = 'White'})
 $BoutonCPU.Add_MouseLeave({$BoutonCPU.ForeColor = 'black'})
-$BoutonCPU.Add_Click({UnzipApp "CPU" 'https://ftp.alexchato9.com/public/file/fZ4zZStnwkqNBtocga81mw/CPU.zip' "$pathDiagnostiqueSource"})
+#$BoutonCPU.Add_Click({UnzipApp "CPU" 'https://ftp.alexchato9.com/public/file/fZ4zZStnwkqNBtocga81mw/CPU.zip' "$pathDiagnostiqueSource"})
+$BoutonCPU.Add_Click({new-item -ItemType Directory -path "$pathDiagnostiqueSource\CPU"})
 $BoutonCPU.Add_Click({$BoutonCPU.visible = $false})
 $BoutonCPU.Add_Click({$Aida.visible = $true})
 $BoutonCPU.Add_Click({$Prime95.visible = $true})
@@ -168,7 +169,8 @@ $Aida.FlatAppearance.MouseOverBackColor = 'gray'
 $Aida.Add_MouseEnter({$Aida.ForeColor = 'White'})
 $Aida.Add_MouseLeave({$Aida.ForeColor = 'black'})
 $Aida.Add_Click({
-Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Aida64\aida64.exe"
+UnzipAppLaunch "Aida64" "https://ftp.alexchato9.com/public/file/WPdP-yDdBE2pOpHVFKNC6g/Aida64.zip" "aida64.exe" "$pathDiagnostiqueSource\cpu"
+#Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Aida64\aida64.exe"
 Addlog "diagnostiquelog.txt" "Test de stabilité du système effectué"
 })
 #tooltip
@@ -204,7 +206,8 @@ $Coretemp.FlatAppearance.MouseOverBackColor = 'gray'
 $Coretemp.Add_MouseEnter({$Coretemp.ForeColor = 'White'})
 $Coretemp.Add_MouseLeave({$Coretemp.ForeColor = 'black'})
 $Coretemp.Add_Click({
-Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Core_Temp\Core Temp.exe" 
+UnzipAppLaunch "Core_Temp" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core_Temp.zip" "Core Temp.exe" "$pathDiagnostiqueSource\cpu"
+#Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Core_Temp\Core Temp.exe" 
 Addlog "diagnostiquelog.txt" "Température du CPU vérifié"
 })
 #Tooltip
@@ -239,8 +242,9 @@ $Prime95.FlatAppearance.MouseDownBackColor = 'Darkmagenta'
 $Prime95.FlatAppearance.MouseOverBackColor = 'gray'
 $Prime95.Add_MouseEnter({$Prime95.ForeColor = 'White'})
 $Prime95.Add_MouseLeave({$Prime95.ForeColor = 'black'})
-$Prime95.Add_Click(
-{Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Prime95\prime95.exe"
+$Prime95.Add_Click({
+UnzipAppLaunch "Prime95" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "Prime95.exe" "$pathDiagnostiqueSource\cpu"
+#Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\Prime95\prime95.exe"
 Addlog "diagnostiquelog.txt" "Stress test du CPU effectué"
 })
 #Tooltip
@@ -276,7 +280,8 @@ $HeavyLoad.FlatAppearance.MouseOverBackColor = 'gray'
 $HeavyLoad.Add_MouseEnter({$HeavyLoad.ForeColor = 'White'})
 $HeavyLoad.Add_MouseLeave({$HeavyLoad.ForeColor = 'black'})
 $HeavyLoad.Add_Click({
-Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\HeavyLoad\HeavyLoad.exe" -ArgumentList "/start /cpu"
+UnzipAppLaunch "HeavyLoad" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "HeavyLoad.exe" "$pathDiagnostiqueSource\cpu"
+#Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\CPU\HeavyLoad\HeavyLoad.exe" -ArgumentList "/start /cpu"
 Addlog "diagnostiquelog.txt" "Test de stabilité du système effectué"
 })
 #Tooltip
