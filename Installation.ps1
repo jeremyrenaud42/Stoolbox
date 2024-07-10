@@ -42,216 +42,174 @@ $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cel
 $pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
 $windowsVersion = (Get-WmiObject -class Win32_OperatingSystem).Caption
 PrepareDependencies
-#WPF
+#WPF - appMenuChoice
 $inputXML = importXamlFromFile "$pathInstallation\source\MainWindow.xaml"
 $formatedXaml = FormatXamlFile $inputXML
 $ObjectXaml = CreateXamlObject $formatedXaml
 $window = LoadWPFWindowFromXaml $ObjectXaml
-$formControls = GetWPFObjects $formatedXaml $window
+$formControlsMenuApp = GetWPFObjects $formatedXaml $window
 
 #ajout des events, cases a cocher
 #Default Install setup
-$formControls.chkboxAdobe.IsChecked = $true
-$formControls.chkboxGoogleChrome.IsChecked = $true
-#$formControls.chkboxTeamviewer.IsChecked = $true
+$formControlsMenuApp.chkboxAdobe.IsChecked = $true
+$formControlsMenuApp.chkboxGoogleChrome.IsChecked = $true
 $manufacturerBrand = GetManufacturer
 if($manufacturerBrand -match 'LENOVO')
 {
-    $formControls.chkboxLenovoVantage.IsChecked = $true
-    $formControls.chkboxLenovoSystemUpdate.IsChecked = $true
+    $formControlsMenuApp.chkboxLenovoVantage.IsChecked = $true
+    $formControlsMenuApp.chkboxLenovoSystemUpdate.IsChecked = $true
 }
 elseif($manufacturerBrand -match 'HP')
 {        
-    $formControls.chkboxHPSA.IsChecked = $true
+    $formControlsMenuApp.chkboxHPSA.IsChecked = $true
 }
 elseif($manufacturerBrand -match 'DELL')
 {
-    $formControls.chkboxDellsa.IsChecked = $true
+    $formControlsMenuApp.chkboxDellsa.IsChecked = $true
 }
 elseif($manufacturerBrand -like '*Micro-Star*')
 {
-    $formControls.chkboxMSICenter.IsChecked = $true
+    $formControlsMenuApp.chkboxMSICenter.IsChecked = $true
 }
 $VideoController = Get-WmiObject win32_VideoController | Select-Object -Property name
 if($VideoController -match 'NVIDIA')
 {
-    $formControls.chkboxGeForce.IsChecked = $true
+    $formControlsMenuApp.chkboxGeForce.IsChecked = $true
 }
-#$formControls.btnGo.Add_Click({})
+#$formControlsMenuApp.btnGo.Add_Click({})
 
-LaunchWPFApp $window
+LaunchWPFAppDialog $window
 
 function InstallCheckedSoftware
 {
-    if($formControls.chkboxAdobe.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxAdobe.IsChecked -eq $true)
     {
         $appName = "Adobe Reader"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkboxGoogleChrome.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxGoogleChrome.IsChecked -eq $true)
     {
         $appName = "Google chrome"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkboxTeamviewer.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxTeamviewer.IsChecked -eq $true)
     {
         $appName = "Teamviewer"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkboxLenovoSystemUpdate.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxLenovoSystemUpdate.IsChecked -eq $true)
     {
         $appName = "Lenovo System Update"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkboxLenovoVantage.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxLenovoVantage.IsChecked -eq $true)
     {
         $appName = "Lenovo Vantage"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkboxHPSA.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxHPSA.IsChecked -eq $true)
     {   
         InstallHPSA
     }
-    if($formControls.chkboxDellsa.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxDellsa.IsChecked -eq $true)
     {
         InstallDellSA
     }
-    if($formControls.chkboxMyAsus.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxMyAsus.IsChecked -eq $true)
     {
         $appName = "MyAsus"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkboxMSICenter.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxMSICenter.IsChecked -eq $true)
     {
         $appName = "MSI Center"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkboxGeForce.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxGeForce.IsChecked -eq $true)
     {
         $appName = "GeForce Experience"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkboxVLC.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxVLC.IsChecked -eq $true)
     {
         $appName = "VLC"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkbox7zip.IsChecked -eq $true)
+    if($formControlsMenuApp.chkbox7zip.IsChecked -eq $true)
     {
         $appName = "7Zip"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkboxSteam.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxSteam.IsChecked -eq $true)
     {
         $appName = "Steam"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkboxZoom.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxZoom.IsChecked -eq $true)
     {
         $appName = "Zoom"
         InstallSoftware $appsInfo.$appName
     }
-    if($formControls.chkboxDiscord.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxDiscord.IsChecked -eq $true)
     {
         $appName = "Discord"
         InstallSoftware $appsInfo.$appName
     }    
-    if($formControls.chkboxFirefox.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxFirefox.IsChecked -eq $true)
     {
         $appName = "Firefox"
         InstallSoftware $appsInfo.$appName
     }   
-    if($formControls.chkboxLibreOffice.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxLibreOffice.IsChecked -eq $true)
     {
         $appName = "Libre Office"
         InstallSoftware $appsInfo.$appName
     }   
-    if($formControls.chkboxCdburnerxp.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxCdburnerxp.IsChecked -eq $true)
     {
         $appName = "CDBurnerXP"
         InstallSoftware $appsInfo.$appName
     } 
-    if($formControls.chkboxIntel.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxIntel.IsChecked -eq $true)
     {
         $appName = "IntelDriver"
         InstallSoftware $appsInfo.$appName
     }  
-    if($formControls.chkboxMacrium.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxMacrium.IsChecked -eq $true)
     {
         $appName = "Macrium"
         InstallSoftware $appsInfo.$appName
     }  
-    if($formControls.chkboxSpotify.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxSpotify.IsChecked -eq $true)
     {
         $appName = "Spotify"
         InstallSoftware $appsInfo.$appName
     }  
-    if($formControls.chkboxOpera.IsChecked -eq $true)
+    if($formControlsMenuApp.chkboxOpera.IsChecked -eq $true)
     {
         $appName = "Opera"
         InstallSoftware $appsInfo.$appName
     }     
 }
 
-$form = New-Object System.Windows.Forms.Form #Créer la fenêtre GUI
-$form.ClientSize = '1041,688' #Taille de la GUI
-$form.Text = "Installation Windows" #Titre de la GUI (apparait en haut à gauche)
-$form.StartPosition = 'Centerscreen' #position de démarrage
-$form.MaximizeBox = $false #Ne peut pas s'agrandir
-$form.AutoSize = $false #Ne peut pas modifier la taille de la fenêtre
-$form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Source\Images\Icone.ico") #chemin de l'icone. 
+#WPF - Main GUI
+Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow1.xaml' -OutFile "$pathInstallation\Source\MainWindow1.xaml" | Out-Null
+$inputXML = importXamlFromFile "$pathInstallation\source\MainWindow1.xaml"
+$formatedXaml = FormatXamlFile $inputXML
+$ObjectXaml = CreateXamlObject $formatedXaml
+$window = LoadWPFWindowFromXaml $ObjectXaml
+$formControlsMain = GetWPFObjects $formatedXaml $window
 
-#titre du champ texte de la fenêtre (en dessous du titre de la Form)
-$lblTitre = New-Object System.Windows.Forms.Label #Creer la label du titre
-$lblTitre.Location = New-Object System.Drawing.Point(57,0) #position du titre par rapport à la fenêtre GUI
-$lblTitre.AutoSize = $false #ne peut pas adapter sa taille en fonction de chaque taille d'écran (empêche les déformations)
-$lblTitre.width = 925 #largeur du label
-$lblTitre.height = 50 #hateur du label
-$lblTitre.TextAlign = 'middlecenter' #comment le texte apparait (aligner et centrer)
-$lblTitre.Font= 'Microsoft Sans Serif,16' #la sorte et taille de police
-$lblTitre.BackColor = 'darkcyan' #couleur de l'arriere plan du label
-$lblTitre.Text = "Configuration du Windows" #Texte affiché dans le label
-$form.Controls.Add($lblTitre) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
-
-#progressbar manuel
-$lblProgres = New-Object System.Windows.Forms.Label #créer la barre de progres
-$lblProgres.Location = New-Object System.Drawing.Point(57,50) #position de la barre de progres
-$lblProgres.AutoSize = $false #ne peut pas adapter sa taille en fonction de chaque taille d'écran (empêche les déformations)
-$lblProgres.width = 925 #largeur du label
-$lblProgres.height = 20 #hateur du label
-$lblProgres.TextAlign = 'middlecenter' #comment le texte apparait (aligner et centrer)
-$lblProgres.Font= 'Consolas,12' #la sorte et taille de police
-$lblProgres.forecolor = 'white' #couleur de la police
-$lblProgres.BackColor = 'darkred' #couleur de l'arriere plan du label
-$form.Controls.Add($lblProgres) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
-
-#Zone ou les étapes s'affiche
-$richTxtBxOutput = New-Object System.Windows.Forms.RichTextBox #Créer la zone
-$richTxtBxOutput.Location = New-Object System.Drawing.Point(57,70) #position de la zone
-$richTxtBxOutput.AutoSize = $false #ne peut pas adapter sa taille en fonction de chaque taille d'écran (empêche les déformations)
-$richTxtBxOutput.width = 925 #largeur du label
-$richTxtBxOutput.height = 600 #hateur du label
-$richTxtBxOutput.Font= 'Microsoft Sans Serif,11' #la sorte et taille de police
-$richTxtBxOutput.BorderStyle = 'fixed3D' #Style de la bordure de la zone de texte
-$richTxtBxOutput.multiline = $true
-$richTxtBxOutput.ScrollBars = 'Vertical'
-$richTxtBxOutput.ReadOnly = $true
-$richTxtBxOutput.AcceptsTab =$false
-$richTxtBxOutput.enabled = $false
-$richTxtBxOutput.Add_TextChanged({
-$richTxtBxOutput.SelectionStart = $richTxtBxOutput.Text.Length
-$richTxtBxOutput.ScrollToCaret()
-})
-$form.Controls.Add($richTxtBxOutput) #ajoute officiellement le label. Il suffit de mettre cette ligne en commentaire et le label ne s'affichera plus
-
-$form.Show() | out-null #afficher la form, ne jamais enlever sinon plus d'affichage GUI
+LaunchWPFApp $window
 
 function Debut
 {
     $actualDate = (Get-Date).ToString()
     Addlog "installationlog.txt" "Installation de $windowsVersion le $actualDate"
-    $lblProgres.Text = "Préparation"
-    $richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")
+    $formControlsMain.lblProgress.content = "Préparation"
+    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")
+    [System.Windows.Forms.Application]::DoEvents()
     #MusicDebut "$pathInstallation\Source\Intro.mp3" 
     Chocoinstall
     Wingetinstall
@@ -271,11 +229,14 @@ function PrepareWindowsUpdate
 
 function GetWindowsUpdate
 {
-    $lblProgres.Text = "Mises à jour de Windows"
-    $richTxtBxOutput.AppendText("Installation des mises à jour de Windows")
+    $formControlsMain.lblProgress.Content = "Mises à jour de Windows"
+    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.richTxtBxOutput.AppendText("Installation des mises à jour de Windows")
+    [System.Windows.Forms.Application]::DoEvents()
     PrepareWindowsUpdate 
     Get-WindowsUpdate -MaxSize 250mb -Install -AcceptAll -IgnoreReboot | out-null #download et install les updates de moins de 250mb sans reboot
-    $richTxtBxOutput.AppendText(" -Mises à jour de Windows effectuées`r`n")
+    $formControlsMain.richTxtBxOutput.AppendText(" -Mises à jour de Windows effectuées`r`n")
+    [System.Windows.Forms.Application]::DoEvents()
     Addlog "installationlog.txt" "Mises à jour de Windows effectuées"
 }
 
@@ -298,69 +259,84 @@ function DisableCortanaStartup
 
 Function RenameSystemDrive
 {
-    $lblProgres.Text = "Renommage du disque"
+    $formControlsMain.lblProgress.Content = "Renommage du disque"
+    [System.Windows.Forms.Application]::DoEvents()
     Set-Volume -DriveLetter 'C' -NewFileSystemLabel "OS"
-    $richTxtBxOutput.AppendText("`r`nLe disque C: a été renommé OS`r`n")
+    $formControlsMain.richTxtBxOutput.AppendText("`r`nLe disque C: a été renommé OS`r`n")
+    [System.Windows.Forms.Application]::DoEvents()
     Addlog "installationlog.txt" "Le disque C: a été renommé OS"
 }
 
 Function ConfigureExplorer
 {
-    $lblProgres.Text = "Configuration des paramètres de l'explorateur de fichiers"
+    $formControlsMain.lblProgress.Content = "Configuration des paramètres de l'explorateur de fichiers"
+    [System.Windows.Forms.Application]::DoEvents()
     set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo' -Type 'DWord' -Value '1'
-    $richTxtBxOutput.AppendText("L'accès rapide a été remplacé par Ce PC`r`n")
+    $formControlsMain.richTxtBxOutput.AppendText("L'accès rapide a été remplacé par Ce PC`r`n")
+    [System.Windows.Forms.Application]::DoEvents()
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications' -Type 'DWord' -Value '0'
-    $richTxtBxOutput.AppendText("Le fournisseur de synchronisation a été decoché`r`n")
-    Addlog "installationlog.txt" "Explorateur de fichiers configuré"  
+    $formControlsMain.richTxtBxOutput.AppendText("Le fournisseur de synchronisation a été decoché`r`n")
+    [System.Windows.Forms.Application]::DoEvents()
+    Addlog "installationlog.txt" "Explorateur de fichiers configuré" 
 }
 
  Function DisableBitlocker
 {
-    $lblProgres.Text = "Désactivation du bitlocker"
+    $formControlsMain.lblProgress.Content = "Désactivation du bitlocker"
+    [System.Windows.Forms.Application]::DoEvents()
     $bitlockerStatus = Get-BitLockerVolume | Select-Object -expand VolumeStatus
         if ($bitlockerStatus -eq 'EncryptionInProgress')
         {
             $bitlockerVolume = Get-BitLockerVolume
             Disable-BitLocker -MountPoint $bitlockerVolume | Out-Null
-            $richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")
+            $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")
+            [System.Windows.Forms.Application]::DoEvents()
         }
     Addlog "installationlog.txt" "Bitlocker a été désactivé"
 }
 
 Function DisableFastBoot
 {
-    $lblProgres.Text = "Desactivation du demarrage rapide"
+    $formControlsMain.lblProgress.Content = "Desactivation du demarrage rapide"
+    [System.Windows.Forms.Application]::DoEvents()
     set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Name 'HiberbootEnabled' -Type 'DWord' -Value '0'
     #powercfg /h off
-    $richTxtBxOutput.AppendText("Le démarrage rapide a été désactivé`r`n")
+    $formControlsMain.richTxtBxOutput.AppendText("Le démarrage rapide a été désactivé`r`n")
+    [System.Windows.Forms.Application]::DoEvents()
     Addlog "installationlog.txt" "Le démarrage rapide a été désactivé"
 }
 
 Function RemoveEngKeyboard
 {
-    $lblProgres.Text = "Suppression du clavier Anglais"
+    $formControlsMain.lblProgress.Content = "Suppression du clavier Anglais"
+    [System.Windows.Forms.Application]::DoEvents()
     $langList = Get-WinUserLanguageList #Gets the language list for the current user account
     $anglaisCanada = $langList | Where-Object LanguageTag -eq "en-CA" #sélectionne le clavier anglais canada de la liste
     $langList.Remove($anglaisCanada) | Out-Null #supprimer la clavier sélectionner
     Set-WinUserLanguageList $langList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
-    $richTxtBxOutput.AppendText("Le clavier Anglais a été supprimé`r`n")
+    $formControlsMain.richTxtBxOutput.AppendText("Le clavier Anglais a été supprimé`r`n")
+    [System.Windows.Forms.Application]::DoEvents()
     Addlog "installationlog.txt" "Le clavier Anglais a été supprimé"
 }
 
 Function ConfigurePrivacy
 {
-    $lblProgres.Text = "Paramètres de confidentialité"
+    $formControlsMain.lblProgress.Content = "Paramètres de confidentialité"
+    [System.Windows.Forms.Application]::DoEvents()
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type 'DWord' -Value 0 
-    $richTxtBxOutput.AppendText("Les options de confidentialité ont été configuré`r`n")
-    Addlog "installationlog.txt" "Les options de confidentialité ont été configuré"  
+    $formControlsMain.richTxtBxOutput.AppendText("Les options de confidentialité ont été configuré`r`n")
+    [System.Windows.Forms.Application]::DoEvents()
+    Addlog "installationlog.txt" "Les options de confidentialité ont été configuré"
+    [System.Windows.Forms.Application]::DoEvents()  
 }
 
 Function DisplayDesktopIcon
 {
-    $lblProgres.Text = "Installation des icones systèmes sur le bureau"
+    $formControlsMain.lblProgress.Content = "Installation des icones systèmes sur le bureau"
+    [System.Windows.Forms.Application]::DoEvents()
     if (!(Test-Path -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel"))
 		{
 			New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Force
@@ -368,20 +344,23 @@ Function DisplayDesktopIcon
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type 'DWord' -Value 0
-    $richTxtBxOutput.AppendText("Les icones systèmes ont été installés sur le bureau`r`n")
+    $formControlsMain.richTxtBxOutput.AppendText("Les icones systèmes ont été installés sur le bureau`r`n")
+    $formControlsMain.richTxtBxOutput.AppendText(" `r`n") #Permet de créé un espace avant les logiciels
     Addlog "installationlog.txt" "Les icones systèmes ont été installés sur le bureau"
-    $richTxtBxOutput.AppendText(" `r`n") #Permet de créé un espace avant les logiciels
+    [System.Windows.Forms.Application]::DoEvents()
 }
 
 function UpdateMsStore
 {
-    $lblProgres.Text = "Mises à jour du Microsoft Store"
-    $richTxtBxOutput.AppendText("`r`nLancement des updates du Microsoft Store")   
+    $formControlsMain.lblProgress.Content = "Mises à jour du Microsoft Store"
+    $formControlsMain.richTxtBxOutput.AppendText("`r`nLancement des updates du Microsoft Store")
+    [System.Windows.Forms.Application]::DoEvents()   
     $namespaceName = "root\cimv2\mdm\dmmap"
     $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
     $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
     $wmiObj.UpdateScanMethod() | Out-Null
-    $richTxtBxOutput.AppendText(" -Mises à jour du Microsoft Store lancées`r`n")
+    $formControlsMain.richTxtBxOutput.AppendText(" -Mises à jour du Microsoft Store lancées`r`n")
+    [System.Windows.Forms.Application]::DoEvents()
     Addlog "installationlog.txt" "Mises à jour de Microsoft Store"
 }
 
@@ -412,12 +391,14 @@ $appNames | ForEach-Object {
 
 function InstallSoftware($appInfo)
 {
-    $lblProgres.Text = "Installation de $appName"
-    $richTxtBxOutput.AppendText("Installation de $appName en cours")
+    $formControlsMain.lblProgress.Content = "Installation de $appName"
+    $formControlsMain.richTxtBxOutput.AppendText("Installation de $appName en cours")
+    [System.Windows.Forms.Application]::DoEvents()
     $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
         if($SoftwareInstallationStatus)
         {
-            $richTxtBxOutput.AppendText(" -$appName est déja installé`r`n")
+            $formControlsMain.richTxtBxOutput.AppendText(" -$appName est déja installé`r`n")
+            [System.Windows.Forms.Application]::DoEvents()
         }
         elseif($SoftwareInstallationStatus -eq $false)
         {  
@@ -435,7 +416,8 @@ function InstallSoftwareWithWinget($appInfo)
     $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
         if($SoftwareInstallationStatus)
         {
-            $richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")  
+            $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")
+            [System.Windows.Forms.Application]::DoEvents()
         } 
         else
         {
@@ -452,11 +434,13 @@ function InstallSoftwareWithChoco($apsInfo)
     $SoftwareInstallationStatus = CheckSoftwarePresence $apsInfo
     if($SoftwareInstallationStatus)
     {   
-        $richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")
+        $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")
+        [System.Windows.Forms.Application]::DoEvents()
     }
     else
     {
-        $richTxtBxOutput.AppendText(" -$appName a échoué`r`n")
+        $formControlsMain.richTxtBxOutput.AppendText(" -$appName a échoué`r`n")
+        [System.Windows.Forms.Application]::DoEvents()
         InstallSoftwareWithNinite $appInfo
     } 
 }
@@ -493,7 +477,8 @@ function InstallLenovoSA
 
 Function UpdateDrivers
 {
-    $lblProgres.Text = "Vérification des pilotes"
+    $formControlsMain.lblProgress.Content = "Vérification des pilotes"
+    [System.Windows.Forms.Application]::DoEvents()
     $manufacturerBrand = GetManufacturer
     if($manufacturerBrand -match 'LENOVO')
     {
@@ -546,12 +531,14 @@ function CheckActivationStatus
     $activated
     if($activated -eq "1")
     {
-        $richTxtBxOutput.AppendText("`r`n$windowsVersion est activé sur cet ordinateur`r`n")
+        $formControlsMain.richTxtBxOutput.AppendText("`r`n$windowsVersion est activé sur cet ordinateur`r`n")
+        [System.Windows.Forms.Application]::DoEvents()
     }
     else 
     {
         [Microsoft.VisualBasic.Interaction]::MsgBox("Windows n'est pas activé",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
-        $richTxtBxOutput.AppendText("`r`nWindows n'est pas activé`r`n")
+        $formControlsMain.richTxtBxOutput.AppendText("`r`nWindows n'est pas activé`r`n")
+        [System.Windows.Forms.Application]::DoEvents()
     }  
 }
 
@@ -602,7 +589,7 @@ function Fin
     $rebootStatus = get-wurebootstatus -Silent #vérifie si ordi doit reboot à cause de windows update
     if($rebootStatus)
     {
-        $richTxtBxOutput.AppendText("`r`nL'ordinateur devra redémarrer pour finaliser l'installation des mises à jour")
+        $formControlsMain.richTxtBxOutput.AppendText("`r`nL'ordinateur devra redémarrer pour finaliser l'installation des mises à jour")
         [Microsoft.VisualBasic.Interaction]::MsgBox("L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
         shutdown /r /t 300
         Task #tâche planifié qui delete tout
