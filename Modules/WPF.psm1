@@ -51,6 +51,11 @@ function GetWPFObjects($formatedXaml, $window)
 
 function LaunchWPFApp($window)
 {
+    $Null = $window.Show() 
+}
+
+function LaunchWPFAppDialog($window)
+{
     $Null = $window.ShowDialog() 
 }
 
@@ -61,6 +66,14 @@ $formatedXaml = FormatXamlFile $inputXML
 $ObjectXaml = CreateXamlObject $formatedXaml
 $window = LoadWPFWindowFromXaml $ObjectXaml
 $formControls = GetWPFObjects $formatedXaml $window
+
+#faire mes Events ici
+ex: $formControls.btnGo.Add_Click({
+    write-host "allo"
+})
+#rendre les case a cocher true si hp, geforce etc.. 
+$formControls.chkboxGeForce.IsChecked = $true
+
 LaunchWPFApp $window
 #>
 
