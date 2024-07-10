@@ -137,4 +137,4 @@ $formControls.btnQuit.Add_Click({
     $window.Close() 
 })
 
-LaunchWPFApp $window
+LaunchWPFAppDialog $window
