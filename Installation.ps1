@@ -26,7 +26,7 @@ function PrepareDependencies
     ImportModules
     CreateFolder "_Tech\Applications\Installation\source"
     CheckInternetStatus
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Intro.mp3' -OutFile "$pathInstallation\Source\Intro.mp3" | Out-Null
+    #Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Intro.mp3' -OutFile "$pathInstallation\Source\Intro.mp3" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Apps.JSON' -OutFile "$pathInstallation\Source\Apps.JSON" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' -OutFile "$pathInstallation\Source\MainWindow.xaml" | Out-Null
 }
@@ -38,6 +38,7 @@ function GetManufacturer
     return $manufacturerBrand
 }
 
+#$ProgressPreference = 'SilentlyContinue'
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
 $pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
 $windowsVersion = (Get-WmiObject -class Win32_OperatingSystem).Caption
