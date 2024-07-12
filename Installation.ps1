@@ -43,6 +43,7 @@ $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cel
 $pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
 $windowsVersion = (Get-WmiObject -class Win32_OperatingSystem).Caption
 PrepareDependencies
+
 #WPF - appMenuChoice
 $inputXML = importXamlFromFile "$pathInstallation\source\MainWindow.xaml"
 $formatedXaml = FormatXamlFile $inputXML
@@ -50,7 +51,8 @@ $ObjectXaml = CreateXamlObject $formatedXaml
 $window = LoadWPFWindowFromXaml $ObjectXaml
 $formControlsMenuApp = GetWPFObjects $formatedXaml $window
 
-#ajout des events, cases a cocher
+#ajout des events, cases a cocher, etc.. pour le WPF:
+
 #Default Install setup
 $formControlsMenuApp.chkboxAdobe.IsChecked = $true
 $formControlsMenuApp.chkboxGoogleChrome.IsChecked = $true
@@ -77,10 +79,28 @@ if($VideoController -match 'NVIDIA')
 {
     $formControlsMenuApp.chkboxGeForce.IsChecked = $true
 }
-#$formControlsMenuApp.btnGo.Add_Click({})
+$formControlsMenuApp.btnGo.Add_Click({
+$window.Close()
+})
+$formControlsMenuApp.btnReturn.Add_Click({
+    start-process "$env:SystemDrive\\_Tech\\Menu.bat" -verb Runas
+    $window.Close()
+    Exit
+})
+$formControlsMenuApp.btnclose.Add_Click({
+    $window.Close()
+    Exit
+})
+$formControlsMenuApp.btnQuit.Add_Click({
+    Task
+    $window.Close()
+    Exit
+})
 
 LaunchWPFAppDialog $window
 
+
+#Install les logiciels coché
 function InstallCheckedSoftware
 {
     if($formControlsMenuApp.chkboxAdobe.IsChecked -eq $true)
