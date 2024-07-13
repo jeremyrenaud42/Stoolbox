@@ -143,6 +143,11 @@ $ObjectXaml = CreateXamlObject $formatedXaml
 $window = LoadWPFWindowFromXaml $ObjectXaml
 $formControlsMain = GetWPFObjects $formatedXaml $window
 
+$formControlsMain.richTxtBxOutput.add_textchanged({
+    $formControlsMain.richTxtBxOutput.ScrollToCaret()
+    $formControlsMain.richTxtBxOutput.ScrollToEnd()
+})
+
 LaunchWPFApp $window
 
 function Debut
