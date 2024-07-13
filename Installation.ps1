@@ -53,9 +53,7 @@ $formControlsMenuApp = GetWPFObjects $formatedXaml $window
 
 #ajout des events, cases a cocher, etc.. pour le WPF:
 
-#Default Install setup
-$formControlsMenuApp.chkboxAdobe.IsChecked = $true
-$formControlsMenuApp.chkboxGoogleChrome.IsChecked = $true
+#Logiciels à cocher automatiquement
 $manufacturerBrand = GetManufacturer
 if($manufacturerBrand -match 'LENOVO')
 {
@@ -79,6 +77,7 @@ if($VideoController -match 'NVIDIA')
 {
     $formControlsMenuApp.chkboxGeForce.IsChecked = $true
 }
+#Boutons
 $formControlsMenuApp.btnGo.Add_Click({
 $window.Close()
 })
@@ -100,117 +99,40 @@ $formControlsMenuApp.btnQuit.Add_Click({
 LaunchWPFAppDialog $window
 
 
-#Install les logiciels coché
+#Install les logiciels cochés
+function InstallCheckedSoftware2($Controlbx,$appName)
+{
+    if($formControlsMenuApp.$Controlbx.IsChecked -eq $true)
+    {
+        InstallSoftware $appsInfo.$appName
+    }
+}
+
+
 function InstallCheckedSoftware
 {
-    if($formControlsMenuApp.chkboxAdobe.IsChecked -eq $true)
-    {
-        $appName = "Adobe Reader"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkboxGoogleChrome.IsChecked -eq $true)
-    {
-        $appName = "Google chrome"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkboxTeamviewer.IsChecked -eq $true)
-    {
-        $appName = "Teamviewer"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkboxLenovoSystemUpdate.IsChecked -eq $true)
-    {
-        $appName = "Lenovo System Update"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkboxLenovoVantage.IsChecked -eq $true)
-    {
-        $appName = "Lenovo Vantage"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkboxHPSA.IsChecked -eq $true)
-    {   
-        InstallHPSA
-    }
-    if($formControlsMenuApp.chkboxDellsa.IsChecked -eq $true)
-    {
-        InstallDellSA
-    }
-    if($formControlsMenuApp.chkboxMyAsus.IsChecked -eq $true)
-    {
-        $appName = "MyAsus"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkboxMSICenter.IsChecked -eq $true)
-    {
-        $appName = "MSI Center"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkboxGeForce.IsChecked -eq $true)
-    {
-        $appName = "GeForce Experience"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkboxVLC.IsChecked -eq $true)
-    {
-        $appName = "VLC"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkbox7zip.IsChecked -eq $true)
-    {
-        $appName = "7Zip"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkboxSteam.IsChecked -eq $true)
-    {
-        $appName = "Steam"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkboxZoom.IsChecked -eq $true)
-    {
-        $appName = "Zoom"
-        InstallSoftware $appsInfo.$appName
-    }
-    if($formControlsMenuApp.chkboxDiscord.IsChecked -eq $true)
-    {
-        $appName = "Discord"
-        InstallSoftware $appsInfo.$appName
-    }    
-    if($formControlsMenuApp.chkboxFirefox.IsChecked -eq $true)
-    {
-        $appName = "Firefox"
-        InstallSoftware $appsInfo.$appName
-    }   
-    if($formControlsMenuApp.chkboxLibreOffice.IsChecked -eq $true)
-    {
-        $appName = "Libre Office"
-        InstallSoftware $appsInfo.$appName
-    }   
-    if($formControlsMenuApp.chkboxCdburnerxp.IsChecked -eq $true)
-    {
-        $appName = "CDBurnerXP"
-        InstallSoftware $appsInfo.$appName
-    } 
-    if($formControlsMenuApp.chkboxIntel.IsChecked -eq $true)
-    {
-        $appName = "IntelDriver"
-        InstallSoftware $appsInfo.$appName
-    }  
-    if($formControlsMenuApp.chkboxMacrium.IsChecked -eq $true)
-    {
-        $appName = "Macrium"
-        InstallSoftware $appsInfo.$appName
-    }  
-    if($formControlsMenuApp.chkboxSpotify.IsChecked -eq $true)
-    {
-        $appName = "Spotify"
-        InstallSoftware $appsInfo.$appName
-    }  
-    if($formControlsMenuApp.chkboxOpera.IsChecked -eq $true)
-    {
-        $appName = "Opera"
-        InstallSoftware $appsInfo.$appName
-    }     
+    InstallCheckedSoftware2 "chkboxAdobe" "Adobe Reader"
+    InstallCheckedSoftware2 "chkboxGoogleChrome" "Google chrome"
+    InstallCheckedSoftware2 "chkboxLenovoSystemUpdate" "Lenovo System Update"
+    InstallCheckedSoftware2 "chkboxLenovoVantage" "Lenovo Vantage"
+    InstallCheckedSoftware2 "chkboxMyAsus" "MyAsus"
+    InstallCheckedSoftware2 "chkboxMSICenter" "MSI Center"
+    InstallCheckedSoftware2 "chkboxHPSA" "Hp Support Assistant"
+    InstallCheckedSoftware2 "chkboxDellsa" "Dell Command Update"
+    InstallCheckedSoftware2 "chkboxIntel" "IntelDriver"
+    InstallCheckedSoftware2 "chkboxGeForce" "GeForce Experience"
+    InstallCheckedSoftware2 "chkboxMacrium" "Macrium"
+    InstallCheckedSoftware2 "chkboxTeamviewer" "Teamviewer"
+    InstallCheckedSoftware2 "chkboxVLC" "VLC"
+    InstallCheckedSoftware2 "chkbox7zip" "7Zip"
+    InstallCheckedSoftware2 "chkboxSteam" "Steam"
+    InstallCheckedSoftware2 "chkboxZoom" "Zoom"
+    InstallCheckedSoftware2 "chkboxDiscord" "Discord"
+    InstallCheckedSoftware2 "chkboxFirefox" "Firefox"
+    InstallCheckedSoftware2 "chkboxLibreOffice" "Libre Office"
+    InstallCheckedSoftware2 "chkboxCdburnerxp" "CDBurnerXP"
+    InstallCheckedSoftware2 "chkboxSpotify" "Spotify"
+    InstallCheckedSoftware2 "chkboxOpera" "Opera"
 }
 
 #WPF - Main GUI
@@ -472,70 +394,6 @@ function InstallSoftwareWithNinite($appInfo)
     {
         Invoke-WebRequest $appInfo.NiniteGithubLink -OutFile $appInfo.NiniteName | Out-Null
         Start-Process $appInfo.NiniteName -Verb runAs
-    }
-}
-
-function InstallDellSA
-{
-    $appName = "Dell Command Update"
-    InstallSoftware $appsInfo.$appName
-}
-
-function InstallHPSA
-{  
-    $appName = "Hp Support Assistant"
-    InstallSoftware $appsInfo.$appName
-}
-
-function InstallLenovoSA
-{
-    $appName = "Lenovo Vantage"
-    InstallSoftware $appsInfo.$appName
-
-    $appName = "Lenovo System Update"
-    InstallSoftware $appsInfo.$appName
-}
-
-Function UpdateDrivers
-{
-    $formControlsMain.lblProgress.Content = "Vérification des pilotes"
-    [System.Windows.Forms.Application]::DoEvents()
-    $manufacturerBrand = GetManufacturer
-    if($manufacturerBrand -match 'LENOVO')
-    {
-        InstallLenovoSA
-    }
-
-    elseif($manufacturerBrand -match 'HP')
-    {        
-        InstallHPSA
-    }
-
-    elseif($manufacturerBrand -match 'DELL')
-    {
-        InstallDellSA
-    }
-    
-    elseif($manufacturerBrand -match 'MSI')
-    {   
-        $appName = "MSI Center"
-        InstallSoftware $appsInfo.$appName
-    }
-    <#
-    elseif($manufacturerBrand -like 'ASUS*')
-    {
-
-    }
-    #>
-}
-
-function InstallGeForceExperience
-{   
-$VideoController = Get-WmiObject win32_VideoController | Select-Object -Property name
-    if($VideoController -match 'NVIDIA')
-    {
-        $appName = "GeForce Experience"
-        InstallSoftware $appsInfo.$appName
     }
 }
 
