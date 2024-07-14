@@ -1,6 +1,5 @@
-﻿#V2.55
-Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
-[System.Windows.Forms.Application]::EnableVisualStyles() #it will use the built-in Windows theming to style controls instead of the "classic Windows" look and feel
+﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
+#[System.Windows.Forms.Application]::EnableVisualStyles() #it will use the built-in Windows theming to style controls instead of the "classic Windows" look and feel
 
 function ImportModules
 {
@@ -98,41 +97,15 @@ $formControlsMenuApp.btnQuit.Add_Click({
 
 LaunchWPFAppDialog $window
 
-
 #Install les logiciels cochés
-function InstallCheckedSoftware2($Controlbx,$appName)
+function GetCheckBoxStatus 
 {
-    if($formControlsMenuApp.$Controlbx.IsChecked -eq $true)
+    $checkboxes = $formControlsMenuApp.GridApps.Children | Where-Object {$_ -is [System.Windows.Controls.CheckBox] -and $_.Name -like "chkbox*" -and $_.IsChecked -eq $true}
+    foreach ($chkbox in $checkboxes) 
     {
+        $appName = "$($chkbox.Content)"
         InstallSoftware $appsInfo.$appName
     }
-}
-
-
-function InstallCheckedSoftware
-{
-    InstallCheckedSoftware2 "chkboxAdobe" "Adobe Reader"
-    InstallCheckedSoftware2 "chkboxGoogleChrome" "Google chrome"
-    InstallCheckedSoftware2 "chkboxLenovoSystemUpdate" "Lenovo System Update"
-    InstallCheckedSoftware2 "chkboxLenovoVantage" "Lenovo Vantage"
-    InstallCheckedSoftware2 "chkboxMyAsus" "MyAsus"
-    InstallCheckedSoftware2 "chkboxMSICenter" "MSI Center"
-    InstallCheckedSoftware2 "chkboxHPSA" "Hp Support Assistant"
-    InstallCheckedSoftware2 "chkboxDellsa" "Dell Command Update"
-    InstallCheckedSoftware2 "chkboxIntel" "IntelDriver"
-    InstallCheckedSoftware2 "chkboxGeForce" "GeForce Experience"
-    InstallCheckedSoftware2 "chkboxMacrium" "Macrium"
-    InstallCheckedSoftware2 "chkboxTeamviewer" "Teamviewer"
-    InstallCheckedSoftware2 "chkboxVLC" "VLC"
-    InstallCheckedSoftware2 "chkbox7zip" "7Zip"
-    InstallCheckedSoftware2 "chkboxSteam" "Steam"
-    InstallCheckedSoftware2 "chkboxZoom" "Zoom"
-    InstallCheckedSoftware2 "chkboxDiscord" "Discord"
-    InstallCheckedSoftware2 "chkboxFirefox" "Firefox"
-    InstallCheckedSoftware2 "chkboxLibreOffice" "Libre Office"
-    InstallCheckedSoftware2 "chkboxCdburnerxp" "CDBurnerXP"
-    InstallCheckedSoftware2 "chkboxSpotify" "Spotify"
-    InstallCheckedSoftware2 "chkboxOpera" "Opera"
 }
 
 #WPF - Main GUI
@@ -327,6 +300,7 @@ $appNames | ForEach-Object {
 
  function CheckSoftwarePresence($appInfo)
 {
+   [System.Windows.Forms.Application]::DoEvents()
    $SoftwareInstallationStatus= $false
    if (($appInfo.path64 -AND (Test-Path $appInfo.path64)) -OR 
    ($appInfo.path32 -AND (Test-Path $appInfo.path32)) -OR 
@@ -495,7 +469,7 @@ DisableFastBoot
 RemoveEngKeyboard
 ConfigurePrivacy
 DisplayDesktopIcon
-InstallCheckedSoftware
+GetCheckBoxStatus
 CheckActivationStatus
 UpdateMsStore
 GetWindowsUpdate
