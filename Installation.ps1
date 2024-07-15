@@ -132,14 +132,14 @@ function Debut
     $formControlsMain.richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")
     [System.Windows.Forms.Application]::DoEvents()
     #MusicDebut "$pathInstallation\Source\Intro.mp3" 
-    NugetInstall #pour le module PSWindowsUpdate
     Chocoinstall
     Wingetinstall
 }
 
 function PrepareWindowsUpdate
 {
-    Install-Module PSWindowsUpdate -Force | Out-Null #install le module pour les Update de Windows,nécéssite nuget
+    Install-PackageProvider -name Nuget -MinimumVersion 2.8.5.201 -Force | Out-Null 
+    Install-Module PSWindowsUpdate -Force | Out-Null #install le module pour les Update de Windows
     $pathPSWindowsUpdateExist = test-path "$env:SystemDrive\Program Files\WindowsPowerShell\Modules\PSWindowsUpdate" 
     if($pathPSWindowsUpdateExist -eq $false) #si le module n'est pas là (Plan B)
     {
