@@ -1,5 +1,4 @@
 ﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
-#[System.Windows.Forms.Application]::EnableVisualStyles() #it will use the built-in Windows theming to style controls instead of the "classic Windows" look and feel
 
 function ImportModules
 {
@@ -28,6 +27,7 @@ function PrepareDependencies
     #Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Intro.mp3' -OutFile "$pathInstallation\Source\Intro.mp3" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Apps.JSON' -OutFile "$pathInstallation\Source\Apps.JSON" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' -OutFile "$pathInstallation\Source\MainWindow.xaml" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow1.xaml' -OutFile "$pathInstallation\Source\MainWindow1.xaml" | Out-Null
 }
 
 function GetManufacturer
@@ -109,7 +109,6 @@ function GetCheckBoxStatus
 }
 
 #WPF - Main GUI
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow1.xaml' -OutFile "$pathInstallation\Source\MainWindow1.xaml" | Out-Null
 $inputXML = importXamlFromFile "$pathInstallation\source\MainWindow1.xaml"
 $formatedXaml = FormatXamlFile $inputXML
 $ObjectXaml = CreateXamlObject $formatedXaml
@@ -117,8 +116,8 @@ $window = LoadWPFWindowFromXaml $ObjectXaml
 $formControlsMain = GetWPFObjects $formatedXaml $window
 
 $formControlsMain.richTxtBxOutput.add_textchanged({
-    $formControlsMain.richTxtBxOutput.ScrollToCaret()
-    $formControlsMain.richTxtBxOutput.ScrollToEnd()
+    [System.Windows.Forms.Application]::DoEvents() #Refresh le text
+    $formControlsMain.richTxtBxOutput.ScrollToEnd() #scroll en bas
 })
 
 LaunchWPFApp $window
@@ -127,12 +126,12 @@ function Debut
 {
     $actualDate = (Get-Date).ToString()
     Addlog "installationlog.txt" "Installation de $windowsVersion le $actualDate"
-    $formControlsMain.lblProgress.content = "Préparation"
-    [System.Windows.Forms.Application]::DoEvents()
-    $formControlsMain.richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.lblProgress.content = "Préparation"   
+    $formControlsMain.richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")  
     #MusicDebut "$pathInstallation\Source\Intro.mp3" 
+    $formControlsMain.richTxtBxOutput.AppendText("Installation de Chocolatey`r`n")    
     Chocoinstall
+    $formControlsMain.richTxtBxOutput.AppendText("Installation de Winget`r`n")    
     Wingetinstall
 }
 
@@ -148,16 +147,53 @@ function PrepareWindowsUpdate
     Import-Module PSWindowsUpdate | out-null 
 }
 
-function GetWindowsUpdate
+function GetWindowsUpdateold
 {
-    $formControlsMain.lblProgress.Content = "Mises à jour de Windows"
-    [System.Windows.Forms.Application]::DoEvents()
-    $formControlsMain.richTxtBxOutput.AppendText("Installation des mises à jour de Windows")
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.lblProgress.Content = "Mises à jour de Windows"  
+    $formControlsMain.richTxtBxOutput.AppendText("Installation des mises à jour de Windows")   
     PrepareWindowsUpdate 
     Get-WindowsUpdate -MaxSize 250mb -Install -AcceptAll -IgnoreReboot | out-null #download et install les updates de moins de 250mb sans reboot
     $formControlsMain.richTxtBxOutput.AppendText(" -Mises à jour de Windows effectuées`r`n")
-    [System.Windows.Forms.Application]::DoEvents()
+    
+    Addlog "installationlog.txt" "Mises à jour de Windows effectuées"
+}
+
+
+function GetWindowsUpdate
+{
+    $formControlsMain.lblProgress.Content = "Mises à jour de Windows"
+    $formControlsMain.richTxtBxOutput.AppendText("Vérification des mises à jour de Windows") 
+    PrepareWindowsUpdate 
+    $updates = Get-WUList -MaxSize 250mb
+    $firstUpdate = $updates[0]
+    $totalUpdates = $updates.Count
+        if($totalUpdates -eq 0)
+        {
+            $formControlsMain.richTxtBxOutput.AppendText(" -Toutes les mises à jour sont deja installées`r`n")     
+        }
+        elseif($totalUpdates -gt 0)
+        {
+            if ([string]::IsNullOrEmpty($firstUpdate.Title)) 
+            {
+            $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n")        
+            }
+            else
+            {
+                $formControlsMain.richTxtBxOutput.AppendText(" -$totalUpdates mises à jour de disponibles`r`n") 
+                $currentUpdate = 0
+                    foreach($update in $updates)
+                    { 
+                        $currentUpdate++ 
+                        $kb = $update.KB
+                        $formControlsMain.richTxtBxOutput.AppendText("Mise à jour $($currentUpdate) sur $($totalUpdates): $($update.Title)`r`n")                    
+                        Get-WindowsUpdate -KBArticleID $kb -MaxSize 250mb -Install -AcceptAll -IgnoreReboot     
+                    }
+            }
+        }  
+        else
+        {
+        $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n") 
+        } 
     Addlog "installationlog.txt" "Mises à jour de Windows effectuées"
 }
 
@@ -180,84 +216,70 @@ function DisableCortanaStartup
 
 Function RenameSystemDrive
 {
-    $formControlsMain.lblProgress.Content = "Renommage du disque"
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.lblProgress.Content = "Renommage du disque"    
     Set-Volume -DriveLetter 'C' -NewFileSystemLabel "OS"
-    $formControlsMain.richTxtBxOutput.AppendText("`r`nLe disque C: a été renommé OS`r`n")
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.richTxtBxOutput.AppendText("`r`nLe disque C: a été renommé OS`r`n")    
     Addlog "installationlog.txt" "Le disque C: a été renommé OS"
 }
 
 Function ConfigureExplorer
 {
     $formControlsMain.lblProgress.Content = "Configuration des paramètres de l'explorateur de fichiers"
-    [System.Windows.Forms.Application]::DoEvents()
     set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo' -Type 'DWord' -Value '1'
-    $formControlsMain.richTxtBxOutput.AppendText("L'accès rapide a été remplacé par Ce PC`r`n")
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.richTxtBxOutput.AppendText("L'accès rapide a été remplacé par Ce PC`r`n")   
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications' -Type 'DWord' -Value '0'
-    $formControlsMain.richTxtBxOutput.AppendText("Le fournisseur de synchronisation a été decoché`r`n")
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.richTxtBxOutput.AppendText("Le fournisseur de synchronisation a été decoché`r`n")   
     Addlog "installationlog.txt" "Explorateur de fichiers configuré" 
 }
 
  Function DisableBitlocker
 {
-    $formControlsMain.lblProgress.Content = "Désactivation du bitlocker"
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.lblProgress.Content = "Désactivation du bitlocker"   
     $bitlockerStatus = Get-BitLockerVolume | Select-Object -expand VolumeStatus
         if ($bitlockerStatus -eq 'EncryptionInProgress')
         {
             $bitlockerVolume = Get-BitLockerVolume
             Disable-BitLocker -MountPoint $bitlockerVolume | Out-Null
-            $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")
-            [System.Windows.Forms.Application]::DoEvents()
+            $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")            
         }
     Addlog "installationlog.txt" "Bitlocker a été désactivé"
 }
 
 Function DisableFastBoot
 {
-    $formControlsMain.lblProgress.Content = "Desactivation du demarrage rapide"
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.lblProgress.Content = "Desactivation du demarrage rapide"    
     set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Name 'HiberbootEnabled' -Type 'DWord' -Value '0'
     #powercfg /h off
-    $formControlsMain.richTxtBxOutput.AppendText("Le démarrage rapide a été désactivé`r`n")
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.richTxtBxOutput.AppendText("Le démarrage rapide a été désactivé`r`n")   
     Addlog "installationlog.txt" "Le démarrage rapide a été désactivé"
 }
 
 Function RemoveEngKeyboard
 {
-    $formControlsMain.lblProgress.Content = "Suppression du clavier Anglais"
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.lblProgress.Content = "Suppression du clavier Anglais"   
     $langList = Get-WinUserLanguageList #Gets the language list for the current user account
     $anglaisCanada = $langList | Where-Object LanguageTag -eq "en-CA" #sélectionne le clavier anglais canada de la liste
     $langList.Remove($anglaisCanada) | Out-Null #supprimer la clavier sélectionner
     Set-WinUserLanguageList $langList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
     $formControlsMain.richTxtBxOutput.AppendText("Le clavier Anglais a été supprimé`r`n")
-    [System.Windows.Forms.Application]::DoEvents()
     Addlog "installationlog.txt" "Le clavier Anglais a été supprimé"
 }
 
 Function ConfigurePrivacy
 {
     $formControlsMain.lblProgress.Content = "Paramètres de confidentialité"
-    [System.Windows.Forms.Application]::DoEvents()
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type 'DWord' -Value 0 
-    $formControlsMain.richTxtBxOutput.AppendText("Les options de confidentialité ont été configuré`r`n")
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.richTxtBxOutput.AppendText("Les options de confidentialité ont été configuré`r`n") 
     Addlog "installationlog.txt" "Les options de confidentialité ont été configuré"
-    [System.Windows.Forms.Application]::DoEvents()  
+      
 }
 
 Function DisplayDesktopIcon
 {
-    $formControlsMain.lblProgress.Content = "Installation des icones systèmes sur le bureau"
-    [System.Windows.Forms.Application]::DoEvents()
+    $formControlsMain.lblProgress.Content = "Installation des icones systèmes sur le bureau"   
     if (!(Test-Path -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel"))
 		{
 			New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Force
@@ -267,21 +289,18 @@ Function DisplayDesktopIcon
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type 'DWord' -Value 0
     $formControlsMain.richTxtBxOutput.AppendText("Les icones systèmes ont été installés sur le bureau`r`n")
     $formControlsMain.richTxtBxOutput.AppendText(" `r`n") #Permet de créé un espace avant les logiciels
-    Addlog "installationlog.txt" "Les icones systèmes ont été installés sur le bureau"
-    [System.Windows.Forms.Application]::DoEvents()
+    Addlog "installationlog.txt" "Les icones systèmes ont été installés sur le bureau"  
 }
 
 function UpdateMsStore
 {
     $formControlsMain.lblProgress.Content = "Mises à jour du Microsoft Store"
-    $formControlsMain.richTxtBxOutput.AppendText("`r`nLancement des updates du Microsoft Store")
-    [System.Windows.Forms.Application]::DoEvents()   
+    $formControlsMain.richTxtBxOutput.AppendText("`r`nLancement des updates du Microsoft Store") 
     $namespaceName = "root\cimv2\mdm\dmmap"
     $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
     $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
     $wmiObj.UpdateScanMethod() | Out-Null
     $formControlsMain.richTxtBxOutput.AppendText(" -Mises à jour du Microsoft Store lancées`r`n")
-    [System.Windows.Forms.Application]::DoEvents()
     Addlog "installationlog.txt" "Mises à jour de Microsoft Store"
 }
 
@@ -300,7 +319,6 @@ $appNames | ForEach-Object {
 
  function CheckSoftwarePresence($appInfo)
 {
-   [System.Windows.Forms.Application]::DoEvents()
    $SoftwareInstallationStatus= $false
    if (($appInfo.path64 -AND (Test-Path $appInfo.path64)) -OR 
    ($appInfo.path32 -AND (Test-Path $appInfo.path32)) -OR 
@@ -315,12 +333,10 @@ function InstallSoftware($appInfo)
 {
     $formControlsMain.lblProgress.Content = "Installation de $appName"
     $formControlsMain.richTxtBxOutput.AppendText("Installation de $appName en cours")
-    [System.Windows.Forms.Application]::DoEvents()
     $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
         if($SoftwareInstallationStatus)
         {
             $formControlsMain.richTxtBxOutput.AppendText(" -$appName est déja installé`r`n")
-            [System.Windows.Forms.Application]::DoEvents()
         }
         elseif($SoftwareInstallationStatus -eq $false)
         {  
@@ -338,8 +354,7 @@ function InstallSoftwareWithWinget($appInfo)
     $SoftwareInstallationStatus = CheckSoftwarePresence $appInfo
         if($SoftwareInstallationStatus)
         {
-            $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")
-            [System.Windows.Forms.Application]::DoEvents()
+            $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n") 
         } 
         else
         {
@@ -356,13 +371,11 @@ function InstallSoftwareWithChoco($apsInfo)
     $SoftwareInstallationStatus = CheckSoftwarePresence $apsInfo
     if($SoftwareInstallationStatus)
     {   
-        $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")
-        [System.Windows.Forms.Application]::DoEvents()
+        $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")  
     }
     else
     {
         $formControlsMain.richTxtBxOutput.AppendText(" -$appName a échoué`r`n")
-        [System.Windows.Forms.Application]::DoEvents()
         InstallSoftwareWithNinite $appInfo
     } 
 }
@@ -389,14 +402,12 @@ function CheckActivationStatus
     $activated
     if($activated -eq "1")
     {
-        $formControlsMain.richTxtBxOutput.AppendText("`r`n$windowsVersion est activé sur cet ordinateur`r`n")
-        [System.Windows.Forms.Application]::DoEvents()
+        $formControlsMain.richTxtBxOutput.AppendText("`r`n$windowsVersion est activé sur cet ordinateur`r`n")       
     }
     else 
     {
         [Microsoft.VisualBasic.Interaction]::MsgBox("Windows n'est pas activé",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
-        $formControlsMain.richTxtBxOutput.AppendText("`r`nWindows n'est pas activé`r`n")
-        [System.Windows.Forms.Application]::DoEvents()
+        $formControlsMain.richTxtBxOutput.AppendText("`r`nWindows n'est pas activé`r`n")     
     }  
 }
 
