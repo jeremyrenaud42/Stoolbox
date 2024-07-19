@@ -129,6 +129,8 @@ function Debut
     $formControlsMain.lblProgress.content = "Préparation"   
     $formControlsMain.richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")  
     #MusicDebut "$pathInstallation\Source\Intro.mp3" 
+    $formControlsMain.richTxtBxOutput.AppendText("Installation de NuGet`r`n")
+    Nugetinstall
     $formControlsMain.richTxtBxOutput.AppendText("Installation de Chocolatey`r`n")    
     Chocoinstall
     $formControlsMain.richTxtBxOutput.AppendText("Installation de Winget`r`n")    
@@ -137,7 +139,6 @@ function Debut
 
 function PrepareWindowsUpdate
 {
-    Install-PackageProvider -name Nuget -MinimumVersion 2.8.5.201 -Force | Out-Null 
     Install-Module PSWindowsUpdate -Force | Out-Null #install le module pour les Update de Windows
     $pathPSWindowsUpdateExist = test-path "$env:SystemDrive\Program Files\WindowsPowerShell\Modules\PSWindowsUpdate" 
     if($pathPSWindowsUpdateExist -eq $false) #si le module n'est pas là (Plan B)
@@ -175,7 +176,7 @@ function GetWindowsUpdate
         {
             if ([string]::IsNullOrEmpty($firstUpdate.Title)) 
             {
-            $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n")        
+                $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n")        
             }
             else
             {
@@ -192,7 +193,7 @@ function GetWindowsUpdate
         }  
         else
         {
-        $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n") 
+            $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n") 
         } 
     Addlog "installationlog.txt" "Mises à jour de Windows effectuées"
 }
