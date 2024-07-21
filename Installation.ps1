@@ -25,7 +25,7 @@ function PrepareDependencies
     CreateFolder "_Tech\Applications\Installation\source"
     CheckInternetStatus
     #Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Intro.mp3' -OutFile "$pathInstallation\Source\Intro.mp3" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Apps.JSON' -OutFile "$pathInstallation\Source\Apps.JSON" | Out-Null
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/InstallationApps.JSON' -OutFile "$pathInstallation\Source\InstallationApps.JSON" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' -OutFile "$pathInstallation\Source\MainWindow.xaml" | Out-Null
     Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow1.xaml' -OutFile "$pathInstallation\Source\MainWindow1.xaml" | Out-Null
 }
@@ -305,7 +305,7 @@ function UpdateMsStore
     Addlog "installationlog.txt" "Mises à jour de Microsoft Store"
 }
 
-$JSONFilePath = "$env:SystemDrive\_Tech\Applications\Installation\Source\Apps.JSON"
+$JSONFilePath = "$env:SystemDrive\_Tech\Applications\Installation\Source\InstallationApps.JSON"
 $jsonString = Get-Content -Raw $JSONFilePath
 $appsInfo = ConvertFrom-Json $jsonString
 $appNames = $appsInfo.psobject.Properties.Name
