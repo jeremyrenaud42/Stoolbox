@@ -18,7 +18,8 @@ set-location $pathDiagnostique
 ImportModules
 CreateFolder "_Tech\Applications\Diagnostique\source"
 DownloadFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "$pathDiagnostiqueSource" 
-DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/MainWindow.xaml' "$pathDiagnostiqueSource" 
+DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/MainWindow.xaml' "$pathDiagnostiqueSource"
+DownloadFile "DiagApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/DiagApps.JSON' "$pathDiagnostiqueSource"  
 
 $inputXML = importXamlFromFile "$pathDiagnostiqueSource\MainWindow.xaml"
 $formatedXaml = FormatXamlFile $inputXML
@@ -50,6 +51,7 @@ $formControls.BoutonCPU.Add_Click({
     $formControls.BoutonCoretemp.Visibility="Visible"
     $formControls.BoutonPrime95.Visibility="Visible"
     $formControls.BoutonHeavyLoad.Visibility="Visible"
+    $formControls.BoutonThrottleStop.Visibility="Visible"
     $formControls.BoutonCPU.Visibility="Collapsed"
     new-item -ItemType Directory -path "$pathDiagnostiqueSource\CPU" | Out-Null
 })
@@ -101,6 +103,10 @@ $formControls.BoutonBattinfo.Add_Click({
     UnzipAppLaunch "HeavyLoad" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "HeavyLoad.exe" "$pathDiagnostiqueSource\cpu"
     Addlog "diagnostiquelog.txt" "Test de stabilité du système effectué"
     })
+    $formControls.BoutonThrottleStop.Add_Click({
+        UnzipAppLaunch "ThrottleStop" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "ThrottleStop.exe" "$pathDiagnostiqueSource\cpu"
+        Addlog "diagnostiquelog.txt" "Stress test du CPU effectué"
+        })
     
     function diskmarkinfoLog
     {
@@ -195,8 +201,8 @@ $formControls.BoutonBattinfo.Add_Click({
 
 LaunchWPFAppDialog $window
 
-<#
-$JSONFilePath = "$env:SystemDrive\_Tech\Applications\Diagnostique\source\Apps.JSON"
+
+$JSONFilePath = "$env:SystemDrive\_Tech\Applications\Diagnostique\source\DiagApps.JSON"
 $jsonString = Get-Content -Raw $JSONFilePath
 $appsInfo = ConvertFrom-Json $jsonString
 $appNames = $appsInfo.psobject.Properties.Name
@@ -208,4 +214,3 @@ $appNames | ForEach-Object {
     $appsInfo.$appName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.pathAppData)
     $appsInfo.$appName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.NiniteName)
     }
-    #>
