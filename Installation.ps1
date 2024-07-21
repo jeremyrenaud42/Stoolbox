@@ -9,25 +9,15 @@ function ImportModules
     }
 }
 
-function CheckInternetStatus
-{
-    while (!(test-connection 8.8.8.8 -Count 1 -quiet)) #Ping Google et recommence jusqu'a ce qu'il y est internet
-    {
-    [Microsoft.VisualBasic.Interaction]::MsgBox("Veuillez vous connecter à Internet et cliquer sur OK",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
-    start-sleep 5
-    }
-}
-
 function PrepareDependencies
 {
     set-location $pathInstallation
     ImportModules
     CreateFolder "_Tech\Applications\Installation\source"
-    CheckInternetStatus
-    #Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/Intro.mp3' -OutFile "$pathInstallation\Source\Intro.mp3" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/InstallationApps.JSON' -OutFile "$pathInstallation\Source\InstallationApps.JSON" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' -OutFile "$pathInstallation\Source\MainWindow.xaml" | Out-Null
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow1.xaml' -OutFile "$pathInstallation\Source\MainWindow1.xaml" | Out-Null
+    CheckInternetStatusLoop
+    DownloadFile "InstallationApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/InstallationApps.JSON' "$pathInstallationSource"
+    DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' "$pathInstallationSource"
+    DownloadFile "MainWindow1.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow1.xaml' "$pathInstallationSource"
 }
 
 function GetManufacturer
@@ -37,9 +27,9 @@ function GetManufacturer
     return $manufacturerBrand
 }
 
-#$ProgressPreference = 'SilentlyContinue'
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
 $pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
+$pathInstallationSource = "$env:SystemDrive\_Tech\Applications\Installation\source"
 $windowsVersion = (Get-WmiObject -class Win32_OperatingSystem).Caption
 PrepareDependencies
 
@@ -97,17 +87,6 @@ $formControlsMenuApp.btnQuit.Add_Click({
 
 LaunchWPFAppDialog $window
 
-#Install les logiciels cochés
-function GetCheckBoxStatus 
-{
-    $checkboxes = $formControlsMenuApp.GridApps.Children | Where-Object {$_ -is [System.Windows.Controls.CheckBox] -and $_.Name -like "chkbox*" -and $_.IsChecked -eq $true}
-    foreach ($chkbox in $checkboxes) 
-    {
-        $appName = "$($chkbox.Content)"
-        InstallSoftware $appsInfo.$appName
-    }
-}
-
 #WPF - Main GUI
 $inputXML = importXamlFromFile "$pathInstallation\source\MainWindow1.xaml"
 $formatedXaml = FormatXamlFile $inputXML
@@ -148,18 +127,6 @@ function PrepareWindowsUpdate
     Import-Module PSWindowsUpdate | out-null 
 }
 
-function GetWindowsUpdateold
-{
-    $formControlsMain.lblProgress.Content = "Mises à jour de Windows"  
-    $formControlsMain.richTxtBxOutput.AppendText("Installation des mises à jour de Windows")   
-    PrepareWindowsUpdate 
-    Get-WindowsUpdate -MaxSize 250mb -Install -AcceptAll -IgnoreReboot | out-null #download et install les updates de moins de 250mb sans reboot
-    $formControlsMain.richTxtBxOutput.AppendText(" -Mises à jour de Windows effectuées`r`n")
-    
-    Addlog "installationlog.txt" "Mises à jour de Windows effectuées"
-}
-
-
 function GetWindowsUpdate
 {
     $formControlsMain.lblProgress.Content = "Mises à jour de Windows"
@@ -196,23 +163,6 @@ function GetWindowsUpdate
             $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n") 
         } 
     Addlog "installationlog.txt" "Mises à jour de Windows effectuées"
-}
-
-function UnpinCortana
-{
-    $cortanaTaskbarStatus = get-itemproperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowCortanaButton' -ErrorAction SilentlyContinue
-    if($cortanaTaskbarStatus)
-    {
-        set-itemproperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowCortanaButton' -value '0'
-    }
-}
-function DisableCortanaStartup
-{
-    $cortanaStartStatus = get-itemproperty "Registry::HKEY_CLASSES_ROOT\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\SystemAppData\Microsoft.549981C3F5F10_8wekyb3d8bbwe\CortanaStartupId" -Name 'UserEnabledStartupOnce'
-    if($cortanaStartStatus)
-    {
-        set-itemproperty "Registry::HKEY_CLASSES_ROOT\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\SystemAppData\Microsoft.549981C3F5F10_8wekyb3d8bbwe\CortanaStartupId" -Name 'UserEnabledStartupOnce' -value '0'
-    }
 }
 
 Function RenameSystemDrive
@@ -318,6 +268,17 @@ $appNames | ForEach-Object {
     $appsInfo.$appName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.NiniteName)
     }
 
+#Install les logiciels cochés
+function GetCheckBoxStatus 
+{
+    $checkboxes = $formControlsMenuApp.GridApps.Children | Where-Object {$_ -is [System.Windows.Controls.CheckBox] -and $_.Name -like "chkbox*" -and $_.IsChecked -eq $true}
+    foreach ($chkbox in $checkboxes) 
+    {
+        $appName = "$($chkbox.Content)"
+        InstallSoftware $appsInfo.$appName
+    }
+}
+
  function CheckSoftwarePresence($appInfo)
 {
    $SoftwareInstallationStatus= $false
@@ -389,13 +350,6 @@ function InstallSoftwareWithNinite($appInfo)
         Start-Process $appInfo.NiniteName -Verb runAs
     }
 }
-
-#Function Antivirus
-#{
-#    start-Process "windowsdefender:"
-#    [Microsoft.VisualBasic.Interaction]::MsgBox("Vérifier que l'antivirus est bien configuré, puis cliquer sur OK",'OKOnly,SystemModal,Information', "Windows -Antivirus") | Out-Null
-#    #[System.Windows.MessageBox]::Show("Vérifier que l'antivirus est bien configuré, puis cliquer sur OK","Windows -Antivirus",0) | Out-Null
-#}
 
 function CheckActivationStatus
 {
