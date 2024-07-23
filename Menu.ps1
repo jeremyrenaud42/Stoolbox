@@ -1,5 +1,4 @@
-﻿#ABOUT_COMMENT_BASED_HELP
-Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
+﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
 
 function CheckInternetStatus
 {
