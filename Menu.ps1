@@ -1,16 +1,5 @@
-﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
-
-function CheckAdminStatus
-{
-    $adminStatus = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator') 
-    return $adminStatus
-}
-
-function ReloadAsAdmin
-{
-    Start-Process powershell.exe -ArgumentList ("-NoProfile -windowstyle hidden -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit #permet de fermer la session non-Admin
-}
+﻿#ABOUT_COMMENT_BASED_HELP
+Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
 
 function CheckInternetStatus
 {
@@ -19,6 +8,12 @@ function CheckInternetStatus
     [Microsoft.VisualBasic.Interaction]::MsgBox("Veuillez vous connecter à Internet et cliquer sur OK",'OKOnly,SystemModal,Information', "Menu - Boite à outils du technicien") | Out-Null
     start-sleep 5
     }
+}
+
+function ReloadAsAdmin
+{
+    Start-Process powershell.exe -ArgumentList ("-NoProfile -windowstyle hidden -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+    Exit #permet de fermer la session non-Admin
 }
 
 function DownloadModules
@@ -49,22 +44,9 @@ function DownloadAndImportModules
 
 function DownloadBackgroundAndIcone
 {
+    CreateFolder "_Tech\Applications\Source\images"
     DownloadFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$applicationPath\Source\Images"
     DownloadFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$applicationPath\source\Images"
-}
-
-function CreateDesktopShortcut
-{
-    $desktop= [Environment]::GetFolderPath("Desktop")
-    $shortcutExist = Test-Path "$desktop\Menu.lnk"
-    if($shortcutExist -eq $false)
-    {
-    $WshShell = New-Object -comObject WScript.Shell
-    $Shortcut = $WshShell.CreateShortcut("$desktop\Menu.lnk")
-    $Shortcut.TargetPath = "$env:SystemDrive\_Tech\Menu.bat"
-    $Shortcut.IconLocation = "$applicationPath\Source\Images\Icone.ico"
-    $Shortcut.Save()
-    }
 }
 
 function DownloadRemoveScripts
@@ -82,21 +64,21 @@ function DeployApp($appName,$githubPs1Link,$githubBatLink)
     Start-Process "$applicationPath\$appName\RunAs$appName.bat" | Out-Null
 }
 
-$adminStatus = CheckAdminStatus
-if($adminStatus -eq $false)
-{
-    ReloadAsAdmin
-}
 CheckInternetStatus
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 set-location "$env:SystemDrive\_Tech" 
 New-Item "$applicationPath\Source" -ItemType 'Directory' -Force | Out-Null   
 DownloadAndImportModules
-CreateFolder "_Tech\Applications\Source\images"
 DownloadBackgroundAndIcone
-CreateDesktopShortcut
+$desktop= [Environment]::GetFolderPath("Desktop")
+CreateDesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$applicationPath\Source\Images\Icone.ico"
 CreateFolder "Temp"
 DownloadRemoveScripts
+$adminStatus = CheckAdminStatus
+if($adminStatus -eq $false)
+{
+    ReloadAsAdmin
+}
 
 ###GUI###
 DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml'"$applicationPath\Source"
@@ -127,7 +109,7 @@ $formControls.btnFix.Add_Click({
     $window.Close()   
 })
 $formControls.btnChangeLog.Add_Click({
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' -OutFile "$env:SystemDrive\_Tech\changelog.txt" | Out-Null #download le .ps1
+    DownloadFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt'"$env:SystemDrive\_Tech"
     Start-Process "$env:SystemDrive\_Tech\changelog.txt"
 })
 $formControls.btnQuit.Add_Click({
