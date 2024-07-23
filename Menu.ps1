@@ -1,6 +1,4 @@
-﻿#V2.6
-Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
-    [System.Windows.Forms.Application]::EnableVisualStyles()
+﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
 
 function CheckAdminStatus
 {
@@ -101,8 +99,8 @@ CreateFolder "Temp"
 DownloadRemoveScripts
 
 ###GUI###
-Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' -OutFile "$env:SystemDrive\_Tech\MainWindow.xaml" | Out-Null
-$inputXML = importXamlFromFile "$env:SystemDrive\_Tech\MainWindow.xaml"
+DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml'"$applicationPath\Source"
+$inputXML = importXamlFromFile "$applicationPath\Source\MainWindow.xaml"
 $formatedXaml = FormatXamlFile $inputXML
 $ObjectXaml = CreateXamlObject $formatedXaml
 $window = LoadWPFWindowFromXaml $ObjectXaml
