@@ -1,3 +1,11 @@
+2024-07-25:
+- Menu affiche des statuts et permet d'installer Winget et Choco
+
+2024-07-20:
+- Diagnostique est maintenant en WPF
+- Ajout de Throttlestop à Diagnostique
+- Amélioration d'installation
+
 2024-07-10:
 - Menu est maintenant en WPF
 - Installation est maintenant en WPF
