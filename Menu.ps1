@@ -80,7 +80,7 @@ if($adminStatus -eq $false)
 }
 
 ###GUI###
-DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml'"$applicationPath\Source"
+DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' "$applicationPath\Source"
 $inputXML = importXamlFromFile "$applicationPath\Source\MainWindow.xaml"
 $formatedXaml = FormatXamlFile $inputXML
 $ObjectXaml = CreateXamlObject $formatedXaml
@@ -115,5 +115,87 @@ $formControls.btnQuit.Add_Click({
     Task
     $window.Close() 
 })
+
+function MenuWinget
+{
+    $formControls.txtBlkWingetVersion.text = CheckWingetStatus
+    if($formControls.txtBlkWingetVersion.text -ge 1.8)
+    {
+        $formControls.txtBlkWingetVersion.Foreground = "green"  
+        $formControls.btnWinget.Visibility = "Collapsed"
+    }
+    elseif($formControls.txtBlkWingetVersion.text -lt 1.8)
+    {
+        $formControls.btnWinget.content = "Mettre à jour"
+    }
+    else
+    {
+        $formControls.txtBlkWingetVersion.text = "Non installé"
+        $formControls.btnWinget.content = "Installer"
+    }
+}
+
+function MenuChoco
+{
+    $formControls.txtBlkChocoVersion.text = CheckChocoStatus
+    if($formControls.txtBlkChocoVersion.text -eq $true)
+    {
+        $formControls.txtBlkChocoVersion.Foreground = "green"  
+        $formControls.txtBlkChocoVersion.text = "Installé"
+        $formControls.btnChoco.Visibility = "Collapsed" 
+    }
+    elseif($formControls.txtBlkChocoVersion.text -eq $false)
+    {
+        $formControls.txtBlkChocoVersion.text = "Non installé"
+        $formControls.btnChoco.content = "Installer"
+    }
+    else 
+    {
+        $formControls.txtBlkChocoVersion.text = "Erreur"
+    }
+}
+
+function MenuGit
+{
+    $formControls.txtBlkGitVersion.text = CheckGitStatus
+    if($formControls.txtBlkGitVersion.text -eq $true)
+    {
+        $formControls.txtBlkGitVersion.Foreground = "green"  
+        $formControls.txtBlkGitVersion.text = "Valide"
+    }
+    else
+    {
+        $formControls.txtBlkGitVersion.text = "Injoignable"
+    }
+}
+
+function MenuFTP
+{
+    $formControls.txtBlkFTPVersion.text = CheckFtpStatus
+    if($formControls.txtBlkFTPVersion.text -eq $true)
+    {
+        $formControls.txtBlkFTPVersion.Foreground = "green"
+        $formControls.txtBlkFTPVersion.text = "Valide"  
+    }
+    else
+    {
+        $formControls.txtBlkFTPVersion.text = "Injoignable"
+    }
+}
+
+$formControls.btnWinget.Add_Click({
+    Wingetinstall
+    MenuWinget
+})
+
+$formControls.btnChoco.Add_Click({
+    Chocoinstall
+    MenuChoco
+})
+
+MenuWinget
+MenuChoco
+MenuGit
+MenuFTP
 
 LaunchWPFAppDialog $window
