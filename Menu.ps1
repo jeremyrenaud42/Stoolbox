@@ -1,7 +1,38 @@
-﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
+﻿<#
+.SYNOPSIS
+    Affiche un menu qui permet de sélectionner les actions à faire
+.DESCRIPTION
+    Directement téléchargé par le .exe il va permettre de poser les bases pour que tout fonctionne.
+    vérifie donc qu'Internet soit présent, que le script soit en admin
+    Créer les dossiers nécéssaires
+    télécharge les modules et les importes (executionpolicy doit etre a unrestricted pour que ca importe)
+    télécharge le script qui permet d'effacer/desisntaller le tout
+    affiche un menu généré en WPF par un fichier XAML
+    Permet d'installer winget et choco tout de suite au besoin
+    Affiche les boutons qui ouvre les autres scripts
+.NOTES
+    est initialement downloadé par Stoolbox.exe depuis github
+    Par la suite il ya un raccourci sur le bureau pour l'appeler
+    Ou directement via le menu.bat dans c:\_tech
+#>
 
-function CheckInternetStatus
+#Load les assemblies nécéssaire au fonctionnement
+Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
+########################Fonctions nécéssaire au déroulement########################
+function Test-InternetConnection
 {
+    [CmdletBinding()]
+    param ()
+    <#
+    .SYNOPSIS
+        Vérifie si il y a Internet de connecté
+    .DESCRIPTION
+        Envoi une seule requête PING vers 8.8.8.8 (google.com)
+        Tant que la requête échoue ca affiche un message aux 5 secondes qui mentionne qu'il n'y a pas Internet
+        Le message disparait après avoir cliquer OK si Internet est connecté.
+        ca prend le assembly de visual basic pour afficher le message
+        Ne prend pas la fonction deja inclus dans le module Verifiation car a ce moment la on a pas les modules de downloadé
+    #>
     while (!(test-connection 8.8.8.8 -Count 1 -quiet)) #Ping Google et recommence jusqu'a ce qu'il y est internet
     {
     [Microsoft.VisualBasic.Interaction]::MsgBox("Veuillez vous connecter à Internet et cliquer sur OK",'OKOnly,SystemModal,Information', "Menu - Boite à outils du technicien") | Out-Null
@@ -9,14 +40,31 @@ function CheckInternetStatus
     }
 }
 
-function ReloadAsAdmin
+function Restart-Elevated
 {
+    [CmdletBinding()]
+    param ()
+    <#
+    .SYNOPSIS
+        Relance le script en tant qu'administrateur
+    .DESCRIPTION
+        Si le script est pas executé en admin il va le relancer en admin et fermer l'ancien pas admin
+    .NOTES
+        N'est pas stocké dans un module, car il prend le script actuel et dans un module ca marchait pas
+    #>  
     Start-Process powershell.exe -ArgumentList ("-NoProfile -windowstyle hidden -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit #permet de fermer la session non-Admin
+    Exit
 }
 
-function DownloadModules
+function Get-RequiredModules
 {
+    <#
+    .SYNOPSIS
+        Download les modules nécéssaires pour tous les scripts
+    .DESCRIPTION
+        Download depuis github vers c:\_tech\applications\source
+        C'est un zip qui les contient tous qui va être dezippé sous le dossier module
+    #>
     $modulepath = test-path "$applicationPath\source\Modules"
     if($modulepath -eq $false)
     {
@@ -26,8 +74,16 @@ function DownloadModules
     }
 }
 
-function ImportModules
+function Import-RequiredModules
 {
+    <#
+    .SYNOPSIS
+        Importe les modules nécéssaires pour tous les scripts
+    .DESCRIPTION
+       Importe tous les modules du dossier "$env:SystemDrive\_Tech\Applications\Source\modules"
+    .NOTES
+        nécéssite executionpolicy unrestricted ou bypass
+    #>  
     $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
     foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
     {
@@ -35,80 +91,110 @@ function ImportModules
     }
 }
 
-function DownloadAndImportModules
+function Install-RequiredModules
 {
-    DownloadModules
-    ImportModules
+    <#
+    .SYNOPSIS
+        Combiner les 2 fonctions ensemble en une seule fonction
+    #>
+    Get-RequiredModules
+    Import-RequiredModules
+
 }
 
-function DownloadBackgroundAndIcone
+function Get-GuiFiles
 {
+    <#
+    .SYNOPSIS
+       Download le fond d'écran, l'icone et le xaml
+    .NOTES
+        Premiere fonction qui utilise les modules
+    #>
     CreateFolder "_Tech\Applications\Source\images"
     DownloadFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$applicationPath\Source\Images"
     DownloadFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$applicationPath\source\Images"
+    DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' "$applicationPath\Source"
 }
 
-function DownloadRemoveScripts
+function Get-RemoveScriptFiles
 {
+    <#
+    .SYNOPSIS
+        Download les scripts permettant de tout supprimer les traces
+    .DESCRIPTION
+        Créer un dossier c:\Temp
+        Download Remove.bat et Remove.ps1
+    .NOTES
+        Ne peut pas être downloadé dans c:\_Tech pour ne pas bloquer la suppression
+    #>
     DownloadFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
     DownloadFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp"
 }
 
-function DeployApp($appName,$githubPs1Link,$githubBatLink)
+function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 {
+    <#
+    .SYNOPSIS
+        Configure et lance les scripts
+    .DESCRIPTION
+        Est utilisé lorsque qu'un bouton est cliqué
+        Créer un dossier au nom de l'application
+        Download le .ps1 et le .bat
+        Execute le script
+    .NOTES
+        N'est pas dans un module, car c'est spécific au menu seulement
+    #>
     CreateFolder "_Tech\Applications\$appName"
-    set-location "$applicationPath\$appName" 
     DownloadFile "$appName\$appName.ps1" $githubPs1Link $applicationPath
-    DownloadFile "$appName\RunAs$appName.bat" $githubBatLink $applicationPath
-    Start-Process "$applicationPath\$appName\RunAs$appName.bat" | Out-Null
+    DownloadLaunchApp "$appName\RunAs$appName.bat" $githubBatLink $applicationPath
 }
 
-CheckInternetStatus
+########################Déroulement########################
+Test-InternetConnection
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
-set-location "$env:SystemDrive\_Tech" 
 New-Item "$applicationPath\Source" -ItemType 'Directory' -Force | Out-Null   
-DownloadAndImportModules
-DownloadBackgroundAndIcone
-$desktop= [Environment]::GetFolderPath("Desktop")
-CreateDesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$applicationPath\Source\Images\Icone.ico"
+Install-RequiredModules
+Get-GuiFiles
+$desktop = [Environment]::GetFolderPath("Desktop")
+Add-DesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$applicationPath\Source\Images\Icone.ico"
 CreateFolder "Temp"
-DownloadRemoveScripts
+Get-RemoveScriptFiles
 $adminStatus = CheckAdminStatus
 if($adminStatus -eq $false)
 {
-    ReloadAsAdmin
+    Restart-Elevated
 }
 
-###GUI###
-DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' "$applicationPath\Source"
+########################GUI########################
 $inputXML = importXamlFromFile "$applicationPath\Source\MainWindow.xaml"
 $formatedXaml = FormatXamlFile $inputXML
 $ObjectXaml = CreateXamlObject $formatedXaml
 $window = LoadWPFWindowFromXaml $ObjectXaml
 $formControls = GetWPFObjects $formatedXaml $window
 
+########################GUI Events########################
 $formControls.btnInstall.Add_Click({
-    DeployApp "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsInstallation.bat'
+    Initialize-Application "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsInstallation.bat'
     $window.Close()
 })
 $formControls.btnOptiNett.Add_Click({
-    DeployApp "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsOptimisation_Nettoyage.bat'
+    Initialize-Application "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsOptimisation_Nettoyage.bat'
     $window.Close()
 })
 $formControls.btnDiagnostic.Add_Click({
-    DeployApp "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDiagnostique.bat'
+    Initialize-Application "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDiagnostique.bat'
     $window.Close()    
 })
 $formControls.btnDesinfection.Add_Click({
-    DeployApp "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat'
+    Initialize-Application "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat'
     $window.Close() 
 })
 $formControls.btnFix.Add_Click({
-    DeployApp "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsFix.bat'
+    Initialize-Application "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsFix.bat'
     $window.Close()   
 })
 $formControls.btnChangeLog.Add_Click({
-    DownloadFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt'"$env:SystemDrive\_Tech"
+    DownloadFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' "$env:SystemDrive\_Tech"
     Start-Process "$env:SystemDrive\_Tech\changelog.txt"
 })
 $formControls.btnQuit.Add_Click({
@@ -116,7 +202,7 @@ $formControls.btnQuit.Add_Click({
     $window.Close() 
 })
 
-function MenuWinget
+function Set-MenuWinget
 {
     $formControls.txtBlkWingetVersion.text = CheckWingetStatus
     if($formControls.txtBlkWingetVersion.text -ge 1.8)
@@ -135,7 +221,7 @@ function MenuWinget
     }
 }
 
-function MenuChoco
+function Set-MenuChoco
 {
     $formControls.txtBlkChocoVersion.text = CheckChocoStatus
     if($formControls.txtBlkChocoVersion.text -eq $true)
@@ -155,7 +241,7 @@ function MenuChoco
     }
 }
 
-function MenuGit
+function Set-MenuGit
 {
     $formControls.txtBlkGitVersion.text = CheckGitStatus
     if($formControls.txtBlkGitVersion.text -eq $true)
@@ -169,7 +255,7 @@ function MenuGit
     }
 }
 
-function MenuFTP
+function Set-MenuFTP
 {
     $formControls.txtBlkFTPVersion.text = CheckFtpStatus
     if($formControls.txtBlkFTPVersion.text -eq $true)
@@ -185,17 +271,17 @@ function MenuFTP
 
 $formControls.btnWinget.Add_Click({
     Wingetinstall
-    MenuWinget
+    Set-MenuWinget
 })
 
 $formControls.btnChoco.Add_Click({
     Chocoinstall
-    MenuChoco
+    Set-MenuChoco
 })
 
-MenuWinget
-MenuChoco
-MenuGit
-MenuFTP
+Set-MenuWinget
+Set-MenuChoco
+Set-MenuGit
+Set-MenuFTP
 
 LaunchWPFAppDialog $window
