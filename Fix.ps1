@@ -2,7 +2,7 @@
 Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-function ImportModules
+function Get-RequiredModules
 {
     $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
     foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
@@ -15,7 +15,7 @@ $desktop = [Environment]::GetFolderPath("Desktop")
 $pathfix = "$env:SystemDrive\_Tech\Applications\fix"
 $pathfixSource = "$env:SystemDrive\_Tech\Applications\fix\source"
 set-location $pathfix
-ImportModules
+Get-RequiredModules
 CreateFolder "_Tech\Applications\fix\source"
 
 function zipMinitool

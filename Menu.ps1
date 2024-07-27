@@ -166,11 +166,11 @@ if($adminStatus -eq $false)
 }
 
 ########################GUI########################
-$inputXML = importXamlFromFile "$applicationPath\Source\MainWindow.xaml"
-$formatedXaml = FormatXamlFile $inputXML
-$ObjectXaml = CreateXamlObject $formatedXaml
-$window = LoadWPFWindowFromXaml $ObjectXaml
-$formControls = GetWPFObjects $formatedXaml $window
+$inputXML = import-XamlFromFile "$applicationPath\Source\MainWindow.xaml"
+$formatedXaml = Format-XamlFile $inputXML
+$ObjectXaml = New-XamlObject $formatedXaml
+$window = Add-WPFWindowFromXaml $ObjectXaml
+$formControls = Get-WPFObjects $formatedXaml $window
 
 ########################GUI Events########################
 $formControls.btnInstall.Add_Click({
@@ -194,8 +194,8 @@ $formControls.btnFix.Add_Click({
     $window.Close()   
 })
 $formControls.btnChangeLog.Add_Click({
-    DownloadFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' "$env:SystemDrive\_Tech"
-    Start-Process "$env:SystemDrive\_Tech\changelog.txt"
+    DownloadFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' "$env:SystemDrive\_Tech\Applications\source"
+    Start-Process "$env:SystemDrive\_Tech\Applications\source\changelog.txt"
 })
 $formControls.btnQuit.Add_Click({
     Task
@@ -284,4 +284,4 @@ Set-MenuChoco
 Set-MenuGit
 Set-MenuFTP
 
-LaunchWPFAppDialog $window
+Start-WPFAppDialog $window

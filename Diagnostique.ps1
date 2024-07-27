@@ -1,8 +1,7 @@
-﻿#V1.5
-Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
+﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-function ImportModules
+function Get-RequiredModules
 {
     $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
     foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
@@ -15,17 +14,17 @@ function ImportModules
 $pathDiagnostique = "$env:SystemDrive\_Tech\Applications\Diagnostique"
 $pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\source"
 set-location $pathDiagnostique
-ImportModules
+Get-RequiredModules
 CreateFolder "_Tech\Applications\Diagnostique\source"
 DownloadFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "$pathDiagnostiqueSource" 
 DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/MainWindow.xaml' "$pathDiagnostiqueSource"
 DownloadFile "DiagApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/DiagApps.JSON' "$pathDiagnostiqueSource"  
 
-$inputXML = importXamlFromFile "$pathDiagnostiqueSource\MainWindow.xaml"
-$formatedXaml = FormatXamlFile $inputXML
-$ObjectXaml = CreateXamlObject $formatedXaml
-$window = LoadWPFWindowFromXaml $ObjectXaml
-$formControls = GetWPFObjects $formatedXaml $window
+$inputXML = import-XamlFromFile "$pathDiagnostiqueSource\MainWindow.xaml"
+$formatedXaml = Format-XamlFile $inputXML
+$ObjectXaml = New-XamlObject $formatedXaml
+$window = Add-WPFWindowFromXaml $ObjectXaml
+$formControls = Get-WPFObjects $formatedXaml $window
 
 
 $formControls.BoutonMenu.Add_Click({
@@ -71,41 +70,41 @@ $formControls.BoutonGPU.Add_Click({
 })
 $formControls.BoutonRAM.Add_Click({
     mdsched.exe
-    Addlog "diagnostiquelog.txt" "Memtest effectué"
+    Add-Log "diagnostiquelog.txt" "Memtest effectué"
 })
 
 $formControls.BoutonBattinfo.Add_Click({
     Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\battinfoview\batteryinfoview.exe"
-    Addlog "diagnostiquelog.txt" "Usure de la batterie vérifié"
+    Add-Log "diagnostiquelog.txt" "Usure de la batterie vérifié"
     })
     
     $formControls.BoutonDontsleep.Add_Click({
     Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\DontSleep\DontSleep_x64_p.exe"
-    Addlog "diagnostiquelog.txt" "Dontsleep a été utilisé pour tester la batterie"
+    Add-Log "diagnostiquelog.txt" "Dontsleep a été utilisé pour tester la batterie"
     })
     
     $formControls.BoutonAida.Add_Click({
     UnzipAppLaunch "Aida64" "https://ftp.alexchato9.com/public/file/WPdP-yDdBE2pOpHVFKNC6g/Aida64.zip" "aida64.exe" "$pathDiagnostiqueSource\cpu"
-    Addlog "diagnostiquelog.txt" "Test de stabilité du système effectué"
+    Add-Log "diagnostiquelog.txt" "Test de stabilité du système effectué"
     })
     
     $formControls.BoutonCoretemp.Add_Click({
     UnzipAppLaunch "Core_Temp" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core_Temp.zip" "Core Temp.exe" "$pathDiagnostiqueSource\cpu"
-    Addlog "diagnostiquelog.txt" "Température du CPU vérifié"
+    Add-Log "diagnostiquelog.txt" "Température du CPU vérifié"
     })
     
     $formControls.BoutonPrime95.Add_Click({
     UnzipAppLaunch "Prime95" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "Prime95.exe" "$pathDiagnostiqueSource\cpu"
-    Addlog "diagnostiquelog.txt" "Stress test du CPU effectué"
+    Add-Log "diagnostiquelog.txt" "Stress test du CPU effectué"
     })
     
     $formControls.BoutonHeavyLoad.Add_Click({
     UnzipAppLaunch "HeavyLoad" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "HeavyLoad.exe" "$pathDiagnostiqueSource\cpu"
-    Addlog "diagnostiquelog.txt" "Test de stabilité du système effectué"
+    Add-Log "diagnostiquelog.txt" "Test de stabilité du système effectué"
     })
     $formControls.BoutonThrottleStop.Add_Click({
         UnzipAppLaunch "ThrottleStop" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "ThrottleStop.exe" "$pathDiagnostiqueSource\cpu"
-        Addlog "diagnostiquelog.txt" "Stress test du CPU effectué"
+        Add-Log "diagnostiquelog.txt" "Stress test du CPU effectué"
         })
     
     function diskmarkinfoLog
@@ -135,7 +134,7 @@ $formControls.BoutonBattinfo.Add_Click({
     function HDSentinnel
     {
         $pathHDS = "C:\Program Files (x86)\Hard Disk Sentinel"
-        Addlog "diagnostiquelog.txt" "Vérifier la santé du disque dur"
+        Add-Log "diagnostiquelog.txt" "Vérifier la santé du disque dur"
         $apppath = VerifPresenceApp $pathHDS
         if($apppath)
         {
@@ -159,7 +158,7 @@ $formControls.BoutonBattinfo.Add_Click({
     
     $formControls.BoutonHDTune.Add_Click({
         Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\HD_Tune\_HDTune.exe"
-        Addlog "diagnostiquelog.txt" "Vérifier la Vitesse du disque dur"
+        Add-Log "diagnostiquelog.txt" "Vérifier la Vitesse du disque dur"
     })
     
     $formControls.BoutonASSD.Add_Click({
@@ -168,19 +167,19 @@ $formControls.BoutonBattinfo.Add_Click({
     
     $formControls.BoutonDiskmark.Add_Click({
     Start-Process -wait  "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"  -ArgumentList "/copy"
-    Addlog "diagnostiquelog.txt" "Vérifier la santé du disque dur"
+    Add-Log "diagnostiquelog.txt" "Vérifier la santé du disque dur"
     #diskmarkinfolog | Out-File $logfilepath -Append
     })
     
     $formControls.BoutonFurmark.Add_Click({
     Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\FurMark\FurMark.exe"
-    Addlog "diagnostiquelog.txt" "Stress test du GPU"
+    Add-Log "diagnostiquelog.txt" "Stress test du GPU"
     })
     
     
     $formControls.BoutonUnigine.Add_Click({
     Start-Process "https://benchmark.unigine.com/"
-    Addlog "diagnostiquelog.txt" "Vérifier les performances du GPU"
+    Add-Log "diagnostiquelog.txt" "Vérifier les performances du GPU"
     })
     
     $formControls.BoutonSpeccy.Add_Click({
@@ -199,7 +198,7 @@ $formControls.BoutonBattinfo.Add_Click({
     msinfo32
     })
 
-LaunchWPFAppDialog $window
+Start-WPFAppDialog $window
 
 
 $JSONFilePath = "$env:SystemDrive\_Tech\Applications\Diagnostique\source\DiagApps.JSON"
