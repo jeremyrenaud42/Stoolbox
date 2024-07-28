@@ -16,8 +16,8 @@ $pathOptimisation_Nettoyage = "$env:SystemDrive\_Tech\Applications\Optimisation_
 $pathOptimisation_NettoyageSource = "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\source"
 set-location $pathOptimisation_Nettoyage
 Get-RequiredModules
-CreateFolder "_Tech\Applications\Optimisation_Nettoyage\source"
-DownloadFile "fondopti.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "$pathOptimisation_NettoyageSource" 
+New-Folder "_Tech\Applications\Optimisation_Nettoyage\source"
+Get-RemoteFile "fondopti.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "$pathOptimisation_NettoyageSource" 
 
 $image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg") 
 $Form = New-Object System.Windows.Forms.Form
@@ -30,7 +30,7 @@ $Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Application
 
 function zipccleaner
 {
-    UnzipApp "ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' $pathOptimisation_NettoyageSource
+    Get-RemoteZipFile "ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' $pathOptimisation_NettoyageSource
     $ccleanerpostpath = test-Path "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
     if(!($ccleanerpostpath))
     {
@@ -166,7 +166,7 @@ $Autoruns.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Autoruns.Add_MouseEnter({$Autoruns.ForeColor = 'White'})
 $Autoruns.Add_MouseLeave({$Autoruns.ForeColor = 'black'})
 $Autoruns.Add_Click({
-    DownloadLaunchApp "autoruns.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' "$pathOptimisation_NettoyageSource"
+    Invoke-App "autoruns.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' "$pathOptimisation_NettoyageSource"
     start-sleep 5
     taskmgr
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les logiciels au démarrage"
@@ -189,7 +189,7 @@ $Revo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Revo.Add_MouseEnter({$Revo.ForeColor = 'White'})
 $Revo.Add_MouseLeave({$Revo.ForeColor = 'black'})
 $Revo.Add_Click({
-    UnzipAppLaunch "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "RevoUPort.exe" "$pathOptimisation_NettoyageSource"
+    Invoke-RemoteZipFile "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "RevoUPort.exe" "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
 })
 
@@ -252,7 +252,7 @@ $sfc.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $sfc.Add_MouseEnter({$sfc.ForeColor = 'White'})
 $sfc.Add_MouseLeave({$sfc.ForeColor = 'black'})
 $sfc.Add_Click({
-    DownloadLaunchApp "sfcScannow.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat' "$pathOptimisation_NettoyageSource"
+    Invoke-App "sfcScannow.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat' "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les fichiers corrompus"
 })
 
@@ -273,7 +273,7 @@ $HitmanPro.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HitmanPro.Add_MouseEnter({$HitmanPro.ForeColor = 'White'})
 $HitmanPro.Add_MouseLeave({$HitmanPro.ForeColor = 'black'})
 $HitmanPro.Add_Click({
-    DownloadLaunchApp "HitmanPro.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' "$pathOptimisation_NettoyageSource"
+    Invoke-App "HitmanPro.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les virus avec HitmanPro"
 })
 
@@ -294,7 +294,7 @@ $sysevent.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $sysevent.Add_MouseEnter({$sysevent.ForeColor = 'White'})
 $sysevent.Add_MouseLeave({$sysevent.ForeColor = 'black'})
 $sysevent.Add_Click({
-    DownloadLaunchApp "sysevent.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe' "$pathOptimisation_NettoyageSource"
+    Invoke-App "sysevent.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe' "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les evenements"
 })
 
@@ -336,7 +336,7 @@ $CrystalDiskInfo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gra
 $CrystalDiskInfo.Add_MouseEnter({$CrystalDiskInfo.ForeColor = 'White'})
 $CrystalDiskInfo.Add_MouseLeave({$CrystalDiskInfo.ForeColor = 'black'})
 $CrystalDiskInfo.Add_Click({
-    UnzipAppLaunch "CrystalDiskInfoPortable" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "CrystalDiskInfoPortable.exe" "$pathOptimisation_NettoyageSource"
+    Invoke-RemoteZipFile "CrystalDiskInfoPortable" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "CrystalDiskInfoPortable.exe" "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier la santé du HDD"
 })
 
@@ -357,7 +357,7 @@ $HDTune.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HDTune.Add_MouseEnter({$HDTune.ForeColor = 'White'})
 $HDTune.Add_MouseLeave({$HDTune.ForeColor = 'black'})
 $HDTune.Add_Click({
-    UnzipAppLaunch "HD_Tune" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' "_HDTune.exe" "$pathOptimisation_NettoyageSource"
+    Invoke-RemoteZipFile "HD_Tune" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' "_HDTune.exe" "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
 })
 

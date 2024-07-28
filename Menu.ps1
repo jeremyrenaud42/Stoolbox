@@ -110,10 +110,10 @@ function Get-GuiFiles
     .NOTES
         Premiere fonction qui utilise les modules
     #>
-    CreateFolder "_Tech\Applications\Source\images"
-    DownloadFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$applicationPath\Source\Images"
-    DownloadFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$applicationPath\source\Images"
-    DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' "$applicationPath\Source"
+    New-Folder "_Tech\Applications\Source\images"
+    Get-RemoteFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$applicationPath\Source\Images"
+    Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$applicationPath\source\Images"
+    Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' "$applicationPath\Source"
 }
 
 function Get-RemoveScriptFiles
@@ -127,8 +127,8 @@ function Get-RemoveScriptFiles
     .NOTES
         Ne peut pas être downloadé dans c:\_Tech pour ne pas bloquer la suppression
     #>
-    DownloadFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
-    DownloadFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp"
+    Get-RemoteFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
+    Get-RemoteFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp"
 }
 
 function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
@@ -144,9 +144,9 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
     .NOTES
         N'est pas dans un module, car c'est spécific au menu seulement
     #>
-    CreateFolder "_Tech\Applications\$appName"
-    DownloadFile "$appName\$appName.ps1" $githubPs1Link $applicationPath
-    DownloadLaunchApp "$appName\RunAs$appName.bat" $githubBatLink $applicationPath
+    New-Folder "_Tech\Applications\$appName"
+    Get-RemoteFile "$appName\$appName.ps1" $githubPs1Link $applicationPath
+    Invoke-App "$appName\RunAs$appName.bat" $githubBatLink $applicationPath
 }
 
 ########################Déroulement########################
@@ -157,7 +157,7 @@ Install-RequiredModules
 Get-GuiFiles
 $desktop = [Environment]::GetFolderPath("Desktop")
 Add-DesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$applicationPath\Source\Images\Icone.ico"
-CreateFolder "Temp"
+New-Folder "Temp"
 Get-RemoveScriptFiles
 $adminStatus = CheckAdminStatus
 if($adminStatus -eq $false)
@@ -194,7 +194,7 @@ $formControls.btnFix.Add_Click({
     $window.Close()   
 })
 $formControls.btnChangeLog.Add_Click({
-    DownloadFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' "$env:SystemDrive\_Tech\Applications\source"
+    Get-RemoteFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' "$env:SystemDrive\_Tech\Applications\source"
     Start-Process "$env:SystemDrive\_Tech\Applications\source\changelog.txt"
 })
 $formControls.btnQuit.Add_Click({
@@ -204,19 +204,26 @@ $formControls.btnQuit.Add_Click({
 
 function Set-MenuWinget
 {
-    $formControls.txtBlkWingetVersion.text = CheckWingetStatus
-    if($formControls.txtBlkWingetVersion.text -ge 1.8)
+    $version = CheckWingetStatus
+	if($version -eq $null)
+	{
+		$formControls.txtBlkWingetVersion.text = "Non installé"
+	}
+    
+    elseif($version -ge 1.8)
     {
         $formControls.txtBlkWingetVersion.Foreground = "green"  
         $formControls.btnWinget.Visibility = "Collapsed"
+        $formControls.txtBlkWingetVersion.text = $version
     }
-    elseif($formControls.txtBlkWingetVersion.text -lt 1.8)
+    elseif($version -lt 1.8)
     {
         $formControls.btnWinget.content = "Mettre à jour"
+        $formControls.txtBlkWingetVersion.text = $version
     }
     else
     {
-        $formControls.txtBlkWingetVersion.text = "Non installé"
+        $formControls.txtBlkWingetVersion.text = "Erreur"
         $formControls.btnWinget.content = "Installer"
     }
 }
@@ -270,12 +277,12 @@ function Set-MenuFTP
 }
 
 $formControls.btnWinget.Add_Click({
-    Wingetinstall
+    Install-Winget
     Set-MenuWinget
 })
 
 $formControls.btnChoco.Add_Click({
-    Chocoinstall
+    Install-Choco
     Set-MenuChoco
 })
 

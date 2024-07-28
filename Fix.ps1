@@ -16,7 +16,7 @@ $pathfix = "$env:SystemDrive\_Tech\Applications\fix"
 $pathfixSource = "$env:SystemDrive\_Tech\Applications\fix\source"
 set-location $pathfix
 Get-RequiredModules
-CreateFolder "_Tech\Applications\fix\source"
+New-Folder "_Tech\Applications\fix\source"
 
 function zipMinitool
 {
@@ -27,12 +27,12 @@ function zipMinitool
     }
     elseif($minitoolpath -eq $false)
     {
-    Wingetinstall  
+    Install-Winget  
     winget install -e --id  MiniTool.PartitionWizard.Free --accept-package-agreements --accept-source-agreements --silent | Out-Null
     $minitoolpath = test-Path "$env:SystemDrive\Program Files\MiniTool Partition*\partitionwizard.exe"
         if($minitoolpath -eq $false)
         {
-            Chocoinstall
+            Install-Choco
             choco install partitionwizard -y | Out-Null
         }
     }
@@ -75,14 +75,14 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{sortie;break}
-1{UnzipApp "scripts" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' "$pathfixSource"; submenuHDD;Break}
-2{UnzipApp "Tweak" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathfixSource"; submenuTweak;Break}
-3{UnzipApp "Sterjo" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathfixSource"; submenuMDP;Break}
-4{UnzipAppLaunch "DDU" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/DDU.zip' "Display Driver Uninstaller.exe" "$pathfixSource";Addlog "Fixlog.txt" "Désinstallation du pilote graphique avec DDU";Break}
-5{UnzipAppLaunch "WiseForceDeleter" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleter.zip' "WiseDeleter.exe" "$pathfixSource";Break}
-6{UnzipAppLaunch "WinDirStat" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' "WinDirStatPortable.exe" "$pathfixSource";Break}
+1{Get-RemoteZipFile "scripts" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' "$pathfixSource"; submenuHDD;Break}
+2{Get-RemoteZipFile "Tweak" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathfixSource"; submenuTweak;Break}
+3{Get-RemoteZipFile "Sterjo" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathfixSource"; submenuMDP;Break}
+4{Invoke-RemoteZipFile "DDU" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/DDU.zip' "Display Driver Uninstaller.exe" "$pathfixSource";Addlog "Fixlog.txt" "Désinstallation du pilote graphique avec DDU";Break}
+5{Invoke-RemoteZipFile "WiseForceDeleter" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleter.zip' "WiseDeleter.exe" "$pathfixSource";Break}
+6{Invoke-RemoteZipFile "WinDirStat" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' "WinDirStatPortable.exe" "$pathfixSource";Break}
 7{zipMinitool;Break} 
-8{UnzipAppLaunch "ComIntRep" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' "ComIntRep_X64.exe" "$pathfixSource";Addlog "Fixlog.txt" "Réparer Internet";Break}
+8{Invoke-RemoteZipFile "ComIntRep" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' "ComIntRep_X64.exe" "$pathfixSource";Addlog "Fixlog.txt" "Réparer Internet";Break}
 9{menu;Break}
 }
 start-sleep 1

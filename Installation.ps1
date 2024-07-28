@@ -13,11 +13,11 @@ function Get-Dependencies
 {
     Get-RequiredModules
     Set-Location $pathInstallation #pour log
-    CreateFolder "_Tech\Applications\Installation\source"
+    New-Folder "_Tech\Applications\Installation\source"
     CheckInternetStatusLoop
-    DownloadFile "InstallationApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/InstallationApps.JSON' "$pathInstallationSource"
-    DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' "$pathInstallationSource"
-    DownloadFile "MainWindow1.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow1.xaml' "$pathInstallationSource"
+    Get-RemoteFile "InstallationApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/InstallationApps.JSON' "$pathInstallationSource"
+    Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' "$pathInstallationSource"
+    Get-RemoteFile "MainWindow1.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow1.xaml' "$pathInstallationSource"
 }
 
 function Get-Manufacturer
@@ -108,11 +108,11 @@ function Install-SoftwaresManager
     $formControlsMain.lblProgress.content = "Préparation"   
     $formControlsMain.richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")  
     $formControlsMain.richTxtBxOutput.AppendText("Installation de NuGet`r`n")
-    Nugetinstall
+    Install-Nuget
     $formControlsMain.richTxtBxOutput.AppendText("Installation de Chocolatey`r`n")    
-    Chocoinstall
+    Install-Choco
     $formControlsMain.richTxtBxOutput.AppendText("Installation de Winget`r`n")    
-    Wingetinstall
+    Install-Winget
 }
 
 function Initialize-WindowsUpdate

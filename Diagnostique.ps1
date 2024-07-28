@@ -15,10 +15,10 @@ $pathDiagnostique = "$env:SystemDrive\_Tech\Applications\Diagnostique"
 $pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\source"
 set-location $pathDiagnostique
 Get-RequiredModules
-CreateFolder "_Tech\Applications\Diagnostique\source"
-DownloadFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "$pathDiagnostiqueSource" 
-DownloadFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/MainWindow.xaml' "$pathDiagnostiqueSource"
-DownloadFile "DiagApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/DiagApps.JSON' "$pathDiagnostiqueSource"  
+New-Folder "_Tech\Applications\Diagnostique\source"
+Get-RemoteFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "$pathDiagnostiqueSource" 
+Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/MainWindow.xaml' "$pathDiagnostiqueSource"
+Get-RemoteFile "DiagApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/DiagApps.JSON' "$pathDiagnostiqueSource"  
 
 $inputXML = import-XamlFromFile "$pathDiagnostiqueSource\MainWindow.xaml"
 $formatedXaml = Format-XamlFile $inputXML
@@ -43,7 +43,7 @@ $formControls.Boutonbat.Add_Click({
     $formControls.BoutonBattinfo.Visibility="Visible"
     $formControls.BoutonDontsleep.Visibility="Visible"
     $formControls.Boutonbat.Visibility="Collapsed"
-    UnzipApp "Batterie" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "$pathDiagnostiqueSource"
+    Get-RemoteZipFile "Batterie" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "$pathDiagnostiqueSource"
 })
 $formControls.BoutonCPU.Add_Click({
     $formControls.BoutonAida.Visibility="Visible"
@@ -60,13 +60,13 @@ $formControls.BoutonHDD.Add_Click({
     $formControls.BoutonASSD.Visibility="Visible"
     $formControls.BoutonDiskmark.Visibility="Visible"
     $formControls.BoutonHDD.Visibility="Collapsed"
-    UnzipApp "HDD" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip' "$pathDiagnostiqueSource"
+    Get-RemoteZipFile "HDD" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip' "$pathDiagnostiqueSource"
 })
 $formControls.BoutonGPU.Add_Click({
     $formControls.BoutonFurmark.Visibility="Visible"
     $formControls.BoutonUnigine.Visibility="Visible"
     $formControls.BoutonGPU.Visibility="Collapsed"
-    UnzipApp "GPU" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "$pathDiagnostiqueSource"
+    Get-RemoteZipFile "GPU" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "$pathDiagnostiqueSource"
 })
 $formControls.BoutonRAM.Add_Click({
     mdsched.exe
@@ -84,26 +84,26 @@ $formControls.BoutonBattinfo.Add_Click({
     })
     
     $formControls.BoutonAida.Add_Click({
-    UnzipAppLaunch "Aida64" "https://ftp.alexchato9.com/public/file/WPdP-yDdBE2pOpHVFKNC6g/Aida64.zip" "aida64.exe" "$pathDiagnostiqueSource\cpu"
+    Invoke-RemoteZipFile "Aida64" "https://ftp.alexchato9.com/public/file/WPdP-yDdBE2pOpHVFKNC6g/Aida64.zip" "aida64.exe" "$pathDiagnostiqueSource\cpu"
     Add-Log "diagnostiquelog.txt" "Test de stabilité du système effectué"
     })
     
     $formControls.BoutonCoretemp.Add_Click({
-    UnzipAppLaunch "Core_Temp" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core_Temp.zip" "Core Temp.exe" "$pathDiagnostiqueSource\cpu"
+    Invoke-RemoteZipFile "Core_Temp" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core_Temp.zip" "Core Temp.exe" "$pathDiagnostiqueSource\cpu"
     Add-Log "diagnostiquelog.txt" "Température du CPU vérifié"
     })
     
     $formControls.BoutonPrime95.Add_Click({
-    UnzipAppLaunch "Prime95" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "Prime95.exe" "$pathDiagnostiqueSource\cpu"
+    Invoke-RemoteZipFile "Prime95" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "Prime95.exe" "$pathDiagnostiqueSource\cpu"
     Add-Log "diagnostiquelog.txt" "Stress test du CPU effectué"
     })
     
     $formControls.BoutonHeavyLoad.Add_Click({
-    UnzipAppLaunch "HeavyLoad" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "HeavyLoad.exe" "$pathDiagnostiqueSource\cpu"
+    Invoke-RemoteZipFile "HeavyLoad" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "HeavyLoad.exe" "$pathDiagnostiqueSource\cpu"
     Add-Log "diagnostiquelog.txt" "Test de stabilité du système effectué"
     })
     $formControls.BoutonThrottleStop.Add_Click({
-        UnzipAppLaunch "ThrottleStop" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "ThrottleStop.exe" "$pathDiagnostiqueSource\cpu"
+        Invoke-RemoteZipFile "ThrottleStop" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "ThrottleStop.exe" "$pathDiagnostiqueSource\cpu"
         Add-Log "diagnostiquelog.txt" "Stress test du CPU effectué"
         })
     
@@ -135,22 +135,22 @@ $formControls.BoutonBattinfo.Add_Click({
     {
         $pathHDS = "C:\Program Files (x86)\Hard Disk Sentinel"
         Add-Log "diagnostiquelog.txt" "Vérifier la santé du disque dur"
-        $apppath = VerifPresenceApp $pathHDS
+        $apppath = Test-AppPresence $pathHDS
         if($apppath)
         {
-            StartExeFile "HDSentinel.exe" $pathHDS
+            Start-App "HDSentinel.exe" $pathHDS
         }
         elseif($apppath -eq $false)
         {
-        Wingetinstall  
+        Install-Winget  
         winget install -e --id XPDNXG5333CSVK --accept-package-agreements --accept-source-agreements --silent | Out-Null
-        $apppath = VerifPresenceApp $pathHDS
+        $apppath = Test-AppPresence $pathHDS
             if($apppath -eq $false)
             {
                 Chocoinstall
                 choco install hdsentinel -y | Out-Null
             }
-            StartExeFile "HDSentinel.exe" $pathHDS
+            Start-App "HDSentinel.exe" $pathHDS
         }
     }
     HDSentinnel
@@ -183,15 +183,15 @@ $formControls.BoutonBattinfo.Add_Click({
     })
     
     $formControls.BoutonSpeccy.Add_Click({
-    UnzipAppLaunch "Speccy" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "Speccy.exe" "$pathDiagnostiqueSource"
+    Invoke-RemoteZipFile "Speccy" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "Speccy.exe" "$pathDiagnostiqueSource"
     })
     
     $formControls.BoutonHWMonitor.Add_Click({
-    UnzipAppLaunch "HWmonitor" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor.zip" "HWMonitor_x64.exe" "$pathDiagnostiqueSource"
+    Invoke-RemoteZipFile "HWmonitor" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor.zip" "HWMonitor_x64.exe" "$pathDiagnostiqueSource"
     })
     
     $formControls.BoutonWhocrashed.Add_Click({
-    UnzipAppLaunch "WhoCrashed" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashed.zip" "WhoCrashedEx.exe" "$pathDiagnostiqueSource"
+    Invoke-RemoteZipFile "WhoCrashed" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashed.zip" "WhoCrashedEx.exe" "$pathDiagnostiqueSource"
     })
     
     $formControls.BoutonSysinfo.Add_Click({
