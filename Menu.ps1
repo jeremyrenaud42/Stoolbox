@@ -17,12 +17,10 @@
 #>
 
 #Load les assemblies nécéssaire au fonctionnement
-Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
+Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 ########################Fonctions nécéssaire au déroulement########################
 function Test-InternetConnection
 {
-    [CmdletBinding()]
-    param ()
     <#
     .SYNOPSIS
         Vérifie si il y a Internet de connecté
@@ -30,20 +28,43 @@ function Test-InternetConnection
         Envoi une seule requête PING vers 8.8.8.8 (google.com)
         Tant que la requête échoue ca affiche un message aux 5 secondes qui mentionne qu'il n'y a pas Internet
         Le message disparait après avoir cliquer OK si Internet est connecté.
-        ca prend le assembly de visual basic pour afficher le message
+    .PARAMETER PingAddress
+        Adresse IP utilisé pour le ping. Defaut = 8.8.8.8 (Google.com)
+    .PARAMETER CheckInterval
+        Le nombre de délai avant de recommencer la reqête ping. Defaut = 5 secondes
+    .EXAMPLE
+        Test-InternetConnection
+        Tests the internet connection using default parameters (pinging 8.8.8.8 every 5 seconds).
+    .EXAMPLE
+        Test-InternetConnection -PingAddress "1.1.1.1" -CheckInterval 10
+        Tests the internet connection by pinging 1.1.1.1 and checking every 10 seconds.
+    .Notes
         Ne prend pas la fonction deja inclus dans le module Verifiation car a ce moment la on a pas les modules de downloadé
     #>
-    while (!(test-connection 8.8.8.8 -Count 1 -quiet)) #Ping Google et recommence jusqu'a ce qu'il y est internet
+
+
+    [CmdletBinding()]
+    param
+    (
+        [string]$PingAddress = "8.8.8.8",
+
+        [int]$CheckInterval = 5
+    )
+
+
+    while (!(test-connection $PingAddress -Count 1 -quiet))
     {
-    [Microsoft.VisualBasic.Interaction]::MsgBox("Veuillez vous connecter à Internet et cliquer sur OK",'OKOnly,SystemModal,Information', "Menu - Boite à outils du technicien") | Out-Null
-    start-sleep 5
+        $result = [System.Windows.MessageBox]::Show("Veuillez vous connecter à Internet et cliquer sur OK","Menu - Boite à outils du technicien",1,48)
+        if($result -eq 'Cancel')
+        {
+            exit
+        }
+            start-sleep $CheckInterval
     }
 }
 
 function Restart-Elevated
 {
-    [CmdletBinding()]
-    param ()
     <#
     .SYNOPSIS
         Relance le script en tant qu'administrateur

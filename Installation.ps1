@@ -1,4 +1,4 @@
-﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore,Microsoft.VisualBasic
+﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 
 function Get-RequiredModules
 {
@@ -352,7 +352,7 @@ function Get-ActivationStatus
     }
     else 
     {
-        [Microsoft.VisualBasic.Interaction]::MsgBox("Windows n'est pas activé",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
+        [System.Windows.MessageBox]::Show("Windows n'est pas activé","Installation Windows",0,64) | Out-Null
         $formControlsMain.richTxtBxOutput.AppendText("`r`nWindows n'est pas activé`r`n")     
     }  
 }
@@ -364,7 +364,7 @@ function Set-DefaultBrowser
     if(($currentHttpAssocation -notlike "ChromeHTML*") -and ($currentHttpsAssocation -notlike "ChromeHTML*"))
     {
         Start-Process ms-settings:defaultapps
-        [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre Google Chrome par défaut",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null   
+        [System.Windows.MessageBox]::Show("Mettre Google Chrome par défaut","Installation Windows",0,64) | Out-Null   
     }
 }
    
@@ -373,7 +373,7 @@ function Set-DefaultPDFViewer
     $currentDefaultPdfViewer = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice | Select-Object -ExpandProperty ProgId
     if($currentDefaultPdfViewer -notlike "*.Document.DC")
     {
-        [Microsoft.VisualBasic.Interaction]::MsgBox("Mettre Adobe Reader par défaut",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null   
+        [System.Windows.MessageBox]::Show("Mettre Adobe Reader par défaut","Installation Windows",0,64) | Out-Null   
     }
 }
     
@@ -383,7 +383,7 @@ function Set-GooglePinnedTaskbar
     $chromeTaskbarStatus= Test-Path "$taskbardir\*Google*Chrome*"
     if($chromeTaskbarStatus-eq $false)
     {
-        [Microsoft.VisualBasic.Interaction]::MsgBox("Épingler Google Chrome dans la barre des tâches",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null   
+        [System.Windows.MessageBox]::Show("Épingler Google Chrome dans la barre des tâches","Installation Windows",0,64) | Out-Null   
     } 
 }
 
@@ -405,7 +405,7 @@ function Complete-Installation
     if($rebootStatus)
     {
         $formControlsMain.richTxtBxOutput.AppendText("`r`nL'ordinateur devra redémarrer pour finaliser l'installation des mises à jour")
-        [Microsoft.VisualBasic.Interaction]::MsgBox("L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour",'OKOnly,SystemModal,Information', "Installation Windows") | Out-Null
+        [System.Windows.MessageBox]::Show("L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour","Installation Windows",0,64) | Out-Null
         shutdown /r /t 300
         Task #tâche planifié qui delete tout
     }
