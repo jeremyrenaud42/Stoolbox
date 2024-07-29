@@ -22,8 +22,8 @@ Get-RemoteFile "DiagApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42
 
 $inputXML = import-XamlFromFile "$pathDiagnostiqueSource\MainWindow.xaml"
 $formatedXaml = Format-XamlFile $inputXML
-$ObjectXaml = New-XamlObject $formatedXaml
-$window = Add-WPFWindowFromXaml $ObjectXaml
+$objectXaml = New-XamlObject $formatedXaml
+$window = Add-WPFWindowFromXaml $objectXaml
 $formControls = Get-WPFObjects $formatedXaml $window
 
 

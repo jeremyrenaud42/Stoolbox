@@ -14,7 +14,7 @@ function Get-Dependencies
     Get-RequiredModules
     Set-Location $pathInstallation #pour log
     New-Folder "_Tech\Applications\Installation\source"
-    CheckInternetStatusLoop
+    Get-InternetStatusLoop
     Get-RemoteFile "InstallationApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/InstallationApps.JSON' "$pathInstallationSource"
     Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' "$pathInstallationSource"
     Get-RemoteFile "MainWindow1.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow1.xaml' "$pathInstallationSource"
@@ -37,8 +37,8 @@ Get-Dependencies
 #WPF - appMenuChoice
 $inputXML = import-XamlFromFile "$pathInstallation\source\MainWindow.xaml"
 $formatedXaml = Format-XamlFile $inputXML
-$ObjectXaml = New-XamlObject $formatedXaml
-$window = Add-WPFWindowFromXaml $ObjectXaml
+$objectXaml = New-XamlObject $formatedXaml
+$window = Add-WPFWindowFromXaml $objectXaml
 $formControlsMenuApp = Get-WPFObjects $formatedXaml $window
 
 #ajout des events, cases a cocher, etc.. pour le WPF:
@@ -62,8 +62,8 @@ elseif($manufacturerBrand -like '*Micro-Star*')
 {
     $formControlsMenuApp.chkboxMSICenter.IsChecked = $true
 }
-$VideoController = Get-WmiObject win32_VideoController | Select-Object -Property name
-if($VideoController -match 'NVIDIA')
+$videoController = Get-WmiObject win32_videoController | Select-Object -Property name
+if($videoController -match 'NVIDIA')
 {
     $formControlsMenuApp.chkboxGeForce.IsChecked = $true
 }
@@ -72,7 +72,7 @@ $formControlsMenuApp.btnGo.Add_Click({
 $window.Close()
 })
 $formControlsMenuApp.btnReturn.Add_Click({
-    start-process "$env:SystemDrive\\_Tech\\Menu.bat" -verb Runas
+    start-process "$env:SystemDrive\_Tech\Menu.bat" -verb Runas
     $window.Close()
     Exit
 })
@@ -91,8 +91,8 @@ Start-WPFAppDialog $window
 #WPF - Main GUI
 $inputXML = import-XamlFromFile "$pathInstallation\source\MainWindow1.xaml"
 $formatedXaml = Format-XamlFile $inputXML
-$ObjectXaml = New-XamlObject $formatedXaml
-$window = Add-WPFWindowFromXaml $ObjectXaml
+$objectXaml = New-XamlObject $formatedXaml
+$window = Add-WPFWindowFromXaml $objectXaml
 $formControlsMain = Get-WPFObjects $formatedXaml $window
 
 $formControlsMain.richTxtBxOutput.add_textchanged({
@@ -132,7 +132,6 @@ function Install-WindowsUpdate
     $formControlsMain.richTxtBxOutput.AppendText("Vérification des mises à jour de Windows") 
     Initialize-WindowsUpdate 
     $updates = Get-WUList -MaxSize 250mb
-    $firstUpdate = $updates[0]
     $totalUpdates = $updates.Count
         if($totalUpdates -eq 0)
         {
@@ -140,23 +139,16 @@ function Install-WindowsUpdate
         }
         elseif($totalUpdates -gt 0)
         {
-            if ([string]::IsNullOrEmpty($firstUpdate.Title)) 
-            {
-                $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n")        
-            }
-            else
-            {
-                $formControlsMain.richTxtBxOutput.AppendText(" -$totalUpdates mises à jour de disponibles`r`n") 
-                $currentUpdate = 0
-                    foreach($update in $updates)
-                    { 
-                        $currentUpdate++ 
-                        $kb = $update.KB
-                        $formControlsMain.richTxtBxOutput.AppendText("Mise à jour $($currentUpdate) sur $($totalUpdates): $($update.Title)`r`n")                    
-                        Get-WindowsUpdate -KBArticleID $kb -MaxSize 250mb -Install -AcceptAll -IgnoreReboot     
-                    }
-            }
-        }  
+            $formControlsMain.richTxtBxOutput.AppendText(" -$totalUpdates mises à jour de disponibles`r`n") 
+            $currentUpdate = 0
+                foreach($update in $updates)
+                { 
+                    $currentUpdate++ 
+                    $kb = $update.KB
+                    $formControlsMain.richTxtBxOutput.AppendText("Mise à jour $($currentUpdate) sur $($totalUpdates): $($update.Title)`r`n")                    
+                    Get-WindowsUpdate -KBArticleID $kb -MaxSize 250mb -Install -AcceptAll -IgnoreReboot     
+                }
+        } 
         else
         {
             $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n") 
@@ -254,8 +246,8 @@ function Update-MsStore
     Add-Log "installation.txt" "Mises à jour de Microsoft Store"
 }
 
-$JSONFilePath = "$env:SystemDrive\_Tech\Applications\Installation\Source\InstallationApps.JSON"
-$jsonString = Get-Content -Raw $JSONFilePath
+$jsonFilePath = "$env:SystemDrive\_Tech\Applications\Installation\Source\InstallationApps.JSON"
+$jsonString = Get-Content -Raw $jsonFilePath
 $appsInfo = ConvertFrom-Json $jsonString
 $appNames = $appsInfo.psobject.Properties.Name
 #Iterate over the applications in the JSON and interpolate the variables
@@ -280,26 +272,26 @@ function Get-CheckBoxStatus
 
  function Test-SoftwarePresence($appInfo)
 {
-   $SoftwareInstallationStatus= $false
+   $softwareInstallationStatus= $false
    if (($appInfo.path64 -AND (Test-Path $appInfo.path64)) -OR 
    ($appInfo.path32 -AND (Test-Path $appInfo.path32)) -OR 
    ($appInfo.pathAppData -AND (Test-Path $appInfo.pathAppData)))
    {
-     $SoftwareInstallationStatus = $true
+     $softwareInstallationStatus = $true
    }
-   return $SoftwareInstallationStatus
+   return $softwareInstallationStatus
 }
 
 function Install-Software($appInfo)
 {
     $formControlsMain.lblProgress.Content = "Installation de $appName"
     $formControlsMain.richTxtBxOutput.AppendText("Installation de $appName en cours")
-    $SoftwareInstallationStatus = Test-SoftwarePresence $appInfo
-        if($SoftwareInstallationStatus)
+    $softwareInstallationStatus = Test-SoftwarePresence $appInfo
+        if($softwareInstallationStatus)
         {
             $formControlsMain.richTxtBxOutput.AppendText(" -$appName est déja installé`r`n")
         }
-        elseif($SoftwareInstallationStatus -eq $false)
+        elseif($softwareInstallationStatus -eq $false)
         {  
             Install-SoftwareWithWinget $appInfo
         }
@@ -312,8 +304,8 @@ function Install-SoftwareWithWinget($appInfo)
     {
         winget install -e --id $appInfo.wingetname --accept-package-agreements --accept-source-agreements --silent | out-null
     } 
-    $SoftwareInstallationStatus = Test-SoftwarePresence $appInfo
-        if($SoftwareInstallationStatus)
+    $softwareInstallationStatus = Test-SoftwarePresence $appInfo
+        if($softwareInstallationStatus)
         {
             $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n") 
         } 
@@ -329,8 +321,8 @@ function Install-SoftwareWithChoco($apsInfo)
     {
         choco install $appInfo.ChocoName -y | out-null
     }
-    $SoftwareInstallationStatus = Test-SoftwarePresence $apsInfo
-    if($SoftwareInstallationStatus)
+    $softwareInstallationStatus = Test-SoftwarePresence $apsInfo
+    if($softwareInstallationStatus)
     {   
         $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")  
     }

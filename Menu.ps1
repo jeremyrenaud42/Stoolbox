@@ -99,7 +99,6 @@ function Install-RequiredModules
     #>
     Get-RequiredModules
     Import-RequiredModules
-
 }
 
 function Get-GuiFiles
@@ -159,7 +158,7 @@ $desktop = [Environment]::GetFolderPath("Desktop")
 Add-DesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$applicationPath\Source\Images\Icone.ico"
 New-Folder "Temp"
 Get-RemoveScriptFiles
-$adminStatus = CheckAdminStatus
+$adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
     Restart-Elevated
@@ -168,8 +167,8 @@ if($adminStatus -eq $false)
 ########################GUI########################
 $inputXML = import-XamlFromFile "$applicationPath\Source\MainWindow.xaml"
 $formatedXaml = Format-XamlFile $inputXML
-$ObjectXaml = New-XamlObject $formatedXaml
-$window = Add-WPFWindowFromXaml $ObjectXaml
+$objectXaml = New-XamlObject $formatedXaml
+$window = Add-WPFWindowFromXaml $objectXaml
 $formControls = Get-WPFObjects $formatedXaml $window
 
 ########################GUI Events########################
@@ -204,7 +203,7 @@ $formControls.btnQuit.Add_Click({
 
 function Set-MenuWinget
 {
-    $version = CheckWingetStatus
+    $version = Get-WingetStatus
 	if($version -eq $null)
 	{
 		$formControls.txtBlkWingetVersion.text = "Non installé"
@@ -230,7 +229,7 @@ function Set-MenuWinget
 
 function Set-MenuChoco
 {
-    $formControls.txtBlkChocoVersion.text = CheckChocoStatus
+    $formControls.txtBlkChocoVersion.text = Get-ChocoStatus
     if($formControls.txtBlkChocoVersion.text -eq $true)
     {
         $formControls.txtBlkChocoVersion.Foreground = "green"  
@@ -250,7 +249,7 @@ function Set-MenuChoco
 
 function Set-MenuGit
 {
-    $formControls.txtBlkGitVersion.text = CheckGitStatus
+    $formControls.txtBlkGitVersion.text = Get-GitStatus
     if($formControls.txtBlkGitVersion.text -eq $true)
     {
         $formControls.txtBlkGitVersion.Foreground = "green"  
@@ -264,7 +263,7 @@ function Set-MenuGit
 
 function Set-MenuFTP
 {
-    $formControls.txtBlkFTPVersion.text = CheckFtpStatus
+    $formControls.txtBlkFTPVersion.text = Get-FtpStatus
     if($formControls.txtBlkFTPVersion.text -eq $true)
     {
         $formControls.txtBlkFTPVersion.Foreground = "green"
