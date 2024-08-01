@@ -1,4 +1,8 @@
+2024-08-01:
+- Installation peut être custom dans l'onglet settings 
+
 2024-07-25:
+- Menu affiche des statuts et permet d'installer Winget et Choco2024-07-25:
 - Menu affiche des statuts et permet d'installer Winget et Choco
 
 2024-07-20:

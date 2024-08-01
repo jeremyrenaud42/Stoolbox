@@ -35,7 +35,7 @@ $actualDate = (Get-Date).ToString()
 Get-Dependencies
 
 #WPF - appMenuChoice
-$inputXML = import-XamlFromFile "$pathInstallation\source\MainWindow.xaml"
+$inputXML = import-XamlFromFile "$pathInstallationSource\MainWindow.xaml"
 $formatedXaml = Format-XamlFile $inputXML
 $objectXaml = New-XamlObject $formatedXaml
 $window = Add-WPFWindowFromXaml $objectXaml
@@ -86,10 +86,11 @@ $formControlsMenuApp.btnQuit.Add_Click({
     Exit
 })
 
+
 Start-WPFAppDialog $window
 
 #WPF - Main GUI
-$inputXML = import-XamlFromFile "$pathInstallation\source\MainWindow1.xaml"
+$inputXML = import-XamlFromFile "$pathInstallationSource\MainWindow1.xaml"
 $formatedXaml = Format-XamlFile $inputXML
 $objectXaml = New-XamlObject $formatedXaml
 $window = Add-WPFWindowFromXaml $objectXaml
@@ -100,7 +101,34 @@ $formControlsMain.richTxtBxOutput.add_textchanged({
     $formControlsMain.richTxtBxOutput.ScrollToEnd() #scroll en bas
 })
 
+$cbBoxSizeDefaultValue = "250"
+$cbBoxRestartTimereDefaultValue = "300"
+
+
+if (-not $formControlsMenuApp.CbBoxSize.SelectedItem) {
+    $formControlsMenuApp.CbBoxSize.SelectedItem = $formControlsMenuApp.CbBoxSize.Items | Where-Object { $_.Content -eq $cbBoxSizeDefaultValue }
+}
+
+# Check and set the default value for CbBoxRestartTimer if not selected
+if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem) {
+    $formControlsMenuApp.CbBoxRestartTimer.SelectedItem = $formControlsMenuApp.CbBoxRestartTimer.Items | Where-Object { $_.Content -eq $cbBoxRestartTimereDefaultValue }
+}
+
 Start-WPFApp $window
+
+#experimental
+function Update-GUI 
+{
+    param (
+        [string]$message
+    )
+
+    # Use the Dispatcher to update the GUI from the main thread
+    $formControlsMain.richTxtBxOutput.Dispatcher.Invoke([Action]{
+        $formControlsMain.richTxtBxOutput.AppendText("$message`r`n")  
+    })
+}
+##fin du experimental
 
 function Install-SoftwaresManager
 {
@@ -111,7 +139,7 @@ function Install-SoftwaresManager
     Install-Nuget
     $formControlsMain.richTxtBxOutput.AppendText("Installation de Chocolatey`r`n")    
     Install-Choco
-    $formControlsMain.richTxtBxOutput.AppendText("Installation de Winget`r`n")    
+    $formControlsMain.richTxtBxOutput.AppendText("Installation de Winget`r`n`r`n")    
     Install-Winget
 }
 
@@ -126,12 +154,48 @@ function Initialize-WindowsUpdate
     Import-Module PSWindowsUpdate | out-null 
 }
 
+function Get-WindowsUpdateReboot
+{
+    $restartComputer = $false
+    $rebootStatus = get-wurebootstatus -Silent #vérifie si ordi doit reboot à cause de windows update (PSwindowsupdate)
+    if($rebootStatus)
+    {
+        $formControlsMain.richTxtBxOutput.AppendText("`r`nL'ordinateur devra redémarrer pour finaliser l'installation des mises à jour")
+        [System.Windows.MessageBox]::Show("L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour","Installation Windows",0,64) | Out-Null    
+        $restartComputer = $true
+    } 
+    return $restartComputer
+} 
+
 function Install-WindowsUpdate
 {
+    <#
+    .SYNOPSIS
+        Installer les mises a jour de Windows
+    .DESCRIPTION
+        Liste les updates de Windows qui sont disponibles
+        Si il ya 0 update dispo, va afficher que c'est deja bon
+        si il y a des updates de trouvé, il va les faire une par une et afficher ce qu'il fait en temps reel
+    .PARAMETER UpdateSize
+        La Taille maximum des mises a jour de Windows
+    .EXAMPLE
+        Install-WindowsUpdate -UpdateSize "250" 
+        Install chaque update qui est de moins de 250mb
+    #>
+    
+    
+    [CmdletBinding()]
+    param
+    (
+        [int]$UpdateSize = 250
+    )
+
+
     $formControlsMain.lblProgress.Content = "Mises à jour de Windows"
     $formControlsMain.richTxtBxOutput.AppendText("Vérification des mises à jour de Windows") 
     Initialize-WindowsUpdate 
-    $updates = Get-WUList -MaxSize 250mb
+    $maxSizeBytes = $UpdateSize * 1MB #sans ca ca marchera pas
+    $updates = Get-WUList -MaxSize $maxSizeBytes
     $totalUpdates = $updates.Count
         if($totalUpdates -eq 0)
         {
@@ -146,9 +210,9 @@ function Install-WindowsUpdate
                     $currentUpdate++ 
                     $kb = $update.KB
                     $formControlsMain.richTxtBxOutput.AppendText("Mise à jour $($currentUpdate) sur $($totalUpdates): $($update.Title)`r`n")                    
-                    Get-WindowsUpdate -KBArticleID $kb -MaxSize 250mb -Install -AcceptAll -IgnoreReboot     
+                    Get-WindowsUpdate -KBArticleID $kb -MaxSize $maxSizeBytes -Install -AcceptAll -IgnoreReboot     
                 }
-        } 
+        }  
         else
         {
             $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n") 
@@ -158,10 +222,39 @@ function Install-WindowsUpdate
 
 Function Rename-SystemDrive
 {
+    <#
+    .SYNOPSIS
+        Renomme le lecteur C:
+    .DESCRIPTION
+        Renomme par OS par défaut au lieu du nom actuel (souvent disque local)
+        Vérifie si ca a fonctionné
+    .PARAMETER NewDiskName
+        Le nouveau nom du disque
+    .EXAMPLE
+        Rename-SystemDrive -NewDiskName "OS"
+        Renomme le disque OS
+    #>
+    
+    
+    [CmdletBinding()]
+    param
+    (
+        [string]$NewDiskName = "OS"
+    )
+
+    $systemDriverLetter = $env:SystemDrive.TrimEnd(':') #Retounre la lettre seulement sans le :
     $formControlsMain.lblProgress.Content = "Renommage du disque"    
-    Set-Volume -DriveLetter 'C' -NewFileSystemLabel "OS"
-    $formControlsMain.richTxtBxOutput.AppendText("`r`nLe disque C: a été renommé OS`r`n")    
-    Add-Log "installation.txt" "Le disque C: a été renommé OS"
+    Set-Volume -DriveLetter $systemDriverLetter -NewFileSystemLabel $NewDiskName
+    $diskName = (Get-Volume -DriveLetter $systemDriverLetter).FileSystemLabel
+    if($diskName -match $NewDiskName)
+    {
+        $formControlsMain.richTxtBxOutput.AppendText("Le disque $env:SystemDrive a été renommé $NewDiskName`r`n")    
+        Add-Log "installation.txt" "Le disque $env:SystemDrive a été renommé $NewDiskName"
+    }
+    else
+    {
+        $formControlsMain.richTxtBxOutput.AppendText("`r`nÉchec du renommage de disque`r`n")    
+    }
 }
 
 Function Set-ExplorerDisplay
@@ -345,7 +438,6 @@ function Install-SoftwareWithNinite($appInfo)
 function Get-ActivationStatus
 {
     $activated = Get-CIMInstance -query "select LicenseStatus from SoftwareLicensingProduct where LicenseStatus=1" | Select-Object -ExpandProperty LicenseStatus 
-    $activated
     if($activated -eq "1")
     {
         $formControlsMain.richTxtBxOutput.AppendText("`r`n$windowsVersion est activé sur cet ordinateur`r`n")       
@@ -397,39 +489,74 @@ function Complete-Installation
     [Audio]::Volume = 0.75
     Get-voice -Verb runAs
     Send-VoiceMessage "Vous avez terminer la configuration du Windows."
-    Set-DefaultBrowser
-    Set-DefaultPDFViewer
-    Set-GooglePinnedTaskbar
+    $formControlsMain.richTxtBxOutput.AppendText("`r`nVous avez terminer la configuration du Windows.")
     Stop-Process -Name "ninite" -Force -erroraction ignore
-    $rebootStatus = get-wurebootstatus -Silent #vérifie si ordi doit reboot à cause de windows update
-    if($rebootStatus)
+    if($formControlsMenuApp.chkboxGoogleChrome.IsChecked -eq $true)
     {
-        $formControlsMain.richTxtBxOutput.AppendText("`r`nL'ordinateur devra redémarrer pour finaliser l'installation des mises à jour")
-        [System.Windows.MessageBox]::Show("L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour","Installation Windows",0,64) | Out-Null
-        shutdown /r /t 300
-        Task #tâche planifié qui delete tout
+        Set-DefaultBrowser
+        Set-GooglePinnedTaskbar
     }
-    else 
+    if($formControlsMenuApp.chkboxAdobe.IsChecked -eq $true)
     {
-        Task #tâche planifié qui delete tout  
-    }     
+        Set-DefaultPDFViewer
+    }
+    if($formControlsMenuApp.chkboxWindowsUpdate.IsChecked -eq $true)
+    {
+        $wuRestart = Get-WindowsUpdateReboot
+        if($wuRestart -eq $true)
+        {
+            $restartTime = $formControlsMenuApp.CbBoxRestartTimer.SelectedItem.Content
+            shutdown /r /t $restartTime
+        }  
+    }
+    Task #tâche planifié qui delete tout   
 }
 
 function Main
 {
-Install-SoftwaresManager
-Update-MsStore
-Rename-SystemDrive
-Set-ExplorerDisplay
-Disable-Bitlocker
-Disable-FastBoot
-Remove-EngKeyboard
-Set-Privacy
-Enable-DesktopIcon
-Get-CheckBoxStatus
-Get-ActivationStatus
-Update-MsStore
-Install-WindowsUpdate
-Complete-Installation
+    Install-SoftwaresManager
+    if($formControlsMenuApp.chkboxMSStore.IsChecked -eq $true)
+    { 
+        Update-MsStore
+    }
+    if($formControlsMenuApp.chkboxDisque.IsChecked -eq $true)
+    { 
+        Rename-SystemDrive -NewDiskName $formControlsMenuApp.TxtBkDiskName.text
+    }
+    if($formControlsMenuApp.chkboxExplorer.IsChecked -eq $true)
+    { 
+        Set-ExplorerDisplay
+    }
+    if($formControlsMenuApp.chkboxBitlocker.IsChecked -eq $true)
+    { 
+        Disable-Bitlocker
+    }
+    if($formControlsMenuApp.chkboxStartup.IsChecked -eq $true)
+    { 
+        Disable-FastBoot
+    }
+    if($formControlsMenuApp.chkboxClavier.IsChecked -eq $true)
+    { 
+        Remove-EngKeyboard
+    }
+    if($formControlsMenuApp.chkboxConfi.IsChecked -eq $true)
+    { 
+        Set-Privacy
+    }
+    if($formControlsMenuApp.chkboxIcone.IsChecked -eq $true)
+    {
+        Enable-DesktopIcon  
+    }
+    Get-CheckBoxStatus
+    Get-ActivationStatus
+    if($formControlsMenuApp.chkboxMSStore.IsChecked -eq $true)
+    { 
+        Update-MsStore
+    }
+    if($formControlsMenuApp.chkboxWindowsUpdate.IsChecked -eq $true)
+    { 
+        Install-WindowsUpdate -UpdateSize $formControlsMenuApp.CbBoxSize.SelectedItem.Content
+    }
+    Complete-Installation
 }
 Main
