@@ -17,11 +17,6 @@ $pathfixSource = "$env:SystemDrive\_Tech\Applications\fix\source"
 set-location $pathfix
 Get-RequiredModules
 New-Folder "_Tech\Applications\fix\source"
-$adminStatus = Get-AdminStatus
-if($adminStatus -eq $false)
-{
-    Restart-Elevated -Path $pathOptimisation_Nettoyage\Fix.ps1
-}
 
 function zipMinitool
 {
