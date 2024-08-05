@@ -19,6 +19,11 @@ New-Folder "_Tech\Applications\Diagnostique\source"
 Get-RemoteFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "$pathDiagnostiqueSource" 
 Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/MainWindow.xaml' "$pathDiagnostiqueSource"
 Get-RemoteFile "DiagApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/DiagApps.JSON' "$pathDiagnostiqueSource"  
+$adminStatus = Get-AdminStatus
+if($adminStatus -eq $false)
+{
+    Restart-Elevated -Path $pathDiagnostique\Diagnostique.ps1
+}
 
 $inputXML = import-XamlFromFile "$pathDiagnostiqueSource\MainWindow.xaml"
 $formatedXaml = Format-XamlFile $inputXML
@@ -35,7 +40,7 @@ $formControls.BoutonMenu.Add_Click({
 
 $formControls.BoutonQuit.Add_Click({
     winget uninstall -e --id XPDNXG5333CSVK
-    Task
+    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
     $window.Close()
 })
 

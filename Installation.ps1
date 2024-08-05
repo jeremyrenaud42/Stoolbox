@@ -33,6 +33,11 @@ $pathInstallationSource = "$env:SystemDrive\_Tech\Applications\Installation\sour
 $windowsVersion = (Get-WmiObject -class Win32_OperatingSystem).Caption
 $actualDate = (Get-Date).ToString()
 Get-Dependencies
+$adminStatus = Get-AdminStatus
+if($adminStatus -eq $false)
+{
+    Restart-Elevated -Path $pathInstallation\Installation.ps1
+}
 
 #WPF - appMenuChoice
 $inputXML = import-XamlFromFile "$pathInstallationSource\MainWindow.xaml"
@@ -81,7 +86,7 @@ $formControlsMenuApp.btnclose.Add_Click({
     Exit
 })
 $formControlsMenuApp.btnQuit.Add_Click({
-    Task
+    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
     $window.Close()
     Exit
 })
@@ -509,7 +514,7 @@ function Complete-Installation
             shutdown /r /t $restartTime
         }  
     }
-    Task #tâche planifié qui delete tout   
+    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat' #tâche planifié qui delete tout   
 }
 
 function Main

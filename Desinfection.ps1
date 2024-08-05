@@ -17,6 +17,11 @@ set-location $pathDesinfection
 Get-RequiredModules
 New-Folder "_Tech\Applications\Desinfection\source"
 Get-RemoteFile "fondvirus.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' "$pathDesinfectionSource"  
+$adminStatus = Get-AdminStatus
+if($adminStatus -eq $false)
+{
+    Restart-Elevated -Path $pathDesinfection\Desinfection.ps1
+}
 
 function zipccleaner
 {
@@ -344,7 +349,7 @@ $quit.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $quit.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $quit.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $quit.Add_Click({
-Task
+Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
 $Form.Close()
 })
 

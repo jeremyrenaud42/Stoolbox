@@ -17,6 +17,11 @@ $pathfixSource = "$env:SystemDrive\_Tech\Applications\fix\source"
 set-location $pathfix
 Get-RequiredModules
 New-Folder "_Tech\Applications\fix\source"
+$adminStatus = Get-AdminStatus
+if($adminStatus -eq $false)
+{
+    Restart-Elevated -Path $pathOptimisation_Nettoyage\Fix.ps1
+}
 
 function zipMinitool
 {
@@ -103,7 +108,7 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
     {
         #Get-Process -Name AliyunWrapExe -ErrorAction SilentlyContinue | Out-Null   
         #stop-process -Name AliyunWrapExe -ErrorAction SilentlyContinue | Out-Null #gérer easeUS removal
-        Task
+        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
         exit
     }
     else 

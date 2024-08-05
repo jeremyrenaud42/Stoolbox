@@ -63,20 +63,6 @@ function Test-InternetConnection
     }
 }
 
-function Restart-Elevated
-{
-    <#
-    .SYNOPSIS
-        Relance le script en tant qu'administrateur
-    .DESCRIPTION
-        Si le script est pas executé en admin il va le relancer en admin et fermer l'ancien pas admin
-    .NOTES
-        N'est pas stocké dans un module, car il prend le script actuel et dans un module ca marchait pas
-    #>  
-    Start-Process powershell.exe -ArgumentList ("-NoProfile -windowstyle hidden -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit
-}
-
 function Get-RequiredModules
 {
     <#
@@ -182,7 +168,7 @@ Get-RemoveScriptFiles
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
-    Restart-Elevated
+    Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
 }
 
 ########################GUI########################
@@ -218,7 +204,7 @@ $formControls.btnChangeLog.Add_Click({
     Start-Process "$env:SystemDrive\_Tech\Applications\source\changelog.txt"
 })
 $formControls.btnQuit.Add_Click({
-    Task
+    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
     $window.Close() 
 })
 
