@@ -18,6 +18,11 @@ set-location $pathOptimisation_Nettoyage
 Get-RequiredModules
 New-Folder "_Tech\Applications\Optimisation_Nettoyage\source"
 Get-RemoteFile "fondopti.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "$pathOptimisation_NettoyageSource" 
+$adminStatus = Get-AdminStatus
+if($adminStatus -eq $false)
+{
+    Restart-Elevated -Path $pathOptimisation_Nettoyage\Optimisation_Nettoyage.ps1
+}
 
 $image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg") 
 $Form = New-Object System.Windows.Forms.Form
@@ -379,7 +384,7 @@ $quit.Add_MouseEnter({$quit.ForeColor = 'White'})
 $quit.Add_MouseLeave({$quit.ForeColor = 'black'})
 $quit.Add_Click({
 #Close-ExcelPackage $excel #Ferme la grille Excel
-Task
+Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
 $Form.Close()
 })
 
