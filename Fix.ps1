@@ -78,11 +78,11 @@ switch ($choix)
 1{Get-RemoteZipFile "scripts.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' "$pathFixSource"; submenuHDD;Break}
 2{Get-RemoteZipFile "Tweak.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathFixSource"; submenuTweak;Break}
 3{Get-RemoteZipFile "Sterjo.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathFixSource"; submenuMDP;Break}
-4{Invoke-RemoteZipFile "DDU" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/DDU.zip' "Display Driver Uninstaller.exe" "$pathFixSource";Addlog "Fixlog.txt" "Désinstallation du pilote graphique avec DDU";Break}
-5{Invoke-RemoteZipFile "WiseForceDeleter" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleter.zip' "WiseDeleter.exe" "$pathFixSource";Break}
-6{Invoke-RemoteZipFile "WinDirStat" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' "WinDirStatPortable.exe" "$pathFixSource";Break}
+4{Invoke-RemoteZipFile "DDU.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/DDU.zip' "Display Driver Uninstaller.exe" "$pathFixSource";Addlog "Fixlog.txt" "Désinstallation du pilote graphique avec DDU";Break}
+5{Invoke-RemoteZipFile "WiseForceDeleter.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleter.zip' "WiseDeleter.exe" "$pathFixSource";Break}
+6{Invoke-RemoteZipFile "WinDirStat.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' "WinDirStatPortable.exe" "$pathFixSource";Break}
 7{zipMinitool;Break} 
-8{Invoke-RemoteZipFile "ComIntRep" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' "ComIntRep_X64.exe" "$pathFixSource";Addlog "Fixlog.txt" "Réparer Internet";Break}
+8{Invoke-RemoteZipFile "ComIntRep.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' "ComIntRep_X64.exe" "$pathFixSource";Addlog "Fixlog.txt" "Réparer Internet";Break}
 9{menu;Break}
 }
 start-sleep 1

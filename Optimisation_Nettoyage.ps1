@@ -193,7 +193,7 @@ $Revo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Revo.Add_MouseEnter({$Revo.ForeColor = 'White'})
 $Revo.Add_MouseLeave({$Revo.ForeColor = 'black'})
 $Revo.Add_Click({
-    Invoke-RemoteZipFile "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "RevoUPort.exe" "$pathOptimisation_NettoyageSource"
+    Invoke-RemoteZipFile "RevoUninstaller_Portable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "RevoUPort.exe" "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
 })
 
@@ -340,7 +340,7 @@ $CrystalDiskInfo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gra
 $CrystalDiskInfo.Add_MouseEnter({$CrystalDiskInfo.ForeColor = 'White'})
 $CrystalDiskInfo.Add_MouseLeave({$CrystalDiskInfo.ForeColor = 'black'})
 $CrystalDiskInfo.Add_Click({
-    Invoke-RemoteZipFile "CrystalDiskInfoPortable" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "CrystalDiskInfoPortable.exe" "$pathOptimisation_NettoyageSource"
+    Invoke-RemoteZipFile "CrystalDiskInfoPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "CrystalDiskInfoPortable.exe" "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier la santé du HDD"
 })
 
@@ -361,7 +361,7 @@ $HDTune.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HDTune.Add_MouseEnter({$HDTune.ForeColor = 'White'})
 $HDTune.Add_MouseLeave({$HDTune.ForeColor = 'black'})
 $HDTune.Add_Click({
-    Invoke-RemoteZipFile "HD_Tune" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' "_HDTune.exe" "$pathOptimisation_NettoyageSource"
+    Invoke-RemoteZipFile "HD_Tune.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HD_Tune.zip' "_HDTune.exe" "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
 })
 
