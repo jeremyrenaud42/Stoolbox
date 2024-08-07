@@ -121,7 +121,6 @@ function Get-GuiFiles
     .NOTES
         Premiere fonction qui utilise les modules
     #>
-    New-Folder "$env:SystemDrive\_Tech\Applications\Source\images"
     Get-RemoteFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$applicationPath\Source\Images"
     Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$applicationPath\source\Images"
     Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' "$applicationPath\Source"
@@ -155,9 +154,8 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
     .NOTES
         N'est pas dans un module, car c'est spécific au menu seulement
     #>
-    New-Folder $applicationPath\$appName
-    Get-RemoteFile "$appName\$appName.ps1" $githubPs1Link $applicationPath
-    Invoke-App "$appName\RunAs$appName.bat" $githubBatLink $applicationPath
+    Get-RemoteFile "$appName.ps1" $githubPs1Link $applicationPath\$appName
+    Invoke-App "RunAs$appName.bat" $githubBatLink $applicationPath\$appName
 }
 
 ########################Déroulement########################
@@ -169,7 +167,6 @@ Install-RequiredModules
 Get-GuiFiles
 $desktop = [Environment]::GetFolderPath("Desktop")
 Add-DesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$applicationPath\Source\Images\Icone.ico"
-New-Folder "$env:SystemDrive\Temp"
 Get-RemoveScriptFiles
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)

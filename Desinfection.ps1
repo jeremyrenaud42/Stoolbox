@@ -15,7 +15,6 @@ $pathDesinfection = "$env:SystemDrive\_Tech\Applications\Desinfection"
 $pathDesinfectionSource = "$env:SystemDrive\_Tech\Applications\Desinfection\source"
 set-location $pathDesinfection
 Get-RequiredModules
-New-Folder $pathDesinfectionSource
 Get-RemoteFile "fondvirus.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' "$pathDesinfectionSource"  
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)

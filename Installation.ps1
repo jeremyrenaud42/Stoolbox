@@ -13,7 +13,6 @@ function Get-Dependencies
 {
     Get-RequiredModules
     Set-Location $pathInstallation #pour log
-    New-Folder $pathInstallationSource
     Get-InternetStatusLoop
     Get-RemoteFile "InstallationApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/InstallationApps.JSON' "$pathInstallationSource"
     Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' "$pathInstallationSource"
