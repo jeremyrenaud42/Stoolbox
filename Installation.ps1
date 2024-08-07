@@ -13,7 +13,7 @@ function Get-Dependencies
 {
     Get-RequiredModules
     Set-Location $pathInstallation #pour log
-    New-Folder "_Tech\Applications\Installation\source"
+    New-Folder $pathInstallationSource
     Get-InternetStatusLoop
     Get-RemoteFile "InstallationApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/InstallationApps.JSON' "$pathInstallationSource"
     Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' "$pathInstallationSource"
@@ -332,16 +332,16 @@ Function Enable-DesktopIcon
     Add-Log "installation.txt" "Les icones systèmes ont été installés sur le bureau"  
 }
 
-function Update-MsStore
+function Update-MsStore 
 {
     $formControlsMain.lblProgress.Content = "Mises à jour du Microsoft Store"
-    $formControlsMain.richTxtBxOutput.AppendText("`r`nLancement des updates du Microsoft Store") 
+    $formControlsMain.richTxtBxOutput.AppendText("`r`nLancement des updates du Microsoft Store")
     $namespaceName = "root\cimv2\mdm\dmmap"
     $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
     $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
     $wmiObj.UpdateScanMethod() | Out-Null
-    $formControlsMain.richTxtBxOutput.AppendText(" -Mises à jour du Microsoft Store lancées`r`n")
-    Add-Log "installation.txt" "Mises à jour de Microsoft Store"
+    $formControlsMain.richTxtBxOutput.AppendText(" - Mises à jour du Microsoft Store lancées`r`n")
+    Add-Log "installation.txt" "Mises à jour de Microsoft Store" 
 }
 
 $jsonFilePath = "$env:SystemDrive\_Tech\Applications\Installation\Source\InstallationApps.JSON"

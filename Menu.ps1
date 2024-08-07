@@ -54,12 +54,14 @@ function Test-InternetConnection
 
     while (!(test-connection $PingAddress -Count 1 -quiet))
     {
-        $result = [System.Windows.MessageBox]::Show("Veuillez vous connecter à Internet et cliquer sur OK","Menu - Boite à outils du technicien",1,48)
-        if($result -eq 'Cancel')
+        $messageBoxText = "Veuillez vous connecter à Internet et cliquer sur OK"
+        $messageBoxTitle = "Menu - Boite à outils du technicien"
+        $failMessageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,1,48)
+        if($failMessageBox -eq 'Cancel')
         {
             exit
         }
-            start-sleep $CheckInterval
+        start-sleep $CheckInterval
     }
 }
 
@@ -72,12 +74,15 @@ function Get-RequiredModules
         Download depuis github vers c:\_tech\applications\source
         C'est un zip qui les contient tous qui va être dezippé sous le dossier module
     #>
-    $modulepath = test-path "$applicationPath\source\Modules"
-    if($modulepath -eq $false)
+    $modulesFolderPath = "$sourceFolderPath\Modules"
+    $modulesFolderPathExist = test-path -Path $modulesFolderPath
+    if($modulesFolderPathExist -eq $false)
     {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$applicationPath\source\Modules.zip" | Out-Null
-        Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
-        Remove-Item "$applicationPath\source\Modules.zip"
+        $zipFileDownloadLink = 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip'
+        $zipFile = "Modules.zip"
+        Invoke-WebRequest -Uri $zipFileDownloadLink -OutFile $sourceFolderPath\$zipFile
+        Expand-Archive -Path $sourceFolderPath\$zipFile -DestinationPath $sourceFolderPath -Force
+        Remove-Item -Path $sourceFolderPath\$zipFile
     }
 }
 
@@ -91,10 +96,10 @@ function Import-RequiredModules
     .NOTES
         nécéssite executionpolicy unrestricted ou bypass
     #>  
-    $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
-    foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
+    $modulesFolderPath = "$sourceFolderPath\Modules"
+    foreach ($module in Get-Childitem $modulesFolderPath -Name -Filter "*.psm1")
     {
-        Import-Module $modulesFolder\$module
+        Import-Module $modulesFolderPath\$module
     }
 }
 
@@ -116,7 +121,7 @@ function Get-GuiFiles
     .NOTES
         Premiere fonction qui utilise les modules
     #>
-    New-Folder "_Tech\Applications\Source\images"
+    New-Folder "$env:SystemDrive\_Tech\Applications\Source\images"
     Get-RemoteFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$applicationPath\Source\Images"
     Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$applicationPath\source\Images"
     Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' "$applicationPath\Source"
@@ -150,7 +155,7 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
     .NOTES
         N'est pas dans un module, car c'est spécific au menu seulement
     #>
-    New-Folder "_Tech\Applications\$appName"
+    New-Folder $applicationPath\$appName
     Get-RemoteFile "$appName\$appName.ps1" $githubPs1Link $applicationPath
     Invoke-App "$appName\RunAs$appName.bat" $githubBatLink $applicationPath
 }
@@ -158,12 +163,13 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 ########################Déroulement########################
 Test-InternetConnection
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
+$sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
 New-Item "$applicationPath\Source" -ItemType 'Directory' -Force | Out-Null   
 Install-RequiredModules
 Get-GuiFiles
 $desktop = [Environment]::GetFolderPath("Desktop")
 Add-DesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$applicationPath\Source\Images\Icone.ico"
-New-Folder "Temp"
+New-Folder "$env:SystemDrive\Temp"
 Get-RemoveScriptFiles
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)

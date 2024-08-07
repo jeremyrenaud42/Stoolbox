@@ -16,7 +16,7 @@ $pathOptimisation_Nettoyage = "$env:SystemDrive\_Tech\Applications\Optimisation_
 $pathOptimisation_NettoyageSource = "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\source"
 set-location $pathOptimisation_Nettoyage
 Get-RequiredModules
-New-Folder "_Tech\Applications\Optimisation_Nettoyage\source"
+New-Folder $pathOptimisation_NettoyageSource
 Get-RemoteFile "fondopti.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "$pathOptimisation_NettoyageSource" 
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
