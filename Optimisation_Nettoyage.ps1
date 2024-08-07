@@ -34,7 +34,7 @@ $Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Application
 
 function zipccleaner
 {
-    Get-RemoteZipFile "ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' $pathOptimisation_NettoyageSource
+    Get-RemoteZipFile "ccleaner.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' $pathOptimisation_NettoyageSource
     $ccleanerpostpath = test-Path "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
     if(!($ccleanerpostpath))
     {

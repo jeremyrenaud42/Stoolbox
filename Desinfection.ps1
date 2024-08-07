@@ -24,7 +24,7 @@ if($adminStatus -eq $false)
 
 function zipccleaner
 {
-    Get-RemoteZipFile "ccleaner" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' $pathDesinfectionSource
+    Get-RemoteZipFile "ccleaner.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' $pathDesinfectionSource
     $ccleanerpostpath = test-Path "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
     if(!($ccleanerpostpath))
     {
