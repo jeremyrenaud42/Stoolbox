@@ -103,28 +103,33 @@ $formControls.BoutonAida.Add_Click({
         {
             Import-Module $modulesFolder\$module
         }
-    Invoke-RemoteZipFile "Aida64.zip" "https://ftp.alexchato9.com/public/file/WPdP-yDdBE2pOpHVFKNC6g/Aida64.zip" "aida64.exe" "$pathDiagnostiqueSource\cpu"
+    Get-RemoteZipFile  "Aida64.zip" "https://ftp.alexchato9.com/public/file/WPdP-yDdBE2pOpHVFKNC6g/Aida64.zip" "$pathDiagnostiqueSource\cpu"
+    Start-ExpandedApp  "aida64.exe" "$pathDiagnostiqueSource\cpu\aida64"  
     Add-Log "diagnostiquelog.txt" "Test de stabilité du système effectué"
     }      
     Start-ThreadJob -ScriptBlock $scriptBlock | Wait-Job | Remove-Job
 })
     
 $formControls.BoutonCoretemp.Add_Click({
-Invoke-RemoteZipFile "Core_Temp.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core_Temp.zip" "Core Temp.exe" "$pathDiagnostiqueSource\cpu"
+Get-RemoteZipFile "Core_Temp.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core_Temp.zip" "$pathDiagnostiqueSource\cpu"
+Start-ExpandedApp "Core Temp.exe" "$pathDiagnostiqueSource\cpu\Core_Temp"
 Add-Log "diagnostiquelog.txt" "Température du CPU vérifié"
 })
 
 $formControls.BoutonPrime95.Add_Click({
-Invoke-RemoteZipFile "Prime95.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "Prime95.exe" "$pathDiagnostiqueSource\cpu"
+Get-RemoteZipFile "Prime95.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "$pathDiagnostiqueSource\cpu"
+Start-ExpandedApp "Prime95.exe" "$pathDiagnostiqueSource\cpu\Prime95"
 Add-Log "diagnostiquelog.txt" "Stress test du CPU effectué"
 })
 
 $formControls.BoutonHeavyLoad.Add_Click({
-Invoke-RemoteZipFile "HeavyLoad.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "HeavyLoad.exe" "$pathDiagnostiqueSource\cpu"
+Get-RemoteZipFile "HeavyLoad.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "$pathDiagnostiqueSource\cpu"
+Start-ExpandedApp "HeavyLoad.exe" "$pathDiagnostiqueSource\cpu\HeavyLoad"
 Add-Log "diagnostiquelog.txt" "Test de stabilité du système effectué"
 })
 $formControls.BoutonThrottleStop.Add_Click({
-    Invoke-RemoteZipFile "ThrottleStop.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "ThrottleStop.exe" "$pathDiagnostiqueSource\cpu"
+    Get-RemoteZipFile "ThrottleStop.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "$pathDiagnostiqueSource\cpu"
+    Start-ExpandedApp "ThrottleStop.exe" "$pathDiagnostiqueSource\cpu\ThrottleStop"
     Add-Log "diagnostiquelog.txt" "Stress test du CPU effectué"
     })
 
@@ -204,15 +209,18 @@ Add-Log "diagnostiquelog.txt" "Vérifier les performances du GPU"
 })
 
 $formControls.BoutonSpeccy.Add_Click({
-Invoke-RemoteZipFile "Speccy.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "Speccy.exe" "$pathDiagnostiqueSource"
+Get-RemoteZipFile "Speccy.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "$pathDiagnostiqueSource"
+Start-ExpandedApp "Speccy.exe" "$pathDiagnostiqueSource\Speccy"
 })
 
 $formControls.BoutonHWMonitor.Add_Click({
-Invoke-RemoteZipFile "HWmonitor.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor.zip" "HWMonitor_x64.exe" "$pathDiagnostiqueSource"
+Get-RemoteZipFile "HWmonitor.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor.zip" "$pathDiagnostiqueSource"
+Start-ExpandedApp "HWMonitor_x64.exe" "$pathDiagnostiqueSource\HWmonitor"
 })
 
 $formControls.BoutonWhocrashed.Add_Click({
-Invoke-RemoteZipFile "WhoCrashed.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashed.zip" "WhoCrashedEx.exe" "$pathDiagnostiqueSource"
+    Get-RemoteZipFile "WhoCrashed.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashed.zip" "$pathDiagnostiqueSource"
+    Start-ExpandedApp "WhoCrashedEd.exe" "$pathDiagnostiqueSource\WhoCrashedEx"
 })
 
 $formControls.BoutonSysinfo.Add_Click({
