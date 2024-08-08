@@ -79,7 +79,7 @@ switch ($choix)
 2{Get-RemoteZipFile "Tweak" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathFixSource"; submenuTweak;Break}
 3{Get-RemoteZipFile "Sterjo" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathFixSource"; submenuMDP;Break}
 4{Invoke-RemoteZipFile "Display Driver Uninstaller" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip' "$pathFixSource";Add-Log "Fixlog.txt" "Désinstallation du pilote graphique avec DDU";Break}
-5{Invoke-RemoteZipFile "WiseDeleter" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseDeleter.zip' "$pathFixSource";Break}
+5{Invoke-RemoteZipFile "WiseForceDeleterPortable" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleterPortable.zip' "$pathFixSource";Break}
 6{Invoke-RemoteZipFile "WinDirStatPortable" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip' "$pathFixSource";Break}
 7{zipMinitool;Break} 
 8{Invoke-RemoteZipFile "ComIntRep_X64" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip' "$pathFixSource";Add-Log "Fixlog.txt" "Réparer Internet";Break}
