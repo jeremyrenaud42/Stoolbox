@@ -55,7 +55,7 @@ $formControls.Boutonbat.Add_Click({
     $formControls.BoutonBattinfo.Visibility="Visible"
     $formControls.BoutonDontsleep.Visibility="Visible"
     $formControls.Boutonbat.Visibility="Collapsed"
-    Get-RemoteZipFile "Batterie.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "$pathDiagnostiqueSource"
+    Get-RemoteZipFile "Batterie" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "$pathDiagnostiqueSource"
 })
 $formControls.BoutonCPU.Add_Click({
     $formControls.BoutonAida.Visibility="Visible"
@@ -64,7 +64,7 @@ $formControls.BoutonCPU.Add_Click({
     $formControls.BoutonHeavyLoad.Visibility="Visible"
     $formControls.BoutonThrottleStop.Visibility="Visible"
     $formControls.BoutonCPU.Visibility="Collapsed"
-    new-item -ItemType Directory -path "$pathDiagnostiqueSource\CPU" | Out-Null
+    New-Folder "$pathDiagnostiqueSource\CPU"
 })
 $formControls.BoutonHDD.Add_Click({
     $formControls.BoutonHDSentinnel.Visibility="Visible"
@@ -72,13 +72,13 @@ $formControls.BoutonHDD.Add_Click({
     $formControls.BoutonASSD.Visibility="Visible"
     $formControls.BoutonDiskmark.Visibility="Visible"
     $formControls.BoutonHDD.Visibility="Collapsed"
-    Get-RemoteZipFile "HDD.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip' "$pathDiagnostiqueSource"
+    Get-RemoteZipFile "HDD" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip' "$pathDiagnostiqueSource"
 })
 $formControls.BoutonGPU.Add_Click({
     $formControls.BoutonFurmark.Visibility="Visible"
     $formControls.BoutonUnigine.Visibility="Visible"
     $formControls.BoutonGPU.Visibility="Collapsed"
-    Get-RemoteZipFile "GPU.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "$pathDiagnostiqueSource"
+    Get-RemoteZipFile "GPU" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "$pathDiagnostiqueSource"
 })
 $formControls.BoutonRAM.Add_Click({
     mdsched.exe
