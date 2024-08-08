@@ -75,14 +75,14 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{sortie;break}
-1{Get-RemoteZipFile "scripts.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' "$pathFixSource"; submenuHDD;Break}
-2{Get-RemoteZipFile "Tweak.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathFixSource"; submenuTweak;Break}
-3{Get-RemoteZipFile "Sterjo.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathFixSource"; submenuMDP;Break}
-4{Invoke-RemoteZipFile "Display Driver Uninstaller.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip' "$pathFixSource";Addlog "Fixlog.txt" "Désinstallation du pilote graphique avec DDU";Break}
+1{Get-RemoteZipFile "scripts" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' "$pathFixSource"; submenuHDD;Break}
+2{Get-RemoteZipFile "Tweak" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathFixSource"; submenuTweak;Break}
+3{Get-RemoteZipFile "Sterjo" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathFixSource"; submenuMDP;Break}
+4{Invoke-RemoteZipFile "Display Driver Uninstaller" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip' "$pathFixSource";Add-Log "Fixlog.txt" "Désinstallation du pilote graphique avec DDU";Break}
 5{Invoke-RemoteZipFile "WiseDeleter" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseDeleter.zip' "$pathFixSource";Break}
-6{Invoke-RemoteZipFile "WinDirStat" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.zip' "$pathFixSource";Break}
+6{Invoke-RemoteZipFile "WinDirStatPortable" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip' "$pathFixSource";Break}
 7{zipMinitool;Break} 
-8{Invoke-RemoteZipFile "ComIntRep" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep.zip' "$pathFixSource";Addlog "Fixlog.txt" "Réparer Internet";Break}
+8{Invoke-RemoteZipFile "ComIntRep_X64" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip' "$pathFixSource";Add-Log "Fixlog.txt" "Réparer Internet";Break}
 9{menu;Break}
 }
 start-sleep 1
@@ -126,10 +126,10 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{menu}
-1{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\sfcScannow.bat";Addlog "Fixlog.txt" "Réparation des fichiers corrompus";Break}
-2{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\DISM.bat";Addlog "Fixlog.txt" "Réparation du Windows";Break}
-3{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\CHKDSK.BAT";Addlog "Fixlog.txt" "Réparation du HDD";Break}
-4{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\creer_session.txt";Addlog "Fixlog.txt" "Nouvelle session créé";Break}
+1{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\sfcScannow.bat";Add-Log "Fixlog.txt" "Réparation des fichiers corrompus";Break}
+2{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\DISM.bat";Add-Log "Fixlog.txt" "Réparation du Windows";Break}
+3{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\CHKDSK.BAT";Add-Log "Fixlog.txt" "Réparation du HDD";Break}
+4{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\creer_session.txt";Add-Log "Fixlog.txt" "Nouvelle session créé";Break}
 }
 start-sleep 1
 submenuHDD
