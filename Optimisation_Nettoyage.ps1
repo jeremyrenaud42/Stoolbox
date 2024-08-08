@@ -32,19 +32,6 @@ $Form.height = $image.height
 $Form.MaximizeBox = $false
 $Form.icon = New-Object system.drawing.icon ("$env:SystemDrive\_Tech\Applications\Source\Images\Icone.ico") 
 
-function zipccleaner
-{
-    Get-RemoteZipFile "CCleaner64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip' $pathOptimisation_NettoyageSource
-    $ccleanerpostpath = test-Path "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
-    if(!($ccleanerpostpath))
-    {
-        New-Item "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner" -ItemType 'Directory'
-        Copy-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner\*" -Destination "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner" -Force | Out-Null #copy sur le dossier user pour pas bloquer la clé
-    }
-    Start-Process "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
-    Add-Log "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
-}
-
 #choco install hdtune
 #choco install hdsentinel
 #choco install revo-uninstaller
@@ -236,7 +223,8 @@ $Ccleaner.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Ccleaner.Add_MouseEnter({$Ccleaner.ForeColor = 'White'})
 $Ccleaner.Add_MouseLeave({$Ccleaner.ForeColor = 'black'})
 $Ccleaner.Add_Click({
-zipccleaner
+Invoke-RemoteZipFile "CCleaner64" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip' $pathOptimisation_NettoyageSource
+Add-Log "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
 })
 
 #sfc
