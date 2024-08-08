@@ -24,15 +24,8 @@ if($adminStatus -eq $false)
 
 function zipccleaner
 {
-    Get-RemoteZipFile "ccleaner.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/Ccleaner.zip' $pathDesinfectionSource
-    $ccleanerpostpath = test-Path "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
-    if(!($ccleanerpostpath))
-    {
-        New-Item "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner" -ItemType 'Directory'
-        Copy-Item "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\Ccleaner\*" -Destination "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner" -Force | Out-Null #copy sur le dossier user pour pas bloquer la clé
-    }
-    Start-Process "$env:SystemDrive\Users\$env:UserName\Downloads\CCleaner\CCleaner64.exe"
-    Add-Log "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
+Invoke-RemoteZipFile "CCleaner64" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip' $pathDesinfectionSource
+Add-Log "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
 }
 
 $image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Desinfection\Source\fondvirus.png") 
@@ -183,7 +176,7 @@ $Revo.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $Revo.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $Revo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Revo.Add_Click({
-    Invoke-RemoteZipFile "RevoUninstaller_Portable" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUninstaller_Portable.zip' "$pathDesinfectionSource"
+    Invoke-RemoteZipFile "RevoUPort" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip' "$pathDesinfectionSource"
     Add-Log "desinfectionlog.txt" "Vérifier les programmes nuisibles"
 })
 
