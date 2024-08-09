@@ -180,7 +180,7 @@ $Revo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Revo.Add_MouseEnter({$Revo.ForeColor = 'White'})
 $Revo.Add_MouseLeave({$Revo.ForeColor = 'black'})
 $Revo.Add_Click({
-    Invoke-RemoteZipFile "RevoUPort.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip' "$pathOptimisation_NettoyageSource"
+    Invoke-App "RevoUPort.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip' "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
 })
 
@@ -223,7 +223,7 @@ $Ccleaner.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Ccleaner.Add_MouseEnter({$Ccleaner.ForeColor = 'White'})
 $Ccleaner.Add_MouseLeave({$Ccleaner.ForeColor = 'black'})
 $Ccleaner.Add_Click({
-Invoke-RemoteZipFile "CCleaner64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip' $pathOptimisation_NettoyageSource
+Invoke-App "CCleaner64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip' $pathOptimisation_NettoyageSource
 Add-Log "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
 })
 
@@ -328,7 +328,7 @@ $CrystalDiskInfo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gra
 $CrystalDiskInfo.Add_MouseEnter({$CrystalDiskInfo.ForeColor = 'White'})
 $CrystalDiskInfo.Add_MouseLeave({$CrystalDiskInfo.ForeColor = 'black'})
 $CrystalDiskInfo.Add_Click({
-    Invoke-RemoteZipFile "CrystalDiskInfoPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "$pathOptimisation_NettoyageSource"
+    Invoke-App "CrystalDiskInfoPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier la santé du HDD"
 })
 
@@ -349,7 +349,7 @@ $HDTune.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $HDTune.Add_MouseEnter({$HDTune.ForeColor = 'White'})
 $HDTune.Add_MouseLeave({$HDTune.ForeColor = 'black'})
 $HDTune.Add_Click({
-    Invoke-RemoteZipFile "_HDTune.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/_HDTune.zip' "$pathOptimisation_NettoyageSource"
+    Invoke-App "_HDTune.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/_HDTune.zip' "$pathOptimisation_NettoyageSource"
     Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
 })
 
