@@ -166,7 +166,7 @@ function submenuTweak
 {
 Clear-Host
 write-host "[1] Fix w10"
-write-host "[2] Fix w8"
+write-host "[2] Fix w11"
 write-host "[3] Ultimate Windows Tweaker W10"
 write-host "[4] Ultimate Windows Tweaker W11"
 write-host "[5] Tweaking Windows Repair"
@@ -178,9 +178,9 @@ switch ($choix)
 {
 0{menu}
 1{Start-Process "$PSScriptRoot\Source\Tweak\FixWin10\FixWin 10.2.2.exe";Break}
-2{Start-Process "$PSScriptRoot\Source\Tweak\FixWin8\FixWin 2.2.exe";break}
+2{Start-Process "$PSScriptRoot\Source\Tweak\FixWin11\FixWin 11.1.exe";break}
 3{Start-Process "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe";Break}
-4{Start-Process "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.0.exe";break}
+4{Start-Process "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe";break}
 5{Tweaking;Break} 
 }
 Start-Sleep 1
