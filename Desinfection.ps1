@@ -24,7 +24,7 @@ if($adminStatus -eq $false)
 
 function zipccleaner
 {
-Invoke-RemoteZipFile "CCleaner64" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip' $pathDesinfectionSource
+Invoke-RemoteZipFile "CCleaner64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip' $pathDesinfectionSource
 Add-Log "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
 }
 
@@ -176,7 +176,7 @@ $Revo.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $Revo.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $Revo.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $Revo.Add_Click({
-    Invoke-RemoteZipFile "RevoUPort" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip' "$pathDesinfectionSource"
+    Invoke-RemoteZipFile "RevoUPort.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip' "$pathDesinfectionSource"
     Add-Log "desinfectionlog.txt" "Vérifier les programmes nuisibles"
 })
 
@@ -321,7 +321,7 @@ $RogueKiller.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $RogueKiller.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $RogueKiller.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $RogueKiller.Add_Click({
-    Invoke-RemoteZipFile "RogueKiller_portable64" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/RogueKiller_portable64.zip' "$pathDesinfectionSource"
+    Invoke-RemoteZipFile "RogueKiller_portable64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/RogueKiller_portable64.zip' "$pathDesinfectionSource"
     Add-Log "desinfectionlog.txt" "Analyse RogueKiller effectué"
 })
 #via le cmd, aller a l'emplacement RogueKillerCMD.exe -scan -no-interact -deleteall #-debuglog {path}

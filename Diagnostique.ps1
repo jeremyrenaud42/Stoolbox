@@ -10,8 +10,6 @@ function Get-RequiredModules
     }
 }
 
-
-
 #$desktop = [Environment]::GetFolderPath("Desktop")
 $pathDiagnostique = "$env:SystemDrive\_Tech\Applications\Diagnostique"
 $pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\source"
@@ -55,7 +53,7 @@ $formControls.Boutonbat.Add_Click({
     $formControls.BoutonBattinfo.Visibility="Visible"
     $formControls.BoutonDontsleep.Visibility="Visible"
     $formControls.Boutonbat.Visibility="Collapsed"
-    Get-RemoteZipFile "Batterie" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "$pathDiagnostiqueSource"
+    Get-RemoteZipFile "Batterie.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "$pathDiagnostiqueSource"
 })
 $formControls.BoutonCPU.Add_Click({
     $formControls.BoutonAida.Visibility="Visible"
@@ -72,13 +70,13 @@ $formControls.BoutonHDD.Add_Click({
     $formControls.BoutonASSD.Visibility="Visible"
     $formControls.BoutonDiskmark.Visibility="Visible"
     $formControls.BoutonHDD.Visibility="Collapsed"
-    Get-RemoteZipFile "HDD" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip' "$pathDiagnostiqueSource"
+    Get-RemoteZipFile "HDD.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip' "$pathDiagnostiqueSource"
 })
 $formControls.BoutonGPU.Add_Click({
     $formControls.BoutonFurmark.Visibility="Visible"
     $formControls.BoutonUnigine.Visibility="Visible"
     $formControls.BoutonGPU.Visibility="Collapsed"
-    Get-RemoteZipFile "GPU" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "$pathDiagnostiqueSource"
+    Get-RemoteZipFile "GPU.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "$pathDiagnostiqueSource"
 })
 $formControls.BoutonRAM.Add_Click({
     mdsched.exe
@@ -103,28 +101,28 @@ $formControls.BoutonAida.Add_Click({
         {
             Import-Module $modulesFolder\$module
         }
-    Invoke-RemoteZipFile "Aida64" "https://ftp.alexchato9.com/public/file/WPdP-yDdBE2pOpHVFKNC6g/Aida64.zip" "$pathDiagnostiqueSource\cpu" 
+    Invoke-RemoteZipFile "Aida64.zip" "https://ftp.alexchato9.com/public/file/WPdP-yDdBE2pOpHVFKNC6g/Aida64.zip" "$pathDiagnostiqueSource\cpu" 
     Add-Log "diagnostiquelog.txt" "Test de stabilité du système effectué"
     }      
     Start-ThreadJob -ScriptBlock $scriptBlock | Wait-Job | Remove-Job
 })
     
 $formControls.BoutonCoretemp.Add_Click({
-Invoke-RemoteZipFile "Core Temp" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core Temp.zip" "$pathDiagnostiqueSource\cpu"
+Invoke-RemoteZipFile "Core Temp.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core Temp.zip" "$pathDiagnostiqueSource\cpu"
 Add-Log "diagnostiquelog.txt" "Température du CPU vérifié"
 })
 
 $formControls.BoutonPrime95.Add_Click({
-Invoke-RemoteZipFile "Prime95" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "$pathDiagnostiqueSource\cpu"
+Invoke-RemoteZipFile "Prime95.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "$pathDiagnostiqueSource\cpu"
 Add-Log "diagnostiquelog.txt" "Stress test du CPU effectué"
 })
 
 $formControls.BoutonHeavyLoad.Add_Click({
-Invoke-RemoteZipFile "HeavyLoad" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "$pathDiagnostiqueSource\cpu"
+Invoke-RemoteZipFile "HeavyLoad.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "$pathDiagnostiqueSource\cpu"
 Add-Log "diagnostiquelog.txt" "Test de stabilité du système effectué"
 })
 $formControls.BoutonThrottleStop.Add_Click({
-    Invoke-RemoteZipFile "ThrottleStop" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "$pathDiagnostiqueSource\cpu"
+    Invoke-RemoteZipFile "ThrottleStop.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "$pathDiagnostiqueSource\cpu"
     Add-Log "diagnostiquelog.txt" "Stress test du CPU effectué"
     })
 
@@ -204,15 +202,15 @@ Add-Log "diagnostiquelog.txt" "Vérifier les performances du GPU"
 })
 
 $formControls.BoutonSpeccy.Add_Click({
-Invoke-RemoteZipFile "Speccy" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "$pathDiagnostiqueSource"
+Invoke-RemoteZipFile "Speccy.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "$pathDiagnostiqueSource"
 })
 
 $formControls.BoutonHWMonitor.Add_Click({
-Invoke-RemoteZipFile "HWMonitor_x64" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor_x64.zip" "$pathDiagnostiqueSource"
+Invoke-RemoteZipFile "HWMonitor_x64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor_x64.zip" "$pathDiagnostiqueSource"
 })
 
 $formControls.BoutonWhocrashed.Add_Click({
-Invoke-RemoteZipFile "WhoCrashedEx" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashedEx.zip" "$pathDiagnostiqueSource"
+Invoke-RemoteZipFile "WhoCrashedEx.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashedEx.zip" "$pathDiagnostiqueSource"
 })
 
 $formControls.BoutonSysinfo.Add_Click({
