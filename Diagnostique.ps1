@@ -52,6 +52,7 @@ $formControls.BoutonQuit.Add_Click({
 $formControls.Boutonbat.Add_Click({
     $formControls.BoutonBattinfo.Visibility="Visible"
     $formControls.BoutonDontsleep.Visibility="Visible"
+    $formControls.BoutonBattMonitor.Visibility="Visible"
     $formControls.Boutonbat.Visibility="Collapsed"
     Get-RemoteFile "Batterie.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "$pathDiagnostiqueSource"
 })
@@ -74,6 +75,7 @@ $formControls.BoutonHDD.Add_Click({
 })
 $formControls.BoutonGPU.Add_Click({
     $formControls.BoutonFurmark.Visibility="Visible"
+    $formControls.BoutonFurmarkV2.Visibility="Visible"
     $formControls.BoutonUnigine.Visibility="Visible"
     $formControls.BoutonGPU.Visibility="Collapsed"
     Get-RemoteFile "GPU.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "$pathDiagnostiqueSource"
@@ -84,12 +86,16 @@ $formControls.BoutonRAM.Add_Click({
 })
 
 $formControls.BoutonBattinfo.Add_Click({
-    Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\battinfoview\batteryinfoview.exe"
+    Start-App "batteryinfoview.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\battinfoview"
+    Add-Log "diagnostiquelog.txt" "Usure de la batterie vérifié"
+})
+$formControls.BoutonBattMonitor.Add_Click({
+    Start-App "BatteryMonx64.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\BatteryMonx64"
     Add-Log "diagnostiquelog.txt" "Usure de la batterie vérifié"
 })
     
 $formControls.BoutonDontsleep.Add_Click({
-    Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\DontSleep\DontSleep_x64_p.exe"
+    Start-App "DontSleep_x64_p.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\DontSleep"
     Add-Log "diagnostiquelog.txt" "Dontsleep a été utilisé pour tester la batterie"
 })
     
@@ -176,12 +182,13 @@ HDSentinnel
 })
 
 $formControls.BoutonHDTune.Add_Click({
-    Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\_HDTune\_HDTune.exe"
+    Start-App "_HDTune.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\_HDTune"
     Add-Log "diagnostiquelog.txt" "Vérifier la Vitesse du disque dur"
 })
 
 $formControls.BoutonASSD.Add_Click({
-Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\As_SSD\AS SSD Benchmark.exe"
+Start-App "AS SSD Benchmark.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\As_SSD"
+Add-Log "diagnostiquelog.txt" "Vérifier la Vitesse du disque dur"
 })
 
 $formControls.BoutonDiskmark.Add_Click({
@@ -194,6 +201,11 @@ $formControls.BoutonFurmark.Add_Click({
 Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\FurMark\FurMark.exe"
 Add-Log "diagnostiquelog.txt" "Stress test du GPU"
 })
+$formControls.BoutonFurmarkV2.Add_Click({
+    Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\FurMark_GUI\FurMark_GUI.exe"
+    Add-Log "diagnostiquelog.txt" "Stress test du GPU"
+    })
+    
 
 
 $formControls.BoutonUnigine.Add_Click({
