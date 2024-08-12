@@ -39,7 +39,7 @@ function Test-InternetConnection
         Test-InternetConnection -PingAddress "1.1.1.1" -CheckInterval 10
         Tests the internet connection by pinging 1.1.1.1 and checking every 10 seconds.
     .Notes
-        Ne prend pas la fonction deja inclus dans le module Verifiation car a ce moment la on a pas les modules de downloadé
+        Ne prend pas la fonction deja inclus dans le module Verification car a ce moment la on a pas les modules de downloadé
     #>
 
 
@@ -121,8 +121,8 @@ function Get-GuiFiles
     .NOTES
         Premiere fonction qui utilise les modules
     #>
-    Get-RemoteFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$applicationPath\Source\Images"
-    Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$applicationPath\source\Images"
+    Get-RemoteFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$sourceFolderPath\Images"
+    Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$sourceFolderPath\Images"
     Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' "$applicationPath\Source"
 }
 
@@ -162,20 +162,18 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 Test-InternetConnection
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-New-Item "$applicationPath\Source" -ItemType 'Directory' -Force | Out-Null   
+New-Item $sourceFolderPath -ItemType 'Directory' -Force
+
 Install-RequiredModules
-Get-GuiFiles
-$desktop = [Environment]::GetFolderPath("Desktop")
-Add-DesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$applicationPath\Source\Images\Icone.ico"
-Get-RemoveScriptFiles
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
     Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
 }
+Get-GuiFiles
 
 ########################GUI########################
-$inputXML = import-XamlFromFile "$applicationPath\Source\MainWindow.xaml"
+$inputXML = import-XamlFromFile "$sourceFolderPath\MainWindow.xaml"
 $formatedXaml = Format-XamlFile $inputXML
 $objectXaml = New-XamlObject $formatedXaml
 $window = Add-WPFWindowFromXaml $objectXaml
@@ -203,25 +201,31 @@ $formControls.btnFix.Add_Click({
     $window.Close()   
 })
 $formControls.btnChangeLog.Add_Click({
-    Get-RemoteFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' "$env:SystemDrive\_Tech\Applications\source"
-    Start-Process "$env:SystemDrive\_Tech\Applications\source\changelog.txt"
+    Get-RemoteFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' $sourceFolderPath
+    Start-Process "$sourceFolderPath\changelog.txt"
 })
 $formControls.btnForceUpdate.Add_Click({
-    Get-RemoteFileForce  "Installation.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' "$env:SystemDrive\_Tech\Applications\Installation"
-    Get-RemoteFileForce  "Optimisation_Nettoyage.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
-    Get-RemoteFileForce  "Diagnostique.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' "$env:SystemDrive\_Tech\Applications\Diagnostique"
-    Get-RemoteFileForce  "Desinfection.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' "$env:SystemDrive\_Tech\Applications\Desinfection"
-    Get-RemoteFileForce  "Fix.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' "$env:SystemDrive\_Tech\Applications\Fix"
+    Get-RemoteFileForce  "Installation.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' "$applicationPath\Installation"
+    Get-RemoteFileForce  "Optimisation_Nettoyage.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' "$applicationPath\Optimisation_Nettoyage"
+    Get-RemoteFileForce  "Diagnostique.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' "$applicationPath\Diagnostique"
+    Get-RemoteFileForce  "Desinfection.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' "$applicationPath\Desinfection"
+    Get-RemoteFileForce  "Fix.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' "$applicationPath\Fix"
     Get-RemoteFileForce "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
     Get-RemoteFileForce  "Menu.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' "$env:SystemDrive\_Tech"
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$applicationPath\source\Modules.zip" | Out-Null
-    Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
-    Remove-Item "$applicationPath\source\Modules.zip"
+    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$sourceFolderPath\Modules.zip" | Out-Null
+    Expand-Archive "$sourceFolderPath\Modules.zip" $sourceFolderPath -Force
+    Remove-Item "$sourceFolderPath\Modules.zip"
     Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
 })
 $formControls.btnQuit.Add_Click({
     Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
     $window.Close() 
+})
+
+$Window.add_Closed({
+    $desktop = [Environment]::GetFolderPath("Desktop")
+    Add-DesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$sourceFolderPath\Images\Icone.ico"
+    Get-RemoveScriptFiles
 })
 
 function Set-MenuWinget
