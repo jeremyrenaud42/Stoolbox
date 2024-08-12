@@ -16,6 +16,7 @@
 2024-07-10:
 - Menu est maintenant en WPF
 - Installation est maintenant en WPF
+- Update Winget v1.8 (from 1.6)
 
 2023-12-17:
 - Décocher Teamviewer par défaut
