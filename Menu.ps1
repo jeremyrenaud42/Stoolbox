@@ -21,139 +21,112 @@ Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,
 ########################Fonctions nécéssaire au déroulement########################
 function Test-InternetConnection
 {
-    <#
-    .SYNOPSIS
-        Vérifie si il y a Internet de connecté
-    .DESCRIPTION
-        Envoi une seule requête PING vers 8.8.8.8 (google.com)
-        Tant que la requête échoue ca affiche un message aux 5 secondes qui mentionne qu'il n'y a pas Internet
-        Le message disparait après avoir cliquer OK si Internet est connecté.
-    .PARAMETER PingAddress
-        Adresse IP utilisé pour le ping. Defaut = 8.8.8.8 (Google.com)
-    .PARAMETER CheckInterval
-        Le nombre de délai avant de recommencer la reqête ping. Defaut = 5 secondes
-    .EXAMPLE
-        Test-InternetConnection
-        Tests the internet connection using default parameters (pinging 8.8.8.8 every 5 seconds).
-    .EXAMPLE
-        Test-InternetConnection -PingAddress "1.1.1.1" -CheckInterval 10
-        Tests the internet connection by pinging 1.1.1.1 and checking every 10 seconds.
-    .Notes
-        Ne prend pas la fonction deja inclus dans le module Verification car a ce moment la on a pas les modules de downloadé
-    #>
+<#
+.SYNOPSIS
+    Vérifie si il y a Internet de connecté
+.DESCRIPTION
+    Envoi une seule requête PING vers 8.8.8.8 (google.com)
+    Tant que la requête échoue ca affiche un message aux 5 secondes qui mentionne qu'il n'y a pas Internet
+    Le message disparait après avoir cliquer OK si Internet est connecté.
+.PARAMETER PingAddress
+    Adresse IP utilisé pour le ping. Defaut = 8.8.8.8 (Google.com)
+.PARAMETER CheckInterval
+    Le nombre de délai avant de recommencer la reqête ping. Defaut = 5 secondes
+.EXAMPLE
+    Test-InternetConnection
+    Tests the internet connection using default parameters (pinging 8.8.8.8 every 5 seconds).
+.EXAMPLE
+    Test-InternetConnection -PingAddress "1.1.1.1" -CheckInterval 10
+    Tests the internet connection by pinging 1.1.1.1 and checking every 10 seconds.
+.Notes
+    Ne prend pas la fonction deja inclus dans le module Verifiation car a ce moment la on a pas les modules de downloadé
+#>
 
 
-    [CmdletBinding()]
-    param
-    (
-        [string]$PingAddress = "8.8.8.8",
+[CmdletBinding()]
+param
+(
+    [string]$PingAddress = "8.8.8.8",
 
-        [int]$CheckInterval = 5
-    )
+    [int]$CheckInterval = 5
+)
 
 
-    while (!(test-connection $PingAddress -Count 1 -quiet))
+while (!(test-connection $PingAddress -Count 1 -quiet))
+{
+    $messageBoxText = "Veuillez vous connecter à Internet et cliquer sur OK"
+    $messageBoxTitle = "Menu - Boite à outils du technicien"
+    $failMessageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,1,48)
+    if($failMessageBox -eq 'Cancel')
     {
-        $messageBoxText = "Veuillez vous connecter à Internet et cliquer sur OK"
-        $messageBoxTitle = "Menu - Boite à outils du technicien"
-        $failMessageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,1,48)
-        if($failMessageBox -eq 'Cancel')
-        {
-            exit
-        }
-        start-sleep $CheckInterval
+        exit
     }
+    start-sleep $CheckInterval
+}
 }
 
 function Get-RequiredModules
 {
-    <#
-    .SYNOPSIS
-        Download les modules nécéssaires pour tous les scripts
-    .DESCRIPTION
-        Download depuis github vers c:\_tech\applications\source
-        C'est un zip qui les contient tous qui va être dezippé sous le dossier module
-    #>
-    $modulesFolderPath = "$sourceFolderPath\Modules"
-    $modulesFolderPathExist = test-path -Path $modulesFolderPath
-    if($modulesFolderPathExist -eq $false)
-    {
-        $zipFileDownloadLink = 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip'
-        $zipFile = "Modules.zip"
-        Invoke-WebRequest -Uri $zipFileDownloadLink -OutFile $sourceFolderPath\$zipFile
-        Expand-Archive -Path $sourceFolderPath\$zipFile -DestinationPath $sourceFolderPath -Force
-        Remove-Item -Path $sourceFolderPath\$zipFile
+<#
+.SYNOPSIS
+    Download les modules nécéssaires pour tous les scripts
+.DESCRIPTION
+    Download depuis github vers c:\_tech\applications\source
+    C'est un zip qui les contient tous qui va être dezippé sous le dossier module
+#>
+$modulesFolderPath = "$sourceFolderPath\Modules"
+$modulesFolderPathExist = test-path -Path $modulesFolderPath
+if($modulesFolderPathExist -eq $false)
+{
+    $zipFileDownloadLink = 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip'
+    $zipFile = "Modules.zip"
+    Invoke-WebRequest -Uri $zipFileDownloadLink -OutFile $sourceFolderPath\$zipFile
+    Expand-Archive -Path $sourceFolderPath\$zipFile -DestinationPath $sourceFolderPath -Force
+    Remove-Item -Path $sourceFolderPath\$zipFile
+}
+}
+
+function Start-AsyncTask {
+    param (
+        [ScriptBlock]$ScriptBlock
+    )
+
+# Crée une instance de PowerShell
+$runspace = [powershell]::Create().AddScript($ScriptBlock)
+# Démarre l'exécution asynchrone
+$asyncResult = $runspace.BeginInvoke()
+# Retourne l'AsyncResult et le Runspace dans un objet personnalisé
+return @{ AsyncResult = $asyncResult; Runspace = $runspace }
+}
+
+# Fonction pour vérifier si la tâche est terminée
+function Wait-ForTaskCompletion {
+    param (
+        [Parameter(Mandatory=$true)]
+        [System.IAsyncResult]$AsyncResult
+    )
+
+    # Boucle pour attendre que la tâche soit terminée
+    while (-not $AsyncResult.IsCompleted) {
+        Start-Sleep -Milliseconds 100
     }
-}
-
-function Import-RequiredModules
-{
-    <#
-    .SYNOPSIS
-        Importe les modules nécéssaires pour tous les scripts
-    .DESCRIPTION
-       Importe tous les modules du dossier "$env:SystemDrive\_Tech\Applications\Source\modules"
-    .NOTES
-        nécéssite executionpolicy unrestricted ou bypass
-    #>  
-    $modulesFolderPath = "$sourceFolderPath\Modules"
-    foreach ($module in Get-Childitem $modulesFolderPath -Name -Filter "*.psm1")
-    {
-        Import-Module $modulesFolderPath\$module
-    }
-}
-
-function Install-RequiredModules
-{
-    <#
-    .SYNOPSIS
-        Combiner les 2 fonctions ensemble en une seule fonction
-    #>
-    Get-RequiredModules
-    Import-RequiredModules
-}
-
-function Get-GuiFiles
-{
-    <#
-    .SYNOPSIS
-       Download le fond d'écran, l'icone et le xaml
-    .NOTES
-        Premiere fonction qui utilise les modules
-    #>
-    Get-RemoteFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$sourceFolderPath\Images"
-    Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$sourceFolderPath\Images"
-    Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' "$applicationPath\Source"
-}
-
-function Get-RemoveScriptFiles
-{
-    <#
-    .SYNOPSIS
-        Download les scripts permettant de tout supprimer les traces
-    .DESCRIPTION
-        Créer un dossier c:\Temp
-        Download Remove.bat et Remove.ps1
-    .NOTES
-        Ne peut pas être downloadé dans c:\_Tech pour ne pas bloquer la suppression
-    #>
-    Get-RemoteFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
-    Get-RemoteFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp"
 }
 
 function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 {
-    <#
-    .SYNOPSIS
-        Configure et lance les scripts
-    .DESCRIPTION
-        Est utilisé lorsque qu'un bouton est cliqué
-        Créer un dossier au nom de l'application
-        Download le .ps1 et le .bat
-        Execute le script
-    .NOTES
-        N'est pas dans un module, car c'est spécific au menu seulement
-    #>
+<#
+.SYNOPSIS
+    Configure et lance les scripts
+.DESCRIPTION
+    Est utilisé lorsque qu'un bouton est cliqué
+    Créer un dossier au nom de l'application
+    Download le .ps1 et le .bat
+    Execute le script
+.NOTES
+    N'est pas dans un module, car c'est spécific au menu seulement
+#>
+    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     Get-RemoteFile "$appName.ps1" $githubPs1Link $applicationPath\$appName
     Invoke-App "RunAs$appName.bat" $githubBatLink $applicationPath\$appName
 }
@@ -161,75 +134,73 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 ########################Déroulement########################
 Test-InternetConnection
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
-$sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-New-Item $sourceFolderPath -ItemType 'Directory' -Force
+$sourceFolderPath = "$applicationPath\source"
+New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
+Get-RequiredModules
+Import-Module "$sourceFolderPath\Modules\Verification.psm1"
 
-Install-RequiredModules
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
     Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
 }
-Get-GuiFiles
 
+$xamlPathExist = Test-Path $sourceFolderPath\MainWindow.xaml
+if($xamlPathExist -eq $false)
+{
+    $taskGetxaml = Start-AsyncTask -ScriptBlock {
+    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+    Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' $sourceFolderPath
+    }
+}
+
+$guiPathExist = Test-Path $sourceFolderPath\Images
+if($guiPathExist -eq $false)
+{
+    $taskGetIcoFile = Start-AsyncTask -ScriptBlock {
+    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+    Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$sourceFolderPath\Images"
+    }
+}
+
+if($guiPathExist -eq $false)
+{
+    $taskGetBGFile = Start-AsyncTask -ScriptBlock {
+    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+    Get-RemoteFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$sourceFolderPath\Images"
+    }
+}
+
+if ($taskGetxaml -and $taskGetxaml.Runspace -and $taskGetxaml.AsyncResult) 
+{
+    Wait-ForTaskCompletion -AsyncResult $taskGetxaml.AsyncResult
+    $taskGetxaml.Runspace.EndInvoke($taskGetxaml.AsyncResult)
+    $taskGetxaml.Runspace.Dispose()
+}
+if ($taskGetBGFile -and $taskGetBGFile.Runspace -and $taskGetBGFile.AsyncResult) 
+{
+    Wait-ForTaskCompletion -AsyncResult $taskGetBGFile.AsyncResult
+    $taskGetBGFile.Runspace.EndInvoke($taskGetBGFile.AsyncResult)
+    $taskGetBGFile.Runspace.Dispose()
+}
+ 
 ########################GUI########################
-$inputXML = import-XamlFromFile "$sourceFolderPath\MainWindow.xaml"
+Import-Module "$sourceFolderPath\Modules\WPF.psm1"
+$inputXML = import-XamlFromFile "$applicationPath\Source\MainWindow.xaml"
 $formatedXaml = Format-XamlFile $inputXML
 $objectXaml = New-XamlObject $formatedXaml
 $window = Add-WPFWindowFromXaml $objectXaml
 $formControls = Get-WPFObjects $formatedXaml $window
 
 ########################GUI Events########################
-$formControls.btnInstall.Add_Click({
-    Initialize-Application "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsInstallation.bat'
-    $window.Close()
-})
-$formControls.btnOptiNett.Add_Click({
-    Initialize-Application "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsOptimisation_Nettoyage.bat'
-    $window.Close()
-})
-$formControls.btnDiagnostic.Add_Click({
-    Initialize-Application "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDiagnostique.bat'
-    $window.Close()    
-})
-$formControls.btnDesinfection.Add_Click({
-    Initialize-Application "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat'
-    $window.Close() 
-})
-$formControls.btnFix.Add_Click({
-    Initialize-Application "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsFix.bat'
-    $window.Close()   
-})
-$formControls.btnChangeLog.Add_Click({
-    Get-RemoteFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' $sourceFolderPath
-    Start-Process "$sourceFolderPath\changelog.txt"
-})
-$formControls.btnForceUpdate.Add_Click({
-    Get-RemoteFileForce  "Installation.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' "$applicationPath\Installation"
-    Get-RemoteFileForce  "Optimisation_Nettoyage.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' "$applicationPath\Optimisation_Nettoyage"
-    Get-RemoteFileForce  "Diagnostique.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' "$applicationPath\Diagnostique"
-    Get-RemoteFileForce  "Desinfection.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' "$applicationPath\Desinfection"
-    Get-RemoteFileForce  "Fix.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' "$applicationPath\Fix"
-    Get-RemoteFileForce "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
-    Get-RemoteFileForce  "Menu.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' "$env:SystemDrive\_Tech"
-    Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$sourceFolderPath\Modules.zip" | Out-Null
-    Expand-Archive "$sourceFolderPath\Modules.zip" $sourceFolderPath -Force
-    Remove-Item "$sourceFolderPath\Modules.zip"
-    Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
-})
-$formControls.btnQuit.Add_Click({
-    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
-    $window.Close() 
-})
-
-$Window.add_Closed({
-    $desktop = [Environment]::GetFolderPath("Desktop")
-    Add-DesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$sourceFolderPath\Images\Icone.ico"
-    Get-RemoveScriptFiles
-})
 
 function Set-MenuWinget
 {
+ $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+ Import-Module "$sourceFolderPath\Modules\Verification.psm1"
     $version = Get-WingetStatus
 	if($version -eq $null)
 	{
@@ -256,6 +227,9 @@ function Set-MenuWinget
 
 function Set-MenuChoco
 {
+ $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+ Import-Module "$sourceFolderPath\Modules\Verification.psm1"
+ Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     $formControls.txtBlkChocoVersion.text = Get-ChocoStatus
     if($formControls.txtBlkChocoVersion.text -eq $true)
     {
@@ -276,6 +250,8 @@ function Set-MenuChoco
 
 function Set-MenuGit
 {
+ $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+ Import-Module "$sourceFolderPath\Modules\Verification.psm1"
     $formControls.txtBlkGitVersion.text = Get-GitStatus
     if($formControls.txtBlkGitVersion.text -eq $true)
     {
@@ -290,6 +266,8 @@ function Set-MenuGit
 
 function Set-MenuFTP
 {
+ $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+ Import-Module "$sourceFolderPath\Modules\Verification.psm1"
     $formControls.txtBlkFTPVersion.text = Get-FtpStatus
     if($formControls.txtBlkFTPVersion.text -eq $true)
     {
@@ -302,19 +280,109 @@ function Set-MenuFTP
     }
 }
 
-$formControls.btnWinget.Add_Click({
-    Install-Winget
-    Set-MenuWinget
-})
-
-$formControls.btnChoco.Add_Click({
-    Install-Choco
-    Set-MenuChoco
-})
-
+$Window.add_Loaded({
+    $formControls.btnInstall.Add_Click({
+        Initialize-Application "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsInstallation.bat'
+        $window.Close()
+    })
+    $formControls.btnOptiNett.Add_Click({
+        Initialize-Application "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsOptimisation_Nettoyage.bat'
+        $window.Close()
+    })
+    $formControls.btnDiagnostic.Add_Click({
+        Initialize-Application "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDiagnostique.bat'
+        $window.Close()    
+    })
+    $formControls.btnDesinfection.Add_Click({
+        Initialize-Application "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat'
+        $window.Close() 
+    })
+    $formControls.btnFix.Add_Click({
+        Initialize-Application "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsFix.bat'
+        $window.Close()   
+    })
+    $formControls.btnChangeLog.Add_Click({
+        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+        Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+        Get-RemoteFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' "$env:SystemDrive\_Tech\Applications\source"
+        Start-Process "$env:SystemDrive\_Tech\Applications\source\changelog.txt"
+    })
+    $formControls.btnForceUpdate.Add_Click({
+        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+        Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+        Get-RemoteFileForce  "Installation.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' "$env:SystemDrive\_Tech\Applications\Installation"
+        Get-RemoteFileForce  "Optimisation_Nettoyage.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
+        Get-RemoteFileForce  "Diagnostique.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' "$env:SystemDrive\_Tech\Applications\Diagnostique"
+        Get-RemoteFileForce  "Desinfection.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' "$env:SystemDrive\_Tech\Applications\Desinfection"
+        Get-RemoteFileForce  "Fix.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' "$env:SystemDrive\_Tech\Applications\Fix"
+        Get-RemoteFileForce "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
+        Get-RemoteFileForce  "Menu.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' "$env:SystemDrive\_Tech"
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$applicationPath\source\Modules.zip" | Out-Null
+        Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
+        Remove-Item "$applicationPath\source\Modules.zip"
+        Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
+    })
+    $formControls.btnQuit.Add_Click({
+        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+        Import-Module "$sourceFolderPath\Modules\Task.psm1"
+        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
+        $window.Close() 
+    })
 Set-MenuWinget
 Set-MenuChoco
 Set-MenuGit
 Set-MenuFTP
 
+$formControls.btnWinget.Add_Click({
+    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+   Import-Module "$sourceFolderPath\Modules\Verification.psm1"
+   Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+       Install-Winget
+       Set-MenuWinget
+   })
+   
+   $formControls.btnChoco.Add_Click({
+   Import-Module "$sourceFolderPath\Modules\Verification.psm1"
+   Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+       Install-Choco
+       Set-MenuChoco
+   })
+   if ($taskGetIcoFile -and $taskGetIcoFile.Runspace -and $taskGetIcoFile.AsyncResult) 
+    {
+    Wait-ForTaskCompletion -AsyncResult $taskGetIcoFile.AsyncResult
+    $taskGetIcoFile.Runspace.EndInvoke($taskGetIcoFile.AsyncResult)
+    $taskGetIcoFile.Runspace.Dispose()
+    }
+})
+
+
+$Window.add_Closed({
+    $taskAddDesktopIcon = Start-AsyncTask -ScriptBlock {
+        $desktop = [Environment]::GetFolderPath("Desktop")
+        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+        Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+        Add-DesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$sourceFolderPath\Images\Icone.ico"
+    }
+
+    $taskGetRemoveScripts = Start-AsyncTask -ScriptBlock {
+        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+        Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+        Get-RemoteFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
+        Get-RemoteFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp"
+    } 
+
+    if ($taskAddDesktopIcon -and $taskAddDesktopIcon.Runspace -and $taskAddDesktopIcon.AsyncResult) 
+    {
+        Wait-ForTaskCompletion -AsyncResult $taskAddDesktopIcon.AsyncResult
+        $taskAddDesktopIcon.Runspace.EndInvoke($taskAddDesktopIcon.AsyncResult)
+        $taskAddDesktopIcon.Runspace.Dispose()
+    }
+
+    if ($taskGetRemoveScripts -and $taskGetRemoveScripts.Runspace -and $taskGetRemoveScripts.AsyncResult) 
+    {
+        Wait-ForTaskCompletion -AsyncResult $taskGetRemoveScripts.AsyncResult 
+        $taskGetRemoveScripts.Runspace.EndInvoke($taskGetRemoveScripts.AsyncResult)
+        $taskGetRemoveScripts.Runspace.Dispose()
+    }   
+})
 Start-WPFAppDialog $window
