@@ -170,7 +170,7 @@ if($guiPathExist -eq $false)
     $taskGetBGFile = Start-AsyncTask -ScriptBlock {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-    Get-RemoteFile "fondpluiesize.gif" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.gif' "$sourceFolderPath\Images"
+    Get-RemoteFile "fondpluiesize.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.png' "$sourceFolderPath\Images"
     }
 }
 
