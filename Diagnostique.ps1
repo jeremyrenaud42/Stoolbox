@@ -23,6 +23,7 @@ if($adminStatus -eq $false)
 {
     Restart-Elevated -Path $pathDiagnostique\Diagnostique.ps1
 }
+
 if ($PSVersionTable.PSVersion.Major -lt 7 -and -not (Get-Command -Type Cmdlet Start-ThreadJob -ErrorAction SilentlyContinue)) 
 {
     Install-Nuget
@@ -30,12 +31,13 @@ if ($PSVersionTable.PSVersion.Major -lt 7 -and -not (Get-Command -Type Cmdlet St
 }
 Import-Module -Name ThreadJob
 
-$inputXML = import-XamlFromFile "$pathDiagnostiqueSource\MainWindow.xaml"
-$formatedXaml = Format-XamlFile $inputXML
-$objectXaml = New-XamlObject $formatedXaml
-$window = Add-WPFWindowFromXaml $objectXaml
-$formControls = Get-WPFObjects $formatedXaml $window
-
+$xamlFile = "$pathDiagnostiqueSource\MainWindow.xaml"
+$xamlContent = Read-XamlFileContent $xamlFile
+$formatedXamlFile = Format-XamlFile $xamlContent
+$xamlDoc = Convert-ToXmlDocument $formatedXamlFile
+$XamlReader = New-XamlReader $xamlDoc
+$window = New-WPFWindowFromXaml $XamlReader
+$formControls = Get-WPFControlsFromXaml $xamlDoc $window
 
 $formControls.BoutonMenu.Add_Click({
     start-process "$env:SystemDrive\\_Tech\\Menu.bat" -verb Runas

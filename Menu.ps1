@@ -189,11 +189,14 @@ if ($taskGetBGFile -and $taskGetBGFile.Runspace -and $taskGetBGFile.AsyncResult)
  
 ########################GUI########################
 Import-Module "$sourceFolderPath\Modules\WPF.psm1"
-$inputXML = import-XamlFromFile "$applicationPath\Source\MainWindow.xaml"
-$formatedXaml = Format-XamlFile $inputXML
-$objectXaml = New-XamlObject $formatedXaml
-$window = Add-WPFWindowFromXaml $objectXaml
-$formControls = Get-WPFObjects $formatedXaml $window
+$xamlFile = "$sourceFolderPath\MainWindow.xaml"
+$xamlContent = Read-XamlFileContent $xamlFile
+$formatedXamlFile = Format-XamlFile $xamlContent
+$xamlDoc = Convert-ToXmlDocument $formatedXamlFile
+$XamlReader = New-XamlReader $xamlDoc
+$window = New-WPFWindowFromXaml $XamlReader
+$formControls = Get-WPFControlsFromXaml $xamlDoc $window
+
 
 ########################GUI Events########################
 

@@ -39,11 +39,14 @@ if($adminStatus -eq $false)
 }
 
 #WPF - appMenuChoice
-$inputXML = import-XamlFromFile "$pathInstallationSource\MainWindow.xaml"
-$formatedXaml = Format-XamlFile $inputXML
-$objectXaml = New-XamlObject $formatedXaml
-$window = Add-WPFWindowFromXaml $objectXaml
-$formControlsMenuApp = Get-WPFObjects $formatedXaml $window
+$xamlFile = "$pathInstallationSource\MainWindow.xaml"
+$xamlContent = Read-XamlFileContent $xamlFile
+$formatedXamlFile = Format-XamlFile $xamlContent
+$xamlDoc = Convert-ToXmlDocument $formatedXamlFile
+$XamlReader = New-XamlReader $xamlDoc
+$window = New-WPFWindowFromXaml $XamlReader
+$formControlsMenuApp = Get-WPFControlsFromXaml $xamlDoc $window
+
 
 #ajout des events, cases a cocher, etc.. pour le WPF:
 
@@ -94,11 +97,14 @@ $formControlsMenuApp.btnQuit.Add_Click({
 Start-WPFAppDialog $window
 
 #WPF - Main GUI
-$inputXML = import-XamlFromFile "$pathInstallationSource\MainWindow1.xaml"
-$formatedXaml = Format-XamlFile $inputXML
-$objectXaml = New-XamlObject $formatedXaml
-$window = Add-WPFWindowFromXaml $objectXaml
-$formControlsMain = Get-WPFObjects $formatedXaml $window
+$xamlFile = "$pathInstallationSource\MainWindow1.xaml"
+$xamlContent = Read-XamlFileContent $xamlFile
+$formatedXamlFile = Format-XamlFile $xamlContent
+$xamlDoc = Convert-ToXmlDocument $formatedXamlFile
+$XamlReader = New-XamlReader $xamlDoc
+$window = New-WPFWindowFromXaml $XamlReader
+$formControlsMain = Get-WPFControlsFromXaml $xamlDoc $window
+
 
 $formControlsMain.richTxtBxOutput.add_textchanged({
     [System.Windows.Forms.Application]::DoEvents() #Refresh le text
@@ -132,6 +138,47 @@ function Update-GUI
         $formControlsMain.richTxtBxOutput.AppendText("$message`r`n")  
     })
 }
+
+function Start-AsyncTask {
+    param (
+        [ScriptBlock]$ScriptBlock
+    )
+
+# Crée une instance de PowerShell
+$runspace = [powershell]::Create().AddScript($ScriptBlock)
+# Démarre l'exécution asynchrone
+$asyncResult = $runspace.BeginInvoke()
+# Retourne l'AsyncResult et le Runspace dans un objet personnalisé
+return @{ AsyncResult = $asyncResult; Runspace = $runspace }
+}
+
+# Fonction pour vérifier si la tâche est terminée
+function Wait-ForTaskCompletion {
+    param (
+        [Parameter(Mandatory=$true)]
+        [System.IAsyncResult]$AsyncResult
+    )
+
+    # Boucle pour attendre que la tâche soit terminée
+    while (-not $AsyncResult.IsCompleted) {
+        Start-Sleep -Milliseconds 100
+    }
+}
+<#
+$taskGetRemoveScripts = Start-AsyncTask -ScriptBlock {
+    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+    Get-RemoteFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
+    Get-RemoteFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp"
+} 
+
+if ($taskGetRemoveScripts -and $taskGetRemoveScripts.Runspace -and $taskGetRemoveScripts.AsyncResult) 
+{
+    Wait-ForTaskCompletion -AsyncResult $taskGetRemoveScripts.AsyncResult 
+    $taskGetRemoveScripts.Runspace.EndInvoke($taskGetRemoveScripts.AsyncResult)
+    $taskGetRemoveScripts.Runspace.Dispose()
+} 
+#>  
 ##fin du experimental
 
 function Install-SoftwaresManager
