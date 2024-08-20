@@ -138,47 +138,6 @@ function Update-GUI
         $formControlsMain.richTxtBxOutput.AppendText("$message`r`n")  
     })
 }
-
-function Start-AsyncTask {
-    param (
-        [ScriptBlock]$ScriptBlock
-    )
-
-# Crée une instance de PowerShell
-$runspace = [powershell]::Create().AddScript($ScriptBlock)
-# Démarre l'exécution asynchrone
-$asyncResult = $runspace.BeginInvoke()
-# Retourne l'AsyncResult et le Runspace dans un objet personnalisé
-return @{ AsyncResult = $asyncResult; Runspace = $runspace }
-}
-
-# Fonction pour vérifier si la tâche est terminée
-function Wait-ForTaskCompletion {
-    param (
-        [Parameter(Mandatory=$true)]
-        [System.IAsyncResult]$AsyncResult
-    )
-
-    # Boucle pour attendre que la tâche soit terminée
-    while (-not $AsyncResult.IsCompleted) {
-        Start-Sleep -Milliseconds 100
-    }
-}
-<#
-$taskGetRemoveScripts = Start-AsyncTask -ScriptBlock {
-    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-    Get-RemoteFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
-    Get-RemoteFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp"
-} 
-
-if ($taskGetRemoveScripts -and $taskGetRemoveScripts.Runspace -and $taskGetRemoveScripts.AsyncResult) 
-{
-    Wait-ForTaskCompletion -AsyncResult $taskGetRemoveScripts.AsyncResult 
-    $taskGetRemoveScripts.Runspace.EndInvoke($taskGetRemoveScripts.AsyncResult)
-    $taskGetRemoveScripts.Runspace.Dispose()
-} 
-#>  
 ##fin du experimental
 
 function Install-SoftwaresManager
@@ -321,12 +280,19 @@ Function Set-ExplorerDisplay
  Function Disable-Bitlocker
 {
     $formControlsMain.lblProgress.Content = "Désactivation du bitlocker"   
-    $bitlockerStatus = Get-BitLockerVolume | Select-Object -expand VolumeStatus
+    $bitlockerStatus = Get-BitLockerVolume -MountPoint $env:SystemDrive | Select-Object -expand VolumeStatus
         if ($bitlockerStatus -eq 'EncryptionInProgress')
         {
-            $bitlockerVolume = Get-BitLockerVolume
-            Disable-BitLocker -MountPoint $bitlockerVolume | Out-Null
+            manage-bde $env:systemdrive -off
             $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")            
+        }
+        elseif ($bitlockerStatus -eq 'FullyDecrypted')
+        {
+            $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja désactivé`r`n") 
+        }
+        elseif ($bitlockerStatus -eq 'DecryptionInProgress')
+        {
+            $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja en cours de déchiffrement`r`n") 
         }
     Add-Log "installation.txt" "Bitlocker a été désactivé"
 }
