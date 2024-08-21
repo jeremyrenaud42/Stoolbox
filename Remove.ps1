@@ -1,22 +1,27 @@
-﻿Add-Type -AssemblyName Microsoft.VisualBasic
+﻿Add-Type -AssemblyName PresentationCore,PresentationFramework
 
 $desktop = [Environment]::GetFolderPath("Desktop")
-$preverif = Test-Path "$env:SystemDrive\_Tech"
-if($preverif)
+$folderPath = "$env:SystemDrive\_Tech"
+
+if (Test-Path $folderPath)
 {
-    write-host "Suppression du dossier $env:SystemDrive\_Tech"
-    Remove-Item  "$env:SystemDrive\_Tech\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null #Ca prend cette ligne si executer depuis C:\_tech. Ca va laisser le odssier _tech vide, mais au moins ca marchera.
-    Remove-Item  "$env:SystemDrive\_Tech" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+    Write-Host "Suppression du dossier $folderPath"
+    Remove-Item "$folderPath\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item $folderPath -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     Remove-Item "$desktop\Menu.lnk" -Force -ErrorAction SilentlyContinue | Out-Null
-    start-sleep -s 2
+    Start-Sleep -Seconds 2
     Write-Host "Vidage de la corbeille"
     Clear-RecycleBin -Force -ErrorAction SilentlyContinue | Out-Null
     Write-Host "La corbeille a été vidé"
-    start-sleep -s 2
-    
-    $path = Test-Path "$env:SystemDrive\_Tech\Menu.ps1"
-    if($path)
+    Start-Sleep -Seconds 2
+
+    if (Test-Path $folderPath)
     {
-        [Microsoft.VisualBasic.Interaction]::MsgBox("La suppression du dossier C:\_Tech a échoué",'OKOnly,SystemModal,Information', "Suppression") | Out-Null
+        [System.Windows.MessageBox]::Show("La suppression du dossier C:\_Tech a échoué","Suppression",0,48) | Out-Null
     }
+}
+else
+{
+    Write-Host "Le dossier C:\_Tech n'existe pas."
+    Start-Sleep -Seconds 2
 }
