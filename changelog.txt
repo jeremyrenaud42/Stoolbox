@@ -1,3 +1,6 @@
+2024-08-22:
+- Amélioration de Remove, supprime dossier download et plus de checkup
+
 2024-08-10:
 - Ajout de BattMonitor et Furmark V2
 - Ajout du bouton pour tout updater dans Menu 
