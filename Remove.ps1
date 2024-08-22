@@ -56,7 +56,6 @@ if (Test-Path $folderPath)
     Remove-Item $folderPath -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     Write-Host "Suppression du raccourci"
     Remove-Item "$desktop\Menu.lnk" -Force -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item "$env:SystemDrive\Temp\Remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
     Start-Sleep -Seconds 2
     Write-Host "Vidage de la corbeille"
     Clear-RecycleBin -Force -ErrorAction SilentlyContinue | Out-Null
@@ -73,3 +72,4 @@ else
     Write-Host "Le dossier C:\_Tech n'existe pas."
     Start-Sleep -Seconds 2
 }
+remove-Item -Path "$env:SystemDrive\temp\*" -Force -ErrorAction SilentlyContinue | Out-Null
