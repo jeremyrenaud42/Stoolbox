@@ -5,6 +5,34 @@ $folderPath = "$env:SystemDrive\_Tech"
 $lockfile = "$env:SystemDrive\_Tech\Applications\source\*lockfile.lock"
 $maxAttempts = 5
 $attempt = 0
+$dateFile = "C:\_tech\Applications\Source\installedDate.txt"
+
+function Remove-DownloadFolder {
+    Write-Host "Nettoyer le dossier des téléchargements"
+	if (-not (test-path $dateFile) -or (Get-Content -Path $dateFile -ErrorAction SilentlyContinue).Trim().Length -eq 0) {
+        Write-Host "Aucune date d'installation trouvée"
+        return
+    }
+    # Read the date and time string from the file
+    $logContent = Get-Content -Path $dateFile
+    # Define the date and time string
+    $dateString = $logContent.Trim()  # Trim whitespace and newlines
+    # Convert the date string to a DateTime object
+    $targetDateTime = [DateTime]::ParseExact($dateString, "yyyy-MM-dd HH:mm:ss", $null)
+    
+    # Get the list of files with a LastWriteTime on or before the target date and time
+    $files = Get-ChildItem -Path "$env:USERPROFILE\Downloads" | Where-Object { $_.LastWriteTime -ge $targetDateTime }
+    
+    if ($files.Count -eq 0) {
+        Write-Host "Aucun fichiers récents trouvé dans le dossier des téléchargements."
+        return
+    }
+    # Remove the filtered files
+    foreach ($file in $files) {
+        Remove-Item -Path $file.FullName -Recurse -Force
+        Write-Output "$($file.FullName) a été supprimé"
+    }
+}
 
 if (Test-Path $folderPath)
 {
@@ -20,9 +48,13 @@ if (Test-Path $folderPath)
             break
         }
     }
+
+    Remove-DownloadFolder
+    Start-Sleep -s 1
     Write-Host "Suppression du dossier $folderPath"
     Remove-Item "$folderPath\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     Remove-Item $folderPath -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+    Write-Host "Suppression du raccourci"
     Remove-Item "$desktop\Menu.lnk" -Force -ErrorAction SilentlyContinue | Out-Null
     Remove-Item "$env:SystemDrive\Temp\Remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
     Start-Sleep -Seconds 2

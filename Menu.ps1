@@ -138,6 +138,11 @@ $sourceFolderPath = "$applicationPath\source"
 New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
 Get-RequiredModules
 Import-Module "$sourceFolderPath\Modules\Verification.psm1"
+$lockfile = "$sourceFolderPath\lockfile.lock"
+$dateFile = "$sourceFolderPath\installedDate.txt"
+New-Item -Path $lockfile -ItemType 'File' -Force
+New-Item -Path $dateFile -ItemType 'File'
+(Get-Date).ToString() | Out-file -filepath $dateFile
 
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
@@ -386,6 +391,7 @@ $Window.add_Closed({
         Wait-ForTaskCompletion -AsyncResult $taskGetRemoveScripts.AsyncResult 
         $taskGetRemoveScripts.Runspace.EndInvoke($taskGetRemoveScripts.AsyncResult)
         $taskGetRemoveScripts.Runspace.Dispose()
-    }   
+    } 
+    Remove-Item -Path $lockfile -Force -ErrorAction SilentlyContinue  
 })
 Start-WPFAppDialog $window
