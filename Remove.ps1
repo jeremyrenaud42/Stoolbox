@@ -78,12 +78,15 @@ else
 if (Test-Path "C:\Temp\remove.ps1" -ErrorAction SilentlyContinue)
 {
 Move-Item "C:\Temp\remove.ps1" -Destination "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
-Start-Process powershell.exe "$env:APPDATA\remove.ps1"
+Move-Item "C:\Temp\remove.bat" -Destination "$env:APPDATA\remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
+$scriptPath = "$env:APPDATA\remove.ps1"
+Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`""
 exit
 }
 
 remove-Item -Path "$env:SystemDrive\temp\*" -Force -ErrorAction SilentlyContinue | Out-Null
 remove-Item -Path "$env:SystemDrive\temp" -Force -ErrorAction SilentlyContinue | Out-Null
 Remove-Item "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
+Remove-Item "$env:APPDATA\remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "Le dossier Temp a été supprimé"
 Start-Sleep -Seconds 1
