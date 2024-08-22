@@ -141,8 +141,10 @@ Import-Module "$sourceFolderPath\Modules\Verification.psm1"
 $lockfile = "$sourceFolderPath\lockfile.lock"
 $dateFile = "$sourceFolderPath\installedDate.txt"
 New-Item -Path $lockfile -ItemType 'File' -Force
-New-Item -Path $dateFile -ItemType 'File'
-(Get-Date).ToString() | Out-file -filepath $dateFile
+if (-not (Test-Path $dateFile)) {
+    (Get-Date).ToString() | Out-File -FilePath $dateFile
+}
+
 
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
