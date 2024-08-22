@@ -9,7 +9,14 @@ $dateFile = "C:\_tech\Applications\Source\installedDate.txt"
 
 function Remove-DownloadFolder {
     Write-Host "Nettoyer le dossier des téléchargements"
-	if (-not (test-path $dateFile) -or (Get-Content -Path $dateFile -ErrorAction SilentlyContinue).Trim().Length -eq 0) {
+
+        if (Test-Path "$env:USERPROFILE\Downloads\stoolbox.exe")
+    {
+         Remove-Item -Path "$env:USERPROFILE\Downloads\stoolbox.exe" -Force
+    }
+
+	if (-not (test-path $dateFile) -or (Get-Content -Path $dateFile -ErrorAction SilentlyContinue).Trim().Length -eq 0) 
+{
         Write-Host "Aucune date d'installation trouvée"
         return
     }
@@ -23,7 +30,8 @@ function Remove-DownloadFolder {
     # Get the list of files with a LastWriteTime on or before the target date and time
     $files = Get-ChildItem -Path "$env:USERPROFILE\Downloads" | Where-Object { $_.LastWriteTime -ge $targetDateTime }
     
-    if ($files.Count -eq 0) {
+    if ($files.Count -eq 0) 
+    {
         Write-Host "Aucun fichiers récents trouvé dans le dossier des téléchargements."
         return
     }
