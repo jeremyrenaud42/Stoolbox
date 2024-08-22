@@ -69,10 +69,13 @@ if (Test-Path $folderPath)
 }
 else
 {
+    if (-not (Test-Path "$env:APPDATA\remove.ps1"))
+    {
     Write-Host "Le dossier C:\_Tech n'existe pas."
     Start-Sleep -Seconds 2
+    }
 }
-if (Test-Path "C:\Temp\remove.ps1")
+if (Test-Path "C:\Temp\remove.ps1" -ErrorAction SilentlyContinue)
 {
 Move-Item "C:\Temp\remove.ps1" -Destination "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
 Start-Process powershell.exe "$env:APPDATA\remove.ps1"
@@ -82,3 +85,5 @@ exit
 remove-Item -Path "$env:SystemDrive\temp\*" -Force -ErrorAction SilentlyContinue | Out-Null
 remove-Item -Path "$env:SystemDrive\temp" -Force -ErrorAction SilentlyContinue | Out-Null
 Remove-Item "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
+Write-Host "Le dossier Temp a été supprimé"
+Start-Sleep -Seconds 1
