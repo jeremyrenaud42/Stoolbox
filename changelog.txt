@@ -1,5 +1,6 @@
 2024-08-22:
 - Amélioration de Remove, supprime dossier download et plus de checkup
+- Il supprime remove.bat et remove.ps1 du dossier Temp
 
 2024-08-10:
 - Ajout de BattMonitor et Furmark V2
