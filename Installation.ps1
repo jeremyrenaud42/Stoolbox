@@ -277,23 +277,28 @@ Function Set-ExplorerDisplay
     Add-Log "installation.txt" "Explorateur de fichiers configuré" 
 }
 
- Function Disable-Bitlocker
+Function Disable-Bitlocker
 {
-    $formControlsMain.lblProgress.Content = "Désactivation du bitlocker"   
+    $formControlsMain.lblProgress.Content = "Désactivation du bitlocker"
     $bitlockerStatus = Get-BitLockerVolume -MountPoint $env:SystemDrive | Select-Object -expand VolumeStatus
-        if ($bitlockerStatus -eq 'EncryptionInProgress')
-        {
-            manage-bde $env:systemdrive -off
-            $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")            
-        }
-        elseif ($bitlockerStatus -eq 'FullyDecrypted')
-        {
-            $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja désactivé`r`n") 
-        }
-        elseif ($bitlockerStatus -eq 'DecryptionInProgress')
-        {
-            $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja en cours de déchiffrement`r`n") 
-        }
+    if($bitlockerStatus -eq 'FullyEncrypted')
+    {
+        manage-bde $env:systemdrive -off
+        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivérn")
+    }
+    elseif ($bitlockerStatus -eq 'EncryptionInProgress')
+    {
+        manage-bde $env:systemdrive -off
+        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivérn")
+    }
+    elseif ($bitlockerStatus -eq 'FullyDecrypted')
+    {
+        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja désactivérn") 
+    }
+    elseif ($bitlockerStatus -eq 'DecryptionInProgress')
+    {
+        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja en cours de déchiffrementrn") 
+    }
     Add-Log "installation.txt" "Bitlocker a été désactivé"
 }
 
