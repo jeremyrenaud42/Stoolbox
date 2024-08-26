@@ -284,22 +284,25 @@ Function Disable-Bitlocker
     if($bitlockerStatus -eq 'FullyEncrypted')
     {
         manage-bde $env:systemdrive -off
-        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivérn")
+        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")
+        Add-Log "installation.txt" "Bitlocker a été désactivé"
     }
     elseif ($bitlockerStatus -eq 'EncryptionInProgress')
     {
         manage-bde $env:systemdrive -off
-        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivérn")
+        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")
+        Add-Log "installation.txt" "Bitlocker a été désactivé"
     }
     elseif ($bitlockerStatus -eq 'FullyDecrypted')
     {
-        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja désactivérn") 
+        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja désactivé`r`n") 
+        Add-Log "installation.txt" "est déja désactivé"
     }
     elseif ($bitlockerStatus -eq 'DecryptionInProgress')
     {
-        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja en cours de déchiffrementrn") 
+        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja en cours de déchiffrement`r`n") 
+        Add-Log "installation.txt" "Bitlocker est déja en cours de déchiffrement"
     }
-    Add-Log "installation.txt" "Bitlocker a été désactivé"
 }
 
 Function Disable-FastBoot
