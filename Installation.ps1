@@ -142,7 +142,7 @@ function Update-GUI
 
 function Install-SoftwaresManager
 {
-    Add-Log "installation.txt" "Installation de $windowsVersion le $actualDate"
+    Add-Log "installationLog.txt" "Installation de $windowsVersion le $actualDate"
     $formControlsMain.lblProgress.content = "Préparation"   
     $formControlsMain.richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")  
     $formControlsMain.richTxtBxOutput.AppendText("Installation de NuGet`r`n")
@@ -227,7 +227,7 @@ function Install-WindowsUpdate
         {
             $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n") 
         } 
-   Add-Log "installation.txt" "Mises à jour de Windows effectuées"
+   Add-Log "installationLog.txt" "Mises à jour de Windows effectuées"
 }
 
 Function Rename-SystemDrive
@@ -259,7 +259,7 @@ Function Rename-SystemDrive
     if($diskName -match $NewDiskName)
     {
         $formControlsMain.richTxtBxOutput.AppendText("Le disque $env:SystemDrive a été renommé $NewDiskName`r`n")    
-        Add-Log "installation.txt" "Le disque $env:SystemDrive a été renommé $NewDiskName"
+        Add-Log "installationLog.txt" "Le disque $env:SystemDrive a été renommé $NewDiskName"
     }
     else
     {
@@ -274,7 +274,7 @@ Function Set-ExplorerDisplay
     $formControlsMain.richTxtBxOutput.AppendText("L'accès rapide a été remplacé par Ce PC`r`n")   
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications' -Type 'DWord' -Value '0'
     $formControlsMain.richTxtBxOutput.AppendText("Le fournisseur de synchronisation a été decoché`r`n")   
-    Add-Log "installation.txt" "Explorateur de fichiers configuré" 
+    Add-Log "installationLog.txt" "Explorateur de fichiers configuré" 
 }
 
 Function Disable-Bitlocker
@@ -285,23 +285,23 @@ Function Disable-Bitlocker
     {
         manage-bde $env:systemdrive -off
         $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")
-        Add-Log "installation.txt" "Bitlocker a été désactivé"
+        Add-Log "installationLog.txt" "Bitlocker a été désactivé"
     }
     elseif ($bitlockerStatus -eq 'EncryptionInProgress')
     {
         manage-bde $env:systemdrive -off
         $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")
-        Add-Log "installation.txt" "Bitlocker a été désactivé"
+        Add-Log "installationLog.txt" "Bitlocker a été désactivé"
     }
     elseif ($bitlockerStatus -eq 'FullyDecrypted')
     {
         $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja désactivé`r`n") 
-        Add-Log "installation.txt" "est déja désactivé"
+        Add-Log "installationLog.txt" "est déja désactivé"
     }
     elseif ($bitlockerStatus -eq 'DecryptionInProgress')
     {
         $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja en cours de déchiffrement`r`n") 
-        Add-Log "installation.txt" "Bitlocker est déja en cours de déchiffrement"
+        Add-Log "installationLog.txt" "Bitlocker est déja en cours de déchiffrement"
     }
 }
 
@@ -311,7 +311,7 @@ Function Disable-FastBoot
     set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Name 'HiberbootEnabled' -Type 'DWord' -Value '0'
     #powercfg /h off
     $formControlsMain.richTxtBxOutput.AppendText("Le démarrage rapide a été désactivé`r`n")   
-    Add-Log "installation.txt" "Le démarrage rapide a été désactivé"
+    Add-Log "installationLog.txt" "Le démarrage rapide a été désactivé"
 }
 
 Function Remove-EngKeyboard
@@ -322,7 +322,7 @@ Function Remove-EngKeyboard
     $langList.Remove($anglaisCanada) | Out-Null #supprimer la clavier sélectionner
     Set-WinUserLanguageList $langList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
     $formControlsMain.richTxtBxOutput.AppendText("Le clavier Anglais a été supprimé`r`n")
-    Add-Log "installation.txt" "Le clavier Anglais a été supprimé"
+    Add-Log "installationLog.txt" "Le clavier Anglais a été supprimé"
 }
 
 Function Set-Privacy
@@ -333,7 +333,7 @@ Function Set-Privacy
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type 'DWord' -Value 0 
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type 'DWord' -Value 0 
     $formControlsMain.richTxtBxOutput.AppendText("Les options de confidentialité ont été configuré`r`n") 
-    Add-Log "installation.txt" "Les options de confidentialité ont été configuré"
+    Add-Log "installationLog.txt" "Les options de confidentialité ont été configuré"
       
 }
 
@@ -349,7 +349,7 @@ Function Enable-DesktopIcon
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type 'DWord' -Value 0
     $formControlsMain.richTxtBxOutput.AppendText("Les icones systèmes ont été installés sur le bureau`r`n")
     $formControlsMain.richTxtBxOutput.AppendText(" `r`n") #Permet de créé un espace avant les logiciels
-    Add-Log "installation.txt" "Les icones systèmes ont été installés sur le bureau"  
+    Add-Log "installationLog.txt" "Les icones systèmes ont été installés sur le bureau"  
 }
 
 function Update-MsStore 
@@ -361,7 +361,7 @@ function Update-MsStore
     $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
     $wmiObj.UpdateScanMethod() | Out-Null
     $formControlsMain.richTxtBxOutput.AppendText(" - Mises à jour du Microsoft Store lancées`r`n")
-    Add-Log "installation.txt" "Mises à jour de Microsoft Store" 
+    Add-Log "installationLog.txt" "Mises à jour de Microsoft Store" 
 }
 
 $jsonFilePath = "$env:SystemDrive\_Tech\Applications\Installation\Source\InstallationApps.JSON"
@@ -413,7 +413,7 @@ function Install-Software($appInfo)
         {  
             Install-SoftwareWithWinget $appInfo
         }
-    Add-Log "installation.txt" "Installation de $appName" 
+    Add-Log "installationLog.txt" "Installation de $appName" 
 }
 
 function Install-SoftwareWithWinget($appInfo)
@@ -506,8 +506,8 @@ function Set-GooglePinnedTaskbar
 
 function Complete-Installation
 {
-    Add-Log "installation.txt" "Installation de Windows effectué avec Succès"
-    Copy-Log "installation.txt" "$env:SystemDrive\TEMP"  
+    Add-Log "installationLog.txt" "Installation de Windows effectué avec Succès"
+    Copy-Log "installationLog.txt" "$env:SystemDrive\TEMP"  
     [Audio]::Volume = 0.25
     [console]::beep(1000,666)
     Start-Sleep -s 1
