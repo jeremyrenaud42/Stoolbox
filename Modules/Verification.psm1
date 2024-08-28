@@ -1,11 +1,35 @@
 ﻿# Fonction pour tester l'URL
 Add-Type -AssemblyName "System.Net.Http"
-function Test-Url($url)
+function Test-Url 
 {
-    $client = New-Object System.Net.Http.HttpClient
-    $response = $client.SendAsync((New-Object System.Net.Http.HttpRequestMessage 'Head', $url)).Result
-    $client.Dispose()
-    return $response.IsSuccessStatusCode
+    param (
+        [string]$Url
+    )
+
+    # Create an HTTP client
+    $client = [System.Net.Http.HttpClient]::new()
+
+    try 
+    {
+        # Create an HTTP HEAD request
+        $request = [System.Net.Http.HttpRequestMessage]::new([System.Net.Http.HttpMethod]::Head, $Url)
+        # Send the request asynchronously and wait for the result
+        $response = $client.SendAsync($request).GetAwaiter().GetResult()
+        # Return the status of the response
+        return $response.IsSuccessStatusCode
+    }
+    catch 
+    {
+        # Log or handle errors
+        Write-Error "Error checking URL: $_"
+        return $false
+    }
+    finally 
+    {
+        # Dispose of the HTTP client and request message to release resources
+        $client.Dispose()
+        $request.Dispose()
+    }     
 }
 function Get-AdminStatus
 {
