@@ -108,7 +108,7 @@ function Get-RemoteFile
        if($fileExist -eq $false)
        {
           New-Folder -FolderToCreate $FilePath
-          Invoke-WebRequest -Uri $DownloadLink -OutFile "$FilePath\$File"
+          Invoke-WebRequest -Uri $DownloadLink -OutFile "$FilePath\$File" -TimeoutSec 5 -UseBasicParsing
           Expand-ZipFile -ZipFile $File -Folderpath $FilePath
        }
    }
@@ -160,7 +160,7 @@ function Get-RemoteFileForce
    $fileExist = Test-AppPresence -PathToTest $FilePath\$File
    if($fileExist -eq $true)
    {
-       Invoke-WebRequest -Uri $DownloadLink -OutFile "$FilePath\$File"
+       Invoke-WebRequest -Uri $DownloadLink -OutFile "$FilePath\$File" -TimeoutSec 5 -UseBasicParsing
    }
 }
 function Start-App
@@ -265,7 +265,7 @@ function Install-Choco
    $chocoExist = Test-AppPresence "$env:SystemDrive\ProgramData\chocolatey"
    if($chocoExist -eq $false)
    {
-       Invoke-WebRequest https://chocolatey.org/install.ps1 -UseBasicParsing | Invoke-Expression | Out-Null #install le module choco
+       Invoke-WebRequest https://chocolatey.org/install.ps1 -TimeoutSec 5 -UseBasicParsing | Invoke-Expression | Out-Null #install le module choco
        $env:Path += ";$env:SystemDrive\ProgramData\chocolatey" #permet de pouvoir installer les logiciels sans reload powershell
    }
 }
