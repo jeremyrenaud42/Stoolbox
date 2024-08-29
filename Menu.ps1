@@ -86,32 +86,6 @@ if($modulesFolderPathExist -eq $false)
 }
 }
 
-function Start-AsyncTask {
-    param (
-        [ScriptBlock]$ScriptBlock
-    )
-
-# Crée une instance de PowerShell
-$runspace = [powershell]::Create().AddScript($ScriptBlock)
-# Démarre l'exécution asynchrone
-$asyncResult = $runspace.BeginInvoke()
-# Retourne l'AsyncResult et le Runspace dans un objet personnalisé
-return @{ AsyncResult = $asyncResult; Runspace = $runspace }
-}
-
-# Fonction pour vérifier si la tâche est terminée
-function Wait-ForTaskCompletion {
-    param (
-        [Parameter(Mandatory=$true)]
-        [System.IAsyncResult]$AsyncResult
-    )
-
-    # Boucle pour attendre que la tâche soit terminée
-    while (-not $AsyncResult.IsCompleted) {
-        Start-Sleep -Milliseconds 100
-    }
-}
-
 function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 {
 <#
@@ -151,6 +125,8 @@ if($adminStatus -eq $false)
 {
     Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
 }
+
+Import-Module "$sourceFolderPath\Modules\Runspaces.psm1"
 
 $xamlPathExist = Test-Path $sourceFolderPath\MainWindow.xaml
 if($xamlPathExist -eq $false)
