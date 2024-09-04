@@ -1,4 +1,4 @@
-﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
+﻿Add-Type -AssemblyName PresentationFramework,System.speech,System.Drawing,presentationCore
 
 function Get-RequiredModules
 {
@@ -29,7 +29,7 @@ function Get-Manufacturer
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
 $pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
 $pathInstallationSource = "$env:SystemDrive\_Tech\Applications\Installation\source"
-$windowsVersion = (Get-WmiObject -class Win32_OperatingSystem).Caption
+$windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
 $actualDate = (Get-Date).ToString()
 Get-Dependencies
 $adminStatus = Get-AdminStatus
@@ -107,7 +107,8 @@ $formControlsMain = Get-WPFControlsFromXaml $xamlDoc $window
 
 
 $formControlsMain.richTxtBxOutput.add_textchanged({
-    [System.Windows.Forms.Application]::DoEvents() #Refresh le text
+    $Window.Dispatcher.Invoke([Windows.Threading.DispatcherPriority]::Background, [action]{}) #Refresh le text
+    #[System.Windows.Forms.Application]::DoEvents() #Refresh le text
     $formControlsMain.richTxtBxOutput.ScrollToEnd() #scroll en bas
 })
 
@@ -127,16 +128,30 @@ if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem) {
 Start-WPFApp $window
 
 #experimental
-function Update-GUI 
+function Update-RichTextBox
 {
-    param (
-        [string]$message
+    param 
+    (
+        [string]$TextBoxMessage
     )
-
-    # Use the Dispatcher to update the GUI from the main thread
     $formControlsMain.richTxtBxOutput.Dispatcher.Invoke([Action]{
-        $formControlsMain.richTxtBxOutput.AppendText("$message`r`n")  
+    $formControlsMain.richTxtBxOutput.AppendText("$TextBoxMessage")  
     })
+}
+function Update-Label
+{
+    param 
+    (
+        [string]$LabelText
+    )
+    $formControlsMain.lblProgress.Dispatcher.Invoke([Action]{
+    $formControlsMain.lblProgress.content = "$LabelText"
+    })
+}
+
+function Update-Gui 
+{
+    $Window.Dispatcher.Invoke([Windows.Threading.DispatcherPriority]::Background, [action]{})
 }
 ##fin du experimental
 
@@ -358,13 +373,21 @@ function Update-MsStore
     $formControlsMain.richTxtBxOutput.AppendText("`r`nLancement des updates du Microsoft Store")
     $namespaceName = "root\cimv2\mdm\dmmap"
     $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
-    $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
-    $wmiObj.UpdateScanMethod() | Out-Null
-    $formControlsMain.richTxtBxOutput.AppendText(" - Mises à jour du Microsoft Store lancées`r`n")
-    Add-Log "installationLog.txt" "Mises à jour de Microsoft Store" 
+    #$wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
+    #$wmiObj.UpdateScanMethod() | Out-Null
+    $result = Get-CimInstance -Namespace $namespaceName -ClassName $className | Invoke-CimMethod -MethodName UpdateScanMethod
+    if ($result.ReturnValue -eq 0) 
+    {
+        $formControlsMain.richTxtBxOutput.AppendText(" - Mises à jour du Microsoft Store lancées`r`n")
+        Add-Log "installationLog.txt" "Mises à jour de Microsoft Store" 
+    } 
+    else 
+    {
+        $formControlsMain.richTxtBxOutput.AppendText(" - Échec des mises à jour du Microsoft Store `r`n")
+    }
 }
 
-$jsonFilePath = "$env:SystemDrive\_Tech\Applications\Installation\Source\InstallationApps.JSON"
+$jsonFilePath = "$pathInstallationSource\InstallationApps.JSON"
 $jsonString = Get-Content -Raw $jsonFilePath
 $appsInfo = ConvertFrom-Json $jsonString
 $appNames = $appsInfo.psobject.Properties.Name
