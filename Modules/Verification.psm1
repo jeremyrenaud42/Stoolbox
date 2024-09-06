@@ -97,7 +97,7 @@ function Get-InternetStatusLoop
 }
 function Get-NugetStatus
 {
-    $nugetExist = test-path $env:LOCALAPPDATA\PackageManagement\ProviderAssemblies\nuget
+    $nugetExist = test-path $env:APPDATA\NuGet
     return $nugetExist
 }
 function Get-WingetStatus
