@@ -1,36 +1,23 @@
-﻿# Fonction pour tester l'URL
-Add-Type -AssemblyName "System.Net.Http"
-function Test-Url 
+﻿function Test-Url 
 {
-    param (
+    [CmdletBinding()]
+    param 
+    (
         [string]$Url
     )
 
-    # Create an HTTP client
-    $client = [System.Net.Http.HttpClient]::new()
-
     try 
     {
-        # Create an HTTP HEAD request
-        $request = [System.Net.Http.HttpRequestMessage]::new([System.Net.Http.HttpMethod]::Head, $Url)
-        # Send the request asynchronously and wait for the result
-        $response = $client.SendAsync($request).GetAwaiter().GetResult()
-        # Return the status of the response
-        return $response.IsSuccessStatusCode
+        Invoke-WebRequest -Uri $Url -Method Head -TimeoutSec 5 -UseBasicParsing -ErrorAction Stop
+        return $true
     }
     catch 
     {
-        # Log or handle errors
         Write-Error "Error checking URL: $_"
         return $false
     }
-    finally 
-    {
-        # Dispose of the HTTP client and request message to release resources
-        $client.Dispose()
-        $request.Dispose()
-    }     
 }
+
 function Get-AdminStatus
 {
     $adminStatus = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator') 
@@ -110,8 +97,8 @@ function Get-InternetStatusLoop
 }
 function Get-NugetStatus
 {
-    $nugetStatus = Get-PackageProvider -name Nuget | Select-Object -expand name
-    return $nugetStatus
+    $nugetExist = test-path $env:LOCALAPPDATA\PackageManagement\ProviderAssemblies\nuget
+    return $nugetExist
 }
 function Get-WingetStatus
 {
