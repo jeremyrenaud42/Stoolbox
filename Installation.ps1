@@ -103,7 +103,7 @@ $formatedXamlFile = Format-XamlFile $xamlContent
 $xamlDoc = Convert-ToXmlDocument $formatedXamlFile
 $XamlReader = New-XamlReader $xamlDoc
 $window = New-WPFWindowFromXaml $XamlReader
-$formControlsMain = Get-WPFControlsFromXaml $xamlDoc $window
+$formControlsMain = Get-WPFControlsFromXaml $xamlDoc $window $sync
 
 
 $formControlsMain.richTxtBxOutput.add_textchanged({
@@ -116,44 +116,21 @@ $cbBoxSizeDefaultValue = "250"
 $cbBoxRestartTimereDefaultValue = "300"
 
 
-if (-not $formControlsMenuApp.CbBoxSize.SelectedItem) {
+if (-not $formControlsMenuApp.CbBoxSize.SelectedItem) 
+{
     $formControlsMenuApp.CbBoxSize.SelectedItem = $formControlsMenuApp.CbBoxSize.Items | Where-Object { $_.Content -eq $cbBoxSizeDefaultValue }
 }
 
-# Check and set the default value for CbBoxRestartTimer if not selected
-if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem) {
+if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem) 
+{
     $formControlsMenuApp.CbBoxRestartTimer.SelectedItem = $formControlsMenuApp.CbBoxRestartTimer.Items | Where-Object { $_.Content -eq $cbBoxRestartTimereDefaultValue }
 }
 
+$window.add_Closed({
+    exit
+})
+
 Start-WPFApp $window
-
-#experimental
-function Update-RichTextBox
-{
-    param 
-    (
-        [string]$TextBoxMessage
-    )
-    $formControlsMain.richTxtBxOutput.Dispatcher.Invoke([Action]{
-    $formControlsMain.richTxtBxOutput.AppendText("$TextBoxMessage")  
-    })
-}
-function Update-Label
-{
-    param 
-    (
-        [string]$LabelText
-    )
-    $formControlsMain.lblProgress.Dispatcher.Invoke([Action]{
-    $formControlsMain.lblProgress.content = "$LabelText"
-    })
-}
-
-function Update-Gui 
-{
-    $Window.Dispatcher.Invoke([Windows.Threading.DispatcherPriority]::Background, [action]{})
-}
-##fin du experimental
 
 function Install-SoftwaresManager
 {
@@ -373,8 +350,6 @@ function Update-MsStore
     $formControlsMain.richTxtBxOutput.AppendText("`r`nLancement des updates du Microsoft Store")
     $namespaceName = "root\cimv2\mdm\dmmap"
     $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
-    #$wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
-    #$wmiObj.UpdateScanMethod() | Out-Null
     $result = Get-CimInstance -Namespace $namespaceName -ClassName $className | Invoke-CimMethod -MethodName UpdateScanMethod
     if ($result.ReturnValue -eq 0) 
     {
@@ -391,7 +366,6 @@ $jsonFilePath = "$pathInstallationSource\InstallationApps.JSON"
 $jsonString = Get-Content -Raw $jsonFilePath
 $appsInfo = ConvertFrom-Json $jsonString
 $appNames = $appsInfo.psobject.Properties.Name
-#Iterate over the applications in the JSON and interpolate the variables
 $appNames | ForEach-Object {
     $appName = $_
     $appsInfo.$appName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path64)
@@ -492,8 +466,8 @@ function Get-ActivationStatus
     }
     else 
     {
-        [System.Windows.MessageBox]::Show("Windows n'est pas activé","Installation Windows",0,64) | Out-Null
-        $formControlsMain.richTxtBxOutput.AppendText("`r`nWindows n'est pas activé`r`n")     
+        $formControlsMain.richTxtBxOutput.AppendText("`r`nWindows n'est pas activé`r`n")  
+        [System.Windows.MessageBox]::Show("Windows n'est pas activé","Installation Windows",0,64) | Out-Null   
     }  
 }
 
@@ -557,7 +531,7 @@ function Complete-Installation
             shutdown /r /t $restartTime
         }  
     }
-    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat' #tâche planifié qui delete tout   
+    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
 }
 
 function Main
