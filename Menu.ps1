@@ -121,7 +121,7 @@ $dateFile = "$sourceFolderPath\installedDate.txt"
 New-Item -Path $lockfile -ItemType 'File' -Force
 if (-not (Test-Path $dateFile)) 
 {
-    (Get-Date).ToString() | Out-File -FilePath $dateFile
+    (Get-Date).ToString("yyyy-MM-dd HH:mm:ss", [System.Globalization.CultureInfo]::CreateSpecificCulture("fr-FR")) | Out-File -FilePath $dateFile
 }
 
 $adminStatus = Get-AdminStatus
