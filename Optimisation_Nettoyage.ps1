@@ -16,6 +16,10 @@ $pathOptimisation_Nettoyage = "$env:SystemDrive\_Tech\Applications\Optimisation_
 $pathOptimisation_NettoyageSource = "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\source"
 set-location $pathOptimisation_Nettoyage
 Get-RequiredModules
+$applicationPath = "$env:SystemDrive\_Tech\Applications"
+$sourceFolderPath = "$applicationPath\source"
+$lockfile = "$sourceFolderPath\Optimisation_Nettoyage.lock"
+New-Item -Path $lockfile -ItemType 'File' -Force
 Get-RemoteFile "fondopti.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "$pathOptimisation_NettoyageSource" 
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
@@ -466,6 +470,10 @@ $label.ForeColor='white'
 $label.BackColor = 'darkred'
 $label.Text = "Choisissez une option"
 $label.TextAlign = 'MiddleCenter'
+
+$Form.add_Closed({
+    Remove-Item -Path $lockfile -Force -ErrorAction SilentlyContinue
+})
 
 #afficher la form
 $Form.controls.AddRange(@($Menuprincipal,$HDTune,$CrystalDiskInfo,$Autoruns,$HDD,$Ccleaner,$Revo,$Updates,$Quit,$label,$HitmanPro,$sysevent,$sfc))

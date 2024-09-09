@@ -15,6 +15,10 @@ $pathDesinfection = "$env:SystemDrive\_Tech\Applications\Desinfection"
 $pathDesinfectionSource = "$env:SystemDrive\_Tech\Applications\Desinfection\source"
 set-location $pathDesinfection
 Get-RequiredModules
+$applicationPath = "$env:SystemDrive\_Tech\Applications"
+$sourceFolderPath = "$applicationPath\source"
+$lockfile = "$sourceFolderPath\Desinfection.lock"
+New-Item -Path $lockfile -ItemType 'File' -Force
 Get-RemoteFile "fondvirus.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' "$pathDesinfectionSource"  
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
@@ -375,6 +379,10 @@ $label.ForeColor='white'
 $label.BackColor = 'darkred'
 $label.Text = "Choisissez une option"
 $label.TextAlign = 'MiddleCenter'
+
+$Form.add_Closed({
+    Remove-Item -Path $lockfile -Force -ErrorAction SilentlyContinue
+})
 
 #afficher la form
 $Form.controls.AddRange(@($Menuprincipal,$Ccleaner,$HDD,$Rkill,$Autoruns,$Process_Explorer,$Restauration,$Revo,$ADWcleaner,$MalwareByte,$SuperAntiSpyware,$HitmanPro,$RogueKiller,$Quit,$label))
