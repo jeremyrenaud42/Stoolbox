@@ -2,7 +2,7 @@
 
 $desktop = [Environment]::GetFolderPath("Desktop")
 $folderPath = "$env:SystemDrive\_Tech"
-$lockfile = "$env:SystemDrive\_Tech\Applications\source\*lockfile.lock"
+$lockfile = "$env:SystemDrive\_Tech\Applications\source\*.lock"
 $maxAttempts = 5
 $attempt = 0
 $dateFile = "C:\_tech\Applications\Source\installedDate.txt"
