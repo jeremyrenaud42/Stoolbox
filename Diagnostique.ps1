@@ -1,5 +1,4 @@
-﻿Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
-[System.Windows.Forms.Application]::EnableVisualStyles()
+﻿Add-Type -AssemblyName PresentationFramework,System.speech,System.Drawing,presentationCore
 
 function Get-RequiredModules
 {
@@ -14,6 +13,10 @@ function Get-RequiredModules
 $pathDiagnostique = "$env:SystemDrive\_Tech\Applications\Diagnostique"
 $pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\source"
 set-location $pathDiagnostique
+$applicationPath = "$env:SystemDrive\_Tech\Applications"
+$sourceFolderPath = "$applicationPath\source"
+$lockfile = "$sourceFolderPath\Diagnostique.lock"
+New-Item -Path $lockfile -ItemType 'File' -Force
 Get-RequiredModules
 Get-RemoteFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "$pathDiagnostiqueSource" 
 Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/MainWindow.xaml' "$pathDiagnostiqueSource"
@@ -23,13 +26,6 @@ if($adminStatus -eq $false)
 {
     Restart-Elevated -Path $pathDiagnostique\Diagnostique.ps1
 }
-
-if ($PSVersionTable.PSVersion.Major -lt 7 -and -not (Get-Command -Type Cmdlet Start-ThreadJob -ErrorAction SilentlyContinue)) 
-{
-    Install-Nuget
-    Install-Module -Scope CurrentUser ThreadJob -Force #ca prend nuget
-}
-Import-Module -Name ThreadJob
 
 $xamlFile = "$pathDiagnostiqueSource\MainWindow.xaml"
 $xamlContent = Read-XamlFileContent $xamlFile
@@ -111,7 +107,13 @@ $formControls.BoutonAida.Add_Click({
         }
     Invoke-App "Aida64.zip" "https://ftp.alexchato9.com/public/file/WPdP-yDdBE2pOpHVFKNC6g/Aida64.zip" "$pathDiagnostiqueSource\cpu" 
     Add-Log "diagnostiquelog.txt" "Test de stabilité du système effectué"
-    }      
+    } 
+    if ($PSVersionTable.PSVersion.Major -lt 7 -and -not (Get-Command -Type Cmdlet Start-ThreadJob -ErrorAction SilentlyContinue)) 
+    {
+        Install-Nuget
+        Install-Module -Scope CurrentUser ThreadJob -Force #ca prend nuget
+    }
+    Import-Module -Name ThreadJob     
     Start-ThreadJob -ScriptBlock $scriptBlock | Wait-Job | Remove-Job
 })
     
@@ -231,9 +233,14 @@ $formControls.BoutonSysinfo.Add_Click({
 msinfo32
 })
 
+$window.add_Closed({
+    Remove-Item -Path $lockfile -Force -ErrorAction SilentlyContinue
+    exit
+})
+
 Start-WPFAppDialog $window
 
-
+<#
 $JSONFilePath = "$env:SystemDrive\_Tech\Applications\Diagnostique\source\DiagApps.JSON"
 $jsonString = Get-Content -Raw $JSONFilePath
 $appsInfo = ConvertFrom-Json $jsonString
@@ -246,3 +253,4 @@ $appNames | ForEach-Object {
     $appsInfo.$appName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.pathAppData)
     $appsInfo.$appName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.NiniteName)
     }
+#>
