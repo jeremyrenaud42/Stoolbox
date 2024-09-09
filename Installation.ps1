@@ -21,8 +21,8 @@ function Get-Dependencies
 
 function Get-Manufacturer
 {
-    $manufacturerBrand = Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -Property Manufacturer #Chercher la marque de l'ordinateur
-    #Get-CimInstance -Class Win32_BaseBoard | Select-Object -Property Manufacturer # + rapide
+    #$manufacturerBrand = Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -Property Manufacturer #Chercher la marque de l'ordinateur
+    $manufacturerBrand = Get-CimInstance -Class Win32_BaseBoard | Select-Object -Property Manufacturer # + rapide
     return $manufacturerBrand
 }
 
@@ -31,6 +31,10 @@ $pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
 $pathInstallationSource = "$env:SystemDrive\_Tech\Applications\Installation\source"
 $windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
 $actualDate = (Get-Date).ToString()
+$applicationPath = "$env:SystemDrive\_Tech\Applications"
+$sourceFolderPath = "$applicationPath\source"
+$lockfile = "$sourceFolderPath\Installation.lock"
+New-Item -Path $lockfile -ItemType 'File' -Force
 Get-Dependencies
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
@@ -127,6 +131,7 @@ if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem)
 }
 
 $window.add_Closed({
+    Remove-Item -Path $lockfile -Force -ErrorAction SilentlyContinue
     exit
 })
 
@@ -532,6 +537,7 @@ function Complete-Installation
         }  
     }
     Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
+    $window.Close()
 }
 
 function Main
