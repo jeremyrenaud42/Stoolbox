@@ -66,6 +66,30 @@ function Test-InternetConnection
     }
 }
 
+function Test-ScriptIsRunning 
+{
+    param 
+    (
+        [string]$identifier
+    )
+
+    Get-Process powershell -ErrorAction SilentlyContinue | ForEach-Object {
+        if ($_.Id -ne $PID) #exclu ce script ci (ce pid ci) pour ne pas s'autodétecter
+        {
+            # Trouve les details du process,la command utilisée pour lancer le process (la command dans le .bat par exemple)
+            #exemple : START powershell.exe -executionpolicy unrestricted -command %~d0\_TECH\Menu.ps1 -Verb runAs
+            $processArguments = (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $($_.Id)").CommandLine
+
+            #Vérifie si mon identifier(Menu.ps1 dans ce cas) est contenue dans la commandline
+            if ($processArguments -like "*$identifier*") 
+            {
+                return $true
+            }
+        }
+    }
+    return $false
+}
+
 function Get-RequiredModules
 {
     <#
@@ -109,6 +133,8 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 
 ########################Déroulement########################
 Test-InternetConnection
+# Define a unique identifier for this script instance
+$Global:scriptIdentifier = "Menu.ps1"
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
@@ -116,9 +142,9 @@ Get-RequiredModules
 Import-Module "$sourceFolderPath\Modules\Verification.psm1"
 Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
 
-$lockfile = "$sourceFolderPath\lockfile.lock"
 $dateFile = "$sourceFolderPath\installedDate.txt"
-New-Item -Path $lockfile -ItemType 'File' -Force
+$lockfile = "$sourceFolderPath\Menu.lock"
+
 if (-not (Test-Path $dateFile)) 
 {
     (Get-Date).ToString("yyyy-MM-dd HH:mm:ss", [System.Globalization.CultureInfo]::CreateSpecificCulture("fr-FR")) | Out-File -FilePath $dateFile
@@ -129,6 +155,33 @@ if($adminStatus -eq $false)
 {
     Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
 }
+
+if (Test-Path $lockfile)
+{
+    $messageBoxText = "Un Menu semble déjà ouvert, voulez-vous l'ouvrir à nouveau?"
+    $messageBoxTitle = "Menu - Boite à outils du technicien"
+    $lockFileMessageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,4,48)
+    if($lockFileMessageBox -eq 'No')
+    {
+        exit
+    }    
+    elseif($lockFileMessageBox -eq 'Yes')
+    {
+        # Check if the script is already running
+        if (Test-ScriptIsRunning -identifier $Global:scriptIdentifier) 
+        {
+            $lockFileMessageBox = [System.Windows.MessageBox]::Show("Menu est deja en cours d'execution",$messageBoxTitle,0,64)
+            exit
+        } 
+    }         
+}
+else 
+{
+    New-Item -Path $lockfile -ItemType 'File' -Force 
+}
+
+
+
 
 Import-Module "$sourceFolderPath\Modules\Runspaces.psm1"
 $global:sync['flag'] = $true 
