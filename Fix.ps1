@@ -1,7 +1,3 @@
-#V0.5
-Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
-[System.Windows.Forms.Application]::EnableVisualStyles()
-
 function Get-RequiredModules
 {
     $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
@@ -11,12 +7,22 @@ function Get-RequiredModules
     }
 }
 
+Get-RequiredModules
 $desktop = [Environment]::GetFolderPath("Desktop")
 $pathFix = "$env:SystemDrive\_Tech\Applications\fix"
-$pathFixSource = "$env:SystemDrive\_Tech\Applications\fix\source"
 set-location $pathFix
-Get-RequiredModules
+$pathFixSource = "$env:SystemDrive\_Tech\Applications\fix\source"
 New-Folder $pathFixSource
+$applicationPath = "$env:SystemDrive\_Tech\Applications"
+$sourceFolderPath = "$applicationPath\source"
+$fixLockFile = "$sourceFolderPath\Fix.lock"
+New-Item -Path $fixLockFile -ItemType 'File' -Force | Out-Null
+$adminStatus = Get-AdminStatus
+if($adminStatus -eq $false)
+{
+    Start-Process powershell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f "$pathFix\Fix.ps1") -Verb RunAs
+    Exit
+}
 
 function zipMinitool
 {
@@ -40,34 +46,33 @@ function zipMinitool
 
 function Tweaking
 {
-    $path = Test-Path "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
+    $path = Test-Path "$pathFixSource\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
     if($path -eq $false)
     {
         #choco install windowsrepair , il faudra revoir le start process aussi
-        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/BRP1JxyMI0edKIft_yYt2g/tweaking.com%20-%20Windows%20Repair.zip' -OutFile "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip"
-        Expand-Archive "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip" "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak"
-        Remove-Item "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\tweaking.com - Windows Repair.zip"
-        Copy-Item "$env:SystemDrive\_Tech\Applications\fix\Source\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair"
-        Start-Process "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
+        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/BRP1JxyMI0edKIft_yYt2g/tweaking.com%20-%20Windows%20Repair.zip' -OutFile "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip"
+        Expand-Archive "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip" "$pathFixSource\Tweak"
+        Remove-Item "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip"
+        Copy-Item "$pathFixSource\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$desktop\Tweaking.com - Windows Repair"
+        Start-Process "$desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
     }    
     elseif($path)
     {
-        Start-Process "$env:SystemDrive\Users\$env:UserName\Desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
+        Start-Process "$desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
     }
 }
 
 Function menu
 {
 Clear-Host
-write-host "[1] Fichiers corrompues" -ForegroundColor 'Cyan'
-write-host "[2] Windows Tweak et Fix" -ForegroundColor 'Green'
-write-host "[3] Obtenir MDP et licenses" -ForegroundColor 'darkcyan'
-write-host "[4] Desinstaller les pilotes graphiques (DDU)" -ForegroundColor 'DarkGreen'
-write-host "[5] Supprimer un dossier" -ForegroundColor 'magenta'
-write-host "[6] Verifier taille des dossiers" -ForegroundColor 'red'
-write-host "[7] Gerer les partitions" -ForegroundColor 'green'
-write-host "[8] Reparer Internet" -ForegroundColor 'DarkRed'
-write-host "[9] Recuperer des donnees [Removed]" -ForegroundColor 'Yellow'
+write-host "[1] Fichiers corrompus [SFC/DISM/CHKDSK]" -ForegroundColor 'Cyan'
+write-host "[2] Windows Tweak et Fix [Tweaking]" -ForegroundColor 'Green'
+write-host "[3] Obtenir MDP et licenses [Sterjo]" -ForegroundColor 'darkcyan'
+write-host "[4] Desinstaller les pilotes graphiques [DDU]" -ForegroundColor 'DarkGreen'
+write-host "[5] Supprimer un dossier [WiseForceDeleter]" -ForegroundColor 'magenta'
+write-host "[6] Verifier taille des dossiers [WinDirStat]" -ForegroundColor 'red'
+write-host "[7] Gerer les partitions [Partition Wizard]" -ForegroundColor 'green'
+write-host "[8] Reparer Internet [Internet repair]" -ForegroundColor 'DarkRed'
 write-host ""
 write-host "[0] Quitter" -ForegroundColor 'red'
 $choix = read-host "Choisissez une option" 
@@ -83,7 +88,6 @@ switch ($choix)
 6{Invoke-App "WinDirStatPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip' "$pathFixSource";Break}
 7{zipMinitool;Break} 
 8{Invoke-App "ComIntRep_X64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip' "$pathFixSource";Add-Log "Fixlog.txt" "Réparer Internet";Break}
-9{menu;Break}
 }
 start-sleep 1
 menu
@@ -91,18 +95,18 @@ menu
 
 function sortie
 {
-$sortie = read-host "Voulez-vous retourner au menu Principal? o/n"
+$sortie = read-host "Voulez-vous retourner au menu Principal? o/n [n = Suppression]"
 
     if($sortie -eq "o")
     {   
         Set-Location "$env:SystemDrive\_Tech"
         start-process "$env:SystemDrive\_Tech\Menu.bat" -verb Runas
+        Remove-Item -Path $fixLockFile -Force -ErrorAction SilentlyContinue
         exit
     }
     elseif($sortie -eq "n")
     {
-        #Get-Process -Name AliyunWrapExe -ErrorAction SilentlyContinue | Out-Null   
-        #stop-process -Name AliyunWrapExe -ErrorAction SilentlyContinue | Out-Null #gérer easeUS removal
+        Remove-Item -Path $fixLockFile -Force -ErrorAction SilentlyContinue
         Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
         exit
     }
@@ -126,10 +130,10 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{menu}
-1{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\sfcScannow.bat";Add-Log "Fixlog.txt" "Réparation des fichiers corrompus";Break}
-2{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\DISM.bat";Add-Log "Fixlog.txt" "Réparation du Windows";Break}
-3{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\CHKDSK.BAT";Add-Log "Fixlog.txt" "Réparation du HDD";Break}
-4{Start-Process "$env:SystemDrive\_Tech\Applications\fix\Source\Scripts\creer_session.txt";Add-Log "Fixlog.txt" "Nouvelle session créé";Break}
+1{Start-Process "$pathFixSource\Scripts\sfcScannow.bat";Add-Log "Fixlog.txt" "Réparation des fichiers corrompus";Break}
+2{Start-Process "$pathFixSource\Scripts\DISM.bat";Add-Log "Fixlog.txt" "Réparation du Windows";Break}
+3{Start-Process "$pathFixSource\Scripts\CHKDSK.BAT";Add-Log "Fixlog.txt" "Réparation du HDD";Break}
+4{Start-Process "$pathFixSource\Scripts\creer_session.txt";Add-Log "Fixlog.txt" "Nouvelle session créé";Break}
 }
 start-sleep 1
 submenuHDD
@@ -151,12 +155,12 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{menu}
-1{Start-Process "$PSScriptRoot\Source\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe";Break}
-2{Start-Process "$PSScriptRoot\Source\Sterjo\SterJo_Chrome_Passwords_sps\ChromePasswords.exe";Break}
-3{Start-Process "$PSScriptRoot\Source\Sterjo\Sterjo_Firefox\FirefoxPasswords.exe";Break}
-4{Start-Process "$PSScriptRoot\Source\Sterjo\Sterjo_Key\KeyFinder.exe";Break}
-5{Start-Process "$PSScriptRoot\Source\Sterjo\SterJo_Mail_Passwords_sps\MailPasswords.exe";Break}
-6{Start-Process "$PSScriptRoot\Source\Sterjo\Sterjo_Wireless\WiFiPasswords.exe";Break}
+1{Start-Process "$pathFixSource\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe";Break}
+2{Start-Process "$pathFixSource\Sterjo\SterJo_Chrome_Passwords_sps\ChromePasswords.exe";Break}
+3{Start-Process "$pathFixSource\Sterjo\Sterjo_Firefox\FirefoxPasswords.exe";Break}
+4{Start-Process "$pathFixSource\Sterjo\Sterjo_Key\KeyFinder.exe";Break}
+5{Start-Process "$pathFixSource\Sterjo\SterJo_Mail_Passwords_sps\MailPasswords.exe";Break}
+6{Start-Process "$pathFixSource\Sterjo\Sterjo_Wireless\WiFiPasswords.exe";Break}
 }
 Start-Sleep 1
 submenuMDP
@@ -177,10 +181,10 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{menu}
-1{Start-Process "$PSScriptRoot\Source\Tweak\FixWin10\FixWin 10.2.2.exe";Break}
-2{Start-Process "$PSScriptRoot\Source\Tweak\FixWin11\FixWin 11.1.exe";break}
-3{Start-Process "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe";Break}
-4{Start-Process "$PSScriptRoot\Source\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe";break}
+1{Start-Process "$pathFixSource\Tweak\FixWin10\FixWin 10.2.2.exe";Break}
+2{Start-Process "$pathFixSource\Tweak\FixWin11\FixWin 11.1.exe";break}
+3{Start-Process "$pathFixSource\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe";Break}
+4{Start-Process "$pathFixSource\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe";break}
 5{Tweaking;Break} 
 }
 Start-Sleep 1
