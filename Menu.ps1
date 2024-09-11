@@ -66,30 +66,6 @@ function Test-InternetConnection
     }
 }
 
-function Test-ScriptIsRunning 
-{
-    param 
-    (
-        [string]$identifier
-    )
-
-    Get-Process powershell -ErrorAction SilentlyContinue | ForEach-Object {
-        if ($_.Id -ne $PID) #exclu ce script ci (ce pid ci) pour ne pas s'autodétecter
-        {
-            # Trouve les details du process,la command utilisée pour lancer le process (la command dans le .bat par exemple)
-            #exemple : START powershell.exe -executionpolicy unrestricted -command %~d0\_TECH\Menu.ps1 -Verb runAs
-            $processArguments = (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $($_.Id)").CommandLine
-
-            #Vérifie si mon identifier(Menu.ps1 dans ce cas) est contenue dans la commandline
-            if ($processArguments -like "*$identifier*") 
-            {
-                return $true
-            }
-        }
-    }
-    return $false
-}
-
 function Get-RequiredModules
 {
     <#
@@ -133,8 +109,12 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 
 ########################Déroulement########################
 Test-InternetConnection
-# Define a unique identifier for this script instance
-$Global:scriptIdentifier = "Menu.ps1"
+$Global:menuIdentifier = "Menu.ps1"
+$Global:installationIdentifier = "Installation.ps1"
+$Global:diagnostiqueIdentifier = "Diagnostique.ps1"
+$Global:optimisationIdentifier = "Optimisation_Nettoyage.ps1"
+$Global:desinfectionIdentifier = "Desinfection.ps1"
+$Global:fixIdentifier = "Fix.ps1"
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
@@ -143,7 +123,7 @@ Import-Module "$sourceFolderPath\Modules\Verification.psm1"
 Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
 
 $dateFile = "$sourceFolderPath\installedDate.txt"
-$lockfile = "$sourceFolderPath\Menu.lock"
+$menuLockfile = "$sourceFolderPath\Menu.lock"
 
 if (-not (Test-Path $dateFile)) 
 {
@@ -156,9 +136,9 @@ if($adminStatus -eq $false)
     Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
 }
 
-if (Test-Path $lockfile)
+if (Test-Path $menuLockfile)
 {
-    $messageBoxText = "Un Menu semble déjà ouvert, voulez-vous l'ouvrir à nouveau?"
+    $messageBoxText = "Menu semble déjà ouvert, voulez-vous l'ouvrir à nouveau?"
     $messageBoxTitle = "Menu - Boite à outils du technicien"
     $lockFileMessageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,4,48)
     if($lockFileMessageBox -eq 'No')
@@ -168,7 +148,7 @@ if (Test-Path $lockfile)
     elseif($lockFileMessageBox -eq 'Yes')
     {
         # Check if the script is already running
-        if (Test-ScriptIsRunning -identifier $Global:scriptIdentifier) 
+        if (Test-ScriptIsRunning -identifier $Global:menuIdentifier) 
         {
             $lockFileMessageBox = [System.Windows.MessageBox]::Show("Menu est deja en cours d'execution",$messageBoxTitle,0,64)
             exit
@@ -177,7 +157,7 @@ if (Test-Path $lockfile)
 }
 else 
 {
-    New-Item -Path $lockfile -ItemType 'File' -Force 
+    New-Item -Path $menuLockfile -ItemType 'File' -Force 
 }
 
 
@@ -681,7 +661,7 @@ $window.add_Closing({
 
 
 $Window.add_Closed({
-    Remove-Item -Path $lockfile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $menuLockfile -Force -ErrorAction SilentlyContinue
 })
 
 Start-WPFAppDialog $window
