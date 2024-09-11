@@ -33,8 +33,8 @@ $windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
 $actualDate = (Get-Date).ToString()
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
-$lockfile = "$sourceFolderPath\Installation.lock"
-New-Item -Path $lockfile -ItemType 'File' -Force
+$installationLockfile = "$sourceFolderPath\Installation.lock"
+New-Item -Path $installationLockfile -ItemType 'File' -Force
 Get-Dependencies
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
@@ -97,6 +97,9 @@ $formControlsMenuApp.btnQuit.Add_Click({
     Exit
 })
 
+$window.add_Closed({
+    Remove-Item -Path $installationLockfile -Force -ErrorAction SilentlyContinue
+})
 
 Start-WPFAppDialog $window
 
@@ -131,11 +134,12 @@ if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem)
 }
 
 $window.add_Closed({
-    Remove-Item -Path $lockfile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $installationLockfile -Force -ErrorAction SilentlyContinue
     exit
 })
 
 Start-WPFApp $window
+New-Item -Path $installationLockfile -ItemType 'File' -Force
 
 function Install-SoftwaresManager
 {
