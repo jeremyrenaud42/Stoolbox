@@ -123,3 +123,27 @@ function Get-FtpStatus
     $test = Test-Url -url $url
     return $test
 }
+
+function Test-ScriptIsRunning 
+{
+    param 
+    (
+        [string]$identifier
+    )
+
+    Get-Process powershell -ErrorAction SilentlyContinue | ForEach-Object {
+        if ($_.Id -ne $PID) #exclu ce script ci (ce pid ci) pour ne pas s'autodétecter
+        {
+            # Trouve les details du process,la command utilisée pour lancer le process (la command dans le .bat par exemple)
+            #exemple : START powershell.exe -executionpolicy unrestricted -command %~d0\_TECH\Menu.ps1 -Verb runAs
+            $processArguments = (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $($_.Id)").CommandLine
+
+            #Vérifie si mon identifier(Menu.ps1 dans ce cas) est contenue dans la commandline
+            if ($processArguments -like "*$identifier*") 
+            {
+                return $true
+            }
+        }
+    }
+    return $false
+}
