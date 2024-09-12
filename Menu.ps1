@@ -87,6 +87,30 @@ function Get-RequiredModules
     }
 }
 
+function Test-ScriptsAreRunning 
+{
+    # Loop through each script identifier and check if it's running
+    foreach ($identifier in $Global:scriptIdentifiers) {
+        Get-Process powershell -ErrorAction SilentlyContinue | ForEach-Object {
+            if ($_.Id -ne $PID) # Exclude current script's process
+            {
+                # Get the command line arguments of the process
+                $processArguments = (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $($_.Id)").CommandLine
+
+                # Check if the process is running one of the scripts by checking the identifier
+                if ($processArguments -like "*$identifier*") 
+                {
+                    $messageBoxText = "$identifier est en cours d'execution"
+                    $messageBoxTitle = "Menu - Boite à outils du technicien"
+                    $MessageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,0,48)
+                    return $true
+                }
+            }
+        }
+    }
+
+    return $false
+}
 
 function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 {
@@ -110,11 +134,13 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 ########################Déroulement########################
 Test-InternetConnection
 $Global:menuIdentifier = "Menu.ps1"
-$Global:installationIdentifier = "Installation.ps1"
-$Global:diagnostiqueIdentifier = "Diagnostique.ps1"
-$Global:optimisationIdentifier = "Optimisation_Nettoyage.ps1"
-$Global:desinfectionIdentifier = "Desinfection.ps1"
-$Global:fixIdentifier = "Fix.ps1"
+$Global:scriptIdentifiers = @(
+    "Installation.ps1",
+    "Diagnostique.ps1",
+    "Optimisation_Nettoyage.ps1",
+    "Desinfection.ps1",
+    "Fix.ps1"
+)
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
@@ -137,6 +163,19 @@ if($adminStatus -eq $false)
 }
 
 Test-ScriptInstance $menuLockFile $Global:menuIdentifier
+
+# Check if any script is already running
+if (Test-ScriptsAreRunning) 
+{
+    $messageBoxText = "Voulez-vous poursuivre avec l'ouverture du Menu ?"
+    $messageBoxTitle = "Menu - Boite à outils du technicien"
+    $messageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,4,48)
+    if($messageBox -eq 'no')
+    {
+        Remove-Item -Path $menuLockFile -Force -ErrorAction SilentlyContinue
+        exit
+    }
+}
 
 Import-Module "$sourceFolderPath\Modules\Runspaces.psm1"
 $global:sync['flag'] = $true 
