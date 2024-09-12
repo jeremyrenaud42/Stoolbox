@@ -16,13 +16,14 @@ New-Folder $pathFixSource
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 $fixLockFile = "$sourceFolderPath\Fix.lock"
-New-Item -Path $fixLockFile -ItemType 'File' -Force | Out-Null
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
     Start-Process powershell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f "$pathFix\Fix.ps1") -Verb RunAs
     Exit
 }
+$Global:fixIdentifier = "Fix.ps1"
+Test-ScriptInstance $fixLockFile $Global:fixIdentifier
 
 function zipMinitool
 {
