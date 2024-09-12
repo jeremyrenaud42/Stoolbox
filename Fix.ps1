@@ -15,6 +15,7 @@ $pathFixSource = "$env:SystemDrive\_Tech\Applications\fix\source"
 New-Folder $pathFixSource
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
+$logFileName = Initialize-LogFile $pathFixSource
 $fixLockFile = "$sourceFolderPath\Fix.lock"
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
@@ -84,11 +85,11 @@ switch ($choix)
 1{Get-RemoteFile "scripts.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' "$pathFixSource"; submenuHDD;Break}
 2{Get-RemoteFile "Tweak.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathFixSource"; submenuTweak;Break}
 3{Get-RemoteFile "Sterjo.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathFixSource"; submenuMDP;Break}
-4{Invoke-App "Display Driver Uninstaller.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip' "$pathFixSource";Add-Log "Fixlog.txt" "Désinstallation du pilote graphique avec DDU";Break}
+4{Invoke-App "Display Driver Uninstaller.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip' "$pathFixSource";Add-Log $logFileName "Désinstallation du pilote graphique avec DDU";Break}
 5{Invoke-App "WiseForceDeleterPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleterPortable.zip' "$pathFixSource";Break}
 6{Invoke-App "WinDirStatPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip' "$pathFixSource";Break}
 7{zipMinitool;Break} 
-8{Invoke-App "ComIntRep_X64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip' "$pathFixSource";Add-Log "Fixlog.txt" "Réparer Internet";Break}
+8{Invoke-App "ComIntRep_X64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip' "$pathFixSource";Add-Log $logFileName "Réparer Internet";Break}
 }
 start-sleep 1
 menu
@@ -131,10 +132,10 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{menu}
-1{Start-Process "$pathFixSource\Scripts\sfcScannow.bat";Add-Log "Fixlog.txt" "Réparation des fichiers corrompus";Break}
-2{Start-Process "$pathFixSource\Scripts\DISM.bat";Add-Log "Fixlog.txt" "Réparation du Windows";Break}
-3{Start-Process "$pathFixSource\Scripts\CHKDSK.BAT";Add-Log "Fixlog.txt" "Réparation du HDD";Break}
-4{Start-Process "$pathFixSource\Scripts\creer_session.txt";Add-Log "Fixlog.txt" "Nouvelle session créé";Break}
+1{Start-Process "$pathFixSource\Scripts\sfcScannow.bat";Add-Log $logFileName "Réparation des fichiers corrompus";Break}
+2{Start-Process "$pathFixSource\Scripts\DISM.bat";Add-Log $logFileName "Réparation du Windows";Break}
+3{Start-Process "$pathFixSource\Scripts\CHKDSK.BAT";Add-Log $logFileName "Réparation du HDD";Break}
+4{Start-Process "$pathFixSource\Scripts\creer_session.txt";Add-Log $logFileName "Nouvelle session créé";Break}
 }
 start-sleep 1
 submenuHDD

@@ -15,6 +15,7 @@ $pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\sour
 set-location $pathDiagnostique
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
+$logFileName = Initialize-LogFile $pathDiagnostiqueSource
 $diagLockFile = "$sourceFolderPath\Diagnostique.lock"
 Get-RequiredModules
 Get-RemoteFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "$pathDiagnostiqueSource" 
@@ -81,21 +82,21 @@ $formControls.BoutonGPU.Add_Click({
 })
 $formControls.BoutonRAM.Add_Click({
     mdsched.exe
-    Add-Log "diagnostiquelog.txt" "Memtest effectué"
+    Add-Log $logFileName "Memtest effectué"
 })
 
 $formControls.BoutonBattinfo.Add_Click({
     Start-App "batteryinfoview.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\battinfoview"
-    Add-Log "diagnostiquelog.txt" "Usure de la batterie vérifié"
+    Add-Log $logFileName "Usure de la batterie vérifié"
 })
 $formControls.BoutonBattMonitor.Add_Click({
     Start-App "BatteryMonx64.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\BatteryMonx64"
-    Add-Log "diagnostiquelog.txt" "Usure de la batterie vérifié"
+    Add-Log $logFileName "Usure de la batterie vérifié"
 })
     
 $formControls.BoutonDontsleep.Add_Click({
     Start-App "DontSleep_x64_p.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\DontSleep"
-    Add-Log "diagnostiquelog.txt" "Dontsleep a été utilisé pour tester la batterie"
+    Add-Log $logFileName "Dontsleep a été utilisé pour tester la batterie"
 })
     
 $formControls.BoutonAida.Add_Click({
@@ -107,7 +108,7 @@ $formControls.BoutonAida.Add_Click({
             Import-Module $modulesFolder\$module
         }
     Invoke-App "Aida64.zip" "https://ftp.alexchato9.com/public/file/WPdP-yDdBE2pOpHVFKNC6g/Aida64.zip" "$pathDiagnostiqueSource\cpu" 
-    Add-Log "diagnostiquelog.txt" "Test de stabilité du système effectué"
+    Add-Log $logFileName "Test de stabilité du système effectué"
     } 
     if ($PSVersionTable.PSVersion.Major -lt 7 -and -not (Get-Command -Type Cmdlet Start-ThreadJob -ErrorAction SilentlyContinue)) 
     {
@@ -120,21 +121,21 @@ $formControls.BoutonAida.Add_Click({
     
 $formControls.BoutonCoretemp.Add_Click({
 Invoke-App "Core Temp.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core Temp.zip" "$pathDiagnostiqueSource\cpu"
-Add-Log "diagnostiquelog.txt" "Température du CPU vérifié"
+Add-Log $logFileName "Température du CPU vérifié"
 })
 
 $formControls.BoutonPrime95.Add_Click({
 Invoke-App "Prime95.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "$pathDiagnostiqueSource\cpu"
-Add-Log "diagnostiquelog.txt" "Stress test du CPU effectué"
+Add-Log $logFileName "Stress test du CPU effectué"
 })
 
 $formControls.BoutonHeavyLoad.Add_Click({
 Invoke-App "HeavyLoad.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "$pathDiagnostiqueSource\cpu"
-Add-Log "diagnostiquelog.txt" "Test de stabilité du système effectué"
+Add-Log $logFileName "Test de stabilité du système effectué"
 })
 $formControls.BoutonThrottleStop.Add_Click({
     Invoke-App "ThrottleStop.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "$pathDiagnostiqueSource\cpu"
-    Add-Log "diagnostiquelog.txt" "Stress test du CPU effectué"
+    Add-Log $logFileName "Stress test du CPU effectué"
     })
 
 function diskmarkinfoLog
@@ -164,7 +165,7 @@ $formControls.BoutonHDSentinnel.Add_Click({
 function HDSentinnel
 {
     $pathHDS = "C:\Program Files (x86)\Hard Disk Sentinel"
-    Add-Log "diagnostiquelog.txt" "Vérifier la santé du disque dur"
+    Add-Log $logFileName "Vérifier la santé du disque dur"
     $apppath = Test-AppPresence $pathHDS
     if($apppath)
     {
@@ -188,34 +189,34 @@ HDSentinnel
 
 $formControls.BoutonHDTune.Add_Click({
     Start-App "_HDTune.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\_HDTune"
-    Add-Log "diagnostiquelog.txt" "Vérifier la Vitesse du disque dur"
+    Add-Log $logFileName "Vérifier la Vitesse du disque dur"
 })
 
 $formControls.BoutonASSD.Add_Click({
 Start-App "AS SSD Benchmark.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\As_SSD"
-Add-Log "diagnostiquelog.txt" "Vérifier la Vitesse du disque dur"
+Add-Log $logFileName "Vérifier la Vitesse du disque dur"
 })
 
 $formControls.BoutonDiskmark.Add_Click({
 Start-Process -wait  "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"  -ArgumentList "/copy"
-Add-Log "diagnostiquelog.txt" "Vérifier la santé du disque dur"
+Add-Log $logFileName "Vérifier la santé du disque dur"
 #diskmarkinfolog | Out-File $logfilepath -Append
 })
 
 $formControls.BoutonFurmark.Add_Click({
 Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\FurMark\FurMark.exe"
-Add-Log "diagnostiquelog.txt" "Stress test du GPU"
+Add-Log $logFileName "Stress test du GPU"
 })
 $formControls.BoutonFurmarkV2.Add_Click({
     Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\FurMark_GUI\FurMark_GUI.exe"
-    Add-Log "diagnostiquelog.txt" "Stress test du GPU"
+    Add-Log $logFileName "Stress test du GPU"
     })
     
 
 
 $formControls.BoutonUnigine.Add_Click({
 Start-Process "https://benchmark.unigine.com/"
-Add-Log "diagnostiquelog.txt" "Vérifier les performances du GPU"
+Add-Log $logFileName "Vérifier les performances du GPU"
 })
 
 $formControls.BoutonSpeccy.Add_Click({

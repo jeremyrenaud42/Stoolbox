@@ -18,6 +18,7 @@ set-location $pathOptimisation_Nettoyage
 Get-RequiredModules
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
+$logFileName = Initialize-LogFile $pathOptimisation_NettoyageSource
 $optiLockFile = "$sourceFolderPath\Optimisation_Nettoyage.lock"
 Get-RemoteFile "fondopti.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "$pathOptimisation_NettoyageSource" 
 $adminStatus = Get-AdminStatus
@@ -116,7 +117,7 @@ $revobefore = "$env:SystemDrive\\_Tech\\Applications\\Optimisation_Nettoyage\\So
 $revoafter = "$env:SystemDrive\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\Logs\\RevoAfter.txt"
 Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*","HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName  | Sort-Object -Property DisplayName | Format-Table �AutoSize | Out-File $revobefore
 Start-Process "$env:SystemDrive\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoUninstaller_Portable\\RevoUPort.exe"
-Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
+Add-Log $logFileName "Vérifier les programmes nuisibles"
 Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*","HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Select-Object DisplayName  | Sort-Object -Property DisplayName | Format-Table �AutoSize | Out-File $revoafter
 Compare-Object -ReferenceObject (Get-Content -path $revobefore) -DifferenceObject (Get-Content -path $revoafter) | Out-File $logfilepath -Append
 Clear-Content $revobefore
@@ -142,7 +143,7 @@ $Updates.Add_MouseEnter({$Updates.ForeColor = 'White'})
 $Updates.Add_MouseLeave({$Updates.ForeColor = 'black'})
 $Updates.Add_Click({
 start-Process "ms-settings:windowsupdate"
-Add-Log "Optimisation_Nettoyagelog.txt" "Mises à jours de Windows effectuées"
+Add-Log $logFileName "Mises à jours de Windows effectuées"
 })
 
 #Autoruns
@@ -165,7 +166,7 @@ $Autoruns.Add_Click({
     Invoke-App "autoruns.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' "$pathOptimisation_NettoyageSource"
     start-sleep 5
     taskmgr
-    Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les logiciels au démarrage"
+    Add-Log $logFileName "Vérifier les logiciels au démarrage"
 })
 
 #Revo
@@ -186,7 +187,7 @@ $Revo.Add_MouseEnter({$Revo.ForeColor = 'White'})
 $Revo.Add_MouseLeave({$Revo.ForeColor = 'black'})
 $Revo.Add_Click({
     Invoke-App "RevoUPort.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip' "$pathOptimisation_NettoyageSource"
-    Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les programmes nuisibles"
+    Add-Log $logFileName "Vérifier les programmes nuisibles"
 })
 
 
@@ -208,7 +209,7 @@ $HDD.Add_MouseEnter({$HDD.ForeColor = 'White'})
 $HDD.Add_MouseLeave({$HDD.ForeColor = 'black'})
 $HDD.Add_Click({
 Start-Process "$env:SystemDrive\Windows\SYSTEM32\cleanmgr.exe"
-Add-Log "Optimisation_Nettoyagelog.txt" "Nettoyage du disque effectué"
+Add-Log $logFileName "Nettoyage du disque effectué"
 })
 
 #Ccleaner
@@ -229,7 +230,7 @@ $Ccleaner.Add_MouseEnter({$Ccleaner.ForeColor = 'White'})
 $Ccleaner.Add_MouseLeave({$Ccleaner.ForeColor = 'black'})
 $Ccleaner.Add_Click({
 Invoke-App "CCleaner64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip' $pathOptimisation_NettoyageSource
-Add-Log "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
+Add-Log $logFileName "Nettoyage CCleaner effectué"
 })
 
 #sfc
@@ -250,7 +251,7 @@ $sfc.Add_MouseEnter({$sfc.ForeColor = 'White'})
 $sfc.Add_MouseLeave({$sfc.ForeColor = 'black'})
 $sfc.Add_Click({
     Invoke-App "sfcScannow.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sfcScannow.bat' "$pathOptimisation_NettoyageSource"
-    Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les fichiers corrompus"
+    Add-Log $logFileName "Vérifier les fichiers corrompus"
 })
 
 #HitmanPro
@@ -271,7 +272,7 @@ $HitmanPro.Add_MouseEnter({$HitmanPro.ForeColor = 'White'})
 $HitmanPro.Add_MouseLeave({$HitmanPro.ForeColor = 'black'})
 $HitmanPro.Add_Click({
     Invoke-App "HitmanPro.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' "$pathOptimisation_NettoyageSource"
-    Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les virus avec HitmanPro"
+    Add-Log $logFileName "Vérifier les virus avec HitmanPro"
 })
 
 #sysevent
@@ -292,7 +293,7 @@ $sysevent.Add_MouseEnter({$sysevent.ForeColor = 'White'})
 $sysevent.Add_MouseLeave({$sysevent.ForeColor = 'black'})
 $sysevent.Add_Click({
     Invoke-App "sysevent.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe' "$pathOptimisation_NettoyageSource"
-    Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier les evenements"
+    Add-Log $logFileName "Vérifier les evenements"
 })
 
 
@@ -334,7 +335,7 @@ $CrystalDiskInfo.Add_MouseEnter({$CrystalDiskInfo.ForeColor = 'White'})
 $CrystalDiskInfo.Add_MouseLeave({$CrystalDiskInfo.ForeColor = 'black'})
 $CrystalDiskInfo.Add_Click({
     Invoke-App "CrystalDiskInfoPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip' "$pathOptimisation_NettoyageSource"
-    Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier la santé du HDD"
+    Add-Log $logFileName "Vérifier la santé du HDD"
 })
 
 #HDTune
@@ -355,7 +356,7 @@ $HDTune.Add_MouseEnter({$HDTune.ForeColor = 'White'})
 $HDTune.Add_MouseLeave({$HDTune.ForeColor = 'black'})
 $HDTune.Add_Click({
     Invoke-App "_HDTune.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/_HDTune.zip' "$pathOptimisation_NettoyageSource"
-    Add-Log "Optimisation_Nettoyagelog.txt" "Vérifier la Vitesse du disque dur"
+    Add-Log $logFileName "Vérifier la Vitesse du disque dur"
 })
 
 #Quitter
