@@ -17,14 +17,15 @@ set-location $pathDesinfection
 Get-RequiredModules
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
-$lockfile = "$sourceFolderPath\Desinfection.lock"
-New-Item -Path $lockfile -ItemType 'File' -Force
+$desinfectionLockFile = "$sourceFolderPath\Desinfection.lock"
 Get-RemoteFile "fondvirus.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' "$pathDesinfectionSource"  
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
     Restart-Elevated -Path $pathDesinfection\Desinfection.ps1
 }
+$Global:desinfectionIdentifier = "Desinfection.ps1"
+Test-ScriptInstance $desinfectionLockFile $Global:desinfectionIdentifier
 
 function zipccleaner
 {
@@ -381,7 +382,7 @@ $label.Text = "Choisissez une option"
 $label.TextAlign = 'MiddleCenter'
 
 $Form.add_Closed({
-    Remove-Item -Path $lockfile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $desinfectionLockFile -Force -ErrorAction SilentlyContinue
 })
 
 #afficher la form

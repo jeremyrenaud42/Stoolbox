@@ -18,14 +18,15 @@ set-location $pathOptimisation_Nettoyage
 Get-RequiredModules
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
-$lockfile = "$sourceFolderPath\Optimisation_Nettoyage.lock"
-New-Item -Path $lockfile -ItemType 'File' -Force
+$optiLockFile = "$sourceFolderPath\Optimisation_Nettoyage.lock"
 Get-RemoteFile "fondopti.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "$pathOptimisation_NettoyageSource" 
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
     Restart-Elevated -Path $pathOptimisation_Nettoyage\Optimisation_Nettoyage.ps1
 }
+$Global:optimisationIdentifier = "Optimisation_Nettoyage.ps1"
+Test-ScriptInstance $optiLockFile $Global:optimisationIdentifier
 
 $image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg") 
 $Form = New-Object System.Windows.Forms.Form
@@ -472,7 +473,7 @@ $label.Text = "Choisissez une option"
 $label.TextAlign = 'MiddleCenter'
 
 $Form.add_Closed({
-    Remove-Item -Path $lockfile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $optiLockFile -Force -ErrorAction SilentlyContinue
 })
 
 #afficher la form
