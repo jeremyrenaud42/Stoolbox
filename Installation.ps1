@@ -33,9 +33,9 @@ $windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
 $actualDate = (Get-Date).ToString()
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
-$logFileName = Initialize-LogFile $pathInstallationSource
 $installationLockFile = "$sourceFolderPath\Installation.lock"
 Get-Dependencies
+$logFileName = Initialize-LogFile $pathInstallationSource
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {

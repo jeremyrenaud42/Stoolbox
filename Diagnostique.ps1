@@ -15,9 +15,9 @@ $pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\sour
 set-location $pathDiagnostique
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
-$logFileName = Initialize-LogFile $pathDiagnostiqueSource
 $diagLockFile = "$sourceFolderPath\Diagnostique.lock"
 Get-RequiredModules
+$logFileName = Initialize-LogFile $pathDiagnostiqueSource
 Get-RemoteFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "$pathDiagnostiqueSource" 
 Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/MainWindow.xaml' "$pathDiagnostiqueSource"
 Get-RemoteFile "DiagApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/DiagApps.JSON' "$pathDiagnostiqueSource"  
