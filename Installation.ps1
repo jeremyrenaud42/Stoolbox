@@ -33,14 +33,15 @@ $windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
 $actualDate = (Get-Date).ToString()
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
-$installationLockfile = "$sourceFolderPath\Installation.lock"
-New-Item -Path $installationLockfile -ItemType 'File' -Force
+$installationLockFile = "$sourceFolderPath\Installation.lock"
 Get-Dependencies
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
     Restart-Elevated -Path $pathInstallation\Installation.ps1
 }
+$Global:installationIdentifier = "Installation.ps1"
+Test-ScriptInstance $installationLockFile $Global:installationIdentifier
 
 #WPF - appMenuChoice
 $xamlFile = "$pathInstallationSource\MainWindow.xaml"
@@ -98,7 +99,7 @@ $formControlsMenuApp.btnQuit.Add_Click({
 })
 
 $window.add_Closed({
-    Remove-Item -Path $installationLockfile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
 })
 
 Start-WPFAppDialog $window
@@ -134,12 +135,12 @@ if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem)
 }
 
 $window.add_Closed({
-    Remove-Item -Path $installationLockfile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
     exit
 })
 
 Start-WPFApp $window
-New-Item -Path $installationLockfile -ItemType 'File' -Force
+New-Item -Path $installationLockFile -ItemType 'File' -Force
 
 function Install-SoftwaresManager
 {

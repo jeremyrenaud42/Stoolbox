@@ -123,7 +123,7 @@ Import-Module "$sourceFolderPath\Modules\Verification.psm1"
 Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
 
 $dateFile = "$sourceFolderPath\installedDate.txt"
-$menuLockfile = "$sourceFolderPath\Menu.lock"
+$menuLockFile = "$sourceFolderPath\Menu.lock"
 
 if (-not (Test-Path $dateFile)) 
 {
@@ -136,32 +136,7 @@ if($adminStatus -eq $false)
     Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
 }
 
-if (Test-Path $menuLockfile)
-{
-    $messageBoxText = "Menu semble déjà ouvert, voulez-vous l'ouvrir à nouveau?"
-    $messageBoxTitle = "Menu - Boite à outils du technicien"
-    $lockFileMessageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,4,48)
-    if($lockFileMessageBox -eq 'No')
-    {
-        exit
-    }    
-    elseif($lockFileMessageBox -eq 'Yes')
-    {
-        # Check if the script is already running
-        if (Test-ScriptIsRunning -identifier $Global:menuIdentifier) 
-        {
-            $lockFileMessageBox = [System.Windows.MessageBox]::Show("Menu est deja en cours d'execution",$messageBoxTitle,0,64)
-            exit
-        } 
-    }         
-}
-else 
-{
-    New-Item -Path $menuLockfile -ItemType 'File' -Force 
-}
-
-
-
+Test-ScriptInstance $menuLockFile $Global:menuIdentifier
 
 Import-Module "$sourceFolderPath\Modules\Runspaces.psm1"
 $global:sync['flag'] = $true 
@@ -661,7 +636,7 @@ $window.add_Closing({
 
 
 $Window.add_Closed({
-    Remove-Item -Path $menuLockfile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $menuLockFile -Force -ErrorAction SilentlyContinue
 })
 
 Start-WPFAppDialog $window

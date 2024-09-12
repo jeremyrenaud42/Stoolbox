@@ -15,8 +15,7 @@ $pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\sour
 set-location $pathDiagnostique
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
-$lockfile = "$sourceFolderPath\Diagnostique.lock"
-New-Item -Path $lockfile -ItemType 'File' -Force
+$diagLockFile = "$sourceFolderPath\Diagnostique.lock"
 Get-RequiredModules
 Get-RemoteFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "$pathDiagnostiqueSource" 
 Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/MainWindow.xaml' "$pathDiagnostiqueSource"
@@ -26,6 +25,8 @@ if($adminStatus -eq $false)
 {
     Restart-Elevated -Path $pathDiagnostique\Diagnostique.ps1
 }
+$Global:diagnostiqueIdentifier = "Diagnostique.ps1"
+Test-ScriptInstance $diagLockFile $Global:diagnostiqueIdentifier
 
 $xamlFile = "$pathDiagnostiqueSource\MainWindow.xaml"
 $xamlContent = Read-XamlFileContent $xamlFile
@@ -234,7 +235,7 @@ msinfo32
 })
 
 $window.add_Closed({
-    Remove-Item -Path $lockfile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $diagLockFile -Force -ErrorAction SilentlyContinue
     exit
 })
 
