@@ -148,12 +148,66 @@ function Install-SoftwaresManager
     Add-Log $logFileName "Installation de $windowsVersion le $actualDate"
     $formControlsMain.lblProgress.content = "Préparation"   
     $formControlsMain.richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")  
-    $formControlsMain.richTxtBxOutput.AppendText("Installation de NuGet`r`n")
-    Install-Nuget
-    $formControlsMain.richTxtBxOutput.AppendText("Installation de Chocolatey`r`n")    
-    Install-Choco
-    $formControlsMain.richTxtBxOutput.AppendText("Installation de Winget`r`n`r`n")    
-    Install-Winget
+
+    $wingetStatus = Get-WingetStatus
+    if($wingetStatus -le '1.8')
+    {
+        $formControlsMain.richTxtBxOutput.AppendText("Installation de Winget`r`n")   
+        Install-Winget
+        $wingetStatus = Get-WingetStatus
+        if($wingetStatus -ge '1.8')
+        {
+            $formControlsMain.richTxtBxOutput.AppendText("Winget a été installé`r`n")
+        }
+        else 
+        {
+            $formControlsMain.richTxtBxOutput.AppendText("Winget a échoué`r`n")
+        }
+    }
+    else 
+    {
+        $formControlsMain.richTxtBxOutput.AppendText("Winget est déja installé`r`n")
+    }
+
+    $chocostatus = Get-ChocoStatus
+    if($chocostatus -eq $false)
+    {
+        $formControlsMain.richTxtBxOutput.AppendText("Installation de Chocolatey`r`n")
+        Install-Choco
+        $chocostatus = Get-ChocoStatus
+        if($chocostatus -eq $true)
+        {
+            $formControlsMain.richTxtBxOutput.AppendText("Chocolatey a été installé`r`n")
+        }
+        else 
+        {
+            $formControlsMain.richTxtBxOutput.AppendText("Chocolatey a échoué`r`n")
+        }
+    }
+    else 
+    {
+        $formControlsMain.richTxtBxOutput.AppendText("Chocolatey est déja installé`r`n")
+    }
+
+    $nugetExist = Get-NugetStatus
+    if($nugetExist -eq $false)
+    {
+        $formControlsMain.richTxtBxOutput.AppendText("Installation de NuGet`r`n")
+        Install-Nuget
+        $nugetExist = Get-NugetStatus
+        if($nugetExist -eq $true)
+        {
+            $formControlsMain.richTxtBxOutput.AppendText("Nuget a été installé`r`n`r`n")
+        }
+        else 
+        {
+            $formControlsMain.richTxtBxOutput.AppendText("Nuget a échoué`r`n`r`n")
+        }
+    }
+    else 
+    {    
+        $formControlsMain.richTxtBxOutput.AppendText("Nuget est déja installé`r`n`r`n")
+    }
 }
 
 function Initialize-WindowsUpdate
@@ -299,7 +353,7 @@ Function Disable-Bitlocker
     elseif ($bitlockerStatus -eq 'FullyDecrypted')
     {
         $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja désactivé`r`n") 
-        Add-Log $logFileName "est déja désactivé"
+        Add-Log $logFileName "Bitlocker est déja désactivé"
     }
     elseif ($bitlockerStatus -eq 'DecryptionInProgress')
     {
@@ -358,6 +412,15 @@ Function Enable-DesktopIcon
 function Update-MsStore 
 {
     $formControlsMain.lblProgress.Content = "Mises à jour du Microsoft Store"
+    #pour gérer les vieilles versions qui ne vont pas s'updaté
+    $storeVersion = (Get-AppxPackage Microsoft.WindowsStore).version
+    if ($storeVersion -le 22110)
+    {
+        $formControlsMain.richTxtBxOutput.AppendText("Mettre le Store à jour manuellement`r`n")
+        Start-Process "ms-windows-store:"
+        return
+    }
+
     $formControlsMain.richTxtBxOutput.AppendText("`r`nLancement des updates du Microsoft Store")
     $namespaceName = "root\cimv2\mdm\dmmap"
     $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
