@@ -515,7 +515,7 @@ function Set-GooglePinnedTaskbar
 function Complete-Installation
 {
     Add-Log $logFileName "Installation de Windows effectué avec Succès"
-    Copy-Log $logFileName "$env:SystemDrive\TEMP"  
+    Send-FTPLogs $pathInstallationSource\$logFileName
     [Audio]::Volume = 0.25
     [console]::beep(1000,666)
     Start-Sleep -s 1
