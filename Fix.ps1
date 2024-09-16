@@ -7,6 +7,126 @@ function Get-RequiredModules
     }
 }
 
+Function menu
+{
+Clear-Host
+write-host "============================================================================================"
+write-host "  + [#] +           Programme                 +              Description               +  "-ForegroundColor $coloraccent
+write-host "  + --- + ----------------------------------- + -------------------------------------- +  " 
+write-host "  + [1] + SFC/DISM/CHKDSK        [sous-menu]  + Fichiers corrompus                     +  " -ForegroundColor $colorfolder
+write-host "  + [2] + Windows tweak          [sous-menu]  + Windows Tweak et Fix                   +  " -ForegroundColor $colorfolder
+write-host "  + [3] + Sterjo MDP recovery    [sous-menu]  + Obtenir MDP et licences                +  " -ForegroundColor $colorfolder
+write-host "  + [4] + DDU                                 + Desinstaller les pilotes graphiques    +  " 
+write-host "  + [5] + WiseForceDeleter                    + Supprimer un dossier/fichier           +  " -ForegroundColor $coloraccent
+write-host "  + [6] + WinDirStat                          + Verifier taille des dossiers           +  " 
+write-host "  + [7] + Partition Wizard                    + Gerer les partitions                   +  " -ForegroundColor $coloraccent
+write-host "  + [8] + Internet repair                     + Reparer Internet                       +  " 
+write-host "  + --- + ----------------------------------- + -------------------------------------- +  " -ForegroundColor $coloraccent
+write-host "  + [0] + Quitter                             + Fermer ou revenir au menu              +  " -ForegroundColor $colorquit
+write-host "============================================================================================="
+$choix = read-host "Choisissez une option" 
+
+switch ($choix)
+{
+0{sortie;break}
+1{Get-RemoteFile "scripts.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' "$pathFixSource"; submenuHDD;Break}
+2{Get-RemoteFile "Tweak.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathFixSource"; submenuTweak;Break}
+3{Get-RemoteFile "Sterjo.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathFixSource"; submenuMDP;Break}
+4{Invoke-App "Display Driver Uninstaller.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip' "$pathFixSource";Add-Log $logFileName "Désinstallation du pilote graphique avec DDU";Break}
+5{Invoke-App "WiseForceDeleterPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleterPortable.zip' "$pathFixSource";Break}
+6{Invoke-App "WinDirStatPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip' "$pathFixSource";Break}
+7{zipMinitool;Break} 
+8{Invoke-App "ComIntRep_X64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip' "$pathFixSource";Add-Log $logFileName "Réparer Internet";Break}
+T{$number = SubmenuTheme;Set-Theme -theme $number;Break}
+}
+start-sleep 1
+menu
+}
+
+function Set-Theme 
+{
+    param 
+    (
+        [int]$theme = 1
+    )
+    
+    switch ($theme) 
+    {
+        0 { # STO:
+            $script:backgroundColor = "Black"
+            $script:colordefault = "DarkRed"
+            $script:coloraccent = "White"
+            $script:colorfolder = "yellow"
+            $script:colorquit = "red"
+        }
+        1 { # Classic:
+            $script:backgroundColor = "Black"
+            $script:colordefault = "Cyan"
+            $script:coloraccent = "magenta"
+            $script:colorfolder = "green"
+            $script:colorquit = "Darkred"
+        }
+        2 { # Halloween:
+            $script:backgroundColor = "Black"
+            $script:colordefault = "yellow"
+            $script:coloraccent = "red"
+            $script:colorfolder = "DarkGreen"
+            $script:colorquit = "Darkred"
+        }
+        3 { # Christmas:
+            $script:backgroundColor = "Black"
+            $script:colordefault = "Darkred"
+            $script:coloraccent = "White"
+            $script:colorfolder = "Darkgreen"
+            $script:colorquit = "Cyan"
+        }
+        4 { # Ocean:
+            $script:backgroundColor = "DarkMagenta"
+            $script:colordefault = "Gray"
+            $script:coloraccent = "Cyan"
+            $script:colorfolder = "Blue"
+            $script:colorquit = "DarkCyan"
+        }
+        default { # Default:
+            $script:backgroundColor = "Black"
+            $script:colordefault = "white"
+            $script:coloraccent = "white"
+            $script:colorfolder = "white"
+            $script:colorquit = "Darkred"
+        }
+    }
+
+    $Host.UI.RawUI.BackgroundColor = $script:backgroundColor
+    $Host.UI.RawUI.ForegroundColor = $script:colordefault
+}
+
+
+function SubmenuTheme 
+{
+    Write-Host "Select Theme:"
+    Write-Host "1: STO"
+    Write-Host "2: Classic"
+    Write-Host "3: Halloween"
+    Write-Host "4: Christmas"
+    Write-Host "5: Ocean"
+    Write-Host "0: Exit"
+
+    $choix = Read-Host "Choisissez une option (0-5)"
+
+    switch ($choix) {
+        0 { return }
+        1 { return '0'}
+        2 { return '1'}
+        3 { return '2'}
+        4 { return '3'}
+        5 { return '4'}
+        Default {Write-Host "Invalide. Choisir un chiffre de 0 à 5."}
+    }
+
+    Start-Sleep 1
+    SubmenuTheme
+}
+Set-Theme -theme 1
 Get-RequiredModules
 $desktop = [Environment]::GetFolderPath("Desktop")
 $pathFix = "$env:SystemDrive\_Tech\Applications\fix"
@@ -64,40 +184,9 @@ function Tweaking
     }
 }
 
-Function menu
-{
-Clear-Host
-write-host "[1] Fichiers corrompus [SFC/DISM/CHKDSK]" -ForegroundColor 'Cyan'
-write-host "[2] Windows Tweak et Fix [Tweaking]" -ForegroundColor 'Green'
-write-host "[3] Obtenir MDP et licenses [Sterjo]" -ForegroundColor 'darkcyan'
-write-host "[4] Desinstaller les pilotes graphiques [DDU]" -ForegroundColor 'DarkGreen'
-write-host "[5] Supprimer un dossier [WiseForceDeleter]" -ForegroundColor 'magenta'
-write-host "[6] Verifier taille des dossiers [WinDirStat]" -ForegroundColor 'red'
-write-host "[7] Gerer les partitions [Partition Wizard]" -ForegroundColor 'green'
-write-host "[8] Reparer Internet [Internet repair]" -ForegroundColor 'DarkRed'
-write-host ""
-write-host "[0] Quitter" -ForegroundColor 'red'
-$choix = read-host "Choisissez une option" 
-
-switch ($choix)
-{
-0{sortie;break}
-1{Get-RemoteFile "scripts.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' "$pathFixSource"; submenuHDD;Break}
-2{Get-RemoteFile "Tweak.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathFixSource"; submenuTweak;Break}
-3{Get-RemoteFile "Sterjo.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathFixSource"; submenuMDP;Break}
-4{Invoke-App "Display Driver Uninstaller.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip' "$pathFixSource";Add-Log $logFileName "Désinstallation du pilote graphique avec DDU";Break}
-5{Invoke-App "WiseForceDeleterPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleterPortable.zip' "$pathFixSource";Break}
-6{Invoke-App "WinDirStatPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip' "$pathFixSource";Break}
-7{zipMinitool;Break} 
-8{Invoke-App "ComIntRep_X64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip' "$pathFixSource";Add-Log $logFileName "Réparer Internet";Break}
-}
-start-sleep 1
-menu
-}
-
 function sortie
 {
-$sortie = read-host "Voulez-vous retourner au menu Principal? o/n [n = Suppression]"
+$sortie = read-host "Voulez-vous retourner au menu Principal? o/n/q [q = Suppression]"
 
     if($sortie -eq "o")
     {   
@@ -107,6 +196,11 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n [n = Suppressi
         exit
     }
     elseif($sortie -eq "n")
+    {
+        Remove-Item -Path $fixLockFile -Force -ErrorAction SilentlyContinue
+        exit
+    }
+    elseif($sortie -eq "q")
     {
         Remove-Item -Path $fixLockFile -Force -ErrorAction SilentlyContinue
         Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
@@ -121,12 +215,16 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n [n = Suppressi
 function submenuHDD
 {
 Clear-Host
-write-host "[1] Sfc /scannow"
-write-host "[2] DISM"
-write-host "[3] CHKDSK"
-write-host "[4] Creer session admin"
-write-host ""
-Write-host "[0] Retour au menu precedent" -ForegroundColor 'red'
+write-host "================================================="
+write-host "  + [#] +           SFC/DISM/CHKDSK           +  "-ForegroundColor $coloraccent
+write-host "  + --- + ----------------------------------- +  " 
+write-host "  + [1] + Sfc /scannow                        +  " -ForegroundColor $coloraccent
+write-host "  + [2] + DISM                                +  " 
+write-host "  + [3] + CHKDSK                              +  " -ForegroundColor $coloraccent
+write-host "  + [4] + Creer session admin                 +  " 
+write-host "  + --- + ----------------------------------- +  " -ForegroundColor $coloraccent
+write-host "  + [0] + Retour au menu precedent            +  " -ForegroundColor $colorquit
+write-host "================================================="
 $choix = read-host "Choisissez une option"
 
 switch ($choix)
@@ -143,15 +241,20 @@ submenuHDD
 
 function submenuMDP
 {
+
 Clear-Host
-write-host "[1] Browser"
-write-host "[2] Chrome"
-write-host "[3] Firefox"
-write-host "[4] Keys"
-write-host "[5] Mail"
-write-host "[6] Wireless"
-write-host ""
-Write-host "[0] Retour au menu precedent" -ForegroundColor 'red'
+write-host "================================================="
+write-host "  + [#] +           Sterjo MDP recovery       +  "-ForegroundColor $coloraccent
+write-host "  + --- + ----------------------------------- +  " 
+write-host "  + [1] + Browser                             +  " -ForegroundColor $coloraccent
+write-host "  + [2] + Chrome                              +  " 
+write-host "  + [3] + Firefox                             +  " -ForegroundColor $coloraccent
+write-host "  + [4] + Keys                                +  " 
+write-host "  + [5] + Mail                                +  " -ForegroundColor $coloraccent
+write-host "  + [6] + Wireless                            +  " 
+write-host "  + --- + ----------------------------------- +  " -ForegroundColor $coloraccent
+write-host "  + [0] + Retour au menu precedent            +  " -ForegroundColor $colorquit
+write-host "================================================="
 $choix = read-host "Choisissez une option"
 
 switch ($choix)
@@ -171,13 +274,17 @@ submenuMDP
 function submenuTweak
 {
 Clear-Host
-write-host "[1] Fix w10"
-write-host "[2] Fix w11"
-write-host "[3] Ultimate Windows Tweaker W10"
-write-host "[4] Ultimate Windows Tweaker W11"
-write-host "[5] Tweaking Windows Repair"
-write-host ""
-Write-host "[0] Retour au menu precedent" -ForegroundColor 'red'
+write-host "================================================="
+write-host "  + [#] +           Windows Tweak et Fix      +  "-ForegroundColor $coloraccent
+write-host "  + --- + ----------------------------------- +  " 
+write-host "  + [1] + Fix w10                             +  " -ForegroundColor $coloraccent
+write-host "  + [2] + Fix w11                             +  " 
+write-host "  + [3] + Ultimate Windows Tweaker W10        +  " -ForegroundColor $coloraccent
+write-host "  + [4] + Ultimate Windows Tweaker W11        +  " 
+write-host "  + [5] + Tweaking Windows Repair             +  " -ForegroundColor $coloraccent
+write-host "  + --- + ----------------------------------- +  " 
+write-host "  + [0] + Retour au menu precedent            +  " -ForegroundColor $colorquit
+write-host "================================================="
 $choix = read-host "Choisissez une option"
 
 switch ($choix)
