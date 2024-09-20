@@ -20,7 +20,8 @@ $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 $logFileName = Initialize-LogFile $pathOptimisation_NettoyageSource
 $optiLockFile = "$sourceFolderPath\Optimisation_Nettoyage.lock"
-Get-RemoteFile "fondopti.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/fondopti.jpg' "$pathOptimisation_NettoyageSource" 
+Get-RemoteFile "background_opti_Principal.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/background_opti_Principal.jpg' "$pathOptimisation_NettoyageSource" 
+Get-RemoteFile "background_opti_Automne.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/background_opti_Automne.png' "$pathOptimisation_NettoyageSource" 
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
@@ -29,7 +30,7 @@ if($adminStatus -eq $false)
 $Global:optimisationIdentifier = "Optimisation_Nettoyage.ps1"
 Test-ScriptInstance $optiLockFile $Global:optimisationIdentifier
 
-$image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\fondopti.jpg") 
+$image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage\Source\background_opti_Automne.png") 
 $Form = New-Object System.Windows.Forms.Form
 $Form.Text = "Optimisation et nettoyage"
 $Form.BackgroundImage = $image
