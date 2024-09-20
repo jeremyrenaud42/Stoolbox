@@ -18,8 +18,9 @@ $sourceFolderPath = "$applicationPath\source"
 $diagLockFile = "$sourceFolderPath\Diagnostique.lock"
 Get-RequiredModules
 $logFileName = Initialize-LogFile $pathDiagnostiqueSource
-Get-RemoteFile "fondDiag.jpg" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/fondDiag.jpg' "$pathDiagnostiqueSource" 
-Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/MainWindow.xaml' "$pathDiagnostiqueSource"
+Get-RemoteFile "background_diag_Principal.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/background_diag_Principal.png' "$pathDiagnostiqueSource" 
+Get-RemoteFile "background_diag_Automne.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/background_diag_Automne.png' "$pathDiagnostiqueSource" 
+Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/background_diag_Automne.xaml' "$pathDiagnostiqueSource"
 Get-RemoteFile "DiagApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/DiagApps.JSON' "$pathDiagnostiqueSource"  
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
