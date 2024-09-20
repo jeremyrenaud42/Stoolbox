@@ -197,8 +197,9 @@ $global:sync['flag'] = $true
     $downloadIconeFile = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-    Get-RemoteFile "fondpluiesize.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/fondpluiesize.png' "$sourceFolderPath\Images"
-    }
+    Get-RemoteFile "background_menu_Principal.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/background_menu_Principal.png' "$sourceFolderPath\Images"
+    Get-RemoteFile "background_menu_Automne.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/background_menu_Automne.png' "$sourceFolderPath\Images"
+}
 
 #Définitions des variables
 $xamlPathExist = Test-Path $sourceFolderPath\MainWindow.xaml
