@@ -39,8 +39,8 @@ $window = New-WPFWindowFromXaml $XamlReader
 $formControls = Get-WPFControlsFromXaml $xamlDoc $window
 
 $formControls.BoutonMenu.Add_Click({
-    start-process "$env:SystemDrive\\_Tech\\Menu.bat" -verb Runas
     $window.Close()
+    start-process "$env:SystemDrive\\_Tech\\Menu.bat" -verb Runas
     Exit
 })
 
