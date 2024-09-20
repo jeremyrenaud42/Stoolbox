@@ -238,7 +238,6 @@ msinfo32
 
 $window.add_Closed({
     Remove-Item -Path $diagLockFile -Force -ErrorAction SilentlyContinue
-    exit
 })
 
 Start-WPFAppDialog $window
