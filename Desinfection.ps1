@@ -19,7 +19,9 @@ $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 $logFileName = Initialize-LogFile $pathDesinfectionSource
 $desinfectionLockFile = "$sourceFolderPath\Desinfection.lock"
-Get-RemoteFile "fondvirus.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/fondvirus.png' "$pathDesinfectionSource"  
+Get-RemoteFile "background_desinfection_Principal.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/background_desinfection_Principal.png' "$pathDesinfectionSource"
+Get-RemoteFile "background_desinfection_Automne.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/background_desinfection_Automne.png' "$pathDesinfectionSource"  
+$adminStatus = Get-AdminStatus  
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
@@ -34,7 +36,7 @@ Invoke-App "CCleaner64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Op
 Add-Log "Optimisation_Nettoyagelog.txt" "Nettoyage CCleaner effectué"
 }
 
-$image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Desinfection\Source\fondvirus.png") 
+$image = [system.drawing.image]::FromFile("$env:SystemDrive\_Tech\Applications\Desinfection\Source\background_desinfection_Automne.png") 
 $Form = New-Object System.Windows.Forms.Form
 $Form.Text = "Desinfection"
 $Form.BackgroundImage = $image
