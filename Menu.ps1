@@ -128,7 +128,7 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     Get-RemoteFile "$appName.ps1" $githubPs1Link $applicationPath\$appName
-    Invoke-App "RunAs$appName.bat" $githubBatLink $applicationPath\$appName
+    Invoke-App "$appName.bat" $githubBatLink $applicationPath\$appName
 }
 
 ########################Déroulement########################
@@ -478,23 +478,23 @@ Get-RunspaceState $global:sync['menuGitResult']
 $Window.add_Loaded({
     $formControls.btnInstall.Add_Click({
         $window.Close()
-        Initialize-Application "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsInstallation.bat' 
+        Initialize-Application "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Installation.bat' 
     })
     $formControls.btnOptiNett.Add_Click({
         $window.Close()
-        Initialize-Application "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsOptimisation_Nettoyage.bat'
+        Initialize-Application "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Optimisation_Nettoyage.bat'
     })
     $formControls.btnDiagnostic.Add_Click({
         $window.Close()
-        Initialize-Application "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDiagnostique.bat'
+        Initialize-Application "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Diagnostique.bat'
     })
     $formControls.btnDesinfection.Add_Click({
         $window.Close()
-        Initialize-Application "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsDesinfection.bat'
+        Initialize-Application "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Desinfection.bat'
     })
     $formControls.btnFix.Add_Click({
         $window.Close()
-        Initialize-Application "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/RunAsFix.bat'
+        Initialize-Application "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Fix.bat'
     })
     $formControls.btnChangeLog.Add_Click({
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
