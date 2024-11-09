@@ -20,7 +20,7 @@ $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 $logFileName = Initialize-LogFile $pathOptimisation_NettoyageSource
 $optiLockFile = "$sourceFolderPath\Optimisation_Nettoyage.lock"
-Get-RemoteFile "Background_opti.jpeg" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/Default/Background_opti.jpeg' "$pathOptimisation_NettoyageSource"
+Get-RemoteFile "Background_opti.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/Background_opti.jpeg" "$pathOptimisation_NettoyageSource"
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {

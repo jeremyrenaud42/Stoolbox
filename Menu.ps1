@@ -176,7 +176,6 @@ if (Test-ScriptsAreRunning)
         exit
     }
 }
-
 Import-Module "$sourceFolderPath\Modules\Runspaces.psm1"
 $global:sync['flag'] = $true 
 
@@ -198,7 +197,8 @@ $global:sync['flag'] = $true
     $downloadBackgroundFile = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-    Get-RemoteFile "background_menu.jpeg" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/Default/background_menu.jpeg' "$sourceFolderPath\Images"
+    Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
+    Get-RemoteFile "Background_menu.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/Background_menu.jpeg" "$sourceFolderPath\Images"
 }
 
 #Définitions des variables
