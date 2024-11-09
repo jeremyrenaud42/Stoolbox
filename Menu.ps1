@@ -188,17 +188,17 @@ $global:sync['flag'] = $true
     Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' $sourceFolderPath
     }
 
-    $downloadBackgroundFile = {
-    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-    Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Icone.ico' "$sourceFolderPath\Images"
-    }
-
     $downloadIconeFile = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-    Get-RemoteFile "background_menu_Principal.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/background_menu_Principal.png' "$sourceFolderPath\Images"
-    Get-RemoteFile "background_menu_Automne.png" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/background_menu_Automne.png' "$sourceFolderPath\Images"
+    Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/Default/Icone.ico' "$sourceFolderPath\Images"
+    }
+
+    
+    $downloadBackgroundFile = {
+    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+    Get-RemoteFile "background_menu.jpeg" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/Default/background_menu.jpeg' "$sourceFolderPath\Images"
 }
 
 #Définitions des variables
