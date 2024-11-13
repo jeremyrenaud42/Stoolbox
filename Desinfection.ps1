@@ -138,25 +138,6 @@ $Ccleaner.Add_Click({
 zipccleaner
 })
 
-#Restauration
-$Restauration = New-Object System.Windows.Forms.Button
-$Restauration.Location = New-Object System.Drawing.Point(30,50)
-$Restauration.Width = '120'
-$Restauration.Height = '55'
-$Restauration.ForeColor='black'
-$Restauration.BackColor = 'cyan'
-$Restauration.Text = "Point de restauration"
-$Restauration.Font= 'Microsoft Sans Serif,13'
-$Restauration.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
-$Restauration.FlatAppearance.BorderSize = 2
-$Restauration.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
-$Restauration.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
-$Restauration.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
-$Restauration.Add_Click({
-New-RestorePoint
-Add-Log $logFileName "Point de restauration effectué"
-})
-
 Function Revo
 {
 $PathRevo= "$root\\_Tech\\Applications\\Optimisation_Nettoyage\\Source\\RevoUninstaller_Portable\\RevoUPort.exe"
@@ -337,7 +318,7 @@ $quit = New-Object System.Windows.Forms.Button
 $quit.Location = New-Object System.Drawing.Point(460,575)
 $quit.Width = '120'
 $quit.Height = '55'
-$quit.ForeColor='darkblue'
+$quit.ForeColor='black'
 $quit.BackColor = 'darkred'
 $quit.Text = "Quitter"
 $quit.Font= 'Microsoft Sans Serif,13'
@@ -353,10 +334,10 @@ $Form.Close()
 
 #Menu principal
 $Menuprincipal = New-Object System.Windows.Forms.Button
-$Menuprincipal.Location = New-Object System.Drawing.Point(105,575)
+$Menuprincipal.Location = New-Object System.Drawing.Point(25,35)
 $Menuprincipal.Width = '120'
 $Menuprincipal.Height = '55'
-$Menuprincipal.ForeColor='darkblue'
+$Menuprincipal.ForeColor='black'
 $Menuprincipal.BackColor = 'darkred'
 $Menuprincipal.Text = "Menu principal"
 $Menuprincipal.Font= 'Microsoft Sans Serif,13'
