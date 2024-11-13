@@ -193,7 +193,6 @@ $global:sync['flag'] = $true
     Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/Default/Icone.ico' "$sourceFolderPath\Images"
     }
 
-    
     $downloadBackgroundFile = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
@@ -510,7 +509,7 @@ $Window.add_Loaded({
         Get-RemoteFileForce  "Diagnostique.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' "$env:SystemDrive\_Tech\Applications\Diagnostique"
         Get-RemoteFileForce  "Desinfection.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' "$env:SystemDrive\_Tech\Applications\Desinfection"
         Get-RemoteFileForce  "Fix.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' "$env:SystemDrive\_Tech\Applications\Fix"
-        Get-RemoteFileForce "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
+        Get-RemoteFileForce "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp\Stoolbox"
         Get-RemoteFileForce  "Menu.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' "$env:SystemDrive\_Tech"
         Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$applicationPath\source\Modules.zip" | Out-Null
         Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
@@ -522,7 +521,7 @@ $Window.add_Loaded({
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\Task.psm1"
         $window.Close() 
-        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
+        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
     })
 
     $formControls.btnWinget.Add_Click({
@@ -558,8 +557,8 @@ $window.add_Closing({
     $desktop = [Environment]::GetFolderPath("Desktop")
 
     $shortcutExist = test-path "$desktop\Menu.lnk"
-    $removeBatExist = test-path "$env:SystemDrive\Temp\remove.bat"
-    $removePs1Exist = test-path "$env:SystemDrive\Temp\remove.ps1"
+    $removeBatExist = test-path "$env:SystemDrive\Temp\Stoolbox\remove.bat"
+    $removePs1Exist = test-path "$env:SystemDrive\Temp\Stoolbox\remove.ps1"
 
     $createShortcutKey = "createShortcut"
     $downloadRemoveScriptKey = "downloadRemoveScript"
@@ -575,8 +574,8 @@ $window.add_Closing({
     $downloadRemoveScript = {
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-        Get-RemoteFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp"
-        Get-RemoteFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp"
+        Get-RemoteFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp\Stoolbox"
+        Get-RemoteFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp\Stoolbox"
     } 
     #Lancement des runspaces
     if($shortcutExist -eq $false)

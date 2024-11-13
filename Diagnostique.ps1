@@ -45,7 +45,7 @@ $formControls.BoutonMenu.Add_Click({
 
 $formControls.BoutonQuit.Add_Click({
     winget uninstall -e --id XPDNXG5333CSVK
-    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
+    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
     $window.Close()
 })
 

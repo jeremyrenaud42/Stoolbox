@@ -347,7 +347,7 @@ $quit.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $quit.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $quit.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $quit.Add_Click({
-Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
+Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
 $Form.Close()
 })
 

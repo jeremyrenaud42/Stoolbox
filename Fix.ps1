@@ -203,7 +203,7 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n/q [q = Suppres
     elseif($sortie -eq "q")
     {
         Remove-Item -Path $fixLockFile -Force -ErrorAction SilentlyContinue
-        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
+        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
         exit
     }
     else 

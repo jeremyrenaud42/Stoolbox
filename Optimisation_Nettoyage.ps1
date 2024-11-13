@@ -377,7 +377,7 @@ $quit.Add_MouseEnter({$quit.ForeColor = 'White'})
 $quit.Add_MouseLeave({$quit.ForeColor = 'black'})
 $quit.Add_Click({
 #Close-ExcelPackage $excel #Ferme la grille Excel
-Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
+Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
 $Form.Close()
 })
 

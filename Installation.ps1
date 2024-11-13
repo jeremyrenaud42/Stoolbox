@@ -94,7 +94,7 @@ $formControlsMenuApp.btnclose.Add_Click({
     Exit
 })
 $formControlsMenuApp.btnQuit.Add_Click({
-    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
+    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
     $window.Close()
     Exit
 })
@@ -114,16 +114,69 @@ $XamlReader = New-XamlReader $xamlDoc
 $window = New-WPFWindowFromXaml $XamlReader
 $formControlsMain = Get-WPFControlsFromXaml $xamlDoc $window $sync
 
+# Function to get a Brush by name
+function Get-BrushByName 
+{
+    param 
+    (
+        [string]$brushName
+    )
+
+    switch ($brushName) 
+    {
+        "Red" { return [System.Windows.Media.Brushes]::Red }
+        "Green" { return [System.Windows.Media.Brushes]::Green }
+        "Blue" { return [System.Windows.Media.Brushes]::Blue }
+        default { return [System.Windows.Media.Brushes]::Black }
+    }
+}
+
+# Function to add a colored line to the RichTextBox
+function Add-ColoredLine {
+    param (
+        [string]$text,
+        [string]$colorName
+    )
+
+    # Create a new Paragraph
+    $paragraph = New-Object System.Windows.Documents.Paragraph
+
+    # Create a Run element with the specified text and color
+    $run = New-Object System.Windows.Documents.Run
+    $run.Text = $text
+    $run.Foreground = Get-BrushByName -brushName $colorName
+
+    # Add the Run to the Paragraph
+    $paragraph.Inlines.Add($run)
+
+    # Add the Paragraph to the RichTextBox
+    $global:sync["richTxtBxTaskList"].Document.Blocks.Add($paragraph)
+
+    # Reset the color for the next line
+    $defaultRun = New-Object System.Windows.Documents.Run
+    $defaultRun.Text = "`n" # Add a new line character
+    $defaultRun.Foreground = [System.Windows.Media.Brushes]::Black # Default color
+
+    # Create a new Paragraph for the default color
+    $defaultParagraph = New-Object System.Windows.Documents.Paragraph
+    $defaultParagraph.Inlines.Add($defaultRun)
+
+    # Add the default Paragraph to the RichTextBox
+    $global:sync["richTxtBxTaskList"].Document.Blocks.Add($defaultParagraph)
+}
+
+$formControlsMain.richTxtBxTaskList.add_textchanged({
+    $Window.Dispatcher.Invoke([Windows.Threading.DispatcherPriority]::Background, [action]{}) #Refresh le text
+    $formControlsMain.richTxtBxTaskList.ScrollToEnd() #scroll en bas
+})
 
 $formControlsMain.richTxtBxOutput.add_textchanged({
     $Window.Dispatcher.Invoke([Windows.Threading.DispatcherPriority]::Background, [action]{}) #Refresh le text
-    #[System.Windows.Forms.Application]::DoEvents() #Refresh le text
     $formControlsMain.richTxtBxOutput.ScrollToEnd() #scroll en bas
 })
 
 $cbBoxSizeDefaultValue = "250"
 $cbBoxRestartTimereDefaultValue = "300"
-
 
 if (-not $formControlsMenuApp.CbBoxSize.SelectedItem) 
 {
@@ -142,6 +195,16 @@ $window.add_Closed({
 
 Start-WPFApp $window
 New-Item -Path $installationLockFile -ItemType 'File' -Force
+
+
+#Add-ColoredLine -text "allo" -colorName "red"
+#read-host "allo"
+#par défaut on peut mettre en genre de gris claire toutes les task. et lors du script ca change en de couleur .
+#si c'est le cas je pense que ca ca sera plus simple que chaque tache soit un label independant qui change de couleur.
+<# Liste de tâches
+
+
+#>
 
 function Install-SoftwaresManager
 {
@@ -605,7 +668,7 @@ function Complete-Installation
             shutdown /r /t $restartTime
         }  
     }
-    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Remove.bat'
+    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
     $window.Close()
 }
 
