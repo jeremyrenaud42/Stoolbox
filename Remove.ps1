@@ -1,7 +1,7 @@
 ﻿Add-Type -AssemblyName PresentationCore,PresentationFramework
 
 $desktop = [Environment]::GetFolderPath("Desktop")
-$folderPath = "$env:SystemDrive\_Tech"
+$TechFolder = "$env:SystemDrive\_Tech"
 $lockfile = "$env:SystemDrive\_Tech\Applications\source\*.lock"
 $maxAttempts = 5
 $attempt = 0
@@ -76,7 +76,7 @@ Start-Sleep -Seconds 2
 }
 
 #Main
-if (Test-Path $folderPath)
+if (Test-Path $TechFolder)
 {
     while(Test-Path $lockfile)
     {
@@ -86,15 +86,15 @@ if (Test-Path $folderPath)
 
         if ($attempt -ge $maxAttempts) 
         {
-            Write-Host "La suppression de $folderPath va se poursuivre, mais pourrait contenir des erreurs."
+            Write-Host "La suppression de $TechFolder va se poursuivre, mais pourrait contenir des erreurs."
             break
         }
     }
 
     Remove-DownloadFolder
-    Write-Host "Suppression du dossier $folderPath"
-    Remove-Item "$folderPath\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item $folderPath -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+    Write-Host "Suppression du dossier $TechFolder"
+    Remove-Item "$TechFolder\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item $TechFolder -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     Write-Host "Suppression du raccourci"
     Remove-Item "$desktop\Menu.lnk" -Force -ErrorAction SilentlyContinue | Out-Null
     Start-Sleep -Seconds 2
@@ -103,7 +103,7 @@ if (Test-Path $folderPath)
     Write-Host "La corbeille a été vidé"
     Start-Sleep -Seconds 2
 
-    if (Test-Path $folderPath)
+    if (Test-Path $TechFolder)
     {
         [System.Windows.MessageBox]::Show("La suppression du dossier C:\_Tech a échoué","Suppression",0,48) | Out-Null
     }
@@ -117,17 +117,18 @@ else
         Start-Sleep -Seconds 2
     }
 }
-if (Test-Path "C:\Temp\remove.ps1" -ErrorAction SilentlyContinue)
+
+if (Test-Path "C:\Temp\Stoolbox\remove.ps1" -ErrorAction SilentlyContinue)
 {
-    Move-Item "C:\Temp\remove.ps1" -Destination "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
-    Move-Item "C:\Temp\remove.bat" -Destination "$env:APPDATA\remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
+    Move-Item "C:\Temp\Stoolbox\remove.ps1" -Destination "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
+    Move-Item "C:\Temp\Stoolbox\remove.bat" -Destination "$env:APPDATA\remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
     $scriptPath = "$env:APPDATA\remove.ps1"
     Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`""
     exit
 }
 
-remove-Item -Path "$env:SystemDrive\temp\*" -Force -ErrorAction SilentlyContinue | Out-Null
-remove-Item -Path "$env:SystemDrive\temp" -Force -ErrorAction SilentlyContinue | Out-Null
+remove-Item -Path "$env:SystemDrive\Temp\Stoolbox\*" -Force -ErrorAction SilentlyContinue | Out-Null
+remove-Item -Path "$env:SystemDrive\Temp\Stoolbox" -Force -ErrorAction SilentlyContinue | Out-Null
 Remove-Item "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
 Remove-Item "$env:APPDATA\remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "Le dossier Temp a été supprimé"
