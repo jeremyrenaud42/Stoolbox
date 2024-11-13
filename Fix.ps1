@@ -29,13 +29,13 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{sortie;break}
-1{Get-RemoteFile "scripts.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/scripts.zip' "$pathFixSource"; submenuHDD;Break}
+1{submenuScripts;Break}
 2{Get-RemoteFile "Tweak.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathFixSource"; submenuTweak;Break}
 3{Get-RemoteFile "Sterjo.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathFixSource"; submenuMDP;Break}
 4{Invoke-App "Display Driver Uninstaller.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip' "$pathFixSource";Add-Log $logFileName "Désinstallation du pilote graphique avec DDU";Break}
 5{Invoke-App "WiseForceDeleterPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleterPortable.zip' "$pathFixSource";Break}
 6{Invoke-App "WinDirStatPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip' "$pathFixSource";Break}
-7{zipMinitool;Break} 
+7{Get-Minitool;Break} 
 8{Invoke-App "ComIntRep_X64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip' "$pathFixSource";Add-Log $logFileName "Réparer Internet";Break}
 T{$number = SubmenuTheme;Set-Theme -theme $number;Break}
 }
@@ -146,7 +146,7 @@ if($adminStatus -eq $false)
 $Global:fixIdentifier = "Fix.ps1"
 Test-ScriptInstance $fixLockFile $Global:fixIdentifier
 
-function zipMinitool
+function Get-Minitool
 {
     $minitoolpath = test-Path "$env:SystemDrive\Program Files\MiniTool Partition*\partitionwizard.exe"
     if($minitoolpath)
@@ -156,7 +156,7 @@ function zipMinitool
     elseif($minitoolpath -eq $false)
     {
     Install-Winget  
-    winget install -e --id  MiniTool.PartitionWizard.Free --accept-package-agreements --accept-source-agreements --silent | Out-Null
+    winget install -e --id MiniTool.PartitionWizard.Free --accept-package-agreements --accept-source-agreements --silent | Out-Null
     $minitoolpath = test-Path "$env:SystemDrive\Program Files\MiniTool Partition*\partitionwizard.exe"
         if($minitoolpath -eq $false)
         {
@@ -166,7 +166,7 @@ function zipMinitool
     }
 }
 
-function Tweaking
+function Get-Tweaking
 {
     $path = Test-Path "$pathFixSource\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
     if($path -eq $false)
@@ -212,7 +212,7 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n/q [q = Suppres
     }
 }
 
-function submenuHDD
+function submenuScripts
 {
 Clear-Host
 write-host "================================================="
@@ -230,13 +230,13 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{menu}
-1{Start-Process "$pathFixSource\Scripts\sfcScannow.bat";Add-Log $logFileName "Réparation des fichiers corrompus";Break}
-2{Start-Process "$pathFixSource\Scripts\DISM.bat";Add-Log $logFileName "Réparation du Windows";Break}
-3{Start-Process "$pathFixSource\Scripts\CHKDSK.BAT";Add-Log $logFileName "Réparation du HDD";Break}
-4{Start-Process "$pathFixSource\Scripts\creer_session.txt";Add-Log $logFileName "Nouvelle session créé";Break}
+1{Start-Process cmd.exe -ArgumentList '/k sfc /scannow';Add-Log $logFileName "Reparation des fichiers corrompus";Break}
+2{Start-Process cmd.exe -ArgumentList '/k DISM /online /cleanup-image /restorehealth';Add-Log $logFileName "Reparation du Windows";Break}
+3{Start-Process cmd.exe -ArgumentList '/k chkdsk /f /r';Add-Log $logFileName "Reparation du HDD";Break}
+4{Get-RemoteFile "creer_session.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/creer_session.txt' "$pathFixSource";Start-Process "$pathFixSource\creer_session.txt";Add-Log $logFileName "Nouvelle session créé";Break}
 }
 start-sleep 1
-submenuHDD
+submenuScripts
 }
 
 function submenuMDP
@@ -294,7 +294,7 @@ switch ($choix)
 2{Start-Process "$pathFixSource\Tweak\FixWin11\FixWin 11.1.exe";break}
 3{Start-Process "$pathFixSource\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe";Break}
 4{Start-Process "$pathFixSource\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe";break}
-5{Tweaking;Break} 
+5{Get-Tweaking;Break} 
 }
 Start-Sleep 1
 submenuTweak
