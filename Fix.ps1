@@ -35,7 +35,7 @@ switch ($choix)
 4{Invoke-App "Display Driver Uninstaller.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip' "$pathFixSource";Add-Log $logFileName "Désinstallation du pilote graphique avec DDU";Break}
 5{Invoke-App "WiseForceDeleterPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleterPortable.zip' "$pathFixSource";Break}
 6{Invoke-App "WinDirStatPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip' "$pathFixSource";Break}
-7{Get-Minitool;Break} 
+7{Get-PW;Break} 
 8{Invoke-App "ComIntRep_X64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip' "$pathFixSource";Add-Log $logFileName "Réparer Internet";Break}
 T{$number = SubmenuTheme;Set-Theme -theme $number;Break}
 }
@@ -184,6 +184,23 @@ function Get-Tweaking
     }
 }
 
+function Get-PW
+{
+    $path = Test-Path "$pathFixSource\Partition_Wizard\partitionwizard.exe"
+    if($path -eq $false)
+    {
+        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/ymz6seur406dkjin_x_yog/Partition_Wizard.zip' -OutFile "$pathFixSource\Partition_Wizard.zip"
+        Expand-Archive "$pathFixSource\Partition_Wizard.zip" "$pathFixSource"
+        Remove-Item "$pathFixSource\Partition_Wizard.zip"
+        Copy-Item "$pathFixSource\Partition_Wizard" -Recurse -Destination "$desktop\Partition_Wizard"
+        Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
+    }    
+    elseif($path)
+    {
+        Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
+    }
+}
+
 function sortie
 {
 $sortie = read-host "Voulez-vous retourner au menu Principal? o/n/q [q = Suppression]"
@@ -300,3 +317,91 @@ Start-Sleep 1
 submenuTweak
 }
 menu
+
+<#
+$JSONFilePath = "$env:SystemDrive\_Tech\Applications\Fix\source\FixApps.JSON"
+$jsonString = Get-Content -Raw $JSONFilePath
+$appsInfo = ConvertFrom-Json $jsonString
+$appNames = $appsInfo.psobject.Properties.Name
+#Iterate over the applications in the JSON and interpolate the variables
+$appNames | ForEach-Object {
+    $appName = $_
+    $appsInfo.$appName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path64)
+    $appsInfo.$appName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path32)
+    $appsInfo.$appName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.pathAppData)
+    $appsInfo.$appName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.NiniteName)
+    }
+
+
+    function Test-SoftwarePresence($appInfo)
+{
+   $softwareInstallationStatus= $false
+   if (($appInfo.path64 -AND (Test-Path $appInfo.path64)) -OR 
+   ($appInfo.path32 -AND (Test-Path $appInfo.path32)) -OR 
+   ($appInfo.pathAppData -AND (Test-Path $appInfo.pathAppData)))
+   {
+     $softwareInstallationStatus = $true
+   }
+   return $softwareInstallationStatus
+}
+
+function Install-Software($appInfo)
+{
+    $formControlsMain.lblProgress.Content = "Installation de $appName"
+    $formControlsMain.richTxtBxOutput.AppendText("Installation de $appName en cours")
+    $softwareInstallationStatus = Test-SoftwarePresence $appInfo
+        if($softwareInstallationStatus)
+        {
+            $formControlsMain.richTxtBxOutput.AppendText(" -$appName est déja installé`r`n")
+        }
+        elseif($softwareInstallationStatus -eq $false)
+        {  
+            Install-SoftwareWithWinget $appInfo
+        }
+    Add-Log $logFileName "Installation de $appName" 
+}
+
+function Install-SoftwareWithWinget($appInfo)
+{
+    if($appInfo.WingetName)
+    {
+        winget install -e --id $appInfo.wingetname --accept-package-agreements --accept-source-agreements --silent | out-null
+    } 
+    $softwareInstallationStatus = Test-SoftwarePresence $appInfo
+        if($softwareInstallationStatus)
+        {
+            $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n") 
+        } 
+        else
+        {
+            Install-SoftwareWithChoco $appInfo
+        }     
+}
+
+function Install-SoftwareWithChoco($apsInfo)
+{
+    if($appInfo.ChocoName)
+    {
+        choco install $appInfo.ChocoName -y | out-null
+    }
+    $softwareInstallationStatus = Test-SoftwarePresence $apsInfo
+    if($softwareInstallationStatus)
+    {   
+        $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")  
+    }
+    else
+    {
+        $formControlsMain.richTxtBxOutput.AppendText(" -$appName a échoué`r`n")
+        Install-SoftwareWithNinite $appInfo
+    } 
+}
+
+function Install-SoftwareWithNinite($appInfo)
+{
+    if($appInfo.NiniteName)
+    {
+        Invoke-WebRequest $appInfo.NiniteGithubLink -OutFile $appInfo.NiniteName | Out-Null
+        Start-Process $appInfo.NiniteName -Verb runAs
+    }
+}
+#>
