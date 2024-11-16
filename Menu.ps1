@@ -179,6 +179,7 @@ if (Test-ScriptsAreRunning)
 Import-Module "$sourceFolderPath\Modules\Runspaces.psm1"
 $global:sync['flag'] = $true 
 
+
 #runspaces pour le GUI
 #Définitions des ScriptBlocks
     $downloadXamlFile = {
@@ -187,17 +188,12 @@ $global:sync['flag'] = $true
     Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' $sourceFolderPath
     }
 
-    $downloadIconeFile = {
-    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-    Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/Default/Icone.ico' "$sourceFolderPath\Images"
-    }
-
     $downloadBackgroundFile = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
-    Get-RemoteFile "Background_menu.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/Background_menu.jpeg" "$sourceFolderPath\Images"
+    Get-RemoteFile "Background_menu.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$sourceFolderPath\Images"
+    Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/Default/Icone.ico' "$sourceFolderPath\Images"
 }
 
 #Définitions des variables
@@ -206,7 +202,6 @@ $guiPathExist = Test-Path $sourceFolderPath\Images
 
 $downloadXamlFileKey = "downloadXamlFile"
 $downloadBackgroundFileKey = "downloadBackgroundFile"
-$downloadIconeFileKey = "downloadIconeFile"
 
 #Lancement des runspaces
 if($xamlPathExist -eq $false)
@@ -220,11 +215,7 @@ if($guiPathExist -eq $false)
 {
     $global:sync['downloadBackgroundFileResult'] = Start-Runspace -RunspaceKey $downloadBackgroundFileKey -ScriptBlock $downloadBackgroundFile
     Write-Host "downloadBackgroundFileResult"
-    Get-RunspaceState $global:sync['downloadBackgroundFileResult']
-    
-    $global:sync['downloadIconeFileResult'] =  Start-Runspace -RunspaceKey $downloadIconeFileKey -ScriptBlock $downloadIconeFile
-    Write-Host "downloadIconeFileResult"
-    Get-RunspaceState $global:sync['downloadIconeFileResult']
+    Get-RunspaceState $global:sync['downloadBackgroundFileResult']  
 }
 
 #nettoyage des runspaces
@@ -243,14 +234,6 @@ if ($global:runspaceStates.ContainsKey('downloadBackgroundFile') -and $global:ru
     Complete-AsyncOperation -RunspaceResult $global:sync['downloadBackgroundFileResult']
     Close-Runspace -RunspaceResult $global:sync['downloadBackgroundFileResult'] -RunspaceKey $downloadBackgroundFileKey
     Get-RunspaceState $global:sync['downloadBackgroundFileResult']
-}
-
-if ($global:runspaceStates.ContainsKey('downloadIconeFile') -and $global:runspaceStates['downloadIconeFile'] -eq 'Opened') 
-{
-    Write-Host "downloadIconeFile"
-    Complete-AsyncOperation -RunspaceResult $global:sync['downloadIconeFileResult']
-    Close-Runspace -RunspaceResult $global:sync['downloadIconeFileResult'] -RunspaceKey $downloadIconeFileKey
-    Get-RunspaceState $global:sync['downloadIconeFileResult']
 }
 
 ########################GUI########################

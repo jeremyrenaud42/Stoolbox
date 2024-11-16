@@ -19,7 +19,7 @@ $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 $logFileName = Initialize-LogFile $pathDesinfectionSource
 $desinfectionLockFile = "$sourceFolderPath\Desinfection.lock"
-Get-RemoteFile "Background_desinfection.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/Background_desinfection.jpeg" "$pathDesinfectionSource"
+Get-RemoteFile "Background_desinfection.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$pathDesinfectionSource"
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
