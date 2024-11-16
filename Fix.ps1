@@ -172,7 +172,7 @@ function Get-Tweaking
     if($path -eq $false)
     {
         #choco install windowsrepair , il faudra revoir le start process aussi
-        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/BRP1JxyMI0edKIft_yYt2g/tweaking.com%20-%20Windows%20Repair.zip' -OutFile "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip"
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/tweaking.com - Windows Repair.zip' -OutFile "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip"
         Expand-Archive "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip" "$pathFixSource\Tweak"
         Remove-Item "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip"
         Copy-Item "$pathFixSource\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$desktop\Tweaking.com - Windows Repair"
@@ -189,15 +189,14 @@ function Get-PW
     $path = Test-Path "$pathFixSource\Partition_Wizard\partitionwizard.exe"
     if($path -eq $false)
     {
-        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/ymz6seur406dkjin_x_yog/Partition_Wizard.zip' -OutFile "$pathFixSource\Partition_Wizard.zip"
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Partition_Wizard.zip' -OutFile "$pathFixSource\Partition_Wizard.zip"
         Expand-Archive "$pathFixSource\Partition_Wizard.zip" "$pathFixSource"
         Remove-Item "$pathFixSource\Partition_Wizard.zip"
-        Copy-Item "$pathFixSource\Partition_Wizard" -Recurse -Destination "$desktop\Partition_Wizard"
-        Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
+        Start-Process "$pathFixSource\\Partition_Wizard\partitionwizard.exe"
     }    
     elseif($path)
     {
-        Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
+        Start-Process "$pathFixSource\\Partition_Wizard\partitionwizard.exe"
     }
 }
 

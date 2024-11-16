@@ -107,7 +107,7 @@ $formControls.BoutonAida.Add_Click({
         {
             Import-Module $modulesFolder\$module
         }
-    Invoke-App "Aida64.zip" "https://ftp.alexchato9.com/public/file/WPdP-yDdBE2pOpHVFKNC6g/Aida64.zip" "$pathDiagnostiqueSource\cpu" 
+    Invoke-App "Aida64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Aida64.zip" "$pathDiagnostiqueSource\cpu" 
     Add-Log $logFileName "Test de stabilité du système effectué"
     } 
     if ($PSVersionTable.PSVersion.Major -lt 7 -and -not (Get-Command -Type Cmdlet Start-ThreadJob -ErrorAction SilentlyContinue)) 
