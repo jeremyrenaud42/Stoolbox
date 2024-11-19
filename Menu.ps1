@@ -247,140 +247,6 @@ $window = New-WPFWindowFromXaml $XamlReader
 $formControls = Get-WPFControlsFromXaml $xamlDoc $window $global:sync
 
 #Fonctions pour runspaces
-$menuChoco = {
-    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\Verification.psm1"
-    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-
-    function Set-MenuChoco 
-    {
-        $currentChocoStatus = Get-ChocoStatus
-
-        if ($currentChocoStatus -ne $previousChocoStatus) 
-        {
-            $previousChocoStatus = $currentChocoStatus
-
-            if ($currentChocoStatus -eq $true) 
-            {
-                $Text = "Installé"
-                $ForeColor = "Green"
-                $buttonVisibility = "Collapsed"
-            } 
-            elseif ($currentChocoStatus -eq $false) 
-            {
-                $Text = "Non installé"
-                $ForeColor = "Red"
-                $buttonVisibility = "Visible"
-                $buttonContent = "Installer"
-            } 
-            else 
-            {
-                $Text = "Erreur"
-                $ForeColor = "Black"
-                $buttonVisibility = "Visible"
-            }
-
-            # Update the GUI with the new status details
-            $global:sync["txtBlkChocoVersion"].Dispatcher.Invoke([action]{
-                $global:sync["txtBlkChocoVersion"].Foreground = $ForeColor
-                $global:sync["txtBlkChocoVersion"].Text = $Text
-                $global:sync["btnChoco"].Visibility = $buttonVisibility
-                $global:sync["btnChoco"].Content = $buttonContent
-            })
-        }
-        return $previousChocoStatus
-    }
-
-    $previousChocoStatus = $null
-    while ($global:sync['flag'] -eq $true) 
-    {
-        $previousChocoStatus =  Set-MenuChoco $previousChocoStatus
-        Start-Sleep -s 5
-    }
-    return
-}
-
-$menuFTP = {
-    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\Verification.psm1"
-
-    function Set-MenuFTP 
-    {
-        $ftpStatus = Get-FtpStatus
-
-        if ($ftpStatus -ne $previousFtpStatus) 
-        {
-            $previousFtpStatus = $ftpStatus
-
-            if ($ftpStatus -eq $true) 
-            {
-                $Text = "Valide"
-                $ForeColor = "Green"
-            }
-            else
-            {
-                $Text = "Injoignable"
-                $ForeColor = "Red"
-            }
-
-            # Update the GUI with the new status details
-            $global:sync["txtBlkFTPVersion"].Dispatcher.Invoke([action]{
-                $global:sync["txtBlkFTPVersion"].Foreground = $ForeColor
-                $global:sync["txtBlkFTPVersion"].Text = $Text
-            })
-        }
-        return $previousFtpStatus
-    }
-    $previousFtpStatus = $null
-    while ($global:sync['flag'] -eq $true) 
-    {
-        $previousFtpStatus = Set-MenuFTP $previousFtpStatus
-        Start-Sleep -s 5
-    }
-    return
-}
-
-$menuGit = {
-    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\Verification.psm1"
-
-    function Set-MenuGit 
-    {
-        $gitStatus = Get-GitStatus
-
-        if ($gitStatus -ne $previousGitStatus) 
-        {
-            $previousGitStatus = $gitStatus
-
-            if ($gitStatus -eq $true) 
-            {
-                $Text = "Valide"
-                $ForeColor = "Green"
-            }
-            else 
-            {
-                $Text = "Injoignable"
-                $ForeColor = "Red"
-            }
-
-            # Update the GUI with the new status details
-            $global:sync["txtBlkGitVersion"].Dispatcher.Invoke([action]{
-                $global:sync["txtBlkGitVersion"].Foreground = $ForeColor
-                $global:sync["txtBlkGitVersion"].Text = $Text
-            })
-        }
-        return $previousGitStatus
-    }
-    $previousGitStatus = $null
-    while ($global:sync['flag'] -eq $true) 
-    {
-        $previousGitStatus = Set-MenuGit $previousGitStatus
-        Start-Sleep -s 5
-    }
-    return
-}
-
-
 $menuWinget = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\Verification.psm1"
@@ -429,7 +295,140 @@ $menuWinget = {
     while ($global:sync['flag'] -eq $true) 
     {
         $previousWingetVersion = Set-MenuWinget $previousWingetVersion
-        Start-Sleep -s 5 
+        Start-Sleep -s 2 
+    }
+    return
+}
+
+$menuChoco = {
+    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+    Import-Module "$sourceFolderPath\Modules\Verification.psm1"
+    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+
+    function Set-MenuChoco 
+    {
+        $currentChocoStatus = Get-ChocoStatus
+
+        if ($currentChocoStatus -ne $previousChocoStatus) 
+        {
+            $previousChocoStatus = $currentChocoStatus
+
+            if ($currentChocoStatus -eq $true) 
+            {
+                $Text = "Installé"
+                $ForeColor = "Green"
+                $buttonVisibility = "Collapsed"
+            } 
+            elseif ($currentChocoStatus -eq $false) 
+            {
+                $Text = "Non installé"
+                $ForeColor = "Red"
+                $buttonVisibility = "Visible"
+                $buttonContent = "Installer"
+            } 
+            else 
+            {
+                $Text = "Erreur"
+                $ForeColor = "Black"
+                $buttonVisibility = "Visible"
+            }
+
+            # Update the GUI with the new status details
+            $global:sync["txtBlkChocoVersion"].Dispatcher.Invoke([action]{
+                $global:sync["txtBlkChocoVersion"].Foreground = $ForeColor
+                $global:sync["txtBlkChocoVersion"].Text = $Text
+                $global:sync["btnChoco"].Visibility = $buttonVisibility
+                $global:sync["btnChoco"].Content = $buttonContent
+            })
+        }
+        return $previousChocoStatus
+    }
+
+    $previousChocoStatus = $null
+    while ($global:sync['flag'] -eq $true) 
+    {
+        $previousChocoStatus =  Set-MenuChoco $previousChocoStatus
+        Start-Sleep -s 2
+    }
+    return
+}
+
+$menuFTP = {
+    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+    Import-Module "$sourceFolderPath\Modules\Verification.psm1"
+
+    function Set-MenuFTP 
+    {
+        $ftpStatus = Get-FtpStatus
+
+        if ($ftpStatus -ne $previousFtpStatus) 
+        {
+            $previousFtpStatus = $ftpStatus
+
+            if ($ftpStatus -eq $true) 
+            {
+                $Text = "Valide"
+                $ForeColor = "Green"
+            }
+            else
+            {
+                $Text = "Injoignable"
+                $ForeColor = "Red"
+            }
+
+            # Update the GUI with the new status details
+            $global:sync["txtBlkFTPVersion"].Dispatcher.Invoke([action]{
+                $global:sync["txtBlkFTPVersion"].Foreground = $ForeColor
+                $global:sync["txtBlkFTPVersion"].Text = $Text
+            })
+        }
+        return $previousFtpStatus
+    }
+    $previousFtpStatus = $null
+    while ($global:sync['flag'] -eq $true) 
+    {
+        $previousFtpStatus = Set-MenuFTP $previousFtpStatus
+        Start-Sleep -s 2
+    }
+    return
+}
+
+$menuGit = {
+    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+    Import-Module "$sourceFolderPath\Modules\Verification.psm1"
+
+    function Set-MenuGit 
+    {
+        $gitStatus = Get-GitStatus
+
+        if ($gitStatus -ne $previousGitStatus) 
+        {
+            $previousGitStatus = $gitStatus
+
+            if ($gitStatus -eq $true) 
+            {
+                $Text = "Valide"
+                $ForeColor = "Green"
+            }
+            else 
+            {
+                $Text = "Injoignable"
+                $ForeColor = "Red"
+            }
+
+            # Update the GUI with the new status details
+            $global:sync["txtBlkGitVersion"].Dispatcher.Invoke([action]{
+                $global:sync["txtBlkGitVersion"].Foreground = $ForeColor
+                $global:sync["txtBlkGitVersion"].Text = $Text
+            })
+        }
+        return $previousGitStatus
+    }
+    $previousGitStatus = $null
+    while ($global:sync['flag'] -eq $true) 
+    {
+        $previousGitStatus = Set-MenuGit $previousGitStatus
+        Start-Sleep -s 2
     }
     return
 }
