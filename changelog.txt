@@ -1,7 +1,13 @@
+2024-12-01:
+- New gui pour choix des options d'installation
+- Corrigé bug menu qui pouvait freeze
+- Nouveau background pour tous les scripts
+- Dossier Temp modifié pour Temp/Stoolbox
+
 2024-08-22:
 - Amélioration de Remove, supprime dossier download et plus de checkup
 - Il supprime remove.bat et remove.ps1 du dossier Temp
-- Il supprime le dossier Temp
+- Il supprime le dossier Temp et la tâche planifiée
 
 2024-08-10:
 - Ajout de BattMonitor et Furmark V2
