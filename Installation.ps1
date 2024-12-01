@@ -98,6 +98,9 @@ $formControlsMenuApp.btnQuit.Add_Click({
     $window.Close()
     Exit
 })
+$formControlsMenuApp.GridToolbar.Add_MouseDown({
+    $window.DragMove()
+})
 
 $window.add_Closed({
     Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
