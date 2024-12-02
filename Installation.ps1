@@ -517,7 +517,7 @@ $appNames | ForEach-Object {
 #Install les logiciels cochés
 function Get-CheckBoxStatus 
 {
-    $checkboxes = $formControlsMenuApp.GridApps.Children | Where-Object {$_ -is [System.Windows.Controls.CheckBox] -and $_.Name -like "chkbox*" -and $_.IsChecked -eq $true}
+    $checkboxes = $formControlsMenuApp.GridInstallationMenuAppChoice.Children | Where-Object {$_ -is [System.Windows.Controls.CheckBox] -and $_.Name -like "chkbox*" -and $_.IsChecked -eq $true}
     foreach ($chkbox in $checkboxes) 
     {
         $appName = "$($chkbox.Content)"
