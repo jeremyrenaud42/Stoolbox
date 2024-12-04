@@ -128,50 +128,44 @@ function Get-BrushByName
     switch ($brushName) 
     {
         "Red" { return [System.Windows.Media.Brushes]::Red }
-        "Green" { return [System.Windows.Media.Brushes]::Green }
-        "Blue" { return [System.Windows.Media.Brushes]::Blue }
-        default { return [System.Windows.Media.Brushes]::Black }
+        "Green" { return [System.Windows.Media.Brushes]::MediumSeaGreen }
+        "Blue" { return [System.Windows.Media.Brushes]::DodgerBlue }
+        default { return [System.Windows.Media.Brushes]::white }
     }
 }
 
-# Function to add a colored line to the RichTextBox
-function Add-ColoredLine {
-    param (
+function Add-Text 
+{
+    param
+    (
         [string]$text,
-        [string]$colorName
+        [string]$colorName,
+        [switch]$SameLine = $false
     )
-
-    # Create a new Paragraph
-    $paragraph = New-Object System.Windows.Documents.Paragraph
-
     # Create a Run element with the specified text and color
     $run = New-Object System.Windows.Documents.Run
     $run.Text = $text
     $run.Foreground = Get-BrushByName -brushName $colorName
-
-    # Add the Run to the Paragraph
-    $paragraph.Inlines.Add($run)
-
-    # Add the Paragraph to the RichTextBox
-    $global:sync["richTxtBxTaskList"].Document.Blocks.Add($paragraph)
-
-    # Reset the color for the next line
-    $defaultRun = New-Object System.Windows.Documents.Run
-    $defaultRun.Text = "`n" # Add a new line character
-    $defaultRun.Foreground = [System.Windows.Media.Brushes]::Black # Default color
-
-    # Create a new Paragraph for the default color
-    $defaultParagraph = New-Object System.Windows.Documents.Paragraph
-    $defaultParagraph.Inlines.Add($defaultRun)
-
-    # Add the default Paragraph to the RichTextBox
-    $global:sync["richTxtBxTaskList"].Document.Blocks.Add($defaultParagraph)
+    
+    # Get the document and last paragraph
+    $document = $global:sync["richTxtBxOutput"].Document
+    $lastParagraph = $document.Blocks.LastBlock
+    
+    if ($lastParagraph -eq $null) {
+        # If no paragraph exists, create one
+        $lastParagraph = New-Object System.Windows.Documents.Paragraph
+        $document.Blocks.Add($lastParagraph)
+    }
+    
+    # If not using SameLine, add a line break
+    if (-not $SameLine) {
+        $lineBreak = New-Object System.Windows.Documents.LineBreak
+        $lastParagraph.Inlines.Add($lineBreak)
+    }
+    
+    # Add the colored run to the paragraph
+    $lastParagraph.Inlines.Add($run)
 }
-
-$formControlsMain.richTxtBxTaskList.add_textchanged({
-    $Window.Dispatcher.Invoke([Windows.Threading.DispatcherPriority]::Background, [action]{}) #Refresh le text
-    $formControlsMain.richTxtBxTaskList.ScrollToEnd() #scroll en bas
-})
 
 $formControlsMain.richTxtBxOutput.add_textchanged({
     $Window.Dispatcher.Invoke([Windows.Threading.DispatcherPriority]::Background, [action]{}) #Refresh le text
@@ -196,84 +190,564 @@ $window.add_Closed({
     exit
 })
 
+$formControlsMain.lblWinget.foreground = "white"
+$formControlsMain.lblChoco.foreground = "white"
+$formControlsMain.lblNuget.foreground = "white"
+$formControlsMain.lblSoftware.foreground = "white"
+$formControlsMain.lblActivation.foreground = "white"
+$formControlsMain.lblManualComplete.foreground = "white"
+if($formControlsMenuApp.chkboxMSStore.IsChecked -eq $true)
+{ 
+    $formControlsMain.lblStore.foreground = "white"
+}
+if($formControlsMenuApp.chkboxDisque.IsChecked -eq $true)
+{ 
+    $formControlsMain.lblDisk.foreground = "white"
+}
+if($formControlsMenuApp.chkboxExplorer.IsChecked -eq $true)
+{ 
+    $formControlsMain.lblExplorer.foreground = "white"
+}
+if($formControlsMenuApp.chkboxBitlocker.IsChecked -eq $true)
+{ 
+    $formControlsMain.lblBitlocker.foreground = "white"
+}
+if($formControlsMenuApp.chkboxStartup.IsChecked -eq $true)
+{ 
+    $formControlsMain.lblStartup.foreground = "white"
+}
+if($formControlsMenuApp.chkboxClavier.IsChecked -eq $true)
+{ 
+    $formControlsMain.lblkeyboard.foreground = "white"
+}
+if($formControlsMenuApp.chkboxConfi.IsChecked -eq $true)
+{ 
+    $formControlsMain.lblPrivacy.foreground = "white"
+}
+if($formControlsMenuApp.chkboxIcone.IsChecked -eq $true)
+{
+    $formControlsMain.lblDesktopIcon.foreground = "white"  
+}
+if($formControlsMenuApp.chkboxMSStore.IsChecked -eq $true)
+{ 
+    $formControlsMain.lblStore2.foreground = "white"
+}
+if($formControlsMenuApp.chkboxWindowsUpdate.IsChecked -eq $true)
+{ 
+    $formControlsMain.lblUpdate.foreground = "white"
+}
+
+$formControlsMain.btnclose.Add_Click({
+    $window.Close()
+    Exit
+})
+$formControlsMain.btnmin.Add_Click({
+    $window.WindowState = [System.Windows.WindowState]::Minimized
+})
+$formControlsMain.Titlebar.Add_MouseDown({
+    $window.DragMove()
+})
+
 Start-WPFApp $window
 New-Item -Path $installationLockFile -ItemType 'File' -Force
-
-
-#Add-ColoredLine -text "allo" -colorName "red"
-#read-host "allo"
-#par défaut on peut mettre en genre de gris claire toutes les task. et lors du script ca change en de couleur .
-#si c'est le cas je pense que ca ca sera plus simple que chaque tache soit un label independant qui change de couleur.
-<# Liste de tâches
-
-
-#>
 
 function Install-SoftwaresManager
 {
     Add-Log $logFileName "Installation de $windowsVersion le $actualDate"
-    $formControlsMain.lblProgress.content = "Préparation"   
-    $formControlsMain.richTxtBxOutput.AppendText("Lancement de la configuration du Windows`r`n")  
+    $formControlsMain.lblProgress.content = "Préparation"
 
+    $formControlsMain.lblWinget.foreground = "DodgerBlue"
     $wingetStatus = Get-WingetStatus
+    Add-Text -text "Installation de Winget"
     if($wingetStatus -le '1.8')
     {
-        $formControlsMain.richTxtBxOutput.AppendText("Installation de Winget`r`n")   
         Install-Winget
         $wingetStatus = Get-WingetStatus
         if($wingetStatus -ge '1.8')
         {
-            $formControlsMain.richTxtBxOutput.AppendText("Winget a été installé`r`n")
+            Add-Text -text " - Winget a été installé" -SameLine
+            $formControlsMain.lblWinget.foreground = "MediumSeaGreen"
         }
         else 
         {
-            $formControlsMain.richTxtBxOutput.AppendText("Winget a échoué`r`n")
+            Add-Text -text " - Winget a échoué" -colorName "red" -SameLine
+            $formControlsMain.lblWinget.foreground = "red"
         }
     }
     else 
     {
-        $formControlsMain.richTxtBxOutput.AppendText("Winget est déja installé`r`n")
+        Add-Text -text " - Winget est déja installé" -SameLine
+        $formControlsMain.lblWinget.foreground = "MediumSeaGreen"
     }
 
+    $formControlsMain.lblChoco.foreground = "DodgerBlue"
     $chocostatus = Get-ChocoStatus
+    Add-Text -text "Installation de Chocolatey"
     if($chocostatus -eq $false)
     {
-        $formControlsMain.richTxtBxOutput.AppendText("Installation de Chocolatey`r`n")
         Install-Choco
         $chocostatus = Get-ChocoStatus
         if($chocostatus -eq $true)
         {
-            $formControlsMain.richTxtBxOutput.AppendText("Chocolatey a été installé`r`n")
+            Add-Text -text " - Chocolatey a été installé" -SameLine
+            $formControlsMain.lblChoco.foreground = "MediumSeaGreen"
         }
         else 
         {
-            $formControlsMain.richTxtBxOutput.AppendText("Chocolatey a échoué`r`n")
+            Add-Text -text " - Chocolatey a échoué" -colorName "red" -SameLine
+            $formControlsMain.lblChoco.foreground = "red"
         }
     }
     else 
     {
-        $formControlsMain.richTxtBxOutput.AppendText("Chocolatey est déja installé`r`n")
+        Add-Text -text " - Chocolatey est déja installé" -SameLine 
+        $formControlsMain.lblChoco.foreground = "MediumSeaGreen"
     }
 
+    $formControlsMain.lblNuget.foreground = "DodgerBlue"
     $nugetExist = Get-NugetStatus
+    Add-Text -text "Installation de NuGet"
     if($nugetExist -eq $false)
-    {
-        $formControlsMain.richTxtBxOutput.AppendText("Installation de NuGet`r`n")
+    {   
         Install-Nuget
         $nugetExist = Get-NugetStatus
         if($nugetExist -eq $true)
         {
-            $formControlsMain.richTxtBxOutput.AppendText("Nuget a été installé`r`n`r`n")
+            Add-Text -text " - Nuget a été installé" -SameLine
+            Add-Text -text "`n"
+            $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
         }
         else 
         {
-            $formControlsMain.richTxtBxOutput.AppendText("Nuget a échoué`r`n`r`n")
+            Add-Text -text " - Nuget a échoué" -colorName = "red" -SameLine
+            Add-Text -text "`n"
+            $formControlsMain.lblNuget.foreground = "red"
         }
     }
     else 
     {    
-        $formControlsMain.richTxtBxOutput.AppendText("Nuget est déja installé`r`n`r`n")
+        Add-Text -text " - Nuget est déja installé" -SameLine
+        Add-Text -text "`n"
+        $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
     }
+}
+
+function Update-MsStore 
+{
+    $formControlsMain.lblStore.foreground = "DodgerBlue"
+    $formControlsMain.lblProgress.Content = "Mises à jour du Microsoft Store"
+    #pour gérer les vieilles versions qui ne vont pas s'updaté
+    $storeVersion = (Get-AppxPackage Microsoft.WindowsStore).version
+    if ($storeVersion -le 22110)
+    {
+        Add-Text -text "Mettre le Store à jour manuellement"
+        Start-Process "ms-windows-store:"
+        return
+    }
+    Add-Text -text "Lancement des updates du Microsoft Store"
+    $namespaceName = "root\cimv2\mdm\dmmap"
+    $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
+    $result = Get-CimInstance -Namespace $namespaceName -ClassName $className | Invoke-CimMethod -MethodName UpdateScanMethod
+    if ($result.ReturnValue -eq 0) 
+    {
+        Add-Text -text " - Mises à jour du Microsoft Store lancées" -SameLine
+        $formControlsMain.lblStore.foreground = "MediumSeaGreen"
+        Add-Log $logFileName "Mises à jour de Microsoft Store" 
+    } 
+    else 
+    {
+        Add-Text -text " - Échec des mises à jour du Microsoft Store" -colorName "red" -SameLine
+        $formControlsMain.lblStore.foreground = "red"
+    }
+}
+
+Function Rename-SystemDrive
+{
+    <#
+    .SYNOPSIS
+        Renomme le lecteur C:
+    .DESCRIPTION
+        Renomme par OS par défaut au lieu du nom actuel (souvent disque local)
+        Vérifie si ca a fonctionné
+    .PARAMETER NewDiskName
+        Le nouveau nom du disque
+    .EXAMPLE
+        Rename-SystemDrive -NewDiskName "OS"
+        Renomme le disque OS
+    #>
+    
+    
+    [CmdletBinding()]
+    param
+    (
+        [string]$NewDiskName = "OS"
+    )
+    $formControlsMain.lblDisk.foreground = "DodgerBlue"
+    $systemDriverLetter = $env:SystemDrive.TrimEnd(':') #Retourne la lettre seulement sans le :
+    $formControlsMain.lblProgress.Content = "Renommage du disque"
+    $diskName = (Get-Volume -DriveLetter $systemDriverLetter).FileSystemLabel
+    
+    if($diskName -match $NewDiskName)
+    {
+        $formControlsMain.lblDisk.foreground = "MediumSeaGreen"
+        Add-Text -text "Le disque est déja nommé $NewDiskName"
+    }
+    else
+    {
+        Set-Volume -DriveLetter $systemDriverLetter -NewFileSystemLabel $NewDiskName
+        $diskName = (Get-Volume -DriveLetter $systemDriverLetter).FileSystemLabel
+
+        if($diskName -match $NewDiskName)
+        {
+            $formControlsMain.lblDisk.foreground = "MediumSeaGreen"
+            Add-Text -text "Le disque $env:SystemDrive a été renommé $NewDiskName" 
+            Add-Log $logFileName "Le disque $env:SystemDrive a été renommé $NewDiskName"
+        }
+        else
+        {
+            Add-Text -text "Échec du renommage de disque" -colorName "red"    
+            $formControlsMain.lblDisk.foreground = "red"
+        }
+    } 
+}
+
+Function Set-ExplorerDisplay
+{
+    $formControlsMain.lblExplorer.foreground = "DodgerBlue"
+    $formControlsMain.lblProgress.Content = "Configuration des paramètres de l'explorateur de fichiers"
+
+    $explorerLaunchWindow = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo').LaunchTo
+    if($explorerLaunchWindow -eq '1')
+    {
+        Add-Text -text "Ce PC remplace déja l'accès rapide"
+    }
+    else 
+    {
+        set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo' -Type 'DWord' -Value '1'     
+    }
+
+    $providerNotifications = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications').ShowSyncProviderNotifications
+    if($providerNotifications -eq '0')
+    {
+        Add-Text -text "Le fournisseur de synchronisation est déjà décoché"
+    }
+    else 
+    {
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications' -Type 'DWord' -Value '0'
+    }
+    $explorerLaunchWindow = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo').LaunchTo
+    $providerNotifications = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications').ShowSyncProviderNotifications
+    if(($explorerLaunchWindow -eq '1') -and ($providerNotifications -eq '0'))
+    {
+        $formControlsMain.lblExplorer.foreground = "MediumSeaGreen"
+        Add-Text -text "L'accès rapide a été remplacé par Ce PC"
+        Add-Text -text "Le fournisseur de synchronisation a été decoché" 
+        Add-Log $logFileName "Explorateur de fichiers configuré" 
+    }
+    else 
+    {
+        $formControlsMain.lblExplorer.foreground = "red"
+        if($explorerLaunchWindow -ne '1')
+        {
+            Add-Text -text "L'accès rapide n'a pas été remplacé par Ce PC" -colorName "red"
+        }
+        if($providerNotifications -ne '0')
+        {
+            Add-Text -text "Le fournisseur de synchronisation n'a pas été decoché" -colorName "red"
+        }       
+    }
+}
+
+Function Disable-Bitlocker
+{
+    $formControlsMain.lblBitlocker.foreground = "DodgerBlue"
+    $formControlsMain.lblProgress.Content = "Désactivation du bitlocker"
+    $bitlockerStatus = Get-BitLockerVolume -MountPoint $env:SystemDrive | Select-Object -expand VolumeStatus
+    if($bitlockerStatus -eq 'FullyEncrypted')
+    {
+        manage-bde $env:systemdrive -off
+        $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
+        Add-Text -text "Bitlocker a été désactivé"
+        Add-Log $logFileName "Bitlocker a été désactivé"
+    }
+    elseif ($bitlockerStatus -eq 'EncryptionInProgress')
+    {
+        manage-bde $env:systemdrive -off
+        $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
+        Add-Text -text "Bitlocker a été désactivé"
+        Add-Log $logFileName "Bitlocker a été désactivé"
+    }
+    elseif ($bitlockerStatus -eq 'FullyDecrypted')
+    {
+        $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
+        Add-Text -text "Bitlocker est déja désactivé"
+        Add-Log $logFileName "Bitlocker est déja désactivé"
+    }
+    elseif ($bitlockerStatus -eq 'DecryptionInProgress')
+    {
+        $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
+        Add-Text -text "Bitlocker est déja en cours de déchiffrement" 
+        Add-Log $logFileName "Bitlocker est déja en cours de déchiffrement"
+    }
+    else 
+    {
+        $formControlsMain.lblBitlocker.foreground = "red"
+        Add-Text -text "Bitlocker a échoué" -colorName "red"
+        Add-Log $logFileName "Bitlocker a échoué"
+    }
+}
+
+Function Disable-FastBoot
+{
+    $formControlsMain.lblStartup.foreground = "DodgerBlue"
+    $formControlsMain.lblProgress.Content = "Desactivation du demarrage rapide"    
+    $power = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Name 'HiberbootEnabled').HiberbootEnabled
+    if($power -eq '0')
+    {  
+        Add-Text -text "Le démarrage rapide est déjà désactivé"
+        $formControlsMain.lblStartup.foreground = "MediumSeaGreen"
+    }
+    elseif($power -eq '1')
+    {
+        set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Name 'HiberbootEnabled' -Type 'DWord' -Value '0'  
+        Add-Text -text "Le démarrage rapide a été désactivé"
+        Add-Log $logFileName "Le démarrage rapide a été désactivé"
+        $formControlsMain.lblStartup.foreground = "MediumSeaGreen"
+    }
+    else  
+    {
+        Add-Text -text "Le démarrage rapide n'a pas été désactivé" -colorName "red"
+        $formControlsMain.lblStartup.foreground = "red"
+    }
+}
+
+Function Remove-EngKeyboard
+{
+    $formControlsMain.lblkeyboard.foreground = "DodgerBlue"
+    $formControlsMain.lblProgress.Content = "Suppression du clavier Anglais"   
+    $langList = Get-WinUserLanguageList #Gets the language list for the current user account
+    $anglaisCanada = $langList | Where-Object LanguageTag -eq "en-CA" #sélectionne le clavier anglais canada de la liste
+    if(($anglaisCanada).LanguageTag -eq 'en-CA')
+    {
+        $langList.Remove($anglaisCanada) | Out-Null #supprimer la clavier sélectionner
+        Set-WinUserLanguageList $langList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
+        $anglaisCanada = $langList | Where-Object LanguageTag -eq "en-CA" #sélectionne le clavier anglais canada de la liste
+        if(($anglaisCanada).LanguageTag -eq 'en-CA')
+        {
+            Add-Text -text "Le clavier Anglais n'a pas été supprimé" -colorName "red"
+            $formControlsMain.lblkeyboard.foreground = "red"
+        }
+        else
+        {
+            Add-Text -text "Le clavier Anglais a été supprimé"
+            $formControlsMain.lblkeyboard.foreground = "MediumSeaGreen"
+            Add-Log $logFileName "Le clavier Anglais a été supprimé"
+        }
+    }
+    else 
+    {
+        Add-Text -text "Le clavier Anglais est déja supprimé"
+        $formControlsMain.lblkeyboard.foreground = "MediumSeaGreen"
+    }   
+}
+
+Function Set-Privacy
+{
+    $formControlsMain.lblPrivacy.foreground = "DodgerBlue"
+    $formControlsMain.lblProgress.Content = "Paramètres de confidentialité"
+
+    $338393 = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled")."SubscribedContent-338393Enabled"
+    $353694 = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled")."SubscribedContent-353694Enabled"
+    $353696 = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled")."SubscribedContent-353696Enabled"
+    $Start_TrackProgs = (Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs")."Start_TrackProgs"
+    if (($338393 -eq 0) -and ($353694 -eq 0) -and ($353696 -eq 0) -and ($Start_TrackProgs -eq 0))
+    {
+        Add-Text -text "Les options de confidentialité sont déjà configurées"
+        $formControlsMain.lblPrivacy.foreground = "MediumSeaGreen"
+    }
+    else 
+    {
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled" -Type 'DWord' -Value 0 
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Type 'DWord' -Value 0 
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type 'DWord' -Value 0 
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type 'DWord' -Value 0 
+        $338393 = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled")."SubscribedContent-338393Enabled"
+        $353694 = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled")."SubscribedContent-353694Enabled"
+        $353696 = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled")."SubscribedContent-353696Enabled"
+        $Start_TrackProgs = (Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs")."Start_TrackProgs"
+        
+        if (($338393 -eq 0) -and ($353694 -eq 0) -and ($353696 -eq 0) -and ($Start_TrackProgs -eq 0))
+        { 
+            Add-Text -text "Les options de confidentialité ont été configurées"
+            Add-Log $logFileName "Les options de confidentialité ont été configurées"
+            $formControlsMain.lblPrivacy.foreground = "MediumSeaGreen" 
+        }
+        else 
+        {
+            $formControlsMain.lblPrivacy.foreground = "red" 
+            Add-Text -text "Les options de confidentialité n'ont pas été configurées" -colorName "red"
+        } 
+    }    
+}
+
+Function Enable-DesktopIcon
+{
+    $formControlsMain.lblDesktopIcon.foreground = "DodgerBlue"
+    $formControlsMain.lblProgress.Content = "Installation des icones systèmes sur le bureau"   
+    if (!(Test-Path -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel"))
+		{
+			New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Force
+		}
+
+    $configPanel = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}")."{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}"
+    $myPC = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}")."{20D04FE0-3AEA-1069-A2D8-08002B30309D}"
+    $userFolder = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}")."{59031a47-3f72-44a7-89c5-5595fe6b30ee}"
+    
+    if (($configPanel -eq 0) -and ($myPC -eq 0) -and ($userFolder -eq 0))
+    {
+        Add-Text -text "Les icones systèmes sont déjà installés sur le bureau"
+        Add-Text -text "`n"
+        $formControlsMain.lblDesktopIcon.foreground = "MediumSeaGreen"
+    }
+    else 
+    {
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type 'DWord' -Value 0 
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type 'DWord' -Value 0 
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type 'DWord' -Value 0
+        $configPanel = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}")."{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}"
+        $myPC = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}")."{20D04FE0-3AEA-1069-A2D8-08002B30309D}"
+        $userFolder = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}")."{59031a47-3f72-44a7-89c5-5595fe6b30ee}"
+        
+        if (($configPanel -eq 0) -and ($myPC -eq 0) -and ($userFolder -eq 0))
+        {
+            Add-Text -text "Les icones systèmes ont été installés sur le bureau"
+            Add-Text -text "`n" #Permet de créé un espace avant les logiciels
+            Add-Log $logFileName "Les icones systèmes ont été installés sur le bureau"
+            $formControlsMain.lblDesktopIcon.foreground = "MediumSeaGreen"  
+        }
+        else 
+        {
+            Add-Text -text "Les icones systèmes n'ont pas été installés sur le bureau" -colorName "red"
+            Add-Text -text "`n" #Permet de créé un espace avant les logiciels
+            $formControlsMain.lblDesktopIcon.foreground = "red"
+        }
+    }  
+}
+
+$jsonFilePath = "$pathInstallationSource\InstallationApps.JSON"
+$jsonString = Get-Content -Raw $jsonFilePath
+$appsInfo = ConvertFrom-Json $jsonString
+$appNames = $appsInfo.psobject.Properties.Name
+$appNames | ForEach-Object {
+    $appName = $_
+    $appsInfo.$appName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path64)
+    $appsInfo.$appName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path32)
+    $appsInfo.$appName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.pathAppData)
+    $appsInfo.$appName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.NiniteName)
+    }
+
+#Install les logiciels cochés
+function Get-CheckBoxStatus 
+{
+    $formControlsMain.lblSoftware.foreground = "DodgerBlue"
+    $checkboxes = $formControlsMenuApp.GridInstallationMenuAppChoice.Children | Where-Object {$_ -is [System.Windows.Controls.CheckBox] -and $_.Name -like "chkbox*" -and $_.IsChecked -eq $true}
+    foreach ($chkbox in $checkboxes) 
+    {
+        $appName = "$($chkbox.Content)"
+        Install-Software $appsInfo.$appName
+    }
+    $formControlsMain.lblSoftware.foreground = "MediumSeaGreen"
+}
+
+ function Test-SoftwarePresence($appInfo)
+{
+   $softwareInstallationStatus= $false
+   if (($appInfo.path64 -AND (Test-Path $appInfo.path64)) -OR 
+   ($appInfo.path32 -AND (Test-Path $appInfo.path32)) -OR 
+   ($appInfo.pathAppData -AND (Test-Path $appInfo.pathAppData)))
+   {
+     $softwareInstallationStatus = $true
+   }
+   return $softwareInstallationStatus
+}
+
+function Install-Software($appInfo)
+{
+    $formControlsMain.lblProgress.Content = "Installation de $appName"
+    Add-Text -text "Installation de $appName en cours"
+    $softwareInstallationStatus = Test-SoftwarePresence $appInfo
+        if($softwareInstallationStatus)
+        {
+            Add-Text -text "- $appName est déja installé" -SameLine
+        }
+        elseif($softwareInstallationStatus -eq $false)
+        {  
+            Install-SoftwareWithWinget $appInfo
+        }
+    Add-Log $logFileName "Installation de $appName" 
+}
+
+function Install-SoftwareWithWinget($appInfo)
+{
+    if($appInfo.WingetName)
+    {
+        winget install -e --id $appInfo.wingetname --accept-package-agreements --accept-source-agreements --silent | out-null
+    } 
+    $softwareInstallationStatus = Test-SoftwarePresence $appInfo
+        if($softwareInstallationStatus)
+        {
+            Add-Text -text " - $appName installé avec succès" -SameLine
+        } 
+        else
+        {
+            Install-SoftwareWithChoco $appInfo
+        }     
+}
+
+function Install-SoftwareWithChoco($apsInfo)
+{
+    if($appInfo.ChocoName)
+    {
+        choco install $appInfo.ChocoName -y | out-null
+    }
+    $softwareInstallationStatus = Test-SoftwarePresence $apsInfo
+    if($softwareInstallationStatus)
+    {     
+        Add-Text -text " - $appName installé avec succès" -SameLine
+    }
+    else
+    {
+        Add-Text -text " - $appName a échoué" -colorName "red" -SameLine
+        Install-SoftwareWithNinite $appInfo
+    } 
+}
+
+function Install-SoftwareWithNinite($appInfo)
+{
+    if($appInfo.NiniteName)
+    {
+        Invoke-WebRequest $appInfo.NiniteGithubLink -OutFile $appInfo.NiniteName | Out-Null
+        Start-Process $appInfo.NiniteName -Verb runAs
+    }
+}
+
+function Get-ActivationStatus
+{
+    $formControlsMain.lblActivation.foreground = "DodgerBlue"
+    $activated = Get-CIMInstance -query "select LicenseStatus from SoftwareLicensingProduct where LicenseStatus=1" | Select-Object -ExpandProperty LicenseStatus 
+    if($activated -eq "1")
+    {
+        Add-Text -text "`n"
+        Add-Text -text "$windowsVersion est activé sur cet ordinateur"
+        $formControlsMain.lblActivation.foreground = "MediumSeaGreen"      
+    }
+    else 
+    {
+        Add-Text -text "`n"
+        Add-Text -text "Windows n'est pas activé" -colorName "red"
+        [System.Windows.MessageBox]::Show("Windows n'est pas activé","Installation Windows",0,64) | Out-Null   
+        $formControlsMain.lblActivation.foreground = "red"
+    }  
 }
 
 function Initialize-WindowsUpdate
@@ -293,7 +767,8 @@ function Get-WindowsUpdateReboot
     $rebootStatus = get-wurebootstatus -Silent #vérifie si ordi doit reboot à cause de windows update (PSwindowsupdate)
     if($rebootStatus)
     {
-        $formControlsMain.richTxtBxOutput.AppendText("`r`nL'ordinateur devra redémarrer pour finaliser l'installation des mises à jour")
+        Add-Text -text "`n"
+        Add-Text -text "L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour"
         [System.Windows.MessageBox]::Show("L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour","Installation Windows",0,64) | Out-Null    
         $restartComputer = $true
     } 
@@ -324,291 +799,37 @@ function Install-WindowsUpdate
     )
 
 
+    $formControlsMain.lblUpdate.foreground = "DodgerBlue"
     $formControlsMain.lblProgress.Content = "Mises à jour de Windows"
-    $formControlsMain.richTxtBxOutput.AppendText("Vérification des mises à jour de Windows") 
+    Add-Text -text "Vérification des mises à jour de Windows"
     Initialize-WindowsUpdate 
     $maxSizeBytes = $UpdateSize * 1MB #sans ca ca marchera pas
     $updates = Get-WUList -MaxSize $maxSizeBytes
     $totalUpdates = $updates.Count
         if($totalUpdates -eq 0)
         {
-            $formControlsMain.richTxtBxOutput.AppendText(" -Toutes les mises à jour sont deja installées`r`n")     
+            Add-Text -text " - Toutes les mises à jour sont deja installées" -SameLine 
+            $formControlsMain.lblUpdate.foreground = "MediumSeaGreen"   
         }
         elseif($totalUpdates -gt 0)
         {
-            $formControlsMain.richTxtBxOutput.AppendText(" -$totalUpdates mises à jour de disponibles`r`n") 
+            Add-Text -text " - $totalUpdates mises à jour de disponibles" -SameLine 
             $currentUpdate = 0
                 foreach($update in $updates)
                 { 
                     $currentUpdate++ 
                     $kb = $update.KB
-                    $formControlsMain.richTxtBxOutput.AppendText("Mise à jour $($currentUpdate) sur $($totalUpdates): $($update.Title)`r`n")                    
+                    Add-Text -text "Mise à jour $($currentUpdate) sur $($totalUpdates): $($update.Title)"
                     Get-WindowsUpdate -KBArticleID $kb -MaxSize $maxSizeBytes -Install -AcceptAll -IgnoreReboot     
                 }
+                $formControlsMain.lblUpdate.foreground = "MediumSeaGreen"
         }  
         else
         {
-            $formControlsMain.richTxtBxOutput.AppendText(" -Échec de la vérification des mise a jours de Windows`r`n") 
+            Add-Text -text " - Échec de la vérification des mise a jours de Windows" -colorName "red" -SameLine
+            $formControlsMain.lblUpdate.foreground = "red"
         } 
    Add-Log $logFileName "Mises à jour de Windows effectuées"
-}
-
-Function Rename-SystemDrive
-{
-    <#
-    .SYNOPSIS
-        Renomme le lecteur C:
-    .DESCRIPTION
-        Renomme par OS par défaut au lieu du nom actuel (souvent disque local)
-        Vérifie si ca a fonctionné
-    .PARAMETER NewDiskName
-        Le nouveau nom du disque
-    .EXAMPLE
-        Rename-SystemDrive -NewDiskName "OS"
-        Renomme le disque OS
-    #>
-    
-    
-    [CmdletBinding()]
-    param
-    (
-        [string]$NewDiskName = "OS"
-    )
-
-    $systemDriverLetter = $env:SystemDrive.TrimEnd(':') #Retounre la lettre seulement sans le :
-    $formControlsMain.lblProgress.Content = "Renommage du disque"    
-    Set-Volume -DriveLetter $systemDriverLetter -NewFileSystemLabel $NewDiskName
-    $diskName = (Get-Volume -DriveLetter $systemDriverLetter).FileSystemLabel
-    if($diskName -match $NewDiskName)
-    {
-        $formControlsMain.richTxtBxOutput.AppendText("Le disque $env:SystemDrive a été renommé $NewDiskName`r`n")    
-        Add-Log $logFileName "Le disque $env:SystemDrive a été renommé $NewDiskName"
-    }
-    else
-    {
-        $formControlsMain.richTxtBxOutput.AppendText("`r`nÉchec du renommage de disque`r`n")    
-    }
-}
-
-Function Set-ExplorerDisplay
-{
-    $formControlsMain.lblProgress.Content = "Configuration des paramètres de l'explorateur de fichiers"
-    set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo' -Type 'DWord' -Value '1'
-    $formControlsMain.richTxtBxOutput.AppendText("L'accès rapide a été remplacé par Ce PC`r`n")   
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications' -Type 'DWord' -Value '0'
-    $formControlsMain.richTxtBxOutput.AppendText("Le fournisseur de synchronisation a été decoché`r`n")   
-    Add-Log $logFileName "Explorateur de fichiers configuré" 
-}
-
-Function Disable-Bitlocker
-{
-    $formControlsMain.lblProgress.Content = "Désactivation du bitlocker"
-    $bitlockerStatus = Get-BitLockerVolume -MountPoint $env:SystemDrive | Select-Object -expand VolumeStatus
-    if($bitlockerStatus -eq 'FullyEncrypted')
-    {
-        manage-bde $env:systemdrive -off
-        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")
-        Add-Log $logFileName "Bitlocker a été désactivé"
-    }
-    elseif ($bitlockerStatus -eq 'EncryptionInProgress')
-    {
-        manage-bde $env:systemdrive -off
-        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker a été désactivé`r`n")
-        Add-Log $logFileName "Bitlocker a été désactivé"
-    }
-    elseif ($bitlockerStatus -eq 'FullyDecrypted')
-    {
-        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja désactivé`r`n") 
-        Add-Log $logFileName "Bitlocker est déja désactivé"
-    }
-    elseif ($bitlockerStatus -eq 'DecryptionInProgress')
-    {
-        $formControlsMain.richTxtBxOutput.AppendText("Bitlocker est déja en cours de déchiffrement`r`n") 
-        Add-Log $logFileName "Bitlocker est déja en cours de déchiffrement"
-    }
-}
-
-Function Disable-FastBoot
-{
-    $formControlsMain.lblProgress.Content = "Desactivation du demarrage rapide"    
-    set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Name 'HiberbootEnabled' -Type 'DWord' -Value '0'
-    #powercfg /h off
-    $formControlsMain.richTxtBxOutput.AppendText("Le démarrage rapide a été désactivé`r`n")   
-    Add-Log $logFileName "Le démarrage rapide a été désactivé"
-}
-
-Function Remove-EngKeyboard
-{
-    $formControlsMain.lblProgress.Content = "Suppression du clavier Anglais"   
-    $langList = Get-WinUserLanguageList #Gets the language list for the current user account
-    $anglaisCanada = $langList | Where-Object LanguageTag -eq "en-CA" #sélectionne le clavier anglais canada de la liste
-    $langList.Remove($anglaisCanada) | Out-Null #supprimer la clavier sélectionner
-    Set-WinUserLanguageList $langList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
-    $formControlsMain.richTxtBxOutput.AppendText("Le clavier Anglais a été supprimé`r`n")
-    Add-Log $logFileName "Le clavier Anglais a été supprimé"
-}
-
-Function Set-Privacy
-{
-    $formControlsMain.lblProgress.Content = "Paramètres de confidentialité"
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled" -Type 'DWord' -Value 0 
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Type 'DWord' -Value 0 
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Type 'DWord' -Value 0 
-    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type 'DWord' -Value 0 
-    $formControlsMain.richTxtBxOutput.AppendText("Les options de confidentialité ont été configuré`r`n") 
-    Add-Log $logFileName "Les options de confidentialité ont été configuré"
-      
-}
-
-Function Enable-DesktopIcon
-{
-    $formControlsMain.lblProgress.Content = "Installation des icones systèmes sur le bureau"   
-    if (!(Test-Path -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel"))
-		{
-			New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Force
-		}
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type 'DWord' -Value 0 
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type 'DWord' -Value 0 
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type 'DWord' -Value 0
-    $formControlsMain.richTxtBxOutput.AppendText("Les icones systèmes ont été installés sur le bureau`r`n")
-    $formControlsMain.richTxtBxOutput.AppendText(" `r`n") #Permet de créé un espace avant les logiciels
-    Add-Log $logFileName "Les icones systèmes ont été installés sur le bureau"  
-}
-
-function Update-MsStore 
-{
-    $formControlsMain.lblProgress.Content = "Mises à jour du Microsoft Store"
-    #pour gérer les vieilles versions qui ne vont pas s'updaté
-    $storeVersion = (Get-AppxPackage Microsoft.WindowsStore).version
-    if ($storeVersion -le 22110)
-    {
-        $formControlsMain.richTxtBxOutput.AppendText("Mettre le Store à jour manuellement`r`n")
-        Start-Process "ms-windows-store:"
-        return
-    }
-
-    $formControlsMain.richTxtBxOutput.AppendText("`r`nLancement des updates du Microsoft Store")
-    $namespaceName = "root\cimv2\mdm\dmmap"
-    $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
-    $result = Get-CimInstance -Namespace $namespaceName -ClassName $className | Invoke-CimMethod -MethodName UpdateScanMethod
-    if ($result.ReturnValue -eq 0) 
-    {
-        $formControlsMain.richTxtBxOutput.AppendText(" - Mises à jour du Microsoft Store lancées`r`n")
-        Add-Log $logFileName "Mises à jour de Microsoft Store" 
-    } 
-    else 
-    {
-        $formControlsMain.richTxtBxOutput.AppendText(" - Échec des mises à jour du Microsoft Store `r`n")
-    }
-}
-
-$jsonFilePath = "$pathInstallationSource\InstallationApps.JSON"
-$jsonString = Get-Content -Raw $jsonFilePath
-$appsInfo = ConvertFrom-Json $jsonString
-$appNames = $appsInfo.psobject.Properties.Name
-$appNames | ForEach-Object {
-    $appName = $_
-    $appsInfo.$appName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path64)
-    $appsInfo.$appName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path32)
-    $appsInfo.$appName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.pathAppData)
-    $appsInfo.$appName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.NiniteName)
-    }
-
-#Install les logiciels cochés
-function Get-CheckBoxStatus 
-{
-    $checkboxes = $formControlsMenuApp.GridInstallationMenuAppChoice.Children | Where-Object {$_ -is [System.Windows.Controls.CheckBox] -and $_.Name -like "chkbox*" -and $_.IsChecked -eq $true}
-    foreach ($chkbox in $checkboxes) 
-    {
-        $appName = "$($chkbox.Content)"
-        Install-Software $appsInfo.$appName
-    }
-}
-
- function Test-SoftwarePresence($appInfo)
-{
-   $softwareInstallationStatus= $false
-   if (($appInfo.path64 -AND (Test-Path $appInfo.path64)) -OR 
-   ($appInfo.path32 -AND (Test-Path $appInfo.path32)) -OR 
-   ($appInfo.pathAppData -AND (Test-Path $appInfo.pathAppData)))
-   {
-     $softwareInstallationStatus = $true
-   }
-   return $softwareInstallationStatus
-}
-
-function Install-Software($appInfo)
-{
-    $formControlsMain.lblProgress.Content = "Installation de $appName"
-    $formControlsMain.richTxtBxOutput.AppendText("Installation de $appName en cours")
-    $softwareInstallationStatus = Test-SoftwarePresence $appInfo
-        if($softwareInstallationStatus)
-        {
-            $formControlsMain.richTxtBxOutput.AppendText(" -$appName est déja installé`r`n")
-        }
-        elseif($softwareInstallationStatus -eq $false)
-        {  
-            Install-SoftwareWithWinget $appInfo
-        }
-    Add-Log $logFileName "Installation de $appName" 
-}
-
-function Install-SoftwareWithWinget($appInfo)
-{
-    if($appInfo.WingetName)
-    {
-        winget install -e --id $appInfo.wingetname --accept-package-agreements --accept-source-agreements --silent | out-null
-    } 
-    $softwareInstallationStatus = Test-SoftwarePresence $appInfo
-        if($softwareInstallationStatus)
-        {
-            $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n") 
-        } 
-        else
-        {
-            Install-SoftwareWithChoco $appInfo
-        }     
-}
-
-function Install-SoftwareWithChoco($apsInfo)
-{
-    if($appInfo.ChocoName)
-    {
-        choco install $appInfo.ChocoName -y | out-null
-    }
-    $softwareInstallationStatus = Test-SoftwarePresence $apsInfo
-    if($softwareInstallationStatus)
-    {   
-        $formControlsMain.richTxtBxOutput.AppendText(" -$appName installé avec succès`r`n")  
-    }
-    else
-    {
-        $formControlsMain.richTxtBxOutput.AppendText(" -$appName a échoué`r`n")
-        Install-SoftwareWithNinite $appInfo
-    } 
-}
-
-function Install-SoftwareWithNinite($appInfo)
-{
-    if($appInfo.NiniteName)
-    {
-        Invoke-WebRequest $appInfo.NiniteGithubLink -OutFile $appInfo.NiniteName | Out-Null
-        Start-Process $appInfo.NiniteName -Verb runAs
-    }
-}
-
-function Get-ActivationStatus
-{
-    $activated = Get-CIMInstance -query "select LicenseStatus from SoftwareLicensingProduct where LicenseStatus=1" | Select-Object -ExpandProperty LicenseStatus 
-    if($activated -eq "1")
-    {
-        $formControlsMain.richTxtBxOutput.AppendText("`r`n$windowsVersion est activé sur cet ordinateur`r`n")       
-    }
-    else 
-    {
-        $formControlsMain.richTxtBxOutput.AppendText("`r`nWindows n'est pas activé`r`n")  
-        [System.Windows.MessageBox]::Show("Windows n'est pas activé","Installation Windows",0,64) | Out-Null   
-    }  
 }
 
 function Set-DefaultBrowser
@@ -643,6 +864,7 @@ function Set-GooglePinnedTaskbar
 
 function Complete-Installation
 {
+    $formControlsMain.lblManualComplete.foreground = "DodgerBlue"
     Add-Log $logFileName "Installation de Windows effectué avec Succès"
     Send-FTPLogs $pathInstallationSource\$logFileName
     [Audio]::Volume = 0.25
@@ -651,7 +873,8 @@ function Complete-Installation
     [Audio]::Volume = 0.75
     Get-voice -Verb runAs
     Send-VoiceMessage "Vous avez terminer la configuration du Windows."
-    $formControlsMain.richTxtBxOutput.AppendText("`r`nVous avez terminer la configuration du Windows.")
+    Add-Text -text "`n"
+    Add-Text -text "Vous avez terminer la configuration du Windows."
     Stop-Process -Name "ninite" -Force -erroraction ignore
     if($formControlsMenuApp.chkboxGoogleChrome.IsChecked -eq $true)
     {
@@ -662,6 +885,7 @@ function Complete-Installation
     {
         Set-DefaultPDFViewer
     }
+    $formControlsMain.lblManualComplete.foreground = "MediumSeaGreen"
     if($formControlsMenuApp.chkboxWindowsUpdate.IsChecked -eq $true)
     {
         $wuRestart = Get-WindowsUpdateReboot
@@ -714,7 +938,9 @@ function Main
     Get-ActivationStatus
     if($formControlsMenuApp.chkboxMSStore.IsChecked -eq $true)
     { 
+        $formControlsMain.lblStore2.foreground = "DodgerBlue"
         Update-MsStore
+        $formControlsMain.lblStore2.foreground = "MediumSeaGreen"
     }
     if($formControlsMenuApp.chkboxWindowsUpdate.IsChecked -eq $true)
     { 
