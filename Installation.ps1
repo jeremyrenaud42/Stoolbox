@@ -43,19 +43,17 @@ if($adminStatus -eq $false)
 }
 $Global:installationIdentifier = "Installation.ps1"
 Test-ScriptInstance $installationLockFile $Global:installationIdentifier
-
+############################GUI####################################
 #WPF - appMenuChoice
-$xamlFile = "$pathInstallationSource\MainWindow.xaml"
-$xamlContent = Read-XamlFileContent $xamlFile
-$formatedXamlFile = Format-XamlFile $xamlContent
-$xamlDoc = Convert-ToXmlDocument $formatedXamlFile
-$XamlReader = New-XamlReader $xamlDoc
-$window = New-WPFWindowFromXaml $XamlReader
-$formControlsMenuApp = Get-WPFControlsFromXaml $xamlDoc $window
+$xamlFileMenuApp = "$pathInstallationSource\MainWindow.xaml"
+$xamlContentMenuApp = Read-XamlFileContent $xamlFileMenuApp
+$formatedXamlFileMenuApp = Format-XamlFile $xamlContentMenuApp
+$xamlDocMenuApp = Convert-ToXmlDocument $formatedXamlFileMenuApp
+$XamlReaderMenuApp = New-XamlReader $xamlDocMenuApp
+$windowMenuApp = New-WPFWindowFromXaml $XamlReaderMenuApp
+$formControlsMenuApp = Get-WPFControlsFromXaml $xamlDocMenuApp $windowMenuApp
 
-
-#ajout des events, cases a cocher, etc.. pour le WPF:
-
+#ajout des events, cases a cocher, etc.. pour appMenuChoice:
 #Logiciels à cocher automatiquement
 $manufacturerBrand = Get-Manufacturer
 if($manufacturerBrand -match 'LENOVO')
@@ -82,40 +80,38 @@ if($videoController -match 'NVIDIA')
 }
 #Boutons
 $formControlsMenuApp.btnGo.Add_Click({
-$window.Close()
+$windowMenuApp.Close()
 })
 $formControlsMenuApp.btnReturn.Add_Click({
     start-process "$env:SystemDrive\_Tech\Menu.bat" -verb Runas
-    $window.Close()
+    $windowMenuApp.Close()
     Exit
 })
 $formControlsMenuApp.btnclose.Add_Click({
-    $window.Close()
+    $windowMenuApp.Close()
     Exit
 })
 $formControlsMenuApp.btnQuit.Add_Click({
     Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
-    $window.Close()
+    $windowMenuApp.Close()
     Exit
 })
 $formControlsMenuApp.GridToolbar.Add_MouseDown({
-    $window.DragMove()
+    $windowMenuApp.DragMove()
 })
 
-$window.add_Closed({
+$windowMenuApp.add_Closed({
     Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
 })
 
-Start-WPFAppDialog $window
-
 #WPF - Main GUI
-$xamlFile = "$pathInstallationSource\MainWindow1.xaml"
-$xamlContent = Read-XamlFileContent $xamlFile
-$formatedXamlFile = Format-XamlFile $xamlContent
-$xamlDoc = Convert-ToXmlDocument $formatedXamlFile
-$XamlReader = New-XamlReader $xamlDoc
-$window = New-WPFWindowFromXaml $XamlReader
-$formControlsMain = Get-WPFControlsFromXaml $xamlDoc $window $sync
+$xamlFileMain = "$pathInstallationSource\MainWindow1.xaml"
+$xamlContentMain = Read-XamlFileContent $xamlFileMain
+$formatedXamlFileMain = Format-XamlFile $xamlContentMain
+$xamlDocMain = Convert-ToXmlDocument $formatedXamlFileMain
+$XamlReaderMain = New-XamlReader $xamlDocMain
+$windowMain = New-WPFWindowFromXaml $XamlReaderMain
+$formControlsMain = Get-WPFControlsFromXaml $xamlDocMain $windowMain $sync
 
 # Function to get a Brush by name
 function Get-BrushByName 
@@ -168,7 +164,7 @@ function Add-Text
 }
 
 $formControlsMain.richTxtBxOutput.add_textchanged({
-    $Window.Dispatcher.Invoke([Windows.Threading.DispatcherPriority]::Background, [action]{}) #Refresh le text
+    $WindowMain.Dispatcher.Invoke([Windows.Threading.DispatcherPriority]::Background, [action]{}) #Refresh le text
     $formControlsMain.richTxtBxOutput.ScrollToEnd() #scroll en bas
 })
 
@@ -185,7 +181,7 @@ if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem)
     $formControlsMenuApp.CbBoxRestartTimer.SelectedItem = $formControlsMenuApp.CbBoxRestartTimer.Items | Where-Object { $_.Content -eq $cbBoxRestartTimereDefaultValue }
 }
 
-$window.add_Closed({
+$windowMain.add_Closed({
     Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
     exit
 })
@@ -238,18 +234,15 @@ if($formControlsMenuApp.chkboxWindowsUpdate.IsChecked -eq $true)
 }
 
 $formControlsMain.btnclose.Add_Click({
-    $window.Close()
+    $windowMain.Close()
     Exit
 })
 $formControlsMain.btnmin.Add_Click({
-    $window.WindowState = [System.Windows.WindowState]::Minimized
+    $windowMain.WindowState = [System.Windows.WindowState]::Minimized
 })
 $formControlsMain.Titlebar.Add_MouseDown({
-    $window.DragMove()
+    $windowMain.DragMove()
 })
-
-Start-WPFApp $window
-New-Item -Path $installationLockFile -ItemType 'File' -Force
 
 function Install-SoftwaresManager
 {
@@ -659,7 +652,7 @@ function Get-CheckBoxStatus
     $formControlsMain.lblSoftware.foreground = "MediumSeaGreen"
 }
 
- function Test-SoftwarePresence($appInfo)
+function Test-SoftwarePresence($appInfo)
 {
    $softwareInstallationStatus= $false
    if (($appInfo.path64 -AND (Test-Path $appInfo.path64)) -OR 
@@ -948,4 +941,7 @@ function Main
     }
     Complete-Installation
 }
+Start-WPFAppDialog $windowMenuApp
+Start-WPFApp $windowMain
+New-Item -Path $installationLockFile -ItemType 'File' -Force
 Main
