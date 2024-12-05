@@ -1,5 +1,5 @@
 2024-12-01:
-- New gui pour choix des options d'installation
+- New gui pour installation
 - Corrigé bug menu qui pouvait freeze
 - Nouveau background pour tous les scripts
 - Dossier Temp modifié pour Temp/Stoolbox
