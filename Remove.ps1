@@ -11,13 +11,13 @@ function Remove-DownloadFolder
 {
     Write-Host "Nettoyer le dossier des téléchargements"
 
-        if (Test-Path "$env:USERPROFILE\Downloads\stoolbox.exe")
+    if (Test-Path "$env:USERPROFILE\Downloads\stoolbox.exe")
     {
          Remove-Item -Path "$env:USERPROFILE\Downloads\stoolbox.exe" -Force
     }
 
-if (-not (test-path $dateFile) -or (Get-Content -Path $dateFile -ErrorAction SilentlyContinue).Trim().Length -eq 0) 
-{
+    if (-not (test-path $dateFile) -or (Get-Content -Path $dateFile -ErrorAction SilentlyContinue).Trim().Length -eq 0) 
+    {
         Write-Host "Aucune date d'installation trouvée"
         return
     }
@@ -38,7 +38,8 @@ if (-not (test-path $dateFile) -or (Get-Content -Path $dateFile -ErrorAction Sil
         return
     }
     # Remove the filtered files
-    foreach ($file in $files) {
+    foreach ($file in $files) 
+    {
         Remove-Item -Path $file.FullName -Recurse -Force
         Write-Output "$($file.FullName) a été supprimé"
     }
@@ -47,32 +48,32 @@ if (-not (test-path $dateFile) -or (Get-Content -Path $dateFile -ErrorAction Sil
 
 function Remove-Task
 {
-$TaskName = 'delete _tech'
-$task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
-if ($null -ne $task) 
-{
-    if ($task.State -eq 'Ready') 
+    $TaskName = 'delete _tech'
+    $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+    if ($null -ne $task) 
     {
-        try 
+        if ($task.State -eq 'Ready') 
         {
-            Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction Stop
-            Write-Host "La tâche planifiée a été supprimée"
+            try 
+            {
+                Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction Stop | Out-Null
+                Write-Host "La tâche planifiée a été supprimée"
+            } 
+            catch 
+            {
+                Write-Host "Erreur lors de la suppression de la tâche: $($_.Exception.Message)"
+            }
         } 
-        catch 
+        else 
         {
-            Write-Host "Erreur lors de la suppression de la tâche: $($_.Exception.Message)"
+            Write-Host "La tâche n'est pas en état 'Ready'. État actuel: $($task.State)"
         }
     } 
     else 
     {
-        Write-Host "La tâche n'est pas en état 'Ready'. État actuel: $($task.State)"
+        Write-Host "La tâche planifiée '$TaskName' n'existe pas."
     }
-} 
-else 
-{
-    Write-Host "La tâche planifiée '$TaskName' n'existe pas."
-}
-Start-Sleep -Seconds 2
+    Start-Sleep -Seconds 2
 }
 
 #Main
