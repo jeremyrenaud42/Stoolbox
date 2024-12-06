@@ -246,6 +246,7 @@ $formControlsMain.Titlebar.Add_MouseDown({
 
 function Install-SoftwaresManager
 {
+    New-Item -Path $installationLockFile -ItemType 'File' -Force
     Add-Log $logFileName "Installation de $windowsVersion le $actualDate"
     $formControlsMain.lblProgress.content = "Préparation"
 
@@ -888,6 +889,7 @@ function Complete-Installation
             shutdown /r /t $restartTime
         }  
     }
+    Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
     Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
     $window.Close()
 }
@@ -943,5 +945,4 @@ function Main
 }
 Start-WPFAppDialog $windowMenuApp
 Start-WPFApp $windowMain
-New-Item -Path $installationLockFile -ItemType 'File' -Force
 Main
