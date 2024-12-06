@@ -75,6 +75,86 @@ function Add-Text
     # Add the colored run to the paragraph
     $lastParagraph.Inlines.Add($run)
 }
+function Get-Winget
+{
+    $formControlsMain.lblWinget.foreground = "DodgerBlue"
+    $wingetStatus = Get-WingetStatus
+    Add-Text -text "Installation de Winget"
+    if($wingetStatus -le '1.8')
+    {
+        Install-Winget
+        $wingetStatus = Get-WingetStatus
+        if($wingetStatus -ge '1.8')
+        {
+            Add-Text -text " - Winget a été installé" -SameLine
+            $formControlsMain.lblWinget.foreground = "MediumSeaGreen"
+        }
+        else 
+        {
+            Add-Text -text " - Winget a échoué" -colorName "red" -SameLine
+            $formControlsMain.lblWinget.foreground = "red"
+        }
+    }
+    else 
+    {
+        Add-Text -text " - Winget est déja installé" -SameLine
+        $formControlsMain.lblWinget.foreground = "MediumSeaGreen"
+    }
+}
+
+function Get-Choco
+{
+    $formControlsMain.lblChoco.foreground = "DodgerBlue"
+    $chocostatus = Get-ChocoStatus
+    Add-Text -text "Installation de Chocolatey"
+    if($chocostatus -eq $false)
+    {
+        Install-Choco
+        $chocostatus = Get-ChocoStatus
+        if($chocostatus -eq $true)
+        {
+            Add-Text -text " - Chocolatey a été installé" -SameLine
+            $formControlsMain.lblChoco.foreground = "MediumSeaGreen"
+        }
+        else 
+        {
+            Add-Text -text " - Chocolatey a échoué" -colorName "red" -SameLine
+            $formControlsMain.lblChoco.foreground = "red"
+        }
+    }
+    else 
+    {
+        Add-Text -text " - Chocolatey est déja installé" -SameLine 
+        $formControlsMain.lblChoco.foreground = "MediumSeaGreen"
+    }
+}
+function Get-Nuget
+{
+    $formControlsMain.lblNuget.foreground = "DodgerBlue"
+    $nugetExist = Get-NugetStatus
+    Add-Text -text "Installation de NuGet"
+    if($nugetExist -eq $false)
+    {   
+        Install-Nuget
+        $nugetExist = Get-NugetStatus
+        if($nugetExist -eq $true)
+        {
+            Add-Text -text " - Nuget a été installé" -SameLine
+            $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
+        }
+        else 
+        {
+            Add-Text -text " - Nuget a échoué" -colorName = "red" -SameLine
+            $formControlsMain.lblNuget.foreground = "red"
+        }
+    }
+    else 
+    {    
+        Add-Text -text " - Nuget est déja installé" -SameLine
+        $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
+    }
+    Add-Text -text "`n"
+}
 
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
 $pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
@@ -101,7 +181,7 @@ $formatedXamlFileMenuApp = Format-XamlFile $xamlContentMenuApp
 $xamlDocMenuApp = Convert-ToXmlDocument $formatedXamlFileMenuApp
 $XamlReaderMenuApp = New-XamlReader $xamlDocMenuApp
 $windowMenuApp = New-WPFWindowFromXaml $XamlReaderMenuApp
-$formControlsMenuApp = Get-WPFControlsFromXaml $xamlDocMenuApp $windowMenuApp
+$formControlsMenuApp = Get-WPFControlsFromXaml $xamlDocMenuApp $windowMenuApp $sync
 
 #WPF - Main GUI
 $xamlFileMain = "$pathInstallationSource\MainWindow1.xaml"
@@ -159,6 +239,128 @@ $windowMenuApp.add_Loaded({
     $formControlsMenuApp.GridToolbar.Add_MouseDown({
         $windowMenuApp.DragMove()
     })
+    $formControlsMenuApp.btnAdobe.Add_Click({
+        $appName = "Adobe Reader"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("Adobe a été installé`r")
+    })
+    $formControlsMenuApp.btnGoogleChrome.Add_Click({
+        $appName = "Google Chrome"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("Chrome a été installé`r")
+    })
+    $formControlsMenuApp.btnTeamviewer.Add_Click({
+        $appName = "TeamViewer"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("TeamViewer a été installé`r")
+    })
+    $formControlsMenuApp.btnVLC.Add_Click({
+        $appName = "VLC"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("VLC a été installé`r")
+    })
+    $formControlsMenuApp.btn7zip.Add_Click({
+        $appName = "7Zip"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("7zip a été installé`r")
+    })
+    $formControlsMenuApp.btnMacrium.Add_Click({
+        $appName = "Macrium"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("Macrium a été installé`r")
+    })
+    $formControlsMenuApp.btnGeForce.Add_Click({
+        $appName = "GeForce Experience"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("GeForce a été installé`r")
+    })
+    $formControlsMenuApp.btnLenovoVantage.Add_Click({
+        $appName = "Lenovo Vantage"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("Lenovo Vantage a été installé`r")
+    })
+    $formControlsMenuApp.btnLenovoSystemUpdate.Add_Click({
+        $appName = "Lenovo System Update"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("Lenovo System Update a été installé`r")
+    })
+    $formControlsMenuApp.btnHPSA.Add_Click({
+        $appName = "HP Support Assistant"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("HPSA a été installé`r")
+    })
+    $formControlsMenuApp.btnMSICenter.Add_Click({
+        $appName = "MSI Center"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("MSI Center a été installé`r")
+    })
+    $formControlsMenuApp.btnMyAsus.Add_Click({
+        $appName = "MyAsus"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("My Asus a été installé`r")
+    })
+    $formControlsMenuApp.btnDellsa.Add_Click({
+        $appName = "Dell Command Update"
+        Install-Software $appsInfo.$appName
+    })
+    $formControlsMenuApp.btnIntel.Add_Click({
+        $appName = "Intel Drivers Support"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("Intel DSA a été installé`r")
+    })
+    $formControlsMenuApp.btnSteam.Add_Click({
+        $appName = "Steam"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("Steam a été installé`r")
+    })
+    $formControlsMenuApp.btnZoom.Add_Click({
+        $appName = "Zoom"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("Zoom a été installé`r")
+    })
+    $formControlsMenuApp.btnDiscord.Add_Click({
+        $appName = "Discord"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("Discord a été installé`r")
+    })
+    $formControlsMenuApp.btnFirefox.Add_Click({
+        $appName = "Firefox"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("Firefox a été installé`r")
+    })
+    $formControlsMenuApp.btnLibreOffice.Add_Click({
+        $appName = "Libre Office"
+        Install-Software $appsInfo.$appName
+        $formControlsMenuApp.richTextBxOutput.AppendText("LibreOffice a été installé`r")
+    })
+    $formControlsMenuApp.btnWindowsUpdate.Add_Click({
+        Get-Nuget
+        Install-WindowsUpdate -UpdateSize $formControlsMenuApp.CbBoxSize.SelectedItem.Content
+    })
+    $formControlsMenuApp.btnDisque.Add_Click({
+        Rename-SystemDrive -NewDiskName $formControlsMenuApp.TxtBkDiskName.text
+    })
+    $formControlsMenuApp.btnMSStore.Add_Click({
+        Update-MsStore
+    })
+    $formControlsMenuApp.btnBitlocker.Add_Click({
+        Disable-BitLocker
+    })
+    $formControlsMenuApp.btnStartup.Add_Click({
+        Disable-FastBoot
+    })
+    $formControlsMenuApp.btnClavier.Add_Click({
+        Remove-EngKeyboard
+    })
+    $formControlsMenuApp.btnExplorer.Add_Click({
+        Set-ExplorerDisplay
+    })
+    $formControlsMenuApp.btnIcone.Add_Click({
+        Enable-DesktopIcon 
+    })
+    $formControlsMenuApp.btnConfi.Add_Click({
+        Set-Privacy
+    })
 })
 
 $windowMenuApp.add_Closed({
@@ -192,80 +394,10 @@ function Install-SoftwaresManager
     New-Item -Path $installationLockFile -ItemType 'File' -Force
     Add-Log $logFileName "Installation de $windowsVersion le $actualDate"
     $formControlsMain.lblProgress.content = "Préparation"
-
-    $formControlsMain.lblWinget.foreground = "DodgerBlue"
-    $wingetStatus = Get-WingetStatus
-    Add-Text -text "Installation de Winget"
-    if($wingetStatus -le '1.8')
-    {
-        Install-Winget
-        $wingetStatus = Get-WingetStatus
-        if($wingetStatus -ge '1.8')
-        {
-            Add-Text -text " - Winget a été installé" -SameLine
-            $formControlsMain.lblWinget.foreground = "MediumSeaGreen"
-        }
-        else 
-        {
-            Add-Text -text " - Winget a échoué" -colorName "red" -SameLine
-            $formControlsMain.lblWinget.foreground = "red"
-        }
-    }
-    else 
-    {
-        Add-Text -text " - Winget est déja installé" -SameLine
-        $formControlsMain.lblWinget.foreground = "MediumSeaGreen"
-    }
-
-    $formControlsMain.lblChoco.foreground = "DodgerBlue"
-    $chocostatus = Get-ChocoStatus
-    Add-Text -text "Installation de Chocolatey"
-    if($chocostatus -eq $false)
-    {
-        Install-Choco
-        $chocostatus = Get-ChocoStatus
-        if($chocostatus -eq $true)
-        {
-            Add-Text -text " - Chocolatey a été installé" -SameLine
-            $formControlsMain.lblChoco.foreground = "MediumSeaGreen"
-        }
-        else 
-        {
-            Add-Text -text " - Chocolatey a échoué" -colorName "red" -SameLine
-            $formControlsMain.lblChoco.foreground = "red"
-        }
-    }
-    else 
-    {
-        Add-Text -text " - Chocolatey est déja installé" -SameLine 
-        $formControlsMain.lblChoco.foreground = "MediumSeaGreen"
-    }
-
-    $formControlsMain.lblNuget.foreground = "DodgerBlue"
-    $nugetExist = Get-NugetStatus
-    Add-Text -text "Installation de NuGet"
-    if($nugetExist -eq $false)
-    {   
-        Install-Nuget
-        $nugetExist = Get-NugetStatus
-        if($nugetExist -eq $true)
-        {
-            Add-Text -text " - Nuget a été installé" -SameLine
-            $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
-        }
-        else 
-        {
-            Add-Text -text " - Nuget a échoué" -colorName = "red" -SameLine
-            $formControlsMain.lblNuget.foreground = "red"
-        }
-    }
-    else 
-    {    
-        Add-Text -text " - Nuget est déja installé" -SameLine
-        $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
-    }
-    Add-Text -text "`n"
-}
+    Get-Winget
+    Get-Choco
+    Get-Nuget
+}   
 
 function Update-MsStore 
 {
