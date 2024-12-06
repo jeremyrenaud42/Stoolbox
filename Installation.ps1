@@ -26,93 +26,6 @@ function Get-Manufacturer
     return $manufacturerBrand
 }
 
-$ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
-$pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
-$pathInstallationSource = "$env:SystemDrive\_Tech\Applications\Installation\source"
-$windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
-$actualDate = (Get-Date).ToString()
-$applicationPath = "$env:SystemDrive\_Tech\Applications"
-$sourceFolderPath = "$applicationPath\source"
-$installationLockFile = "$sourceFolderPath\Installation.lock"
-Get-Dependencies
-$logFileName = Initialize-LogFile $pathInstallationSource
-$adminStatus = Get-AdminStatus
-if($adminStatus -eq $false)
-{
-    Restart-Elevated -Path $pathInstallation\Installation.ps1
-}
-$Global:installationIdentifier = "Installation.ps1"
-Test-ScriptInstance $installationLockFile $Global:installationIdentifier
-############################GUI####################################
-#WPF - appMenuChoice
-$xamlFileMenuApp = "$pathInstallationSource\MainWindow.xaml"
-$xamlContentMenuApp = Read-XamlFileContent $xamlFileMenuApp
-$formatedXamlFileMenuApp = Format-XamlFile $xamlContentMenuApp
-$xamlDocMenuApp = Convert-ToXmlDocument $formatedXamlFileMenuApp
-$XamlReaderMenuApp = New-XamlReader $xamlDocMenuApp
-$windowMenuApp = New-WPFWindowFromXaml $XamlReaderMenuApp
-$formControlsMenuApp = Get-WPFControlsFromXaml $xamlDocMenuApp $windowMenuApp
-
-#ajout des events, cases a cocher, etc.. pour appMenuChoice:
-#Logiciels à cocher automatiquement
-$manufacturerBrand = Get-Manufacturer
-if($manufacturerBrand -match 'LENOVO')
-{
-    $formControlsMenuApp.chkboxLenovoVantage.IsChecked = $true
-    $formControlsMenuApp.chkboxLenovoSystemUpdate.IsChecked = $true
-}
-elseif($manufacturerBrand -match 'HP')
-{        
-    $formControlsMenuApp.chkboxHPSA.IsChecked = $true
-}
-elseif($manufacturerBrand -match 'DELL')
-{
-    $formControlsMenuApp.chkboxDellsa.IsChecked = $true
-}
-elseif($manufacturerBrand -like '*Micro-Star*')
-{
-    $formControlsMenuApp.chkboxMSICenter.IsChecked = $true
-}
-$videoController = Get-WmiObject win32_videoController | Select-Object -Property name
-if($videoController -match 'NVIDIA')
-{
-    $formControlsMenuApp.chkboxGeForce.IsChecked = $true
-}
-#Boutons
-$formControlsMenuApp.btnGo.Add_Click({
-$windowMenuApp.Close()
-})
-$formControlsMenuApp.btnReturn.Add_Click({
-    start-process "$env:SystemDrive\_Tech\Menu.bat" -verb Runas
-    $windowMenuApp.Close()
-    Exit
-})
-$formControlsMenuApp.btnclose.Add_Click({
-    $windowMenuApp.Close()
-    Exit
-})
-$formControlsMenuApp.btnQuit.Add_Click({
-    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
-    $windowMenuApp.Close()
-    Exit
-})
-$formControlsMenuApp.GridToolbar.Add_MouseDown({
-    $windowMenuApp.DragMove()
-})
-
-$windowMenuApp.add_Closed({
-    Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
-})
-
-#WPF - Main GUI
-$xamlFileMain = "$pathInstallationSource\MainWindow1.xaml"
-$xamlContentMain = Read-XamlFileContent $xamlFileMain
-$formatedXamlFileMain = Format-XamlFile $xamlContentMain
-$xamlDocMain = Convert-ToXmlDocument $formatedXamlFileMain
-$XamlReaderMain = New-XamlReader $xamlDocMain
-$windowMain = New-WPFWindowFromXaml $XamlReaderMain
-$formControlsMain = Get-WPFControlsFromXaml $xamlDocMain $windowMain $sync
-
 # Function to get a Brush by name
 function Get-BrushByName 
 {
@@ -163,85 +76,115 @@ function Add-Text
     $lastParagraph.Inlines.Add($run)
 }
 
+$ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
+$pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
+$pathInstallationSource = "$env:SystemDrive\_Tech\Applications\Installation\source"
+$windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
+$actualDate = (Get-Date).ToString()
+$applicationPath = "$env:SystemDrive\_Tech\Applications"
+$sourceFolderPath = "$applicationPath\source"
+$installationLockFile = "$sourceFolderPath\Installation.lock"
+Get-Dependencies
+$logFileName = Initialize-LogFile $pathInstallationSource
+$adminStatus = Get-AdminStatus
+if($adminStatus -eq $false)
+{
+    Restart-Elevated -Path $pathInstallation\Installation.ps1
+}
+$Global:installationIdentifier = "Installation.ps1"
+Test-ScriptInstance $installationLockFile $Global:installationIdentifier
+############################GUI####################################
+#WPF - appMenuChoice
+$xamlFileMenuApp = "$pathInstallationSource\MainWindow.xaml"
+$xamlContentMenuApp = Read-XamlFileContent $xamlFileMenuApp
+$formatedXamlFileMenuApp = Format-XamlFile $xamlContentMenuApp
+$xamlDocMenuApp = Convert-ToXmlDocument $formatedXamlFileMenuApp
+$XamlReaderMenuApp = New-XamlReader $xamlDocMenuApp
+$windowMenuApp = New-WPFWindowFromXaml $XamlReaderMenuApp
+$formControlsMenuApp = Get-WPFControlsFromXaml $xamlDocMenuApp $windowMenuApp
+
+#WPF - Main GUI
+$xamlFileMain = "$pathInstallationSource\MainWindow1.xaml"
+$xamlContentMain = Read-XamlFileContent $xamlFileMain
+$formatedXamlFileMain = Format-XamlFile $xamlContentMain
+$xamlDocMain = Convert-ToXmlDocument $formatedXamlFileMain
+$XamlReaderMain = New-XamlReader $xamlDocMain
+$windowMain = New-WPFWindowFromXaml $XamlReaderMain
+$formControlsMain = Get-WPFControlsFromXaml $xamlDocMain $windowMain $sync
+
+$windowMenuApp.add_Loaded({
+    #ajout des events, cases a cocher, etc.. pour appMenuChoice:
+    #Logiciels à cocher automatiquement
+    $manufacturerBrand = Get-Manufacturer
+    if($manufacturerBrand -match 'LENOVO')
+    {
+        $formControlsMenuApp.chkboxLenovoVantage.IsChecked = $true
+        $formControlsMenuApp.chkboxLenovoSystemUpdate.IsChecked = $true
+    }
+    elseif($manufacturerBrand -match 'HP')
+    {        
+        $formControlsMenuApp.chkboxHPSA.IsChecked = $true
+    }
+    elseif($manufacturerBrand -match 'DELL')
+    {
+        $formControlsMenuApp.chkboxDellsa.IsChecked = $true
+    }
+    elseif($manufacturerBrand -like '*Micro-Star*')
+    {
+        $formControlsMenuApp.chkboxMSICenter.IsChecked = $true
+    }
+    $videoController = Get-WmiObject win32_videoController | Select-Object -Property name
+    if($videoController -match 'NVIDIA')
+    {
+        $formControlsMenuApp.chkboxGeForce.IsChecked = $true
+    }
+    #Boutons
+    $formControlsMenuApp.btnGo.Add_Click({
+        $windowMenuApp.Close()
+    })
+    $formControlsMenuApp.btnReturn.Add_Click({
+        start-process "$env:SystemDrive\_Tech\Menu.bat" -verb Runas
+        $windowMenuApp.Close()
+        Exit
+    })
+    $formControlsMenuApp.btnclose.Add_Click({
+        $windowMenuApp.Close()
+        Exit
+    })
+    $formControlsMenuApp.btnQuit.Add_Click({
+        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
+        $windowMenuApp.Close()
+        Exit
+    })
+    $formControlsMenuApp.GridToolbar.Add_MouseDown({
+        $windowMenuApp.DragMove()
+    })
+})
+
+$windowMenuApp.add_Closed({
+    Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
+})
+
+$windowMain.add_Loaded({
+    $formControlsMain.btnclose.Add_Click({
+        $windowMain.Close()
+        Exit
+    })
+    $formControlsMain.btnmin.Add_Click({
+        $windowMain.WindowState = [System.Windows.WindowState]::Minimized
+    })
+    $formControlsMain.Titlebar.Add_MouseDown({
+        $windowMain.DragMove()
+    })
+})    
+    $windowMain.add_Closed({
+        Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
+        exit
+})
+
 $formControlsMain.richTxtBxOutput.add_textchanged({
     $WindowMain.Dispatcher.Invoke([Windows.Threading.DispatcherPriority]::Background, [action]{}) #Refresh le text
     $formControlsMain.richTxtBxOutput.ScrollToEnd() #scroll en bas
-})
-
-$cbBoxSizeDefaultValue = "250"
-$cbBoxRestartTimereDefaultValue = "300"
-
-if (-not $formControlsMenuApp.CbBoxSize.SelectedItem) 
-{
-    $formControlsMenuApp.CbBoxSize.SelectedItem = $formControlsMenuApp.CbBoxSize.Items | Where-Object { $_.Content -eq $cbBoxSizeDefaultValue }
-}
-
-if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem) 
-{
-    $formControlsMenuApp.CbBoxRestartTimer.SelectedItem = $formControlsMenuApp.CbBoxRestartTimer.Items | Where-Object { $_.Content -eq $cbBoxRestartTimereDefaultValue }
-}
-
-$windowMain.add_Closed({
-    Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
-    exit
-})
-
-$formControlsMain.lblWinget.foreground = "white"
-$formControlsMain.lblChoco.foreground = "white"
-$formControlsMain.lblNuget.foreground = "white"
-$formControlsMain.lblSoftware.foreground = "white"
-$formControlsMain.lblActivation.foreground = "white"
-$formControlsMain.lblManualComplete.foreground = "white"
-if($formControlsMenuApp.chkboxMSStore.IsChecked -eq $true)
-{ 
-    $formControlsMain.lblStore.foreground = "white"
-}
-if($formControlsMenuApp.chkboxDisque.IsChecked -eq $true)
-{ 
-    $formControlsMain.lblDisk.foreground = "white"
-}
-if($formControlsMenuApp.chkboxExplorer.IsChecked -eq $true)
-{ 
-    $formControlsMain.lblExplorer.foreground = "white"
-}
-if($formControlsMenuApp.chkboxBitlocker.IsChecked -eq $true)
-{ 
-    $formControlsMain.lblBitlocker.foreground = "white"
-}
-if($formControlsMenuApp.chkboxStartup.IsChecked -eq $true)
-{ 
-    $formControlsMain.lblStartup.foreground = "white"
-}
-if($formControlsMenuApp.chkboxClavier.IsChecked -eq $true)
-{ 
-    $formControlsMain.lblkeyboard.foreground = "white"
-}
-if($formControlsMenuApp.chkboxConfi.IsChecked -eq $true)
-{ 
-    $formControlsMain.lblPrivacy.foreground = "white"
-}
-if($formControlsMenuApp.chkboxIcone.IsChecked -eq $true)
-{
-    $formControlsMain.lblDesktopIcon.foreground = "white"  
-}
-if($formControlsMenuApp.chkboxMSStore.IsChecked -eq $true)
-{ 
-    $formControlsMain.lblStore2.foreground = "white"
-}
-if($formControlsMenuApp.chkboxWindowsUpdate.IsChecked -eq $true)
-{ 
-    $formControlsMain.lblUpdate.foreground = "white"
-}
-
-$formControlsMain.btnclose.Add_Click({
-    $windowMain.Close()
-    Exit
-})
-$formControlsMain.btnmin.Add_Click({
-    $windowMain.WindowState = [System.Windows.WindowState]::Minimized
-})
-$formControlsMain.Titlebar.Add_MouseDown({
-    $windowMain.DragMove()
 })
 
 function Install-SoftwaresManager
@@ -308,22 +251,20 @@ function Install-SoftwaresManager
         if($nugetExist -eq $true)
         {
             Add-Text -text " - Nuget a été installé" -SameLine
-            Add-Text -text "`n"
             $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
         }
         else 
         {
             Add-Text -text " - Nuget a échoué" -colorName = "red" -SameLine
-            Add-Text -text "`n"
             $formControlsMain.lblNuget.foreground = "red"
         }
     }
     else 
     {    
         Add-Text -text " - Nuget est déja installé" -SameLine
-        Add-Text -text "`n"
         $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
     }
+    Add-Text -text "`n"
 }
 
 function Update-MsStore 
@@ -600,7 +541,6 @@ Function Enable-DesktopIcon
     if (($configPanel -eq 0) -and ($myPC -eq 0) -and ($userFolder -eq 0))
     {
         Add-Text -text "Les icones systèmes sont déjà installés sur le bureau"
-        Add-Text -text "`n"
         $formControlsMain.lblDesktopIcon.foreground = "MediumSeaGreen"
     }
     else 
@@ -615,14 +555,12 @@ Function Enable-DesktopIcon
         if (($configPanel -eq 0) -and ($myPC -eq 0) -and ($userFolder -eq 0))
         {
             Add-Text -text "Les icones systèmes ont été installés sur le bureau"
-            Add-Text -text "`n" #Permet de créé un espace avant les logiciels
             Add-Log $logFileName "Les icones systèmes ont été installés sur le bureau"
             $formControlsMain.lblDesktopIcon.foreground = "MediumSeaGreen"  
         }
         else 
         {
             Add-Text -text "Les icones systèmes n'ont pas été installés sur le bureau" -colorName "red"
-            Add-Text -text "`n" #Permet de créé un espace avant les logiciels
             $formControlsMain.lblDesktopIcon.foreground = "red"
         }
     }  
@@ -729,15 +667,14 @@ function Get-ActivationStatus
 {
     $formControlsMain.lblActivation.foreground = "DodgerBlue"
     $activated = Get-CIMInstance -query "select LicenseStatus from SoftwareLicensingProduct where LicenseStatus=1" | Select-Object -ExpandProperty LicenseStatus 
+    Add-Text -text "`n"
     if($activated -eq "1")
     {
-        Add-Text -text "`n"
         Add-Text -text "$windowsVersion est activé sur cet ordinateur"
         $formControlsMain.lblActivation.foreground = "MediumSeaGreen"      
     }
     else 
-    {
-        Add-Text -text "`n"
+    {  
         Add-Text -text "Windows n'est pas activé" -colorName "red"
         [System.Windows.MessageBox]::Show("Windows n'est pas activé","Installation Windows",0,64) | Out-Null   
         $formControlsMain.lblActivation.foreground = "red"
@@ -929,6 +866,7 @@ function Main
     {
         Enable-DesktopIcon  
     }
+    Add-Text -text "`n"
     Get-CheckBoxStatus
     Get-ActivationStatus
     if($formControlsMenuApp.chkboxMSStore.IsChecked -eq $true)
@@ -943,6 +881,67 @@ function Main
     }
     Complete-Installation
 }
+
 Start-WPFAppDialog $windowMenuApp
+#apres ouverture MenuApps
+$cbBoxSizeDefaultValue = "250"
+$cbBoxRestartTimereDefaultValue = "300"
+
+if (-not $formControlsMenuApp.CbBoxSize.SelectedItem) 
+{
+    $formControlsMenuApp.CbBoxSize.SelectedItem = $formControlsMenuApp.CbBoxSize.Items | Where-Object { $_.Content -eq $cbBoxSizeDefaultValue }
+}
+
+if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem) 
+{
+    $formControlsMenuApp.CbBoxRestartTimer.SelectedItem = $formControlsMenuApp.CbBoxRestartTimer.Items | Where-Object { $_.Content -eq $cbBoxRestartTimereDefaultValue }
+}
+
+$formControlsMain.lblWinget.foreground = "white"
+$formControlsMain.lblChoco.foreground = "white"
+$formControlsMain.lblNuget.foreground = "white"
+$formControlsMain.lblSoftware.foreground = "white"
+$formControlsMain.lblActivation.foreground = "white"
+$formControlsMain.lblManualComplete.foreground = "white"
+if($formControlsMenuApp.chkboxMSStore.IsChecked)
+{ 
+    $formControlsMain.lblStore.foreground = "white"
+}
+if($formControlsMenuApp.chkboxDisque.IsChecked)
+{ 
+    $formControlsMain.lblDisk.foreground = "white"
+}
+if($formControlsMenuApp.chkboxExplorer.IsChecked)
+{ 
+    $formControlsMain.lblExplorer.foreground = "white"
+}
+if($formControlsMenuApp.chkboxBitlocker.IsChecked)
+{ 
+    $formControlsMain.lblBitlocker.foreground = "white"
+}
+if($formControlsMenuApp.chkboxStartup.IsChecked)
+{ 
+    $formControlsMain.lblStartup.foreground = "white"
+}
+if($formControlsMenuApp.chkboxClavier.IsChecked)
+{ 
+    $formControlsMain.lblkeyboard.foreground = "white"
+}
+if($formControlsMenuApp.chkboxConfi.IsChecked)
+{ 
+    $formControlsMain.lblPrivacy.foreground = "white"
+}
+if($formControlsMenuApp.chkboxIcone.IsChecked)
+{
+    $formControlsMain.lblDesktopIcon.foreground = "white"  
+}
+if($formControlsMenuApp.chkboxMSStore.IsChecked)
+{ 
+    $formControlsMain.lblStore2.foreground = "white"
+}
+if($formControlsMenuApp.chkboxWindowsUpdate.IsChecked)
+{ 
+    $formControlsMain.lblUpdate.foreground = "white"
+}
 Start-WPFApp $windowMain
 Main
