@@ -772,6 +772,7 @@ function Install-Software($appInfo)
 {
     $formControlsMain.lblProgress.Content = "Installation de $appName"
     Add-Text -text "Installation de $appName en cours"
+    Add-Log $logFileName "Installation de $appName"
     $softwareInstallationStatus = Test-SoftwarePresence $appInfo
         if($softwareInstallationStatus)
         {
@@ -782,7 +783,6 @@ function Install-Software($appInfo)
         {  
             Install-SoftwareWithWinget $appInfo
         }
-    Add-Log $logFileName "Installation de $appName" 
 }
 
 function Install-SoftwareWithWinget($appInfo)
