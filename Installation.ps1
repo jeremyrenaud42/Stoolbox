@@ -86,17 +86,20 @@ function Get-Winget
         $wingetStatus = Get-WingetStatus
         if($wingetStatus -ge '1.8')
         {
+            Add-Log $logFileName " - Winget a été installé"
             Add-Text -text " - Winget a été installé" -SameLine
             $formControlsMain.lblWinget.foreground = "MediumSeaGreen"
         }
         else 
         {
+            Add-Log $logFileName " - Winget a échoué"
             Add-Text -text " - Winget a échoué" -colorName "red" -SameLine
             $formControlsMain.lblWinget.foreground = "red"
         }
     }
     else 
     {
+        Add-Log $logFileName " - Winget est déja installé"
         Add-Text -text " - Winget est déja installé" -SameLine
         $formControlsMain.lblWinget.foreground = "MediumSeaGreen"
     }
@@ -113,17 +116,20 @@ function Get-Choco
         $chocostatus = Get-ChocoStatus
         if($chocostatus -eq $true)
         {
+            Add-Log $logFileName " - Chocolatey a été installé"
             Add-Text -text " - Chocolatey a été installé" -SameLine
             $formControlsMain.lblChoco.foreground = "MediumSeaGreen"
         }
         else 
         {
+            Add-Log $logFileName " - Chocolatey a échoué"
             Add-Text -text " - Chocolatey a échoué" -colorName "red" -SameLine
             $formControlsMain.lblChoco.foreground = "red"
         }
     }
     else 
     {
+        Add-Log $logFileName " - Chocolatey  est déja installé"
         Add-Text -text " - Chocolatey est déja installé" -SameLine 
         $formControlsMain.lblChoco.foreground = "MediumSeaGreen"
     }
@@ -139,17 +145,20 @@ function Get-Nuget
         $nugetExist = Get-NugetStatus
         if($nugetExist -eq $true)
         {
+            Add-Log $logFileName " - Nuget a été installé"
             Add-Text -text " - Nuget a été installé" -SameLine
             $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
         }
         else 
         {
+            Add-Log $logFileName " - Nuget a échoué"
             Add-Text -text " - Nuget a échoué" -colorName = "red" -SameLine
             $formControlsMain.lblNuget.foreground = "red"
         }
     }
     else 
-    {    
+    {   
+        Add-Log $logFileName " - Nuget est déja installé" 
         Add-Text -text " - Nuget est déja installé" -SameLine
         $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
     }
@@ -419,10 +428,11 @@ function Update-MsStore
     {
         Add-Text -text " - Mises à jour du Microsoft Store lancées" -SameLine
         $formControlsMain.lblStore.foreground = "MediumSeaGreen"
-        Add-Log $logFileName "Mises à jour de Microsoft Store" 
+        Add-Log $logFileName "Mises à jour de Microsoft Store lancées" 
     } 
     else 
     {
+        Add-Log $logFileName " - Échec des mises à jour du Microsoft Store" 
         Add-Text -text " - Échec des mises à jour du Microsoft Store" -colorName "red" -SameLine
         $formControlsMain.lblStore.foreground = "red"
     }
@@ -457,6 +467,7 @@ Function Rename-SystemDrive
     if($diskName -match $NewDiskName)
     {
         $formControlsMain.lblDisk.foreground = "MediumSeaGreen"
+        Add-Log $logFileName "Le disque est déja nommé $NewDiskName"
         Add-Text -text "Le disque est déja nommé $NewDiskName"
     }
     else
@@ -473,6 +484,7 @@ Function Rename-SystemDrive
         else
         {
             Add-Text -text "Échec du renommage de disque" -colorName "red"    
+            Add-Log $logFileName "Échec du renommage de disque"
             $formControlsMain.lblDisk.foreground = "red"
         }
     } 
@@ -487,41 +499,54 @@ Function Set-ExplorerDisplay
     if($explorerLaunchWindow -eq '1')
     {
         Add-Text -text "Ce PC remplace déja l'accès rapide"
+        Add-Log $logFileName "Ce PC remplace déja l'accès rapide"
     }
     else 
     {
-        set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo' -Type 'DWord' -Value '1'     
+        set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo' -Type 'DWord' -Value '1' 
+        $explorerLaunchWindow = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo').LaunchTo 
+        if($explorerLaunchWindow -eq '1')   
+        {
+            Add-Log $logFileName "L'accès rapide a été remplacé par Ce PC"
+            Add-Text -text "L'accès rapide a été remplacé par Ce PC"
+        }
+        else
+        {
+            Add-Text -text "L'accès rapide n'a pas été remplacé par Ce PC" -colorName "red"
+            Add-Log $logFileName "L'accès rapide n'a pas été remplacé par Ce PC"
+        }
     }
 
     $providerNotifications = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications').ShowSyncProviderNotifications
     if($providerNotifications -eq '0')
     {
+        Add-Log $logFileName "Le fournisseur de synchronisation est déjà décoché"
         Add-Text -text "Le fournisseur de synchronisation est déjà décoché"
     }
     else 
     {
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications' -Type 'DWord' -Value '0'
+        $providerNotifications = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications').ShowSyncProviderNotifications
+        if($providerNotifications -eq '0')
+        {
+            Add-Log $logFileName "Le fournisseur de synchronisation a été decoché"
+            Add-Text -text "Le fournisseur de synchronisation a été decoché" 
+        }
+        else
+        {
+            Add-Text -text "Le fournisseur de synchronisation n'a pas été decoché" -colorName "red"
+            Add-Log $logFileName "Le fournisseur de synchronisation n'a pas été decoché"
+        }
     }
-    $explorerLaunchWindow = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo').LaunchTo
-    $providerNotifications = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications').ShowSyncProviderNotifications
+    
+    
     if(($explorerLaunchWindow -eq '1') -and ($providerNotifications -eq '0'))
     {
-        $formControlsMain.lblExplorer.foreground = "MediumSeaGreen"
-        Add-Text -text "L'accès rapide a été remplacé par Ce PC"
-        Add-Text -text "Le fournisseur de synchronisation a été decoché" 
-        Add-Log $logFileName "Explorateur de fichiers configuré" 
+        $formControlsMain.lblExplorer.foreground = "MediumSeaGreen"   
     }
     else 
     {
-        $formControlsMain.lblExplorer.foreground = "red"
-        if($explorerLaunchWindow -ne '1')
-        {
-            Add-Text -text "L'accès rapide n'a pas été remplacé par Ce PC" -colorName "red"
-        }
-        if($providerNotifications -ne '0')
-        {
-            Add-Text -text "Le fournisseur de synchronisation n'a pas été decoché" -colorName "red"
-        }       
+        $formControlsMain.lblExplorer.foreground = "red"     
     }
 }
 
@@ -572,6 +597,7 @@ Function Disable-FastBoot
     if($power -eq '0')
     {  
         Add-Text -text "Le démarrage rapide est déjà désactivé"
+        Add-Log $logFileName "Le démarrage rapide est déjà désactivé"
         $formControlsMain.lblStartup.foreground = "MediumSeaGreen"
     }
     elseif($power -eq '1')
@@ -584,6 +610,7 @@ Function Disable-FastBoot
     else  
     {
         Add-Text -text "Le démarrage rapide n'a pas été désactivé" -colorName "red"
+        Add-Log $logFileName "Le démarrage rapide n'a pas été désactivé"
         $formControlsMain.lblStartup.foreground = "red"
     }
 }
@@ -602,6 +629,7 @@ Function Remove-EngKeyboard
         if(($anglaisCanada).LanguageTag -eq 'en-CA')
         {
             Add-Text -text "Le clavier Anglais n'a pas été supprimé" -colorName "red"
+            Add-Log $logFileName "Le clavier Anglais n'a pas été supprimé"
             $formControlsMain.lblkeyboard.foreground = "red"
         }
         else
@@ -614,6 +642,7 @@ Function Remove-EngKeyboard
     else 
     {
         Add-Text -text "Le clavier Anglais est déja supprimé"
+        Add-Log $logFileName "Le clavier Anglais est déja supprimé"
         $formControlsMain.lblkeyboard.foreground = "MediumSeaGreen"
     }   
 }
@@ -630,6 +659,7 @@ Function Set-Privacy
     if (($338393 -eq 0) -and ($353694 -eq 0) -and ($353696 -eq 0) -and ($Start_TrackProgs -eq 0))
     {
         Add-Text -text "Les options de confidentialité sont déjà configurées"
+        Add-Log $logFileName "Les options de confidentialité sont déjà configurées"
         $formControlsMain.lblPrivacy.foreground = "MediumSeaGreen"
     }
     else 
@@ -653,6 +683,7 @@ Function Set-Privacy
         {
             $formControlsMain.lblPrivacy.foreground = "red" 
             Add-Text -text "Les options de confidentialité n'ont pas été configurées" -colorName "red"
+            Add-Log $logFileName "Les options de confidentialité n'ont pas été configurées"
         } 
     }    
 }
@@ -673,6 +704,7 @@ Function Enable-DesktopIcon
     if (($configPanel -eq 0) -and ($myPC -eq 0) -and ($userFolder -eq 0))
     {
         Add-Text -text "Les icones systèmes sont déjà installés sur le bureau"
+        Add-Log $logFileName "Les icones systèmes sont déjà installés sur le bureau"
         $formControlsMain.lblDesktopIcon.foreground = "MediumSeaGreen"
     }
     else 
@@ -693,6 +725,7 @@ Function Enable-DesktopIcon
         else 
         {
             Add-Text -text "Les icones systèmes n'ont pas été installés sur le bureau" -colorName "red"
+            Add-Log $logFileName "Les icones systèmes n'ont pas été installés sur le bureau"
             $formControlsMain.lblDesktopIcon.foreground = "red"
         }
     }  
@@ -743,6 +776,7 @@ function Install-Software($appInfo)
         if($softwareInstallationStatus)
         {
             Add-Text -text "- $appName est déja installé" -SameLine
+            Add-Log $logFileName "- $appName est déja installé"
         }
         elseif($softwareInstallationStatus -eq $false)
         {  
@@ -761,6 +795,7 @@ function Install-SoftwareWithWinget($appInfo)
         if($softwareInstallationStatus)
         {
             Add-Text -text " - $appName installé avec succès" -SameLine
+            Add-Log $logFileName " - $appName installé avec succès"
         } 
         else
         {
@@ -778,10 +813,12 @@ function Install-SoftwareWithChoco($apsInfo)
     if($softwareInstallationStatus)
     {     
         Add-Text -text " - $appName installé avec succès" -SameLine
+        Add-Log $logFileName " - $appName installé avec succès"
     }
     else
     {
         Add-Text -text " - $appName a échoué" -colorName "red" -SameLine
+        Add-Log $logFileName " - $appName a échoué"
         Install-SoftwareWithNinite $appInfo
     } 
 }
@@ -803,11 +840,13 @@ function Get-ActivationStatus
     if($activated -eq "1")
     {
         Add-Text -text "$windowsVersion est activé sur cet ordinateur"
+        Add-Log $logFileName "$windowsVersion est activé sur cet ordinateur"
         $formControlsMain.lblActivation.foreground = "MediumSeaGreen"      
     }
     else 
     {  
         Add-Text -text "Windows n'est pas activé" -colorName "red"
+        Add-Log $logFileName "Windows n'est pas activé"
         [System.Windows.MessageBox]::Show("Windows n'est pas activé","Installation Windows",0,64) | Out-Null   
         $formControlsMain.lblActivation.foreground = "red"
     }  
@@ -832,10 +871,16 @@ function Get-WindowsUpdateReboot
     {
         Add-Text -text "`n"
         Add-Text -text "L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour"
-        [System.Windows.MessageBox]::Show("L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour","Installation Windows",0,64) | Out-Null    
-        $restartComputer = $true
+        $messageBox = [System.Windows.MessageBox]::Show("L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour.`nVoulez-vous redémarrer ?","Installation Windows",4,64)
+        if($messageBox -eq '6')
+        {
+            return $restartComputer = $true
+        }
+        else
+        {
+            return $restartComputer = $false
+        }     
     } 
-    return $restartComputer
 } 
 
 function Install-WindowsUpdate
@@ -872,17 +917,20 @@ function Install-WindowsUpdate
         if($totalUpdates -eq 0)
         {
             Add-Text -text " - Toutes les mises à jour sont deja installées" -SameLine 
+            Add-Log $logFileName " - Toutes les mises à jour sont deja installées"
             $formControlsMain.lblUpdate.foreground = "MediumSeaGreen"   
         }
         elseif($totalUpdates -gt 0)
         {
             Add-Text -text " - $totalUpdates mises à jour de disponibles" -SameLine 
+            Add-Log $logFileName " - $totalUpdates mises à jour de disponibles"
             $currentUpdate = 0
                 foreach($update in $updates)
                 { 
                     $currentUpdate++ 
                     $kb = $update.KB
                     Add-Text -text "Mise à jour $($currentUpdate) sur $($totalUpdates): $($update.Title)"
+                    Add-Log $logFileName "Mise à jour $($currentUpdate) sur $($totalUpdates): $($update.Title)"
                     Get-WindowsUpdate -KBArticleID $kb -MaxSize $maxSizeBytes -Install -AcceptAll -IgnoreReboot     
                 }
                 $formControlsMain.lblUpdate.foreground = "MediumSeaGreen"
@@ -890,9 +938,9 @@ function Install-WindowsUpdate
         else
         {
             Add-Text -text " - Échec de la vérification des mise a jours de Windows" -colorName "red" -SameLine
+            Add-Log $logFileName " - Échec de la vérification des mise a jours de Windows"
             $formControlsMain.lblUpdate.foreground = "red"
         } 
-   Add-Log $logFileName "Mises à jour de Windows effectuées"
 }
 
 function Set-DefaultBrowser
