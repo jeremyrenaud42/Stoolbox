@@ -977,6 +977,7 @@ function Complete-Installation
 {
     $formControlsMain.lblManualComplete.foreground = "DodgerBlue"
     Add-Log $logFileName "Installation de Windows effectué avec Succès"
+    Copy-Log $logFileName "C:\Temp"
     Send-FTPLogs $pathInstallationSource\$logFileName
     [Audio]::Volume = 0.25
     [console]::beep(1000,666)
