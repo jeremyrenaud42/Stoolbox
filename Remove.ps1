@@ -1,51 +1,48 @@
 ﻿Add-Type -AssemblyName PresentationCore,PresentationFramework
 
 $desktop = [Environment]::GetFolderPath("Desktop")
-$TechFolder = "$env:SystemDrive\_Tech"
+$techFolder = "$env:SystemDrive\_Tech"
+$tempFolder = "$env:SystemDrive\Temp\Stoolbox"
 $lockfile = "$env:SystemDrive\_Tech\Applications\source\*.lock"
 $maxAttempts = 5
 $attempt = 0
 $dateFile = "C:\_tech\Applications\Source\installedDate.txt"
 
-function Remove-DownloadFolder 
+function Remove-Installer
 {
-    Write-Host "Nettoyer le dossier des téléchargements"
-
     if (Test-Path "$env:USERPROFILE\Downloads\stoolbox.exe")
     {
-         Remove-Item -Path "$env:USERPROFILE\Downloads\stoolbox.exe" -Force
+        Remove-Item -Path "$env:USERPROFILE\Downloads\stoolbox.exe" -Force
     }
-
+}
+function Remove-DownloadFolder
+{
+    Write-Host "Nettoyage du dossier téléchargements"
     if (-not (test-path $dateFile) -or (Get-Content -Path $dateFile -ErrorAction SilentlyContinue).Trim().Length -eq 0) 
     {
         Write-Host "Aucune date d'installation trouvée"
-        return
     }
-    # Read the date and time string from the file
-    $logContent = Get-Content -Path $dateFile
-    # Define the date and time string
-    $dateString = $logContent.Trim()  # Trim whitespace and newlines
-    # Convert the date string to a DateTime object
-    $targetDateTime = [DateTime]::ParseExact($dateString, "yyyy-MM-dd HH:mm:ss", $null)
-    
-    # Get the list of files with a LastWriteTime on or before the target date and time
-    $files = Get-ChildItem -Path "$env:USERPROFILE\Downloads" | Where-Object { $_.LastWriteTime -ge $targetDateTime }
-    
-    if ($files.Count -eq 0) 
+    else 
     {
-        Write-Host "Aucun fichiers récents trouvé dans le dossier des téléchargements."
+        $logContent = Get-Content -Path $dateFile
+        $dateString = $logContent.Trim()  # Trim whitespace and newlines
+        $targetDateTime = [DateTime]::ParseExact($dateString, "yyyy-MM-dd HH:mm:ss", $null) # Convert the date string to a DateTime object
+        # Get the list of files with a LastWriteTime on or before the target date and time
+        $files = Get-ChildItem -Path "$env:USERPROFILE\Downloads" | Where-Object { $_.LastWriteTime -ge $targetDateTime }
+        if ($files.Count -eq 0) 
+        {
+            Write-Host "Aucun fichiers récents trouvé dans le dossier des téléchargements."
+            Start-Sleep -s 1
+            return
+        }
+        foreach ($file in $files) 
+        {
+            Remove-Item -Path $file.FullName -Recurse -Force
+            Write-Output "$($file.FullName) a été supprimé"
+        }
         Start-Sleep -s 1
-        return
     }
-    # Remove the filtered files
-    foreach ($file in $files) 
-    {
-        Remove-Item -Path $file.FullName -Recurse -Force
-        Write-Output "$($file.FullName) a été supprimé"
-    }
-    Start-Sleep -s 1
-}
-
+}   
 function Remove-Task
 {
     $TaskName = 'delete _tech'
@@ -75,42 +72,82 @@ function Remove-Task
     }
     Start-Sleep -Seconds 2
 }
-
-#Main
-if (Test-Path $TechFolder)
+function Get-LockFile
 {
     while(Test-Path $lockfile)
     {
+        $attempt++
         Write-Host "En attente de la fermeture des scripts [$attempt/$maxAttempts]"
         Start-Sleep -s 2
-        $attempt++
-
         if ($attempt -ge $maxAttempts) 
         {
-            Write-Host "La suppression de $TechFolder va se poursuivre, mais pourrait contenir des erreurs."
+            Write-Host "La suppression de $techFolder va se poursuivre, mais pourrait contenir des erreurs."
             break
         }
     }
-
-    Remove-DownloadFolder
-    Write-Host "Suppression du dossier $TechFolder"
-    Remove-Item "$TechFolder\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item $TechFolder -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
-    Write-Host "Suppression du raccourci"
-    Remove-Item "$desktop\Menu.lnk" -Force -ErrorAction SilentlyContinue | Out-Null
-    Start-Sleep -Seconds 2
-    Write-Host "Vidage de la corbeille"
-    Clear-RecycleBin -Force -ErrorAction SilentlyContinue | Out-Null
-    Write-Host "La corbeille a été vidé"
-    Start-Sleep -Seconds 2
-
-    if (Test-Path $TechFolder)
+}
+function Remove-techFolder
+{
+    Write-Host "Suppression du dossier $techFolder"
+    Remove-Item "$techFolder\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item $techFolder -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+    if (Test-Path $techFolder)
     {
         [System.Windows.MessageBox]::Show("La suppression du dossier C:\_Tech a échoué","Suppression",0,48) | Out-Null
     }
+    else 
+    {
+        Write-Host "Le dossier C:\_Tech a été supprimé"
+    }
+    Start-Sleep -Seconds 1
 }
-#si C:\_Tech n'existe pas
-else
+function Remove-Shortcut
+{
+    Write-Host "Suppression du raccourci"
+    Remove-Item "$desktop\Menu.lnk" -Force -ErrorAction SilentlyContinue | Out-Null
+    Start-Sleep -Seconds 1
+}
+function Remove-RecycleBin
+{
+    Write-Host "Vidage de la corbeille"
+    Clear-RecycleBin -Force -ErrorAction SilentlyContinue | Out-Null
+    Write-Host "La corbeille a été vidé"
+    Start-Sleep -Seconds 1
+}
+function Remove-TempFolder
+{
+    Remove-Item -Path "$tempFolder\*" -Force -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item -Path $tempFolder -Force -ErrorAction SilentlyContinue | Out-Null
+    Write-Host "Le dossier $tempFolder a été supprimé"
+}
+function Move-RemoveFile
+{
+    if (Test-Path "C:\Temp\Stoolbox\remove.ps1" -ErrorAction SilentlyContinue)
+    {
+        Move-Item "C:\Temp\Stoolbox\remove.ps1" -Destination "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
+        Move-Item "C:\Temp\Stoolbox\remove.bat" -Destination "$env:APPDATA\remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
+        $scriptPath = "$env:APPDATA\remove.ps1"
+        Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`""
+        exit
+    }
+}
+function Remove-RemoveFile
+{
+    Remove-Item "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
+    Remove-Item "$env:APPDATA\remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
+}
+
+#Main
+if (Test-Path $techFolder)
+{
+    Get-LockFile
+    Remove-Installer
+    Remove-DownloadFolder
+    Remove-techFolder
+    Remove-Shortcut
+    Remove-RecycleBin
+}
+else #si C:\_Tech n'existe pas
 {
     if (-not (Test-Path "$env:APPDATA\remove.ps1"))
     {
@@ -119,19 +156,8 @@ else
     }
 }
 
-if (Test-Path "C:\Temp\Stoolbox\remove.ps1" -ErrorAction SilentlyContinue)
-{
-    Move-Item "C:\Temp\Stoolbox\remove.ps1" -Destination "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
-    Move-Item "C:\Temp\Stoolbox\remove.bat" -Destination "$env:APPDATA\remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
-    $scriptPath = "$env:APPDATA\remove.ps1"
-    Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`""
-    exit
-}
-
-remove-Item -Path "$env:SystemDrive\Temp\Stoolbox\*" -Force -ErrorAction SilentlyContinue | Out-Null
-remove-Item -Path "$env:SystemDrive\Temp\Stoolbox" -Force -ErrorAction SilentlyContinue | Out-Null
-Remove-Item "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
-Remove-Item "$env:APPDATA\remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
-Write-Host "Le dossier Temp a été supprimé"
-Start-Sleep -Seconds 1
+#Que techFolder existe ou pas ca va faire la suite:
+Move-RemoveFile
+Remove-TempFolder
+Remove-RemoveFile
 Remove-Task
