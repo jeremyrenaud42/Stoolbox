@@ -534,6 +534,8 @@ $Window.add_Loaded({
 })
 
 $window.add_Closing({
+    Get-RemoteFile "Settings.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Settings.JSON' $sourceFolderPath
+    
     #variable pour runspaces
     $global:sync['flag'] = $false #stop the loop
     $desktop = [Environment]::GetFolderPath("Desktop")
