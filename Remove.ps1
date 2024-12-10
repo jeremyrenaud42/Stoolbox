@@ -17,10 +17,10 @@ function Remove-Installer
 }
 function Remove-DownloadFolder
 {
-    Write-Host "Nettoyage du dossier téléchargements"
+    Write-Host "Nettoyage du dossier téléchargements" -ForegroundColor DarkCyan
     if (-not (test-path $dateFile) -or (Get-Content -Path $dateFile -ErrorAction SilentlyContinue).Trim().Length -eq 0) 
     {
-        Write-Host "Aucune date d'installation trouvée"
+        Write-Host "Échec de la suppression des téléchargements - Aucune date d'installation trouvée"
     }
     else 
     {
@@ -45,6 +45,7 @@ function Remove-DownloadFolder
 }   
 function Remove-Task
 {
+    Write-Host "Suppresion de la tâche planifiée" -ForegroundColor DarkCyan
     $TaskName = 'delete _tech'
     $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
     if ($null -ne $task) 
@@ -88,7 +89,7 @@ function Get-LockFile
 }
 function Remove-techFolder
 {
-    Write-Host "Suppression du dossier $techFolder"
+    Write-Host "Suppression du dossier $techFolder" -ForegroundColor DarkCyan
     Remove-Item "$techFolder\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     Remove-Item $techFolder -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     if (Test-Path $techFolder)
@@ -103,19 +104,20 @@ function Remove-techFolder
 }
 function Remove-Shortcut
 {
-    Write-Host "Suppression du raccourci"
+    Write-Host "Suppression du raccourci" -ForegroundColor DarkCyan
     Remove-Item "$desktop\Menu.lnk" -Force -ErrorAction SilentlyContinue | Out-Null
     Start-Sleep -Seconds 1
 }
 function Remove-RecycleBin
 {
-    Write-Host "Vidage de la corbeille"
+    Write-Host "Vidage de la corbeille" -ForegroundColor DarkCyan
     Clear-RecycleBin -Force -ErrorAction SilentlyContinue | Out-Null
     Write-Host "La corbeille a été vidé"
     Start-Sleep -Seconds 1
 }
 function Remove-TempFolder
 {
+    Write-Host "Suppresion du dossier $tempFolder " -ForegroundColor DarkCyan
     Remove-Item -Path "$tempFolder\*" -Force -ErrorAction SilentlyContinue | Out-Null
     Remove-Item -Path $tempFolder -Force -ErrorAction SilentlyContinue | Out-Null
     Write-Host "Le dossier $tempFolder a été supprimé"
