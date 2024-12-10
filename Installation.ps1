@@ -75,6 +75,13 @@ function Add-Text
     # Add the colored run to the paragraph
     $lastParagraph.Inlines.Add($run)
 }
+function Clear-Text
+{
+    # Get the document from the global synchronized RichTextBox
+    $document = $global:sync["richTxtBxOutput"].Document
+    # Clear all blocks (paragraphs) from the document
+    $document.Blocks.Clear()
+}
 function Get-Winget
 {
     $formControlsMain.lblWinget.foreground = "DodgerBlue"
@@ -165,6 +172,28 @@ function Get-Nuget
     Add-Text -text "`n"
 }
 
+function Install-SoftwareMenuApp($appName)
+{
+    $status = Test-SoftwarePresence $appsInfo.$appName
+    if ($status) 
+    {
+        $formControlsMenuApp.richTextBxOutput.AppendText("$appName est déja installé`r")
+    }
+    else 
+    {
+        Install-Software $appsInfo.$appName
+        $status = Test-SoftwarePresence $appsInfo.$appName
+        if ($status) 
+        {
+            $formControlsMenuApp.richTextBxOutput.AppendText("$appName a été installé`r")
+        }
+        else 
+        {
+            $formControlsMenuApp.richTextBxOutput.AppendText("$appName n'a pas été installé`r")
+        }   
+    }      
+} 
+
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
 $pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
 $pathInstallationSource = "$env:SystemDrive\_Tech\Applications\Installation\source"
@@ -228,6 +257,14 @@ $windowMenuApp.add_Loaded({
         $formControlsMenuApp.chkboxGeForce.IsChecked = $true
     }
     #Boutons
+    $formControlsMenuApp.chkboxRemove.Add_Checked({
+        $formControlsMenuApp.chkboxDeleteFolder.IsChecked = $true
+        $formControlsMenuApp.chkboxDeleteBin.IsChecked = $true
+    })
+    $formControlsMenuApp.chkboxRemove.Add_Unchecked({
+        $formControlsMenuApp.chkboxDeleteFolder.IsChecked = $false
+        $formControlsMenuApp.chkboxDeleteBin.IsChecked = $false
+    })
     $formControlsMenuApp.btnGo.Add_Click({
         $windowMenuApp.Close()
     })
@@ -249,102 +286,65 @@ $windowMenuApp.add_Loaded({
         $windowMenuApp.DragMove()
     })
     $formControlsMenuApp.btnAdobe.Add_Click({
-        $appName = "Adobe Reader"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("Adobe a été installé`r")
+        Install-SoftwareMenuApp "Adobe Reader"
     })
     $formControlsMenuApp.btnGoogleChrome.Add_Click({
-        $appName = "Google Chrome"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("Chrome a été installé`r")
+        Install-SoftwareMenuApp "Google Chrome"
     })
     $formControlsMenuApp.btnTeamviewer.Add_Click({
-        $appName = "TeamViewer"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("TeamViewer a été installé`r")
+        Install-SoftwareMenuApp "TeamViewer"
     })
     $formControlsMenuApp.btnVLC.Add_Click({
-        $appName = "VLC"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("VLC a été installé`r")
+        Install-SoftwareMenuApp "VLC"
     })
     $formControlsMenuApp.btn7zip.Add_Click({
-        $appName = "7Zip"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("7zip a été installé`r")
+        Install-SoftwareMenuApp "7Zip"
     })
     $formControlsMenuApp.btnMacrium.Add_Click({
-        $appName = "Macrium"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("Macrium a été installé`r")
+        Install-SoftwareMenuApp "Macrium"
     })
     $formControlsMenuApp.btnGeForce.Add_Click({
-        $appName = "GeForce Experience"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("GeForce a été installé`r")
+        Install-SoftwareMenuApp "GeForce Experience"
     })
     $formControlsMenuApp.btnLenovoVantage.Add_Click({
-        $appName = "Lenovo Vantage"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("Lenovo Vantage a été installé`r")
+        Install-SoftwareMenuApp "Lenovo Vantage"
     })
     $formControlsMenuApp.btnLenovoSystemUpdate.Add_Click({
-        $appName = "Lenovo System Update"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("Lenovo System Update a été installé`r")
+        Install-SoftwareMenuApp "Lenovo System Update"
     })
     $formControlsMenuApp.btnHPSA.Add_Click({
-        $appName = "HP Support Assistant"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("HPSA a été installé`r")
+        Install-SoftwareMenuApp "HP Support Assistant"
     })
     $formControlsMenuApp.btnMSICenter.Add_Click({
-        $appName = "MSI Center"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("MSI Center a été installé`r")
+        Install-SoftwareMenuApp "MSI Center"
     })
     $formControlsMenuApp.btnMyAsus.Add_Click({
-        $appName = "MyAsus"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("My Asus a été installé`r")
+        Install-SoftwareMenuApp "MyAsus"
     })
     $formControlsMenuApp.btnDellsa.Add_Click({
-        $appName = "Dell Command Update"
-        Install-Software $appsInfo.$appName
+        Install-SoftwareMenuApp "Dell Command Update"
     })
     $formControlsMenuApp.btnIntel.Add_Click({
-        $appName = "Intel Drivers Support"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("Intel DSA a été installé`r")
+        Install-SoftwareMenuApp "Intel Drivers Support"
     })
     $formControlsMenuApp.btnSteam.Add_Click({
-        $appName = "Steam"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("Steam a été installé`r")
+        Install-SoftwareMenuApp "Steam"
     })
     $formControlsMenuApp.btnZoom.Add_Click({
-        $appName = "Zoom"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("Zoom a été installé`r")
+        Install-SoftwareMenuApp "Zoom"
     })
     $formControlsMenuApp.btnDiscord.Add_Click({
-        $appName = "Discord"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("Discord a été installé`r")
+        Install-SoftwareMenuApp "Discord"
     })
     $formControlsMenuApp.btnFirefox.Add_Click({
-        $appName = "Firefox"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("Firefox a été installé`r")
+        Install-SoftwareMenuApp "Firefox"
     })
     $formControlsMenuApp.btnLibreOffice.Add_Click({
-        $appName = "Libre Office"
-        Install-Software $appsInfo.$appName
-        $formControlsMenuApp.richTextBxOutput.AppendText("LibreOffice a été installé`r")
+        Install-SoftwareMenuApp "Libre Office"
     })
     $formControlsMenuApp.btnWindowsUpdate.Add_Click({
-        Get-Nuget
-        Install-WindowsUpdate -UpdateSize $formControlsMenuApp.CbBoxSize.SelectedItem.Content
+        start-Process "ms-settings:windowsupdate"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Vérification des mises à jour de Windows`r")
     })
     $formControlsMenuApp.btnDisque.Add_Click({
         Rename-SystemDrive -NewDiskName $formControlsMenuApp.TxtBkDiskName.text
@@ -359,7 +359,7 @@ $windowMenuApp.add_Loaded({
         Disable-FastBoot
     })
     $formControlsMenuApp.btnClavier.Add_Click({
-        Remove-EngKeyboard
+        Remove-EngKeyboard 'en-CA'
     })
     $formControlsMenuApp.btnExplorer.Add_Click({
         Set-ExplorerDisplay
@@ -403,6 +403,7 @@ function Install-SoftwaresManager
     New-Item -Path $installationLockFile -ItemType 'File' -Force
     Add-Log $logFileName "Installation de $windowsVersion le $actualDate"
     $formControlsMain.lblProgress.content = "Préparation"
+    Clear-Text
     Get-Winget
     Get-Choco
     Get-Nuget
@@ -417,16 +418,19 @@ function Update-MsStore
     if ($storeVersion -le 22110)
     {
         Add-Text -text "Mettre le Store à jour manuellement"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Mettre le Store à jour manuellement`r")
         Start-Process "ms-windows-store:"
         return
     }
     Add-Text -text "Lancement des updates du Microsoft Store"
+    $formControlsMenuApp.richTextBxOutput.AppendText("Lancement des updates du Microsoft Store`r")
     $namespaceName = "root\cimv2\mdm\dmmap"
     $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
     $result = Get-CimInstance -Namespace $namespaceName -ClassName $className | Invoke-CimMethod -MethodName UpdateScanMethod
     if ($result.ReturnValue -eq 0) 
     {
         Add-Text -text " - Mises à jour du Microsoft Store lancées" -SameLine
+        $formControlsMenuApp.richTextBxOutput.AppendText(" - Mises à jour du Microsoft Store lancées`r")
         $formControlsMain.lblStore.foreground = "MediumSeaGreen"
         Add-Log $logFileName "Mises à jour de Microsoft Store lancées" 
     } 
@@ -434,6 +438,7 @@ function Update-MsStore
     {
         Add-Log $logFileName " - Échec des mises à jour du Microsoft Store" 
         Add-Text -text " - Échec des mises à jour du Microsoft Store" -colorName "red" -SameLine
+        $formControlsMenuApp.richTextBxOutput.AppendText(" - Échec des mises à jour du Microsoft Store`r")
         $formControlsMain.lblStore.foreground = "red"
     }
 }
@@ -469,6 +474,7 @@ Function Rename-SystemDrive
         $formControlsMain.lblDisk.foreground = "MediumSeaGreen"
         Add-Log $logFileName "Le disque est déja nommé $NewDiskName"
         Add-Text -text "Le disque est déja nommé $NewDiskName"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Le disque est déja nommé $NewDiskName`r") 
     }
     else
     {
@@ -479,11 +485,13 @@ Function Rename-SystemDrive
         {
             $formControlsMain.lblDisk.foreground = "MediumSeaGreen"
             Add-Text -text "Le disque $env:SystemDrive a été renommé $NewDiskName" 
+            $formControlsMenuApp.richTextBxOutput.AppendText("Le disque $env:SystemDrive a été renommé $NewDiskName`r") 
             Add-Log $logFileName "Le disque $env:SystemDrive a été renommé $NewDiskName"
         }
         else
         {
-            Add-Text -text "Échec du renommage de disque" -colorName "red"    
+            Add-Text -text "Échec du renommage de disque" -colorName "red"
+            $formControlsMenuApp.richTextBxOutput.AppendText("Échec du renommage de disque`r")    
             Add-Log $logFileName "Échec du renommage de disque"
             $formControlsMain.lblDisk.foreground = "red"
         }
@@ -499,6 +507,7 @@ Function Set-ExplorerDisplay
     if($explorerLaunchWindow -eq '1')
     {
         Add-Text -text "Ce PC remplace déja l'accès rapide"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Ce PC remplace déja l'accès rapide`r")
         Add-Log $logFileName "Ce PC remplace déja l'accès rapide"
     }
     else 
@@ -509,10 +518,12 @@ Function Set-ExplorerDisplay
         {
             Add-Log $logFileName "L'accès rapide a été remplacé par Ce PC"
             Add-Text -text "L'accès rapide a été remplacé par Ce PC"
+            $formControlsMenuApp.richTextBxOutput.AppendText("L'accès rapide a été remplacé par Ce PC`r")
         }
         else
         {
             Add-Text -text "L'accès rapide n'a pas été remplacé par Ce PC" -colorName "red"
+            $formControlsMenuApp.richTextBxOutput.AppendText("L'accès rapide n'a pas été remplacé par Ce PC`r")
             Add-Log $logFileName "L'accès rapide n'a pas été remplacé par Ce PC"
         }
     }
@@ -522,6 +533,7 @@ Function Set-ExplorerDisplay
     {
         Add-Log $logFileName "Le fournisseur de synchronisation est déjà décoché"
         Add-Text -text "Le fournisseur de synchronisation est déjà décoché"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Le fournisseur de synchronisation est déjà décoché`r")
     }
     else 
     {
@@ -531,10 +543,12 @@ Function Set-ExplorerDisplay
         {
             Add-Log $logFileName "Le fournisseur de synchronisation a été decoché"
             Add-Text -text "Le fournisseur de synchronisation a été decoché" 
+            $formControlsMenuApp.richTextBxOutput.AppendText("Le fournisseur de synchronisation a été decoché`r")
         }
         else
         {
             Add-Text -text "Le fournisseur de synchronisation n'a pas été decoché" -colorName "red"
+            $formControlsMenuApp.richTextBxOutput.AppendText("Le fournisseur de synchronisation n'a pas été decoché`r")
             Add-Log $logFileName "Le fournisseur de synchronisation n'a pas été decoché"
         }
     }
@@ -560,6 +574,7 @@ Function Disable-Bitlocker
         manage-bde $env:systemdrive -off
         $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
         Add-Text -text "Bitlocker a été désactivé"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Bitlocker a été désactivé`r")
         Add-Log $logFileName "Bitlocker a été désactivé"
     }
     elseif ($bitlockerStatus -eq 'EncryptionInProgress')
@@ -567,24 +582,28 @@ Function Disable-Bitlocker
         manage-bde $env:systemdrive -off
         $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
         Add-Text -text "Bitlocker a été désactivé"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Bitlocker a été désactivé`r")
         Add-Log $logFileName "Bitlocker a été désactivé"
     }
     elseif ($bitlockerStatus -eq 'FullyDecrypted')
     {
         $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
         Add-Text -text "Bitlocker est déja désactivé"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Bitlocker est déja désactivé`r")
         Add-Log $logFileName "Bitlocker est déja désactivé"
     }
     elseif ($bitlockerStatus -eq 'DecryptionInProgress')
     {
         $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
         Add-Text -text "Bitlocker est déja en cours de déchiffrement" 
+        $formControlsMenuApp.richTextBxOutput.AppendText("Bitlocker est déja en cours de déchiffrement`r")
         Add-Log $logFileName "Bitlocker est déja en cours de déchiffrement"
     }
     else 
     {
         $formControlsMain.lblBitlocker.foreground = "red"
         Add-Text -text "Bitlocker a échoué" -colorName "red"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Bitlocker a échoué`r")
         Add-Log $logFileName "Bitlocker a échoué"
     }
 }
@@ -597,6 +616,7 @@ Function Disable-FastBoot
     if($power -eq '0')
     {  
         Add-Text -text "Le démarrage rapide est déjà désactivé"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Le démarrage rapide est déjà désactivé`r")
         Add-Log $logFileName "Le démarrage rapide est déjà désactivé"
         $formControlsMain.lblStartup.foreground = "MediumSeaGreen"
     }
@@ -604,45 +624,50 @@ Function Disable-FastBoot
     {
         set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Name 'HiberbootEnabled' -Type 'DWord' -Value '0'  
         Add-Text -text "Le démarrage rapide a été désactivé"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Le démarrage rapide a été désactivé`r")
         Add-Log $logFileName "Le démarrage rapide a été désactivé"
         $formControlsMain.lblStartup.foreground = "MediumSeaGreen"
     }
     else  
     {
         Add-Text -text "Le démarrage rapide n'a pas été désactivé" -colorName "red"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Le démarrage rapide n'a pas été désactivé`r")
         Add-Log $logFileName "Le démarrage rapide n'a pas été désactivé"
         $formControlsMain.lblStartup.foreground = "red"
     }
 }
 
-Function Remove-EngKeyboard
+Function Remove-EngKeyboard($selectedLanguage)
 {
     $formControlsMain.lblkeyboard.foreground = "DodgerBlue"
-    $formControlsMain.lblProgress.Content = "Suppression du clavier Anglais"   
+    $formControlsMain.lblProgress.Content = "Suppression du clavier $selectedLanguage"   
     $langList = Get-WinUserLanguageList #Gets the language list for the current user account
-    $anglaisCanada = $langList | Where-Object LanguageTag -eq "en-CA" #sélectionne le clavier anglais canada de la liste
-    if(($anglaisCanada).LanguageTag -eq 'en-CA')
+    $filteredUserLangList = $langList | Where-Object LanguageTag -eq $selectedLanguage #sélectionne le clavier anglais canada de la liste
+    if(($filteredUserLangList).LanguageTag -eq $selectedLanguage)
     {
-        $langList.Remove($anglaisCanada) | Out-Null #supprimer la clavier sélectionner
+        $langList.Remove($filteredUserLangList) | Out-Null #supprimer la clavier sélectionner
         Set-WinUserLanguageList $langList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
-        $anglaisCanada = $langList | Where-Object LanguageTag -eq "en-CA" #sélectionne le clavier anglais canada de la liste
-        if(($anglaisCanada).LanguageTag -eq 'en-CA')
+        $filteredUserLangList = $langList | Where-Object LanguageTag -eq $selectedLanguage #sélectionne le clavier anglais canada de la liste
+        if(($filteredUserLangList).LanguageTag -eq $selectedLanguage)
         {
-            Add-Text -text "Le clavier Anglais n'a pas été supprimé" -colorName "red"
-            Add-Log $logFileName "Le clavier Anglais n'a pas été supprimé"
+            Add-Text -text "Le clavier $selectedLanguage n'a pas été supprimé" -colorName "red"
+            $formControlsMenuApp.richTextBxOutput.AppendText("Le clavier $selectedLanguage n'a pas été supprimé`r")
+            Add-Log $logFileName "Le clavier $selectedLanguage n'a pas été supprimé"
             $formControlsMain.lblkeyboard.foreground = "red"
         }
         else
         {
-            Add-Text -text "Le clavier Anglais a été supprimé"
+            Add-Text -text "Le clavier $selectedLanguage a été supprimé"
+            $formControlsMenuApp.richTextBxOutput.AppendText("Le clavier $selectedLanguage a été supprimé`r")
             $formControlsMain.lblkeyboard.foreground = "MediumSeaGreen"
-            Add-Log $logFileName "Le clavier Anglais a été supprimé"
+            Add-Log $logFileName "Le clavier $selectedLanguage a été supprimé"
         }
     }
     else 
     {
-        Add-Text -text "Le clavier Anglais est déja supprimé"
-        Add-Log $logFileName "Le clavier Anglais est déja supprimé"
+        Add-Text -text "Le clavier $selectedLanguage est déja supprimé"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Le clavier $selectedLanguage est déja supprimé`r")
+        Add-Log $logFileName "Le clavier $selectedLanguage est déja supprimé"
         $formControlsMain.lblkeyboard.foreground = "MediumSeaGreen"
     }   
 }
@@ -659,6 +684,7 @@ Function Set-Privacy
     if (($338393 -eq 0) -and ($353694 -eq 0) -and ($353696 -eq 0) -and ($Start_TrackProgs -eq 0))
     {
         Add-Text -text "Les options de confidentialité sont déjà configurées"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Les options de confidentialité sont déjà configurées`r")
         Add-Log $logFileName "Les options de confidentialité sont déjà configurées"
         $formControlsMain.lblPrivacy.foreground = "MediumSeaGreen"
     }
@@ -676,6 +702,7 @@ Function Set-Privacy
         if (($338393 -eq 0) -and ($353694 -eq 0) -and ($353696 -eq 0) -and ($Start_TrackProgs -eq 0))
         { 
             Add-Text -text "Les options de confidentialité ont été configurées"
+            $formControlsMenuApp.richTextBxOutput.AppendText("Les options de confidentialité ont été configurées`r")
             Add-Log $logFileName "Les options de confidentialité ont été configurées"
             $formControlsMain.lblPrivacy.foreground = "MediumSeaGreen" 
         }
@@ -683,6 +710,7 @@ Function Set-Privacy
         {
             $formControlsMain.lblPrivacy.foreground = "red" 
             Add-Text -text "Les options de confidentialité n'ont pas été configurées" -colorName "red"
+            $formControlsMenuApp.richTextBxOutput.AppendText("Les options de confidentialité n'ont pas été configurées`r")
             Add-Log $logFileName "Les options de confidentialité n'ont pas été configurées"
         } 
     }    
@@ -704,6 +732,7 @@ Function Enable-DesktopIcon
     if (($configPanel -eq 0) -and ($myPC -eq 0) -and ($userFolder -eq 0))
     {
         Add-Text -text "Les icones systèmes sont déjà installés sur le bureau"
+        $formControlsMenuApp.richTextBxOutput.AppendText("Les icones systèmes sont déjà installés sur le bureau`r")
         Add-Log $logFileName "Les icones systèmes sont déjà installés sur le bureau"
         $formControlsMain.lblDesktopIcon.foreground = "MediumSeaGreen"
     }
@@ -719,12 +748,14 @@ Function Enable-DesktopIcon
         if (($configPanel -eq 0) -and ($myPC -eq 0) -and ($userFolder -eq 0))
         {
             Add-Text -text "Les icones systèmes ont été installés sur le bureau"
+            $formControlsMenuApp.richTextBxOutput.AppendText("Les icones systèmes ont été installés sur le bureau`r")
             Add-Log $logFileName "Les icones systèmes ont été installés sur le bureau"
             $formControlsMain.lblDesktopIcon.foreground = "MediumSeaGreen"  
         }
         else 
         {
             Add-Text -text "Les icones systèmes n'ont pas été installés sur le bureau" -colorName "red"
+            $formControlsMenuApp.richTextBxOutput.AppendText("Les icones systèmes n'ont pas été installés sur le bureau`r")
             Add-Log $logFileName "Les icones systèmes n'ont pas été installés sur le bureau"
             $formControlsMain.lblDesktopIcon.foreground = "red"
         }
@@ -1008,7 +1039,10 @@ function Complete-Installation
         }  
     }
     Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
-    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
+    if($formControlsMenuApp.chkboxRemove.IsChecked)
+    { 
+        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
+    }
     $window.Close()
 }
 
@@ -1037,7 +1071,7 @@ function Main
     }
     if($formControlsMenuApp.chkboxClavier.IsChecked -eq $true)
     { 
-        Remove-EngKeyboard
+        Remove-EngKeyboard 'en-CA'
     }
     if($formControlsMenuApp.chkboxConfi.IsChecked -eq $true)
     { 
@@ -1123,6 +1157,20 @@ if($formControlsMenuApp.chkboxMSStore.IsChecked)
 if($formControlsMenuApp.chkboxWindowsUpdate.IsChecked)
 { 
     $formControlsMain.lblUpdate.foreground = "white"
+}
+if($formControlsMenuApp.chkboxDeleteFolder.IsChecked -eq $false)
+{ 
+    $jsonFilePath = "$sourceFolderPath\Settings.JSON"
+    $jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
+    $jsonContent.RemoveDownloadFolder.Status = "0"
+    $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath
+}
+if($formControlsMenuApp.chkboxDeleteBin.IsChecked -eq $false)
+{ 
+        $jsonFilePath = "$sourceFolderPath\Settings.JSON"
+        $jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
+        $jsonContent.EmptyRecycleBin.Status = "0"
+        $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath
 }
 Start-WPFApp $windowMain
 Main
