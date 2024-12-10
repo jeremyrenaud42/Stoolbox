@@ -1,8 +1,8 @@
 {
   "RemoveDownloadFolder": {
-    "Status": "0"
+    "Status": "1"
   },
   "EmptyRecycleBin": {
-    "Status": "0"
+    "Status": "1"
   }
 }
