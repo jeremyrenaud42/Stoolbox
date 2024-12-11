@@ -500,6 +500,23 @@ $Window.add_Loaded({
         Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
     })
     $formControls.btnQuit.Add_Click({
+        $messageBox = [System.Windows.MessageBox]::Show("Voulez-vous vider la corbeille et effacer les derniers téléchargements ?","Quitter et Supprimer",4,64)
+        if($messageBox -eq '6')
+        {
+            $jsonFilePath = "$sourceFolderPath\Settings.JSON"
+            $jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
+            $jsonContent.RemoveDownloadFolder.Status = "1"
+            $jsonContent.EmptyRecycleBin.Status = "1"
+            $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath
+        }
+        else
+        {
+            $jsonFilePath = "$sourceFolderPath\Settings.JSON"
+            $jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
+            $jsonContent.RemoveDownloadFolder.Status = "0"
+            $jsonContent.EmptyRecycleBin.Status = "0"
+            $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath
+        }     
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\Task.psm1"
         $window.Close() 
