@@ -44,7 +44,6 @@ $formControls.btnMenu.Add_Click({
 })
 
 $formControls.btnQuit.Add_Click({
-    winget uninstall -e --id XPDNXG5333CSVK
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         $jsonFilePath = "$sourceFolderPath\Settings.JSON"
         $jsonContent = Get-Content $jsonFilePath -Raw | ConvertFrom-Json
@@ -135,71 +134,71 @@ $formControls.btnAida.Add_Click({
 })
     
 $formControls.btnCoretemp.Add_Click({
-Invoke-App "Core Temp.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core Temp.zip" "$pathDiagnostiqueSource\cpu"
-Add-Log $logFileName "Température du CPU vérifié"
+    Invoke-App "Core Temp.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core Temp.zip" "$pathDiagnostiqueSource\cpu"
+    Add-Log $logFileName "Température du CPU vérifié"
 })
 
 $formControls.btnPrime95.Add_Click({
-Invoke-App "Prime95.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "$pathDiagnostiqueSource\cpu"
-Add-Log $logFileName "Stress test du CPU effectué"
+    Invoke-App "Prime95.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "$pathDiagnostiqueSource\cpu"
+    Add-Log $logFileName "Stress test du CPU effectué"
 })
 
 $formControls.btnHeavyLoad.Add_Click({
-Invoke-App "HeavyLoad.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "$pathDiagnostiqueSource\cpu"
-Add-Log $logFileName "Test de stabilité du système effectué"
+    Invoke-App "HeavyLoad.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "$pathDiagnostiqueSource\cpu"
+    Add-Log $logFileName "Test de stabilité du système effectué"
 })
 $formControls.btnThrottleStop.Add_Click({
     Invoke-App "ThrottleStop.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "$pathDiagnostiqueSource\cpu"
     Add-Log $logFileName "Stress test du CPU effectué"
-    })
+})
 
 function diskmarkinfoLog
 {
-$logfile = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\App\CrystalDiskInfo\diskinfo.txt"
-$contentlogfile = Get-Content $logfile
-$lignedisk = "" #initialise la variable vide
-foreach ($ligne in $contentlogfile) #pour chaque ligne dans le fichier, car chaque ligne est un objet
-{
-    if($ligne -match "Model") #si une ligne match drive + un chiffre
+    $logfile = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\App\CrystalDiskInfo\diskinfo.txt"
+    $contentlogfile = Get-Content $logfile
+    $lignedisk = "" #initialise la variable vide
+    foreach ($ligne in $contentlogfile) #pour chaque ligne dans le fichier, car chaque ligne est un objet
     {
-        $lignedisk = $ligne
+        if($ligne -match "Model") #si une ligne match drive + un chiffre
+        {
+            $lignedisk = $ligne
+        }
+        elseif($lignedisk -and $ligne -match "Interface") 
+        {       
+            "$lignedisk `r`n $ligne`r`n"    
+        }
+        elseif($lignedisk -and $ligne -match " Health Status") 
+        {
+            "$ligne $ligneInterfaceused`r`n"
+            $lignedisk = "" #flusher une fois la variable a la fin
+        }
     }
-    elseif($lignedisk -and $ligne -match "Interface") 
-    {       
-        "$lignedisk `r`n $ligne`r`n"    
-    }
-    elseif($lignedisk -and $ligne -match " Health Status") 
-    {
-        "$ligne $ligneInterfaceused`r`n"
-        $lignedisk = "" #flusher une fois la variable a la fin
-    }
-}
 }
 
 $formControls.btnHDSentinnel.Add_Click({
-function HDSentinnel
-{
-    $pathHDS = "C:\Program Files (x86)\Hard Disk Sentinel"
-    Add-Log $logFileName "Vérifier la santé du disque dur"
-    $apppath = Test-AppPresence $pathHDS
-    if($apppath)
+    function HDSentinnel
     {
-        Start-App "HDSentinel.exe" $pathHDS
-    }
-    elseif($apppath -eq $false)
-    {
-    Install-Winget  
-    winget install -e --id XPDNXG5333CSVK --accept-package-agreements --accept-source-agreements --silent | Out-Null
-    $apppath = Test-AppPresence $pathHDS
-        if($apppath -eq $false)
+        $pathHDS = "C:\Program Files (x86)\Hard Disk Sentinel"
+        Add-Log $logFileName "Vérifier la santé du disque dur"
+        $apppath = Test-AppPresence $pathHDS
+        if($apppath)
         {
-            Chocoinstall
-            choco install hdsentinel -y | Out-Null
+            Start-App "HDSentinel.exe" $pathHDS
         }
-        Start-App "HDSentinel.exe" $pathHDS
+        elseif($apppath -eq $false)
+        {
+            Install-Winget  
+            winget install -e --id XPDNXG5333CSVK --accept-package-agreements --accept-source-agreements --silent | Out-Null
+            $apppath = Test-AppPresence $pathHDS
+            if($apppath -eq $false)
+            {
+                Chocoinstall
+                choco install hdsentinel -y | Out-Null
+            }
+            Start-App "HDSentinel.exe" $pathHDS
+        }
     }
-}
-HDSentinnel
+    HDSentinnel
 })
 
 $formControls.btnHDTune.Add_Click({
@@ -208,46 +207,45 @@ $formControls.btnHDTune.Add_Click({
 })
 
 $formControls.btnASSD.Add_Click({
-Start-App "AS SSD Benchmark.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\As_SSD"
-Add-Log $logFileName "Vérifier la Vitesse du disque dur"
+    Start-App "AS SSD Benchmark.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\As_SSD"
+    Add-Log $logFileName "Vérifier la Vitesse du disque dur"
 })
 
 $formControls.btnDiskmark.Add_Click({
-Start-Process -wait  "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"  -ArgumentList "/copy"
-Add-Log $logFileName "Vérifier la santé du disque dur"
-#diskmarkinfolog | Out-File $logfilepath -Append
+    Start-Process -wait  "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"  -ArgumentList "/copy"
+    Add-Log $logFileName "Vérifier la santé du disque dur"
+    #diskmarkinfolog | Out-File $logfilepath -Append
 })
 
 $formControls.btnFurmark.Add_Click({
 Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\FurMark\FurMark.exe"
 Add-Log $logFileName "Stress test du GPU"
 })
+
 $formControls.btnFurmarkV2.Add_Click({
     Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\FurMark_GUI\FurMark_GUI.exe"
     Add-Log $logFileName "Stress test du GPU"
-    })
+})
     
-
-
 $formControls.btnUnigine.Add_Click({
-Start-Process "https://benchmark.unigine.com/"
-Add-Log $logFileName "Vérifier les performances du GPU"
+    Start-Process "https://benchmark.unigine.com/"
+    Add-Log $logFileName "Vérifier les performances du GPU"
 })
 
 $formControls.btnSpeccy.Add_Click({
-Invoke-App "Speccy.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "$pathDiagnostiqueSource"
+    Invoke-App "Speccy.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "$pathDiagnostiqueSource"
 })
 
 $formControls.btnHWMonitor.Add_Click({
-Invoke-App "HWMonitor_x64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor_x64.zip" "$pathDiagnostiqueSource"
+    Invoke-App "HWMonitor_x64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor_x64.zip" "$pathDiagnostiqueSource"
 })
 
 $formControls.btnWhocrashed.Add_Click({
-Invoke-App "WhoCrashedEx.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashedEx.zip" "$pathDiagnostiqueSource"
+    Invoke-App "WhoCrashedEx.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashedEx.zip" "$pathDiagnostiqueSource"
 })
 
 $formControls.btnSysinfo.Add_Click({
-msinfo32
+    msinfo32
 })
 
 $window.add_Closed({
