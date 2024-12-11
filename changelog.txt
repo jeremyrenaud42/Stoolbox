@@ -1,3 +1,7 @@
+2024-12-12:
+- Installation bouton pour quick install chaque logiciels et fonctions
+- Tous les scripts ont le choix de vider corbeille/wiper download en cliquant sur Quitter
+
 2024-12-01:
 - New gui pour installation
 - Corrigé bug menu qui pouvait freeze
