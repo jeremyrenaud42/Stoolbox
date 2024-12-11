@@ -500,6 +500,7 @@ $Window.add_Loaded({
         Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
     })
     $formControls.btnQuit.Add_Click({
+        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         $messageBox = [System.Windows.MessageBox]::Show("Voulez-vous vider la corbeille et effacer les derniers téléchargements ?","Quitter et Supprimer",4,64)
         if($messageBox -eq '6')
         {
@@ -517,7 +518,6 @@ $Window.add_Loaded({
             $jsonContent.EmptyRecycleBin.Status = "0"
             $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath
         }     
-        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\Task.psm1"
         $window.Close() 
         Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
