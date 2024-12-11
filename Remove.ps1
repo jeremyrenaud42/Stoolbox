@@ -8,6 +8,16 @@ $maxAttempts = 5
 $attempt = 0
 $dateFile = "C:\_tech\Applications\Source\installedDate.txt"
 
+if (test-path "C:\_Tech\Applications\source\Settings.JSON")
+{
+    Copy-Item "C:\_Tech\Applications\source\Settings.JSON" -Destination "C:\Temp\Stoolbox" -Force
+}
+$jsonFilePath = "C:\Temp\Stoolbox\Settings.JSON"
+$jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
+
+$download = $jsonContent.RemoveDownloadFolder.Status
+$bin = $jsonContent.EmptyRecycleBin.Status
+
 function Remove-Installer
 {
     if (Test-Path "$env:USERPROFILE\Downloads\stoolbox.exe")
@@ -144,10 +154,16 @@ if (Test-Path $techFolder)
 {
     Get-LockFile
     Remove-Installer
-    Remove-DownloadFolder
+    if($download -eq '1')
+    {
+        Remove-DownloadFolder
+    }
     Remove-techFolder
     Remove-Shortcut
-    Remove-RecycleBin
+    if($bin -eq '1')
+    {
+        Remove-RecycleBin 
+    } 
 }
 else #si C:\_Tech n'existe pas
 {
