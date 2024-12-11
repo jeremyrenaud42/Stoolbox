@@ -1,5 +1,4 @@
 Add-Type -AssemblyName PresentationFramework,System.speech,System.Drawing,presentationCore
-[System.Windows.Forms.Application]::EnableVisualStyles()
 
 function Get-RequiredModules
 {
