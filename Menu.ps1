@@ -194,6 +194,7 @@ $global:sync['flag'] = $true
     Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
     Get-RemoteFile "Background_menu.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$sourceFolderPath\Images"
     Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/Default/Icone.ico' "$sourceFolderPath\Images"
+    Get-RemoteFile "Settings.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Settings.JSON' $sourceFolderPath
 }
 
 #Définitions des variables
@@ -501,23 +502,20 @@ $Window.add_Loaded({
     })
     $formControls.btnQuit.Add_Click({
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+        $jsonFilePath = "$sourceFolderPath\Settings.JSON"
+        $jsonContent = Get-Content $jsonFilePath -Raw | ConvertFrom-Json
         $messageBox = [System.Windows.MessageBox]::Show("Voulez-vous vider la corbeille et effacer les derniers téléchargements ?","Quitter et Supprimer",4,64)
         if($messageBox -eq '6')
         {
-            $jsonFilePath = "$sourceFolderPath\Settings.JSON"
-            $jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
             $jsonContent.RemoveDownloadFolder.Status = "1"
             $jsonContent.EmptyRecycleBin.Status = "1"
-            $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath
         }
         else
         {
-            $jsonFilePath = "$sourceFolderPath\Settings.JSON"
-            $jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
             $jsonContent.RemoveDownloadFolder.Status = "0"
-            $jsonContent.EmptyRecycleBin.Status = "0"
-            $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath
-        }     
+            $jsonContent.EmptyRecycleBin.Status = "0"  
+        }   
+        $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath -Encoding UTF8
         Import-Module "$sourceFolderPath\Modules\Task.psm1"
         $window.Close() 
         Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
@@ -551,8 +549,6 @@ $Window.add_Loaded({
 })
 
 $window.add_Closing({
-    Get-RemoteFile "Settings.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Settings.JSON' $sourceFolderPath
-    
     #variable pour runspaces
     $global:sync['flag'] = $false #stop the loop
     $desktop = [Environment]::GetFolderPath("Desktop")
