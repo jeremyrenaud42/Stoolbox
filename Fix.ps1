@@ -172,7 +172,7 @@ function Get-Tweaking
     if($path -eq $false)
     {
         #choco install windowsrepair , il faudra revoir le start process aussi
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/tweaking.com - Windows Repair.zip' -OutFile "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip"
+        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/BRP1JxyMI0edKIft_yYt2g/tweaking.com%20-%20Windows%20Repair.zip' -OutFile "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip"
         Expand-Archive "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip" "$pathFixSource\Tweak"
         Remove-Item "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip"
         Copy-Item "$pathFixSource\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$desktop\Tweaking.com - Windows Repair"
@@ -189,14 +189,15 @@ function Get-PW
     $path = Test-Path "$pathFixSource\Partition_Wizard\partitionwizard.exe"
     if($path -eq $false)
     {
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Partition_Wizard.zip' -OutFile "$pathFixSource\Partition_Wizard.zip"
+        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/ymz6seur406dkjin_x_yog/Partition_Wizard.zip' -OutFile "$pathFixSource\Partition_Wizard.zip"
         Expand-Archive "$pathFixSource\Partition_Wizard.zip" "$pathFixSource"
         Remove-Item "$pathFixSource\Partition_Wizard.zip"
-        Start-Process "$pathFixSource\\Partition_Wizard\partitionwizard.exe"
+        Copy-Item "$pathFixSource\Partition_Wizard" -Recurse -Destination "$desktop\Partition_Wizard"
+        Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
     }    
     elseif($path)
     {
-        Start-Process "$pathFixSource\\Partition_Wizard\partitionwizard.exe"
+        Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
     }
 }
 
@@ -218,6 +219,21 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n/q [q = Suppres
     }
     elseif($sortie -eq "q")
     {
+        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+        $jsonFilePath = "$sourceFolderPath\Settings.JSON"
+        $jsonContent = Get-Content $jsonFilePath -Raw | ConvertFrom-Json
+        $messageBox = [System.Windows.MessageBox]::Show("Voulez-vous vider la corbeille et effacer les derniers téléchargements ?","Quitter et Supprimer",4,64)
+        if($messageBox -eq '6')
+        {
+            $jsonContent.RemoveDownloadFolder.Status = "1"
+            $jsonContent.EmptyRecycleBin.Status = "1"
+        }
+        else
+        {
+            $jsonContent.RemoveDownloadFolder.Status = "0"
+            $jsonContent.EmptyRecycleBin.Status = "0"  
+        }   
+        $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath -Encoding UTF8
         Remove-Item -Path $fixLockFile -Force -ErrorAction SilentlyContinue
         Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
         exit

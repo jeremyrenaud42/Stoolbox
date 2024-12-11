@@ -328,6 +328,21 @@ $quit.FlatAppearance.BorderColor = [System.Drawing.Color]::darkred
 $quit.FlatAppearance.MouseDownBackColor = [System.Drawing.Color]::Darkmagenta
 $quit.FlatAppearance.MouseOverBackColor = [System.Drawing.Color]::gray
 $quit.Add_Click({
+    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+        $jsonFilePath = "$sourceFolderPath\Settings.JSON"
+        $jsonContent = Get-Content $jsonFilePath -Raw | ConvertFrom-Json
+        $messageBox = [System.Windows.MessageBox]::Show("Voulez-vous vider la corbeille et effacer les derniers téléchargements ?","Quitter et Supprimer",4,64)
+        if($messageBox -eq '6')
+        {
+            $jsonContent.RemoveDownloadFolder.Status = "1"
+            $jsonContent.EmptyRecycleBin.Status = "1"
+        }
+        else
+        {
+            $jsonContent.RemoveDownloadFolder.Status = "0"
+            $jsonContent.EmptyRecycleBin.Status = "0"  
+        }   
+        $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath -Encoding UTF8
 Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
 $Form.Close()
 })
