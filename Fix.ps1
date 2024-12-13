@@ -9,38 +9,38 @@ function Get-RequiredModules
 
 Function menu
 {
-Clear-Host
-write-host "============================================================================================"
-write-host "  + [#] +           Programme                 +              Description               +  "-ForegroundColor $coloraccent
-write-host "  + --- + ----------------------------------- + -------------------------------------- +  " 
-write-host "  + [1] + SFC/DISM/CHKDSK        [sous-menu]  + Fichiers corrompus                     +  " -ForegroundColor $colorfolder
-write-host "  + [2] + Windows tweak          [sous-menu]  + Windows Tweak et Fix                   +  " -ForegroundColor $colorfolder
-write-host "  + [3] + Sterjo MDP recovery    [sous-menu]  + Obtenir MDP et licences                +  " -ForegroundColor $colorfolder
-write-host "  + [4] + DDU                                 + Desinstaller les pilotes graphiques    +  " 
-write-host "  + [5] + WiseForceDeleter                    + Supprimer un dossier/fichier           +  " -ForegroundColor $coloraccent
-write-host "  + [6] + WinDirStat                          + Verifier taille des dossiers           +  " 
-write-host "  + [7] + Partition Wizard                    + Gerer les partitions                   +  " -ForegroundColor $coloraccent
-write-host "  + [8] + Internet repair                     + Reparer Internet                       +  " 
-write-host "  + --- + ----------------------------------- + -------------------------------------- +  " -ForegroundColor $coloraccent
-write-host "  + [0] + Quitter                             + Fermer ou revenir au menu              +  " -ForegroundColor $colorquit
-write-host "============================================================================================="
-$choix = read-host "Choisissez une option" 
+    Clear-Host
+    write-host "============================================================================================"
+    write-host "  + [#] +           Programme                 +              Description               +  "-ForegroundColor $coloraccent
+    write-host "  + --- + ----------------------------------- + -------------------------------------- +  " 
+    write-host "  + [1] + SFC/DISM/CHKDSK        [sous-menu]  + Fichiers corrompus                     +  " -ForegroundColor $colorfolder
+    write-host "  + [2] + Windows tweak          [sous-menu]  + Windows Tweak et Fix                   +  " -ForegroundColor $colorfolder
+    write-host "  + [3] + Sterjo MDP recovery    [sous-menu]  + Obtenir MDP et licences                +  " -ForegroundColor $colorfolder
+    write-host "  + [4] + DDU                                 + Desinstaller les pilotes graphiques    +  " 
+    write-host "  + [5] + WiseForceDeleter                    + Supprimer un dossier/fichier           +  " -ForegroundColor $coloraccent
+    write-host "  + [6] + WinDirStat                          + Verifier taille des dossiers           +  " 
+    write-host "  + [7] + Partition Wizard                    + Gerer les partitions                   +  " -ForegroundColor $coloraccent
+    write-host "  + [8] + Internet repair                     + Reparer Internet                       +  " 
+    write-host "  + --- + ----------------------------------- + -------------------------------------- +  " -ForegroundColor $coloraccent
+    write-host "  + [0] + Quitter                             + Fermer ou revenir au menu              +  " -ForegroundColor $colorquit
+    write-host "============================================================================================="
+    $choix = read-host "Choisissez une option" 
 
-switch ($choix)
-{
-0{sortie;break}
-1{submenuScripts;Break}
-2{Get-RemoteFile "Tweak.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathFixSource"; submenuTweak;Break}
-3{Get-RemoteFile "Sterjo.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathFixSource"; submenuMDP;Break}
-4{Invoke-App "Display Driver Uninstaller.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip' "$pathFixSource";Add-Log $logFileName "Désinstallation du pilote graphique avec DDU";Break}
-5{Invoke-App "WiseForceDeleterPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleterPortable.zip' "$pathFixSource";Break}
-6{Invoke-App "WinDirStatPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip' "$pathFixSource";Break}
-7{Get-PW;Break} 
-8{Invoke-App "ComIntRep_X64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip' "$pathFixSource";Add-Log $logFileName "Réparer Internet";Break}
-T{$number = SubmenuTheme;Set-Theme -theme $number;Break}
-}
-start-sleep 1
-menu
+    switch ($choix)
+    {
+    0{sortie;break}
+    1{submenuScripts;Break}
+    2{Get-RemoteFile "Tweak.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip' "$pathFixSource"; submenuTweak;Break}
+    3{Get-RemoteFile "Sterjo.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip' "$pathFixSource"; submenuMDP;Break}
+    4{Invoke-App "Display Driver Uninstaller.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip' "$pathFixSource";Add-Log $logFileName "Désinstallation du pilote graphique avec DDU";Break}
+    5{Invoke-App "WiseForceDeleterPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleterPortable.zip' "$pathFixSource";Break}
+    6{Invoke-App "WinDirStatPortable.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip' "$pathFixSource";Break}
+    7{Get-PW;Break} 
+    8{Invoke-App "ComIntRep_X64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip' "$pathFixSource";Add-Log $logFileName "Réparer Internet";Break}
+    T{$number = SubmenuTheme;Set-Theme -theme $number;Break}
+    }
+    start-sleep 1
+    menu
 }
 
 function Set-Theme 
@@ -172,7 +172,7 @@ function Get-Tweaking
     if($path -eq $false)
     {
         #choco install windowsrepair , il faudra revoir le start process aussi
-        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/BRP1JxyMI0edKIft_yYt2g/tweaking.com%20-%20Windows%20Repair.zip' -OutFile "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip"
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/tweaking.com - Windows Repair.zip' -OutFile "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip"
         Expand-Archive "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip" "$pathFixSource\Tweak"
         Remove-Item "$pathFixSource\Tweak\tweaking.com - Windows Repair.zip"
         Copy-Item "$pathFixSource\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$desktop\Tweaking.com - Windows Repair"
@@ -189,7 +189,7 @@ function Get-PW
     $path = Test-Path "$pathFixSource\Partition_Wizard\partitionwizard.exe"
     if($path -eq $false)
     {
-        Invoke-WebRequest 'https://ftp.alexchato9.com/public/file/ymz6seur406dkjin_x_yog/Partition_Wizard.zip' -OutFile "$pathFixSource\Partition_Wizard.zip"
+        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Partition_Wizard.zip' -OutFile "$pathFixSource\Partition_Wizard.zip"
         Expand-Archive "$pathFixSource\Partition_Wizard.zip" "$pathFixSource"
         Remove-Item "$pathFixSource\Partition_Wizard.zip"
         Copy-Item "$pathFixSource\Partition_Wizard" -Recurse -Destination "$desktop\Partition_Wizard"
