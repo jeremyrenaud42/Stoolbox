@@ -501,24 +501,7 @@ $Window.add_Loaded({
         Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
     })
     $formControls.btnQuit.Add_Click({
-        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-        $jsonFilePath = "$sourceFolderPath\Settings.JSON"
-        $jsonContent = Get-Content $jsonFilePath -Raw | ConvertFrom-Json
-        $messageBox = [System.Windows.MessageBox]::Show("Voulez-vous vider la corbeille et effacer les derniers téléchargements ?","Quitter et Supprimer",4,64)
-        if($messageBox -eq '6')
-        {
-            $jsonContent.RemoveDownloadFolder.Status = "1"
-            $jsonContent.EmptyRecycleBin.Status = "1"
-        }
-        else
-        {
-            $jsonContent.RemoveDownloadFolder.Status = "0"
-            $jsonContent.EmptyRecycleBin.Status = "0"  
-        }   
-        $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath -Encoding UTF8
-        Import-Module "$sourceFolderPath\Modules\Task.psm1"
-        $window.Close() 
-        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
+        Remove-StoolboxApp
     })
 
     $formControls.btnWinget.Add_Click({
@@ -577,16 +560,16 @@ $window.add_Closing({
     #Lancement des runspaces
     if($shortcutExist -eq $false)
     {    
-    $global:sync['createShortcutResult'] =  Start-Runspace -RunspaceKey $createShortcutKey -ScriptBlock $createShortcut
-    Write-Host "createShortcutResult"
-    Get-RunspaceState $global:sync['createShortcutResult']
+        $global:sync['createShortcutResult'] =  Start-Runspace -RunspaceKey $createShortcutKey -ScriptBlock $createShortcut
+        Write-Host "createShortcutResult"
+        Get-RunspaceState $global:sync['createShortcutResult']
     }
 
     if($removeBatExist -eq $false -or $removePs1Exist -eq $false)
     {
-    $global:sync['downloadRemoveScriptResult'] =  Start-Runspace -RunspaceKey $downloadRemoveScriptKey -ScriptBlock $downloadRemoveScript
-    Write-Host "downloadRemoveScriptResult"
-    Get-RunspaceState $global:sync['downloadRemoveScriptResult']  
+        $global:sync['downloadRemoveScriptResult'] =  Start-Runspace -RunspaceKey $downloadRemoveScriptKey -ScriptBlock $downloadRemoveScript
+        Write-Host "downloadRemoveScriptResult"
+        Get-RunspaceState $global:sync['downloadRemoveScriptResult']  
     }
 
     #Nettoyage des runspaces
@@ -669,7 +652,6 @@ $window.add_Closing({
         Get-RunspaceState $global:sync['downloadRemoveScriptResult']
     }
 })
-
 
 $Window.add_Closed({
     Remove-Item -Path $menuLockFile -Force -ErrorAction SilentlyContinue

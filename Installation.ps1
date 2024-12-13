@@ -149,7 +149,7 @@ function Get-Nuget
     if($nugetExist -eq $false)
     {   
         Install-Nuget
-        $nugetExist = Get-NugetStatus
+        $nugetExist = Test-AppPresence "C:\Program Files\WindowsPowerShell\Modules\NuGet" #permet de géré si lancé via autre user
         if($nugetExist -eq $true)
         {
             Add-Log $logFileName " - Nuget a été installé"
@@ -278,6 +278,21 @@ $windowMenuApp.add_Loaded({
         Exit
     })
     $formControlsMenuApp.btnQuit.Add_Click({
+        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
+        $jsonFilePath = "$sourceFolderPath\Settings.JSON"
+        $jsonContent = Get-Content $jsonFilePath -Raw | ConvertFrom-Json
+        $messageBox = [System.Windows.MessageBox]::Show("Voulez-vous vider la corbeille et effacer les derniers téléchargements ?","Quitter et Supprimer",4,64)
+        if($messageBox -eq '6')
+        {
+            $jsonContent.RemoveDownloadFolder.Status = "1"
+            $jsonContent.EmptyRecycleBin.Status = "1"
+        }
+        else
+        {
+            $jsonContent.RemoveDownloadFolder.Status = "0"
+            $jsonContent.EmptyRecycleBin.Status = "0"  
+        }   
+        $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath -Encoding UTF8
         Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
         $windowMenuApp.Close()
         Exit

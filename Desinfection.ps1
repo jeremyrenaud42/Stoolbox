@@ -1,4 +1,4 @@
-Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
+Add-Type -AssemblyName PresentationFramework,System.speech,System.Drawing,presentationCore
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
 function Get-RequiredModules
@@ -37,29 +37,11 @@ $window = New-WPFWindowFromXaml $XamlReader
 $formControls = Get-WPFControlsFromXaml $xamlDoc $window
 
 $formControls.btnMenu.Add_Click({
-    $window.Close()
-    start-process "$env:SystemDrive\\_Tech\\Menu.bat" -verb Runas
-    Exit
+    Open-Menu
 })
 
 $formControls.btnQuit.Add_Click({
-    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    $jsonFilePath = "$sourceFolderPath\Settings.JSON"
-    $jsonContent = Get-Content $jsonFilePath -Raw | ConvertFrom-Json
-    $messageBox = [System.Windows.MessageBox]::Show("Voulez-vous vider la corbeille et effacer les derniers téléchargements ?","Quitter et Supprimer",4,64)
-    if($messageBox -eq '6')
-    {
-        $jsonContent.RemoveDownloadFolder.Status = "1"
-        $jsonContent.EmptyRecycleBin.Status = "1"
-    }
-    else
-    {
-        $jsonContent.RemoveDownloadFolder.Status = "0"
-        $jsonContent.EmptyRecycleBin.Status = "0"  
-    }   
-    $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath -Encoding UTF8
-    Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
-    $window.Close()
+    Remove-StoolboxApp
 })
 
 $formControls.btnProcess_Explorer.Add_Click({
