@@ -1,5 +1,4 @@
 Add-Type -AssemblyName PresentationFramework,System.speech,System.Drawing,presentationCore
-[System.Windows.Forms.Application]::EnableVisualStyles()
 
 function Get-RequiredModules
 {
@@ -10,25 +9,16 @@ function Get-RequiredModules
     }
 }
 
-$pathDesinfection = "$env:SystemDrive\_Tech\Applications\Desinfection"
-$pathDesinfectionSource = "$env:SystemDrive\_Tech\Applications\Desinfection\source"
-set-location $pathDesinfection
 Get-RequiredModules
+$appName = "Desinfection"
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
-$sourceFolderPath = "$applicationPath\source"
-$logFileName = Initialize-LogFile $pathDesinfectionSource
-$desinfectionLockFile = "$sourceFolderPath\Desinfection.lock"
-Get-RemoteFile "Background_desinfection.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$pathDesinfectionSource"
-Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/MainWindow.xaml' "$pathDesinfectionSource"
-$adminStatus = Get-AdminStatus
-if($adminStatus -eq $false)
-{
-    Restart-Elevated -Path $pathDesinfection\Desinfection.ps1
-}
-$Global:desinfectionIdentifier = "Desinfection.ps1"
-Test-ScriptInstance $desinfectionLockFile $Global:desinfectionIdentifier
+$appPath = "$applicationPath\$appName"
+$appPathSource = "$appPath\source"
+set-location $appPath
+$logFileName = Initialize-LogFile $appPathSource
+$lockFile = "$applicationPath\source\$appName.lock"
 
-$xamlFile = "$pathDesinfectionSource\MainWindow.xaml"
+$xamlFile = "$appPathSource\MainWindow.xaml"
 $xamlContent = Read-XamlFileContent $xamlFile
 $formatedXamlFile = Format-XamlFile $xamlContent
 $xamlDoc = Convert-ToXmlDocument $formatedXamlFile
@@ -45,17 +35,17 @@ $formControls.btnQuit.Add_Click({
 })
 
 $formControls.btnProcess_Explorer.Add_Click({
-    Invoke-App "procexp64.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/procexp64.exe' "$pathDesinfectionSource"
+    Invoke-App "procexp64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/procexp64.exe" "$appPathSource"
     Add-Log $logFileName "Vérifier les process"
 })
 
 $formControls.btnRKill.Add_Click({
-    Invoke-App "rkill64.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/rkill64.exe' "$pathDesinfectionSource"
+    Invoke-App "rkill64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/rkill64.exe" "$appPathSource"
     Add-Log $logFileName "Désactiver les process"
 })
 
 $formControls.btnAutoruns.Add_Click({
-    Invoke-App "autoruns.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe' "$pathDesinfectionSource"
+    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe" "$appPathSource"
     start-sleep 5
     taskmgr
     Add-Log $logFileName "Vérifier les logiciels au démarrage"
@@ -67,18 +57,18 @@ $formControls.btnHDD.Add_Click({
 })
 
 $formControls.btnCcleaner.Add_Click({
-    Invoke-App "CCleaner64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip' $pathDesinfectionSource
+    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip" $appPathSource
     Add-Log $logFileName "Nettoyage CCleaner effectué"
  })
 
 $formControls.btnRevo.Add_Click({
-    Invoke-App "RevoUPort.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip' "$pathDesinfectionSource"
+    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip" "$appPathSource"
     Add-Log $logFileName "Vérifier les programmes nuisibles"
  })
 
 
 $formControls.btnADWcleaner.Add_Click({
-    Invoke-App "adwcleaner.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/adwcleaner.exe' "$pathDesinfectionSource"
+    Invoke-App "adwcleaner.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/adwcleaner.exe" "$appPathSource"
     Add-Log $logFileName "Analyse ADW effectué"
  })
 
@@ -90,8 +80,8 @@ $formControls.btnMalwareByte.Add_Click({
         choco install malwarebytes -y | Out-Null
         if($path -eq $false)
         {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite Malwarebytes Installer.exe' -OutFile "$root\_Tech\Applications\Desinfection\Source\Ninite Malwarebytes Installer.exe"
-            Start-Process "$root\_Tech\\Applications\Desinfection\Source\Ninite Malwarebytes Installer.exe"
+            Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Ninite Malwarebytes Installer.exe" -OutFile "$root\_Tech\Applications\$appName\Source\Ninite Malwarebytes Installer.exe"
+            Start-Process "$root\_Tech\\Applications\$appName\Source\Ninite Malwarebytes Installer.exe"
             $path = Test-Path "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
             if($path -eq $false)
             {
@@ -121,8 +111,8 @@ $formControls.btnSuperAntiSpyware.Add_Click({
         Start-Process "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe" 
         if($path -eq $false)
         {
-            Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite SUPERAntiSpyware Installer.exe' -OutFile "$root\_Tech\Applications\Desinfection\Source\Ninite SUPERAntiSpyware Installer.exe"
-            Start-Process "$root\_Tech\\Applications\Desinfection\Source\Ninite SUPERAntiSpyware Installer.exe"
+            Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Ninite SUPERAntiSpyware Installer.exe" -OutFile "$root\_Tech\Applications\$appName\Source\Ninite SUPERAntiSpyware Installer.exe"
+            Start-Process "$root\_Tech\\Applications\$appName\Source\Ninite SUPERAntiSpyware Installer.exe"
             $path = Test-Path "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
             if($path -eq $false)
             {
@@ -143,18 +133,18 @@ $formControls.btnSuperAntiSpyware.Add_Click({
  })
 
 $formControls.btnHitmanPro.Add_Click({
-    Invoke-App "HitmanPro.exe" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe' "$pathDesinfectionSource"
+    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/HitmanPro.exe" "$appPathSource"
     Add-Log $logFileName "Vérifier les virus avec HitmanPro"
 })
 
 $formControls.btnRogueKiller.Add_Click({
-    Invoke-App "RogueKiller_portable64.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/RogueKiller_portable64.zip' "$pathDesinfectionSource"
+    Invoke-App "RogueKiller_portable64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/RogueKiller_portable64.zip" "$appPathSource"
     Add-Log $logFileName "Analyse RogueKiller effectué"
-    #via le cmd, aller a l'emplacement RogueKillerCMD.exe -scan -no-interact -deleteall #-debuglog {path}
+    #via le cmd, aller a l"emplacement RogueKillerCMD.exe -scan -no-interact -deleteall #-debuglog {path}
  })
 
 $window.add_Closed({
-    Remove-Item -Path $desinfectionLockFile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
 })
 
 Start-WPFAppDialog $window

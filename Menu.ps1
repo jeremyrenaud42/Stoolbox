@@ -112,6 +112,24 @@ function Test-ScriptsAreRunning
     return $false
 }
 
+function Deploy-Dependencies($appName)
+{
+    $applicationPath = "$env:SystemDrive\_Tech\Applications"
+    $appPath = "$applicationPath\$appName"
+    $appPathSource = "$appPath\source"
+    $menuSourceFolderPath = "$applicationPath\source"
+    $lockFile = "$menuSourceFolderPath\$appName.lock"
+    Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$appPathSource"
+    Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow.xaml" "$appPathSource"
+    $adminStatus = Get-AdminStatus
+    if($adminStatus -eq $false)
+    {
+        Restart-Elevated -Path $appPath\$appName.ps1
+    }
+    $Global:appIdentifier = "$appName.ps1"
+    Test-ScriptInstance $lockFile $Global:appIdentifier
+}
+
 function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 {
     <#
@@ -127,7 +145,12 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
     #>
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+    Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
     Get-RemoteFile "$appName.ps1" $githubPs1Link $applicationPath\$appName
+    if (($appName -notmatch 'Installation') -and ($appName -notmatch 'Fix'))
+    {
+        Deploy-Dependencies $appName
+    }
     Invoke-App "$appName.bat" $githubBatLink $applicationPath\$appName
 }
 

@@ -9,27 +9,17 @@ function Get-RequiredModules
     }
 }
 
-#$desktop = [Environment]::GetFolderPath("Desktop")
-$pathDiagnostique = "$env:SystemDrive\_Tech\Applications\Diagnostique"
-$pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\source"
-set-location $pathDiagnostique
-$applicationPath = "$env:SystemDrive\_Tech\Applications"
-$sourceFolderPath = "$applicationPath\source"
-$diagLockFile = "$sourceFolderPath\Diagnostique.lock"
 Get-RequiredModules
-$logFileName = Initialize-LogFile $pathDiagnostiqueSource
-Get-RemoteFile "Background_diagnostique.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$pathDiagnostiqueSource"
-Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/MainWindow.xaml' "$pathDiagnostiqueSource"
-Get-RemoteFile "DiagApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/DiagApps.JSON' "$pathDiagnostiqueSource"  
-$adminStatus = Get-AdminStatus
-if($adminStatus -eq $false)
-{
-    Restart-Elevated -Path $pathDiagnostique\Diagnostique.ps1
-}
-$Global:diagnostiqueIdentifier = "Diagnostique.ps1"
-Test-ScriptInstance $diagLockFile $Global:diagnostiqueIdentifier
+$appName = "Diagnostique"
+$applicationPath = "$env:SystemDrive\_Tech\Applications"
+$appPath = "$applicationPath\$appName"
+$appPathSource = "$appPath\source"
+set-location $appPath
+$logFileName = Initialize-LogFile $appPathSource
+$lockFile = "$applicationPath\source\$appName.lock"
+Get-RemoteFile "DiagApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/DiagApps.JSON' "$appPathSource"  
 
-$xamlFile = "$pathDiagnostiqueSource\MainWindow.xaml"
+$xamlFile = "$appPathSource\MainWindow.xaml"
 $xamlContent = Read-XamlFileContent $xamlFile
 $formatedXamlFile = Format-XamlFile $xamlContent
 $xamlDoc = Convert-ToXmlDocument $formatedXamlFile
@@ -50,7 +40,7 @@ $formControls.btnbat.Add_Click({
     $formControls.btnDontsleep.Visibility="Visible"
     $formControls.btnBattMonitor.Visibility="Visible"
     $formControls.btnbat.Visibility="Collapsed"
-    Get-RemoteFile "Batterie.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "$pathDiagnostiqueSource"
+    Get-RemoteFile "Batterie.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "$appPathSource"
 })
 $formControls.btnCPU.Add_Click({
     $formControls.btnAida.Visibility="Visible"
@@ -59,7 +49,7 @@ $formControls.btnCPU.Add_Click({
     $formControls.btnHeavyLoad.Visibility="Visible"
     $formControls.btnThrottleStop.Visibility="Visible"
     $formControls.btnCPU.Visibility="Collapsed"
-    New-Folder "$pathDiagnostiqueSource\CPU"
+    New-Folder "$appPathSource\CPU"
 })
 $formControls.btnHDD.Add_Click({
     $formControls.btnHDSentinnel.Visibility="Visible"
@@ -67,14 +57,14 @@ $formControls.btnHDD.Add_Click({
     $formControls.btnASSD.Visibility="Visible"
     $formControls.btnDiskmark.Visibility="Visible"
     $formControls.btnHDD.Visibility="Collapsed"
-    Get-RemoteFile "HDD.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip' "$pathDiagnostiqueSource"
+    Get-RemoteFile "HDD.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip' "$appPathSource"
 })
 $formControls.btnGPU.Add_Click({
     $formControls.btnFurmark.Visibility="Visible"
     $formControls.btnFurmarkV2.Visibility="Visible"
     $formControls.btnUnigine.Visibility="Visible"
     $formControls.btnGPU.Visibility="Collapsed"
-    Get-RemoteFile "GPU.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "$pathDiagnostiqueSource"
+    Get-RemoteFile "GPU.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "$appPathSource"
 })
 $formControls.btnRAM.Add_Click({
     mdsched.exe
@@ -97,13 +87,13 @@ $formControls.btnDontsleep.Add_Click({
     
 $formControls.btnAida.Add_Click({
    $scriptBlock = {
-        $pathDiagnostiqueSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\source"
+        $appPathSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\source"
         $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
         foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
         {
             Import-Module $modulesFolder\$module
         }
-    Invoke-App "Aida64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Aida64.zip" "$pathDiagnostiqueSource\cpu" 
+    Invoke-App "Aida64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Aida64.zip" "$appPathSource\cpu" 
     Add-Log $logFileName "Test de stabilité du système effectué"
     } 
     if ($PSVersionTable.PSVersion.Major -lt 7 -and -not (Get-Command -Type Cmdlet Start-ThreadJob -ErrorAction SilentlyContinue)) 
@@ -116,21 +106,21 @@ $formControls.btnAida.Add_Click({
 })
     
 $formControls.btnCoretemp.Add_Click({
-    Invoke-App "Core Temp.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core Temp.zip" "$pathDiagnostiqueSource\cpu"
+    Invoke-App "Core Temp.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core Temp.zip" "$appPathSource\cpu"
     Add-Log $logFileName "Température du CPU vérifié"
 })
 
 $formControls.btnPrime95.Add_Click({
-    Invoke-App "Prime95.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "$pathDiagnostiqueSource\cpu"
+    Invoke-App "Prime95.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "$appPathSource\cpu"
     Add-Log $logFileName "Stress test du CPU effectué"
 })
 
 $formControls.btnHeavyLoad.Add_Click({
-    Invoke-App "HeavyLoad.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "$pathDiagnostiqueSource\cpu"
+    Invoke-App "HeavyLoad.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "$appPathSource\cpu"
     Add-Log $logFileName "Test de stabilité du système effectué"
 })
 $formControls.btnThrottleStop.Add_Click({
-    Invoke-App "ThrottleStop.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "$pathDiagnostiqueSource\cpu"
+    Invoke-App "ThrottleStop.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "$appPathSource\cpu"
     Add-Log $logFileName "Stress test du CPU effectué"
 })
 
@@ -215,15 +205,15 @@ $formControls.btnUnigine.Add_Click({
 })
 
 $formControls.btnSpeccy.Add_Click({
-    Invoke-App "Speccy.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "$pathDiagnostiqueSource"
+    Invoke-App "Speccy.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "$appPathSource"
 })
 
 $formControls.btnHWMonitor.Add_Click({
-    Invoke-App "HWMonitor_x64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor_x64.zip" "$pathDiagnostiqueSource"
+    Invoke-App "HWMonitor_x64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor_x64.zip" "$appPathSource"
 })
 
 $formControls.btnWhocrashed.Add_Click({
-    Invoke-App "WhoCrashedEx.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashedEx.zip" "$pathDiagnostiqueSource"
+    Invoke-App "WhoCrashedEx.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashedEx.zip" "$appPathSource"
 })
 
 $formControls.btnSysinfo.Add_Click({
@@ -231,7 +221,7 @@ $formControls.btnSysinfo.Add_Click({
 })
 
 $window.add_Closed({
-    Remove-Item -Path $diagLockFile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
 })
 
 Start-WPFAppDialog $window
