@@ -108,7 +108,6 @@ function Test-ScriptsAreRunning
             }
         }
     }
-
     return $false
 }
 
@@ -151,7 +150,14 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
     Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
     Get-RemoteFile "$appName.ps1" $githubPs1Link $applicationPath\$appName
     Deploy-Dependencies $appName
-    Invoke-App "$appName.bat" $githubBatLink $applicationPath\$appName
+# Define the content as an array of strings
+$batContent = @(
+    "@echo off"
+    "powershell.exe -executionpolicy unrestricted -command %~d0\_TECH\Applications\$appName\$appName.ps1"
+)
+    Set-Content -Path "$env:SystemDrive\_Tech\Launcher.bat" -Value $batContent
+    start "$env:SystemDrive\_Tech\Launcher.bat"
+    #Invoke-App "$appName.bat" $githubBatLink $applicationPath\$appName
 }
 
 ########################Déroulement########################
@@ -170,6 +176,7 @@ New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
 Get-RequiredModules
 Import-Module "$sourceFolderPath\Modules\Verification.psm1"
 Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+Get-RemoteFile "Launcher.bat" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Launcher.bat" "$env:SystemDrive\_Tech"
 
 $dateFile = "$sourceFolderPath\installedDate.txt"
 $menuLockFile = "$sourceFolderPath\Menu.lock"
@@ -216,7 +223,7 @@ $global:sync['flag'] = $true
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
     Get-RemoteFile "Background_menu.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$sourceFolderPath\Images"
-    Get-RemoteFile "Icone.ico" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/Default/Icone.ico' "$sourceFolderPath\Images"
+    Get-RemoteFile "Icone.ico" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/Icone.ico" "$sourceFolderPath\Images"
     Get-RemoteFile "Settings.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Settings.JSON' $sourceFolderPath
 }
 
