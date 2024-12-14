@@ -1044,7 +1044,7 @@ function Complete-Installation
             shutdown /r /t $restartTime
         }  
     }
-    Remove-Item -Path $InstallationLockFile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
     if($formControlsMenuApp.chkboxRemove.IsChecked)
     { 
         Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
