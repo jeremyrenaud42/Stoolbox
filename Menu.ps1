@@ -153,7 +153,7 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
 # Define the content as an array of strings
 $batContent = @(
     "@echo off"
-    "powershell.exe -executionpolicy unrestricted -command %~d0\_TECH\Applications\$appName\$appName.ps1"
+    "powershell.exe -windowstyle hidden -executionpolicy unrestricted -command %~d0\_TECH\Applications\$appName\$appName.ps1"
 )
     Set-Content -Path "$env:SystemDrive\_Tech\Launcher.bat" -Value $batContent
     start "$env:SystemDrive\_Tech\Launcher.bat"
