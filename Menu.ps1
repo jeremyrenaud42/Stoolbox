@@ -119,8 +119,11 @@ function Deploy-Dependencies($appName)
     $appPathSource = "$appPath\source"
     $menuSourceFolderPath = "$applicationPath\source"
     $lockFile = "$menuSourceFolderPath\$appName.lock"
-    Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$appPathSource"
-    Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow.xaml" "$appPathSource"
+    if($appName -notmatch 'Fix')
+    {
+        Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$appPathSource"
+        Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow.xaml" "$appPathSource"
+    }
     $adminStatus = Get-AdminStatus
     if($adminStatus -eq $false)
     {
@@ -147,10 +150,7 @@ function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
     Get-RemoteFile "$appName.ps1" $githubPs1Link $applicationPath\$appName
-    if (($appName -notmatch 'Installation') -and ($appName -notmatch 'Fix'))
-    {
-        Deploy-Dependencies $appName
-    }
+    Deploy-Dependencies $appName
     Invoke-App "$appName.bat" $githubBatLink $applicationPath\$appName
 }
 

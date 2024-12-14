@@ -9,16 +9,6 @@ function Get-RequiredModules
     }
 }
 
-function Get-Dependencies
-{
-    Get-RequiredModules
-    Set-Location $pathInstallation #pour log
-    Get-InternetStatusLoop
-    Get-RemoteFile "InstallationApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/InstallationApps.JSON' "$pathInstallationSource"
-    Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow.xaml' "$pathInstallationSource"
-    Get-RemoteFile "MainWindow1.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/MainWindow1.xaml' "$pathInstallationSource"
-}
-
 function Get-Manufacturer
 {
     #$manufacturerBrand = Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -Property Manufacturer #Chercher la marque de l'ordinateur
@@ -172,48 +162,48 @@ function Get-Nuget
     Add-Text -text "`n"
 }
 
-function Install-SoftwareMenuApp($appName)
+function Install-SoftwareMenuApp($softwareName)
 {
-    $status = Test-SoftwarePresence $appsInfo.$appName
+    $status = Test-SoftwarePresence $appsInfo.$softwareName
     if ($status) 
     {
-        $formControlsMenuApp.richTextBxOutput.AppendText("$appName est déja installé`r")
+        $formControlsMenuApp.richTextBxOutput.AppendText("$softwareName est déja installé`r")
     }
     else 
     {
-        Install-Software $appsInfo.$appName
-        $status = Test-SoftwarePresence $appsInfo.$appName
+        Install-Software $appsInfo.$softwareName
+        $status = Test-SoftwarePresence $appsInfo.$softwareName
         if ($status) 
         {
-            $formControlsMenuApp.richTextBxOutput.AppendText("$appName a été installé`r")
+            $formControlsMenuApp.richTextBxOutput.AppendText("$softwareName a été installé`r")
         }
         else 
         {
-            $formControlsMenuApp.richTextBxOutput.AppendText("$appName n'a pas été installé`r")
+            $formControlsMenuApp.richTextBxOutput.AppendText("$softwareName n'a pas été installé`r")
         }   
     }      
 } 
 
+Get-RequiredModules
+$appName = "Installation"
+$applicationPath = "$env:SystemDrive\_Tech\Applications"
+$appPath = "$applicationPath\$appName"
+$appPathSource = "$appPath\source"
+set-location $appPath
+$logFileName = Initialize-LogFile $appPathSource
+$lockFile = "$applicationPath\source\$appName.lock"
+
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
-$pathInstallation = "$env:SystemDrive\_Tech\Applications\Installation"
-$pathInstallationSource = "$env:SystemDrive\_Tech\Applications\Installation\source"
 $windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
 $actualDate = (Get-Date).ToString()
-$applicationPath = "$env:SystemDrive\_Tech\Applications"
-$sourceFolderPath = "$applicationPath\source"
-$installationLockFile = "$sourceFolderPath\Installation.lock"
-Get-Dependencies
-$logFileName = Initialize-LogFile $pathInstallationSource
-$adminStatus = Get-AdminStatus
-if($adminStatus -eq $false)
-{
-    Restart-Elevated -Path $pathInstallation\Installation.ps1
-}
-$Global:installationIdentifier = "Installation.ps1"
-Test-ScriptInstance $installationLockFile $Global:installationIdentifier
+
+
+Get-InternetStatusLoop
+Get-RemoteFile "MainWindow1.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow1.xaml" "$appPathSource"
+Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" "$appPathSource"
 ############################GUI####################################
 #WPF - appMenuChoice
-$xamlFileMenuApp = "$pathInstallationSource\MainWindow.xaml"
+$xamlFileMenuApp = "$appPathSource\MainWindow.xaml"
 $xamlContentMenuApp = Read-XamlFileContent $xamlFileMenuApp
 $formatedXamlFileMenuApp = Format-XamlFile $xamlContentMenuApp
 $xamlDocMenuApp = Convert-ToXmlDocument $formatedXamlFileMenuApp
@@ -222,7 +212,7 @@ $windowMenuApp = New-WPFWindowFromXaml $XamlReaderMenuApp
 $formControlsMenuApp = Get-WPFControlsFromXaml $xamlDocMenuApp $windowMenuApp $sync
 
 #WPF - Main GUI
-$xamlFileMain = "$pathInstallationSource\MainWindow1.xaml"
+$xamlFileMain = "$appPathSource\MainWindow1.xaml"
 $xamlContentMain = Read-XamlFileContent $xamlFileMain
 $formatedXamlFileMain = Format-XamlFile $xamlContentMain
 $xamlDocMain = Convert-ToXmlDocument $formatedXamlFileMain
@@ -388,7 +378,7 @@ $windowMenuApp.add_Loaded({
 })
 
 $windowMenuApp.add_Closed({
-    Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
 })
 
 $windowMain.add_Loaded({
@@ -404,7 +394,7 @@ $windowMain.add_Loaded({
     })
 })    
     $windowMain.add_Closed({
-        Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
         exit
 })
 
@@ -415,7 +405,7 @@ $formControlsMain.richTxtBxOutput.add_textchanged({
 
 function Install-SoftwaresManager
 {
-    New-Item -Path $installationLockFile -ItemType 'File' -Force
+    New-Item -Path $lockFile -ItemType 'File' -Force
     Add-Log $logFileName "Installation de $windowsVersion le $actualDate"
     $formControlsMain.lblProgress.content = "Préparation"
     Clear-Text
@@ -777,16 +767,16 @@ Function Enable-DesktopIcon
     }  
 }
 
-$jsonFilePath = "$pathInstallationSource\InstallationApps.JSON"
+$jsonFilePath = "$appPathSource\InstallationApps.JSON"
 $jsonString = Get-Content -Raw $jsonFilePath
 $appsInfo = ConvertFrom-Json $jsonString
 $appNames = $appsInfo.psobject.Properties.Name
 $appNames | ForEach-Object {
-    $appName = $_
-    $appsInfo.$appName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path64)
-    $appsInfo.$appName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path32)
-    $appsInfo.$appName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.pathAppData)
-    $appsInfo.$appName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.NiniteName)
+    $softwareName = $_
+    $appsInfo.$softwareName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path64)
+    $appsInfo.$softwareName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path32)
+    $appsInfo.$softwareName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.pathAppData)
+    $appsInfo.$softwareName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.NiniteName)
     }
 
 #Install les logiciels cochés
@@ -796,8 +786,8 @@ function Get-CheckBoxStatus
     $checkboxes = $formControlsMenuApp.GridInstallationMenuAppChoice.Children | Where-Object {$_ -is [System.Windows.Controls.CheckBox] -and $_.Name -like "chkbox*" -and $_.IsChecked -eq $true}
     foreach ($chkbox in $checkboxes) 
     {
-        $appName = "$($chkbox.Content)"
-        Install-Software $appsInfo.$appName
+        $softwareName = "$($chkbox.Content)"
+        Install-Software $appsInfo.$softwareName
     }
     $formControlsMain.lblSoftware.foreground = "MediumSeaGreen"
 }
@@ -810,20 +800,21 @@ function Test-SoftwarePresence($appInfo)
    ($appInfo.pathAppData -AND (Test-Path $appInfo.pathAppData)))
    {
      $softwareInstallationStatus = $true
+     write-host "installé ? $softwareInstallationStatus"
    }
    return $softwareInstallationStatus
 }
 
 function Install-Software($appInfo)
 {
-    $formControlsMain.lblProgress.Content = "Installation de $appName"
-    Add-Text -text "Installation de $appName en cours"
-    Add-Log $logFileName "Installation de $appName"
+    $formControlsMain.lblProgress.Content = "Installation de $softwareName"
+    Add-Text -text "Installation de $softwareName en cours"
+    Add-Log $logFileName "Installation de $softwareName"
     $softwareInstallationStatus = Test-SoftwarePresence $appInfo
         if($softwareInstallationStatus)
         {
-            Add-Text -text "- $appName est déja installé" -SameLine
-            Add-Log $logFileName "- $appName est déja installé"
+            Add-Text -text "- $softwareName est déja installé" -SameLine
+            Add-Log $logFileName "- $softwareName est déja installé"
         }
         elseif($softwareInstallationStatus -eq $false)
         {  
@@ -840,8 +831,8 @@ function Install-SoftwareWithWinget($appInfo)
     $softwareInstallationStatus = Test-SoftwarePresence $appInfo
         if($softwareInstallationStatus)
         {
-            Add-Text -text " - $appName installé avec succès" -SameLine
-            Add-Log $logFileName " - $appName installé avec succès"
+            Add-Text -text " - $softwareName installé avec succès" -SameLine
+            Add-Log $logFileName " - $softwareName installé avec succès"
         } 
         else
         {
@@ -858,13 +849,13 @@ function Install-SoftwareWithChoco($apsInfo)
     $softwareInstallationStatus = Test-SoftwarePresence $apsInfo
     if($softwareInstallationStatus)
     {     
-        Add-Text -text " - $appName installé avec succès" -SameLine
-        Add-Log $logFileName " - $appName installé avec succès"
+        Add-Text -text " - $softwareName installé avec succès" -SameLine
+        Add-Log $logFileName " - $softwareName installé avec succès"
     }
     else
     {
-        Add-Text -text " - $appName a échoué" -colorName "red" -SameLine
-        Add-Log $logFileName " - $appName a échoué"
+        Add-Text -text " - $softwareName a échoué" -colorName "red" -SameLine
+        Add-Log $logFileName " - $softwareName a échoué"
         Install-SoftwareWithNinite $appInfo
     } 
 }
@@ -916,8 +907,8 @@ function Get-WindowsUpdateReboot
     if($rebootStatus)
     {
         Add-Text -text "`n"
-        Add-Text -text "L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour"
-        $messageBox = [System.Windows.MessageBox]::Show("L'ordinateur devra redémarrer pour finaliser l'installation des mises à jour.`nVoulez-vous redémarrer ?","Installation Windows",4,64)
+        Add-Text -text "L'ordinateur devra redémarrer pour finaliser l'Installation des mises à jour"
+        $messageBox = [System.Windows.MessageBox]::Show("L'ordinateur devra redémarrer pour finaliser l'Installation des mises à jour.`nVoulez-vous redémarrer ?","Installation Windows",4,64)
         if($messageBox -eq '6')
         {
             return $restartComputer = $true
@@ -1024,7 +1015,7 @@ function Complete-Installation
     $formControlsMain.lblManualComplete.foreground = "DodgerBlue"
     Add-Log $logFileName "Installation de Windows effectué avec Succès"
     Copy-Log $logFileName "C:\Temp"
-    Send-FTPLogs $pathInstallationSource\$logFileName
+    Send-FTPLogs $appPathSource\$logFileName
     [Audio]::Volume = 0.25
     [console]::beep(1000,666)
     Start-Sleep -s 1
@@ -1053,7 +1044,7 @@ function Complete-Installation
             shutdown /r /t $restartTime
         }  
     }
-    Remove-Item -Path $installationLockFile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $InstallationLockFile -Force -ErrorAction SilentlyContinue
     if($formControlsMenuApp.chkboxRemove.IsChecked)
     { 
         Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
