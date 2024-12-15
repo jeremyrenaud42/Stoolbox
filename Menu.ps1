@@ -66,7 +66,7 @@ function Test-InternetConnection
     }
 }
 
-function Get-RequiredModules
+function Get-RemotePsm1Files
 {
     <#
     .SYNOPSIS
@@ -132,7 +132,7 @@ function Deploy-Dependencies($appName)
     Test-ScriptInstance $lockFile $Global:appIdentifier
 }
 
-function Initialize-Application($appName,$githubPs1Link,$githubBatLink)
+function Initialize-Application($appName,$githubPs1Link)
 {
     <#
     .SYNOPSIS
@@ -156,8 +156,7 @@ $batContent = @(
     "powershell.exe -windowstyle hidden -executionpolicy unrestricted -command %~d0\_TECH\Applications\$appName\$appName.ps1"
 )
     Set-Content -Path "$env:SystemDrive\_Tech\Launcher.bat" -Value $batContent
-    start "$env:SystemDrive\_Tech\Launcher.bat"
-    #Invoke-App "$appName.bat" $githubBatLink $applicationPath\$appName
+    Start-Process "$env:SystemDrive\_Tech\Launcher.bat"
 }
 
 ########################Déroulement########################
@@ -173,7 +172,7 @@ $Global:scriptIdentifiers = @(
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
-Get-RequiredModules
+Get-RemotePsm1Files
 Import-Module "$sourceFolderPath\Modules\Verification.psm1"
 Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
 Get-RemoteFile "Launcher.bat" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Launcher.bat" "$env:SystemDrive\_Tech"
@@ -490,23 +489,23 @@ Get-RunspaceState $global:sync['menuGitResult']
 $Window.add_Loaded({
     $formControls.btnInstallation.Add_Click({
         $window.Close()
-        Initialize-Application "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Installation.bat' 
+        Initialize-Application "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1'
     })
     $formControls.btnOptimisation_Nettoyage.Add_Click({
         $window.Close()
-        Initialize-Application "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Optimisation_Nettoyage.bat'
+        Initialize-Application "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1'
     })
     $formControls.btnDiagnostique.Add_Click({
         $window.Close()
-        Initialize-Application "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Diagnostique.bat'
+        Initialize-Application "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1'
     })
     $formControls.btnDesinfection.Add_Click({
         $window.Close()
-        Initialize-Application "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Desinfection.bat'
+        Initialize-Application "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1'
     })
     $formControls.btnFix.Add_Click({
         $window.Close()
-        Initialize-Application "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Fix.bat'
+        Initialize-Application "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1'
     })
     $formControls.btnChangeLog.Add_Click({
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
