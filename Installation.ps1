@@ -800,7 +800,6 @@ function Test-SoftwarePresence($appInfo)
    ($appInfo.pathAppData -AND (Test-Path $appInfo.pathAppData)))
    {
      $softwareInstallationStatus = $true
-     write-host "installé ? $softwareInstallationStatus"
    }
    return $softwareInstallationStatus
 }
