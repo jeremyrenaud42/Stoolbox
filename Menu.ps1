@@ -492,7 +492,7 @@ $Window.add_Loaded({
         $window.Close()
         Initialize-Application "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Installation.bat' 
     })
-    $formControls.btnOpti_Nettoyage.Add_Click({
+    $formControls.btnOptimisation_Nettoyage.Add_Click({
         $window.Close()
         Initialize-Application "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Optimisation_Nettoyage.bat'
     })
