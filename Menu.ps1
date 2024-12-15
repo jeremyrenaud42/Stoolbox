@@ -488,15 +488,15 @@ Get-RunspaceState $global:sync['menuGitResult']
 
 ########################GUI Events########################
 $Window.add_Loaded({
-    $formControls.btnInstall.Add_Click({
+    $formControls.btnInstallation.Add_Click({
         $window.Close()
         Initialize-Application "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Installation.bat' 
     })
-    $formControls.btnOptiNett.Add_Click({
+    $formControls.btnOpti_Nettoyage.Add_Click({
         $window.Close()
         Initialize-Application "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Optimisation_Nettoyage.bat'
     })
-    $formControls.btnDiagnostic.Add_Click({
+    $formControls.btnDiagnostique.Add_Click({
         $window.Close()
         Initialize-Application "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Diagnostique.bat'
     })
