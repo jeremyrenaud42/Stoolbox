@@ -152,20 +152,12 @@ function Initialize-Application($appName)
     Deploy-Dependencies $appName
     if($appName -match 'Fix')
     {
-        $batContent = @(
-            "@echo off"
-            "powershell.exe -executionpolicy unrestricted -command %~d0\_TECH\Applications\$appName\$appName.ps1"
-        )
+        Start-Process -FilePath "powershell.exe" -ArgumentList "-ExecutionPolicy Unrestricted -File `"$env:SystemDrive\_TECH\Applications\$appName\$appName.ps1`""
     }
     else 
     {
-        $batContent = @(
-            "@echo off"
-            "powershell.exe -windowstyle hidden -executionpolicy unrestricted -command %~d0\_TECH\Applications\$appName\$appName.ps1"
-        )  
+        Start-Process -FilePath "powershell.exe" -ArgumentList "-WindowStyle Hidden -ExecutionPolicy Unrestricted -File `"$env:SystemDrive\_TECH\Applications\$appName\$appName.ps1`"" -NoNewWindow
     }
-    Set-Content -Path "$env:SystemDrive\_Tech\Launcher.bat" -Value $batContent
-    Start-Process "$env:SystemDrive\_Tech\Launcher.bat"
 }
 
 ########################Déroulement########################
@@ -184,7 +176,6 @@ New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
 Get-RemotePsm1Files
 Import-Module "$sourceFolderPath\Modules\Verification.psm1"
 Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-Get-RemoteFile "Launcher.bat" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Launcher.bat" "$env:SystemDrive\_Tech"
 
 $dateFile = "$sourceFolderPath\installedDate.txt"
 $menuLockFile = "$sourceFolderPath\Menu.lock"
