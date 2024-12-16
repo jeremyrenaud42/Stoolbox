@@ -137,7 +137,6 @@ function Move-RemoveFile
     if (Test-Path "C:\Temp\Stoolbox\remove.ps1" -ErrorAction SilentlyContinue)
     {
         Move-Item "C:\Temp\Stoolbox\remove.ps1" -Destination "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
-        Move-Item "C:\Temp\Stoolbox\remove.bat" -Destination "$env:APPDATA\remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
         $scriptPath = "$env:APPDATA\remove.ps1"
         Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`""
         exit
@@ -146,7 +145,6 @@ function Move-RemoveFile
 function Remove-RemoveFile
 {
     Remove-Item "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
-    Remove-Item "$env:APPDATA\remove.bat" -Force -ErrorAction SilentlyContinue | Out-Null
 }
 
 #Main
