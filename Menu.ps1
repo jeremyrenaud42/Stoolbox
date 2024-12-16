@@ -132,7 +132,7 @@ function Deploy-Dependencies($appName)
     Test-ScriptInstance $lockFile $Global:appIdentifier
 }
 
-function Initialize-Application($appName,$githubPs1Link)
+function Initialize-Application($appName)
 {
     <#
     .SYNOPSIS
@@ -140,7 +140,7 @@ function Initialize-Application($appName,$githubPs1Link)
     .DESCRIPTION
         Est utilisé lorsque qu'un bouton est cliqué
         Créer un dossier au nom de l'application
-        Download le .ps1 et le .bat
+        Download le .ps1
         Execute le script
     .NOTES
         N'est pas dans un module, car c'est spécific au menu seulement
@@ -148,13 +148,22 @@ function Initialize-Application($appName,$githubPs1Link)
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
-    Get-RemoteFile "$appName.ps1" $githubPs1Link $applicationPath\$appName
+    Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $applicationPath\$appName
     Deploy-Dependencies $appName
-# Define the content as an array of strings
-$batContent = @(
-    "@echo off"
-    "powershell.exe -windowstyle hidden -executionpolicy unrestricted -command %~d0\_TECH\Applications\$appName\$appName.ps1"
-)
+    if($appName -match 'Fix')
+    {
+        $batContent = @(
+            "@echo off"
+            "powershell.exe -executionpolicy unrestricted -command %~d0\_TECH\Applications\$appName\$appName.ps1"
+        )
+    }
+    else 
+    {
+        $batContent = @(
+            "@echo off"
+            "powershell.exe -windowstyle hidden -executionpolicy unrestricted -command %~d0\_TECH\Applications\$appName\$appName.ps1"
+        )  
+    }
     Set-Content -Path "$env:SystemDrive\_Tech\Launcher.bat" -Value $batContent
     Start-Process "$env:SystemDrive\_Tech\Launcher.bat"
 }
@@ -489,41 +498,41 @@ Get-RunspaceState $global:sync['menuGitResult']
 $Window.add_Loaded({
     $formControls.btnInstallation.Add_Click({
         $window.Close()
-        Initialize-Application "Installation" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1'
+        Initialize-Application "Installation"
     })
     $formControls.btnOptimisation_Nettoyage.Add_Click({
         $window.Close()
-        Initialize-Application "Optimisation_Nettoyage" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1'
+        Initialize-Application "Optimisation_Nettoyage"
     })
     $formControls.btnDiagnostique.Add_Click({
         $window.Close()
-        Initialize-Application "Diagnostique" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1'
+        Initialize-Application "Diagnostique"
     })
     $formControls.btnDesinfection.Add_Click({
         $window.Close()
-        Initialize-Application "Desinfection" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1'
+        Initialize-Application "Desinfection"
     })
     $formControls.btnFix.Add_Click({
         $window.Close()
-        Initialize-Application "Fix" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1'
+        Initialize-Application "Fix"
     })
     $formControls.btnChangeLog.Add_Click({
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-        Get-RemoteFile "changelog.txt" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt' "$env:SystemDrive\_Tech\Applications\source"
+        Get-RemoteFile "changelog.txt" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt" "$env:SystemDrive\_Tech\Applications\source"
         Start-Process "$env:SystemDrive\_Tech\Applications\source\changelog.txt"
     })
     $formControls.btnForceUpdate.Add_Click({
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-        Get-RemoteFileForce  "Installation.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1' "$env:SystemDrive\_Tech\Applications\Installation"
-        Get-RemoteFileForce  "Optimisation_Nettoyage.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1' "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
-        Get-RemoteFileForce  "Diagnostique.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1' "$env:SystemDrive\_Tech\Applications\Diagnostique"
-        Get-RemoteFileForce  "Desinfection.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1' "$env:SystemDrive\_Tech\Applications\Desinfection"
-        Get-RemoteFileForce  "Fix.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1' "$env:SystemDrive\_Tech\Applications\Fix"
-        Get-RemoteFileForce "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp\Stoolbox"
-        Get-RemoteFileForce  "Menu.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1' "$env:SystemDrive\_Tech"
-        Invoke-WebRequest 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip' -OutFile "$applicationPath\source\Modules.zip" | Out-Null
+        Get-RemoteFileForce  "Installation.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1" "$env:SystemDrive\_Tech\Applications\Installation"
+        Get-RemoteFileForce  "Optimisation_Nettoyage.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1" "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
+        Get-RemoteFileForce  "Diagnostique.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1" "$env:SystemDrive\_Tech\Applications\Diagnostique"
+        Get-RemoteFileForce  "Desinfection.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1" "$env:SystemDrive\_Tech\Applications\Desinfection"
+        Get-RemoteFileForce  "Fix.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1" "$env:SystemDrive\_Tech\Applications\Fix"
+        Get-RemoteFileForce "Remove.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1" "$env:SystemDrive\Temp\Stoolbox"
+        Get-RemoteFileForce  "Menu.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1" "$env:SystemDrive\_Tech"
+        Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip" -OutFile "$applicationPath\source\Modules.zip" | Out-Null
         Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
         Remove-Item "$applicationPath\source\Modules.zip"
 	    $window.Close()
