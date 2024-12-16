@@ -584,7 +584,6 @@ $window.add_Closing({
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
         Get-RemoteFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp\Stoolbox"
-        Get-RemoteFile "Remove.bat" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/bat/Remove.bat' "$env:SystemDrive\Temp\Stoolbox"
     } 
     #Lancement des runspaces
     if($shortcutExist -eq $false)
