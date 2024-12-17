@@ -120,23 +120,6 @@ function Test-ScriptsAreRunning
     return $false
 }
 
-function Deploy-Dependencies($appName)
-{
-    $lockFile = "$menuSourceFolderPath\$appName.lock"
-    if($appName -notmatch 'Fix')
-    {
-        Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$appPathSource"
-        Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow.xaml" "$appPathSource"
-    }
-    $adminStatus = Get-AdminStatus
-    if($adminStatus -eq $false)
-    {
-        Restart-Elevated -Path $appPath\$appName.ps1
-    }
-    $Global:appIdentifier = "$appName.ps1"
-    Test-ScriptInstance $lockFile $Global:appIdentifier
-}
-
 function Initialize-Application($appName)
 {
     <#
@@ -150,15 +133,20 @@ function Initialize-Application($appName)
     .NOTES
         N'est pas dans un module, car c'est spécific au menu seulement
     #>
-
     $appPath = "$applicationPath\$appName"
     $appPathSource = "$appPath\source"
+    if($appName -notmatch 'Fix')
+    {
+        Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$appPathSource"
+        Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow.xaml" "$appPathSource"
+    }
     New-Item -Path $appPath -ItemType 'Directory' -Force
+    Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $appPath 
     set-location $appPath
     $logFileName = Initialize-LogFile $appPathSource $appName
-    $lockFile = "$sourceFolderPath\$appName.lock"
-    Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $appPath 
-    Deploy-Dependencies $appName
+    $lockFile = "$menuSourceFolderPath\$appName.lock"
+    $Global:appIdentifier = "$appName.ps1"
+    Test-ScriptInstance $lockFile $Global:appIdentifier
     . $appPath\$appName.ps1
 }
 
