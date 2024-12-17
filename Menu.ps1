@@ -141,7 +141,7 @@ function Initialize-Application($appName)
     Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $appPath 
     set-location $appPath
     $logFileName = Initialize-LogFile $appPathSource $appName
-    $lockFile = "$menuSourceFolderPath\$appName.lock"
+    $lockFile = "$sourceFolderPath\$appName.lock"
     $Global:appIdentifier = "$appName.ps1"
     Test-ScriptInstance $lockFile $Global:appIdentifier
     . $appPath\$appName.ps1
