@@ -1,3 +1,4 @@
+<#
 Function menu
 {
     Clear-Host
@@ -118,7 +119,7 @@ function SubmenuTheme
     SubmenuTheme
 }
 Set-Theme -theme 1
-
+#>
 function Get-Minitool
 {
     $minitoolpath = test-Path "$env:SystemDrive\Program Files\MiniTool Partition*\partitionwizard.exe"
@@ -173,7 +174,118 @@ function Get-PW
         Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
     }
 }
+$xamlFile = "$appPathSource\MainWindow.xaml"
+$xamlContent = Read-XamlFileContent $xamlFile
+$formatedXamlFile = Format-XamlFile $xamlContent
+$xamlDoc = Convert-ToXmlDocument $formatedXamlFile
+$XamlReader = New-XamlReader $xamlDoc
+$window = New-WPFWindowFromXaml $XamlReader
+$formControls = Get-WPFControlsFromXaml $xamlDoc $window
 
+$formControls.btnMenu.Add_Click({
+    Open-Menu
+})
+
+$formControls.btnQuit.Add_Click({
+    Remove-StoolboxApp
+})
+
+$window.add_Closed({
+    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
+})
+
+$formControls.btnScript.Add_Click({
+    $formControls.btnSFC.Visibility="Visible"
+    $formControls.btnDISM.Visibility="Visible"
+    $formControls.btnCHKDSK.Visibility="Visible"
+    $formControls.btnSession.Visibility="Visible"
+    $formControls.btnScript.Visibility="Collapsed"
+})
+$formControls.btnTweak.Add_Click({
+    $formControls.btnFW10.Visibility="Visible"
+    $formControls.btnFW11.Visibility="Visible"
+    $formControls.btnUWT10.Visibility="Visible"
+    $formControls.btnUWT11.Visibility="Visible"
+    $formControls.btnTweaking.Visibility="Visible"
+    $formControls.btnTweak.Visibility="Collapsed"
+    Get-RemoteFile "Tweak.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Tweak.zip" $appPathSource
+})
+$formControls.btnSterjo.Add_Click({
+    $formControls.btnSterjoBrowser.Visibility="Visible"
+    $formControls.btnSterjoChrome.Visibility="Visible"
+    $formControls.btnSterjoFirefox.Visibility="Visible"
+    $formControls.btnSterjoKeys.Visibility="Visible"
+    $formControls.btnSterjoMail.Visibility="Visible"
+    $formControls.btnSterjoWireless.Visibility="Visible"
+    $formControls.btnSterjo.Visibility="Collapsed"
+    Get-RemoteFile "Sterjo.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Sterjo.zip" $appPathSource
+})
+
+$formControls.btnDDU.Add_Click({
+    Invoke-App "Display Driver Uninstaller.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Display Driver Uninstaller.zip" $appPathSource
+})
+$formControls.btnWFD.Add_Click({
+    Invoke-App "WiseForceDeleterPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WiseForceDeleterPortable.zip" $appPathSource
+})
+$formControls.btnWinDirStat.Add_Click({
+    Invoke-App "WinDirStatPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WinDirStatPortable.zip" $appPathSource
+})
+$formControls.btnPW.Add_Click({
+    Get-PW
+})
+$formControls.btnInternet.Add_Click({
+    Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/ComIntRep_X64.zip"  $appPathSource
+})
+
+$formControls.btnSFC.Add_Click({
+    Start-Process cmd.exe -ArgumentList "/k sfc /scannow"
+})
+$formControls.btnDISM.Add_Click({
+    Start-Process cmd.exe -ArgumentList "/k DISM /online /cleanup-image /restorehealth";Add-Log $logFileName "Reparation du Windows"
+})
+$formControls.btnCHKDSK.Add_Click({
+    Start-Process cmd.exe -ArgumentList "/k chkdsk /f /r"
+})
+$formControls.btnSession.Add_Click({
+    Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/creer_session.txt" "$appPathSource"
+    Start-Process "$appPathSource\creer_session.txt"
+})
+$formControls.btnFW10.Add_Click({
+    Start-Process "$appPathSource\Tweak\FixWin10\FixWin 10.2.2.exe"
+})
+$formControls.btnFW11.Add_Click({
+    Start-Process "$appPathSource\Tweak\FixWin11\FixWin 11.1.exe"
+})
+$formControls.btnUWT10.Add_Click({
+    Start-Process "$appPathSource\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe"
+})
+$formControls.btnUWT11.Add_Click({
+    Start-Process "$appPathSource\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe"
+})
+$formControls.btnTweaking.Add_Click({
+    Get-Tweaking 
+})
+$formControls.btnSterjoBrowser.Add_Click({
+    Start-Process "$appPathSource\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe"
+})
+$formControls.btnSterjoChrome.Add_Click({
+    Start-Process "$appPathSource\Sterjo\SterJo_Chrome_Passwords_sps\ChromePasswords.exe"
+})
+$formControls.btnSterjoFirefox.Add_Click({
+    Start-Process "$appPathSource\Sterjo\Sterjo_Firefox\FirefoxPasswords.exe"
+})
+$formControls.btnSterjoKeys.Add_Click({
+    Start-Process "$appPathSource\Sterjo\Sterjo_Key\KeyFinder.exe"
+})
+$formControls.btnSterjoMail.Add_Click({
+    Start-Process "$appPathSource\Sterjo\SterJo_Mail_Passwords_sps\MailPasswords.exe"
+})
+$formControls.btnSterjoWireless.Add_Click({
+    Start-Process "$appPathSource\Sterjo\Sterjo_Wireless\WiFiPasswords.exe"
+})
+
+Start-WPFAppDialog $window
+<#
 function sortie
 {
 $sortie = read-host "Voulez-vous retourner au menu Principal? o/n/q [q = Suppression]"
@@ -305,3 +417,4 @@ Start-Sleep 1
 submenuTweak
 }
 menu
+#>
