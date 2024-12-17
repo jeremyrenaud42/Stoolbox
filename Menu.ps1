@@ -122,10 +122,6 @@ function Test-ScriptsAreRunning
 
 function Deploy-Dependencies($appName)
 {
-    $applicationPath = "$env:SystemDrive\_Tech\Applications"
-    $appPath = "$applicationPath\$appName"
-    $appPathSource = "$appPath\source"
-    $menuSourceFolderPath = "$applicationPath\source"
     $lockFile = "$menuSourceFolderPath\$appName.lock"
     if($appName -notmatch 'Fix')
     {
@@ -157,6 +153,7 @@ function Initialize-Application($appName)
 
     $appPath = "$applicationPath\$appName"
     $appPathSource = "$appPath\source"
+    New-Item -Path $appPath -ItemType 'Directory' -Force
     set-location $appPath
     $logFileName = Initialize-LogFile $appPathSource $appName
     $lockFile = "$sourceFolderPath\$appName.lock"
