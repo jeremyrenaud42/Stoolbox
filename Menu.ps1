@@ -577,7 +577,7 @@ $window.add_Closing({
         $desktop = [Environment]::GetFolderPath("Desktop")
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-        Add-DesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.bat" "$sourceFolderPath\Images\Icone.ico"   
+        Add-DesktopShortcut "$desktop\Menu.lnk" "$env:SystemDrive\_Tech\Menu.ps1" "$sourceFolderPath\Images\Icone.ico"   
     }
 
     $downloadRemoveScript = {
