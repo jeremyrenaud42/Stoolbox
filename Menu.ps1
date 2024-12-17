@@ -87,6 +87,15 @@ function Get-RemotePsm1Files
     }
 }
 
+function Get-RequiredModules
+{
+    $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
+    foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
+    {
+        Import-Module $modulesFolder\$module
+    }
+}
+
 function Test-ScriptsAreRunning 
 {
     # Loop through each script identifier and check if it's running
@@ -120,10 +129,10 @@ function Deploy-Dependencies($appName)
     $lockFile = "$menuSourceFolderPath\$appName.lock"
     if($appName -notmatch 'Fix')
     {
-        Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" $appPathSource
-        Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow.xaml" $appPathSource
+        Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$appPathSource"
+        Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow.xaml" "$appPathSource"
     }
-    $adminStatus = Get-AdminStatus #surement inutile now
+    $adminStatus = Get-AdminStatus
     if($adminStatus -eq $false)
     {
         Restart-Elevated -Path $appPath\$appName.ps1
@@ -145,19 +154,15 @@ function Initialize-Application($appName)
     .NOTES
         N'est pas dans un module, car c'est spécific au menu seulement
     #>
-    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-    Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
-    Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $applicationPath\$appName
+
+    $appPath = "$applicationPath\$appName"
+    $appPathSource = "$appPath\source"
+    set-location $appPath
+    $logFileName = Initialize-LogFile $appPathSource $appName
+    $lockFile = "$sourceFolderPath\$appName.lock"
+    Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $appPath 
     Deploy-Dependencies $appName
-    if($appName -match 'Fix')
-    {
-        Start-Process -FilePath "powershell.exe" -ArgumentList "-ExecutionPolicy Unrestricted -File `"$env:SystemDrive\_TECH\Applications\$appName\$appName.ps1`""
-    }
-    else 
-    {
-        Start-Process -FilePath "powershell.exe" -ArgumentList "-WindowStyle Hidden -ExecutionPolicy Unrestricted -File `"$env:SystemDrive\_TECH\Applications\$appName\$appName.ps1`"" -NoNewWindow
-    }
+    . $appPath\$appName.ps1
 }
 
 ########################Déroulement########################
@@ -174,8 +179,7 @@ $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
 Get-RemotePsm1Files
-Import-Module "$sourceFolderPath\Modules\Verification.psm1"
-Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+Get-RequiredModules
 
 $dateFile = "$sourceFolderPath\installedDate.txt"
 $menuLockFile = "$sourceFolderPath\Menu.lock"
