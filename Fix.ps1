@@ -128,7 +128,6 @@ function SubmenuTheme
 }
 Set-Theme -theme 1
 
-
 Get-RequiredModules
 $appName = "Fix"
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
@@ -227,7 +226,7 @@ $sortie = read-host "Voulez-vous retourner au menu Principal? o/n/q [q = Suppres
         }   
         $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath -Encoding UTF8
         Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
-        Invoke-Task -TaskName "delete _tech" -ExecutedScript "C:\Temp\Stoolbox\Remove.bat"
+        Invoke-Task -TaskName "delete _tech" -ExecutedScript "C:\Temp\Stoolbox\Remove.ps1"
         exit
     }
     else 

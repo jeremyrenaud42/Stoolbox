@@ -650,8 +650,8 @@ Function Remove-EngKeyboard($selectedLanguage)
     $filteredUserLangList = $langList | Where-Object LanguageTag -eq $selectedLanguage #sélectionne le clavier anglais canada de la liste
     if(($filteredUserLangList).LanguageTag -eq $selectedLanguage)
     {
-        $langList.Remove($filteredUserLangList) | Out-Null #supprimer la clavier sélectionner
-        Set-WinUserLanguageList $langList -Force -WarningAction SilentlyContinue | Out-Null #applique le changement
+        $langList.Remove($filteredUserLangList) #supprimer la clavier sélectionner
+        Set-WinUserLanguageList $langList -Force -WarningAction SilentlyContinue #applique le changement
         $filteredUserLangList = $langList | Where-Object LanguageTag -eq $selectedLanguage #sélectionne le clavier anglais canada de la liste
         if(($filteredUserLangList).LanguageTag -eq $selectedLanguage)
         {
@@ -825,7 +825,7 @@ function Install-SoftwareWithWinget($appInfo)
 {
     if($appInfo.WingetName)
     {
-        winget install -e --id $appInfo.wingetname --accept-package-agreements --accept-source-agreements --silent | out-null
+        winget install -e --id $appInfo.wingetname --accept-package-agreements --accept-source-agreements --silent
     } 
     $softwareInstallationStatus = Test-SoftwarePresence $appInfo
         if($softwareInstallationStatus)
@@ -843,7 +843,7 @@ function Install-SoftwareWithChoco($apsInfo)
 {
     if($appInfo.ChocoName)
     {
-        choco install $appInfo.ChocoName -y | out-null
+        choco install $appInfo.ChocoName -y
     }
     $softwareInstallationStatus = Test-SoftwarePresence $apsInfo
     if($softwareInstallationStatus)
@@ -863,7 +863,7 @@ function Install-SoftwareWithNinite($appInfo)
 {
     if($appInfo.NiniteName)
     {
-        Invoke-WebRequest $appInfo.NiniteGithubLink -OutFile $appInfo.NiniteName | Out-Null
+        Invoke-WebRequest $appInfo.NiniteGithubLink -OutFile $appInfo.NiniteName
         Start-Process $appInfo.NiniteName -Verb runAs
     }
 }
@@ -883,20 +883,20 @@ function Get-ActivationStatus
     {  
         Add-Text -text "Windows n'est pas activé" -colorName "red"
         Add-Log $logFileName "Windows n'est pas activé"
-        [System.Windows.MessageBox]::Show("Windows n'est pas activé","Installation Windows",0,64) | Out-Null   
+        [System.Windows.MessageBox]::Show("Windows n'est pas activé","Installation Windows",0,64)   
         $formControlsMain.lblActivation.foreground = "red"
     }  
 }
 
 function Initialize-WindowsUpdate
 {
-    Install-Module PSWindowsUpdate -Force | Out-Null #install le module pour les Update de Windows
+    Install-Module PSWindowsUpdate -Force #install le module pour les Update de Windows
     $pathPSWindowsUpdateExist = test-path "$env:SystemDrive\Program Files\WindowsPowerShell\Modules\PSWindowsUpdate" 
     if($pathPSWindowsUpdateExist -eq $false) #si le module n'est pas là (Plan B)
     {
-        choco install pswindowsupdate -y | out-null
+        choco install pswindowsupdate -y
     }
-    Import-Module PSWindowsUpdate | out-null 
+    Import-Module PSWindowsUpdate 
 }
 
 function Get-WindowsUpdateReboot
@@ -986,7 +986,7 @@ function Set-DefaultBrowser
     if(($currentHttpAssocation -notlike "ChromeHTML*") -and ($currentHttpsAssocation -notlike "ChromeHTML*"))
     {
         Start-Process ms-settings:defaultapps
-        [System.Windows.MessageBox]::Show("Mettre Google Chrome par défaut","Installation Windows",0,64) | Out-Null   
+        [System.Windows.MessageBox]::Show("Mettre Google Chrome par défaut","Installation Windows",0,64)   
     }
 }
    
@@ -995,7 +995,7 @@ function Set-DefaultPDFViewer
     $currentDefaultPdfViewer = Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice | Select-Object -ExpandProperty ProgId
     if($currentDefaultPdfViewer -notlike "*.Document.DC")
     {
-        [System.Windows.MessageBox]::Show("Mettre Adobe Reader par défaut","Installation Windows",0,64) | Out-Null   
+        [System.Windows.MessageBox]::Show("Mettre Adobe Reader par défaut","Installation Windows",0,64)   
     }
 }
     
@@ -1005,7 +1005,7 @@ function Set-GooglePinnedTaskbar
     $chromeTaskbarStatus= Test-Path "$taskbardir\*Google*Chrome*"
     if($chromeTaskbarStatus-eq $false)
     {
-        [System.Windows.MessageBox]::Show("Épingler Google Chrome dans la barre des tâches","Installation Windows",0,64) | Out-Null   
+        [System.Windows.MessageBox]::Show("Épingler Google Chrome dans la barre des tâches","Installation Windows",0,64)   
     } 
 }
 
@@ -1046,7 +1046,7 @@ function Complete-Installation
     Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
     if($formControlsMenuApp.chkboxRemove.IsChecked)
     { 
-        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
+        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.ps1'
     }
     $window.Close()
 }
