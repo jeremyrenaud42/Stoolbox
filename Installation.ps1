@@ -283,7 +283,7 @@ $windowMenuApp.add_Loaded({
             $jsonContent.EmptyRecycleBin.Status = "0"  
         }   
         $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath -Encoding UTF8
-        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.bat'
+        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.ps1'
         $windowMenuApp.Close()
         Exit
     })
