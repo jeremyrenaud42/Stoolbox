@@ -135,11 +135,8 @@ function Initialize-Application($appName)
     #>
     $appPath = "$applicationPath\$appName"
     $appPathSource = "$appPath\source"
-    if($appName -notmatch 'Fix')
-    {
-        Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$appPathSource"
-        Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow.xaml" "$appPathSource"
-    }
+    Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" $appPathSource
+    Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow.xaml" $appPathSource
     New-Item -Path $appPath -ItemType 'Directory' -Force
     Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $appPath 
     set-location $appPath
