@@ -665,7 +665,7 @@ $window.add_Closing({
     {
         Write-Host "downloadRemoveScriptResult"
         Complete-AsyncOperation -RunspaceResult $global:sync['downloadRemoveScriptResult']
-        Close-Runspace -RunspaceResult $global:sync['downloadRemoveScriptResult'] -RunspaceKey $createShortcutKey
+        Close-Runspace -RunspaceResult $global:sync['downloadRemoveScriptResult'] -RunspaceKey $downloadRemoveScriptKey
         Get-RunspaceState $global:sync['downloadRemoveScriptResult']
     }
 })
