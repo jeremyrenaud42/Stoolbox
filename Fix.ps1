@@ -1,12 +1,3 @@
-function Get-RequiredModules
-{
-    $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
-    foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
-    {
-        Import-Module $modulesFolder\$module
-    }
-}
-
 Function menu
 {
     Clear-Host
@@ -127,15 +118,6 @@ function SubmenuTheme
     SubmenuTheme
 }
 Set-Theme -theme 1
-
-Get-RequiredModules
-$appName = "Fix"
-$applicationPath = "$env:SystemDrive\_Tech\Applications"
-$appPath = "$applicationPath\$appName"
-$appPathSource = "$appPath\source"
-set-location $appPath
-$logFileName = Initialize-LogFile $appPathSource
-$lockFile = "$applicationPath\source\$appName.lock"
 
 function Get-Minitool
 {

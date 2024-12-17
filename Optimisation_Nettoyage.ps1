@@ -1,23 +1,3 @@
-Add-Type -AssemblyName PresentationFramework,System.speech,System.Drawing,presentationCore
-
-function Get-RequiredModules
-{
-    $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
-    foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
-    {
-        Import-Module $modulesFolder\$module
-    }
-}
-
-Get-RequiredModules
-$appName = "Optimisation_Nettoyage"
-$applicationPath = "$env:SystemDrive\_Tech\Applications"
-$appPath = "$applicationPath\$appName"
-$appPathSource = "$appPath\source"
-set-location $appPath
-$logFileName = Initialize-LogFile $appPathSource
-$lockFile = "$applicationPath\source\$appName.lock"
-
 $xamlFile = "$appPathSource\MainWindow.xaml"
 $xamlContent = Read-XamlFileContent $xamlFile
 $formatedXamlFile = Format-XamlFile $xamlContent

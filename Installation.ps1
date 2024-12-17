@@ -1,15 +1,4 @@
-﻿Add-Type -AssemblyName PresentationFramework,System.speech,System.Drawing,presentationCore
-
-function Get-RequiredModules
-{
-    $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
-    foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
-    {
-        Import-Module $modulesFolder\$module
-    }
-}
-
-function Get-Manufacturer
+﻿function Get-Manufacturer
 {
     #$manufacturerBrand = Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -Property Manufacturer #Chercher la marque de l'ordinateur
     $manufacturerBrand = Get-CimInstance -Class Win32_BaseBoard | Select-Object -Property Manufacturer # + rapide
@@ -183,15 +172,6 @@ function Install-SoftwareMenuApp($softwareName)
         }   
     }      
 } 
-
-Get-RequiredModules
-$appName = "Installation"
-$applicationPath = "$env:SystemDrive\_Tech\Applications"
-$appPath = "$applicationPath\$appName"
-$appPathSource = "$appPath\source"
-set-location $appPath
-$logFileName = Initialize-LogFile $appPathSource
-$lockFile = "$applicationPath\source\$appName.lock"
 
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
 $windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption

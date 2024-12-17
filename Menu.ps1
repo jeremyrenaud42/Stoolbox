@@ -120,10 +120,10 @@ function Deploy-Dependencies($appName)
     $lockFile = "$menuSourceFolderPath\$appName.lock"
     if($appName -notmatch 'Fix')
     {
-        Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$appPathSource"
-        Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow.xaml" "$appPathSource"
+        Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" $appPathSource
+        Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow.xaml" $appPathSource
     }
-    $adminStatus = Get-AdminStatus
+    $adminStatus = Get-AdminStatus #surement inutile now
     if($adminStatus -eq $false)
     {
         Restart-Elevated -Path $appPath\$appName.ps1

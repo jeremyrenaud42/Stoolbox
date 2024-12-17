@@ -1,25 +1,4 @@
-﻿Add-Type -AssemblyName PresentationFramework,System.speech,System.Drawing,presentationCore
-
-function Get-RequiredModules
-{
-    $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
-    foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
-    {
-        Import-Module $modulesFolder\$module
-    }
-}
-
-Get-RequiredModules
-$appName = "Diagnostique"
-$applicationPath = "$env:SystemDrive\_Tech\Applications"
-$appPath = "$applicationPath\$appName"
-$appPathSource = "$appPath\source"
-set-location $appPath
-$logFileName = Initialize-LogFile $appPathSource
-$lockFile = "$applicationPath\source\$appName.lock"
-Get-RemoteFile "DiagApps.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/DiagApps.JSON' "$appPathSource"  
-
-$xamlFile = "$appPathSource\MainWindow.xaml"
+﻿$xamlFile = "$appPathSource\MainWindow.xaml"
 $xamlContent = Read-XamlFileContent $xamlFile
 $formatedXamlFile = Format-XamlFile $xamlContent
 $xamlDoc = Convert-ToXmlDocument $formatedXamlFile
