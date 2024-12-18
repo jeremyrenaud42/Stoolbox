@@ -1,18 +1,16 @@
-﻿Add-Type -AssemblyName PresentationCore,PresentationFramework
-
-$desktop = [Environment]::GetFolderPath("Desktop")
+﻿$desktop = [Environment]::GetFolderPath("Desktop")
 $techFolder = "$env:SystemDrive\_Tech"
 $tempFolder = "$env:SystemDrive\Temp\Stoolbox"
 $lockfile = "$env:SystemDrive\_Tech\Applications\source\*.lock"
 $maxAttempts = 5
 $attempt = 0
-$dateFile = "C:\_tech\Applications\Source\installedDate.txt"
+$dateFile = "$techFolder\Applications\Source\installedDate.txt"
 
-if (test-path "C:\_Tech\Applications\source\Settings.JSON")
+if (test-path "$techFolder\Applications\source\Settings.JSON")
 {
-    Copy-Item "C:\_Tech\Applications\source\Settings.JSON" -Destination "C:\Temp\Stoolbox" -Force
+    Copy-Item "$techFolder\Applications\source\Settings.JSON" -Destination $tempFolder -Force
 }
-$jsonFilePath = "C:\Temp\Stoolbox\Settings.JSON"
+$jsonFilePath = "$tempFolder\Settings.JSON"
 $jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
 
 $download = $jsonContent.RemoveDownloadFolder.Status
@@ -104,11 +102,11 @@ function Remove-techFolder
     Remove-Item $techFolder -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     if (Test-Path $techFolder)
     {
-        [System.Windows.MessageBox]::Show("La suppression du dossier C:\_Tech a échoué","Suppression",0,48) | Out-Null
+        [System.Windows.MessageBox]::Show("La suppression du dossier $techFolder a échoué","Suppression",0,48) | Out-Null
     }
     else 
     {
-        Write-Host "Le dossier C:\_Tech a été supprimé"
+        Write-Host "Le dossier $techFolder a été supprimé"
     }
     Start-Sleep -Seconds 1
 }
@@ -134,9 +132,9 @@ function Remove-TempFolder
 }
 function Move-RemoveFile
 {
-    if (Test-Path "C:\Temp\Stoolbox\remove.ps1" -ErrorAction SilentlyContinue)
+    if (Test-Path "$tempFolder\remove.ps1" -ErrorAction SilentlyContinue)
     {
-        Move-Item "C:\Temp\Stoolbox\remove.ps1" -Destination "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
+        Move-Item "$tempFolder\remove.ps1" -Destination "$env:APPDATA\remove.ps1" -Force -ErrorAction SilentlyContinue | Out-Null
         $scriptPath = "$env:APPDATA\remove.ps1"
         Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -File `"$scriptPath`""
         exit
@@ -163,11 +161,11 @@ if (Test-Path $techFolder)
         Remove-RecycleBin 
     } 
 }
-else #si C:\_Tech n'existe pas
+else #si $techFolder n'existe pas
 {
     if (-not (Test-Path "$env:APPDATA\remove.ps1"))
     {
-        Write-Host "Le dossier C:\_Tech n'existe pas."
+        Write-Host "Le dossier $techFolder n'existe pas."
         Start-Sleep -Seconds 2
     }
 }
