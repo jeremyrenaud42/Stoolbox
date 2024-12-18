@@ -1,28 +1,4 @@
-﻿function Get-Manufacturer
-{
-    #$manufacturerBrand = Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -Property Manufacturer #Chercher la marque de l'ordinateur
-    $manufacturerBrand = Get-CimInstance -Class Win32_BaseBoard | Select-Object -Property Manufacturer # + rapide
-    return $manufacturerBrand
-}
-
-# Function to get a Brush by name
-function Get-BrushByName 
-{
-    param 
-    (
-        [string]$brushName
-    )
-
-    switch ($brushName) 
-    {
-        "Red" { return [System.Windows.Media.Brushes]::Red }
-        "Green" { return [System.Windows.Media.Brushes]::MediumSeaGreen }
-        "Blue" { return [System.Windows.Media.Brushes]::DodgerBlue }
-        default { return [System.Windows.Media.Brushes]::white }
-    }
-}
-
-function Add-Text 
+﻿function Add-Text 
 {
     param
     (
@@ -39,14 +15,16 @@ function Add-Text
     $document = $global:sync["richTxtBxOutput"].Document
     $lastParagraph = $document.Blocks.LastBlock
     
-    if ($lastParagraph -eq $null) {
+    if ($lastParagraph -eq $null) 
+    {
         # If no paragraph exists, create one
         $lastParagraph = New-Object System.Windows.Documents.Paragraph
         $document.Blocks.Add($lastParagraph)
     }
     
     # If not using SameLine, add a line break
-    if (-not $SameLine) {
+    if (-not $SameLine) 
+    {
         $lineBreak = New-Object System.Windows.Documents.LineBreak
         $lastParagraph.Inlines.Add($lineBreak)
     }
@@ -54,13 +32,7 @@ function Add-Text
     # Add the colored run to the paragraph
     $lastParagraph.Inlines.Add($run)
 }
-function Clear-Text
-{
-    # Get the document from the global synchronized RichTextBox
-    $document = $global:sync["richTxtBxOutput"].Document
-    # Clear all blocks (paragraphs) from the document
-    $document.Blocks.Clear()
-}
+
 function Get-Winget
 {
     $formControlsMain.lblWinget.foreground = "DodgerBlue"
@@ -128,7 +100,7 @@ function Get-Nuget
     if($nugetExist -eq $false)
     {   
         Install-Nuget
-        $nugetExist = Test-AppPresence "C:\Program Files\WindowsPowerShell\Modules\NuGet" #permet de géré si lancé via autre user
+        $nugetExist = Test-AppPresence "$env:SystemDrive\Program Files\WindowsPowerShell\Modules\NuGet" #permet de géré si lancé via autre user
         if($nugetExist -eq $true)
         {
             Add-Log $logFileName " - Nuget a été installé"
@@ -177,10 +149,9 @@ $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cel
 $windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
 $actualDate = (Get-Date).ToString()
 
-
 Get-InternetStatusLoop
-Get-RemoteFile "MainWindow1.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow1.xaml" "$appPathSource"
-Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" "$appPathSource"
+Get-RemoteFile "MainWindow1.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow1.xaml" $appPathSource
+Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" $appPathSource
 ############################GUI####################################
 #WPF - appMenuChoice
 $xamlFileMenuApp = "$appPathSource\MainWindow.xaml"
@@ -263,7 +234,7 @@ $windowMenuApp.add_Loaded({
             $jsonContent.EmptyRecycleBin.Status = "0"  
         }   
         $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath -Encoding UTF8
-        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.ps1'
+        Invoke-Task -TaskName 'delete _tech' -ExecutedScript "$env:SystemDrive\Temp\Stoolbox\Remove.ps1"
         $windowMenuApp.Close()
         Exit
     })
@@ -388,7 +359,7 @@ function Install-SoftwaresManager
     New-Item -Path $lockFile -ItemType 'File' -Force
     Add-Log $logFileName "Installation de $windowsVersion le $actualDate"
     $formControlsMain.lblProgress.content = "Préparation"
-    Clear-Text
+    Clear-RichTextBox $global:sync["richTxtBxOutput"]
     Get-Winget
     Get-Choco
     Get-Nuget
@@ -537,8 +508,6 @@ Function Set-ExplorerDisplay
             Add-Log $logFileName "Le fournisseur de synchronisation n'a pas été decoché"
         }
     }
-    
-    
     if(($explorerLaunchWindow -eq '1') -and ($providerNotifications -eq '0'))
     {
         $formControlsMain.lblExplorer.foreground = "MediumSeaGreen"   
@@ -993,7 +962,7 @@ function Complete-Installation
 {
     $formControlsMain.lblManualComplete.foreground = "DodgerBlue"
     Add-Log $logFileName "Installation de Windows effectué avec Succès"
-    Copy-Log $logFileName "C:\Temp"
+    Copy-Log $logFileName "$env:SystemDrive\Temp"
     Send-FTPLogs $appPathSource\$logFileName
     [Audio]::Volume = 0.25
     [console]::beep(1000,666)
@@ -1026,7 +995,7 @@ function Complete-Installation
     Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
     if($formControlsMenuApp.chkboxRemove.IsChecked)
     { 
-        Invoke-Task -TaskName 'delete _tech' -ExecutedScript 'C:\Temp\Stoolbox\Remove.ps1'
+        Invoke-Task -TaskName 'delete _tech' -ExecutedScript "$env:SystemDrive\Temp\Stoolbox\Remove.ps1"
     }
     $window.Close()
 }
