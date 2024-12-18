@@ -1,11 +1,3 @@
-$xamlFile = "$appPathSource\MainWindow.xaml"
-$xamlContent = Read-XamlFileContent $xamlFile
-$formatedXamlFile = Format-XamlFile $xamlContent
-$xamlDoc = Convert-ToXmlDocument $formatedXamlFile
-$XamlReader = New-XamlReader $xamlDoc
-$window = New-WPFWindowFromXaml $XamlReader
-$formControls = Get-WPFControlsFromXaml $xamlDoc $window
-
 #choco install hdtune
 #choco install hdsentinel
 #choco install revo-uninstaller

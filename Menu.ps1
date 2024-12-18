@@ -144,6 +144,13 @@ function Initialize-Application($appName)
     $lockFile = "$sourceFolderPath\$appName.lock"
     $Global:appIdentifier = "$appName.ps1"
     Test-ScriptInstance $lockFile $Global:appIdentifier
+    $xamlFile = "$appPathSource\MainWindow.xaml"
+    $xamlContent = Read-XamlFileContent $xamlFile
+    $formatedXamlFile = Format-XamlFile $xamlContent
+    $xamlDoc = Convert-ToXmlDocument $formatedXamlFile
+    $XamlReader = New-XamlReader $xamlDoc
+    $window = New-WPFWindowFromXaml $XamlReader
+    $formControls = Get-WPFControlsFromXaml $xamlDoc $window $sync
     . $appPath\$appName.ps1
 }
 

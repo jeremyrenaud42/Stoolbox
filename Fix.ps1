@@ -120,26 +120,6 @@ function SubmenuTheme
 }
 Set-Theme -theme 1
 #>
-function Get-Minitool
-{
-    $minitoolpath = test-Path "$env:SystemDrive\Program Files\MiniTool Partition*\partitionwizard.exe"
-    if($minitoolpath)
-    {
-        Start-Process "$env:SystemDrive\Program Files\MiniTool Partition*\partitionwizard.exe"
-    }
-    elseif($minitoolpath -eq $false)
-    {
-    Install-Winget  
-    winget install -e --id MiniTool.PartitionWizard.Free --accept-package-agreements --accept-source-agreements --silent | Out-Null
-    $minitoolpath = test-Path "$env:SystemDrive\Program Files\MiniTool Partition*\partitionwizard.exe"
-        if($minitoolpath -eq $false)
-        {
-            Install-Choco
-            choco install partitionwizard -y | Out-Null
-        }
-    }
-}
-
 function Get-Tweaking
 {
     $path = Test-Path "$appPathSource\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
@@ -174,13 +154,6 @@ function Get-PW
         Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
     }
 }
-$xamlFile = "$appPathSource\MainWindow.xaml"
-$xamlContent = Read-XamlFileContent $xamlFile
-$formatedXamlFile = Format-XamlFile $xamlContent
-$xamlDoc = Convert-ToXmlDocument $formatedXamlFile
-$XamlReader = New-XamlReader $xamlDoc
-$window = New-WPFWindowFromXaml $XamlReader
-$formControls = Get-WPFControlsFromXaml $xamlDoc $window
 
 $formControls.btnMenu.Add_Click({
     Open-Menu

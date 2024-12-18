@@ -1,12 +1,4 @@
-﻿$xamlFile = "$appPathSource\MainWindow.xaml"
-$xamlContent = Read-XamlFileContent $xamlFile
-$formatedXamlFile = Format-XamlFile $xamlContent
-$xamlDoc = Convert-ToXmlDocument $formatedXamlFile
-$XamlReader = New-XamlReader $xamlDoc
-$window = New-WPFWindowFromXaml $XamlReader
-$formControls = Get-WPFControlsFromXaml $xamlDoc $window
-
-$formControls.btnMenu.Add_Click({
+﻿$formControls.btnMenu.Add_Click({
     Open-Menu
 })
 
