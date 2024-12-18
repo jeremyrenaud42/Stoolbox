@@ -74,6 +74,12 @@ $formControls.btnMenu.Add_Click({
     Open-Menu
 })
 
+$window.add_Closed({
+    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
+})
+
+Start-WPFAppDialog $window
+
 <#
 Import-Module -Name "$env:SystemDrive\\_TECH\\Applications\\Source\\Excel\\ImportExcel" #import le module Excel situ� dans la cl�
 $excel = Open-ExcelPackage -Path "$env:SystemDrive\\_TECH\\Applications\\Source\\Excel\\Rapport.xlsm" #ouvre la grille Excel
@@ -88,9 +94,3 @@ B2 = num_tel
 A25 � A41 = Notes
 Cases � cocher: B = Bon.  C = Jaune.  D= Rouge. E = Notes.
 #>
-
-$window.add_Closed({
-    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
-})
-
-Start-WPFAppDialog $window

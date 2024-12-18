@@ -11,7 +11,7 @@ $formControls.btnbat.Add_Click({
     $formControls.btnDontsleep.Visibility="Visible"
     $formControls.btnBattMonitor.Visibility="Visible"
     $formControls.btnbat.Visibility="Collapsed"
-    Get-RemoteFile "Batterie.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" "$appPathSource"
+    Get-RemoteFile "Batterie.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" $appPathSource
 })
 $formControls.btnCPU.Add_Click({
     $formControls.btnAida.Visibility="Visible"
@@ -28,14 +28,14 @@ $formControls.btnHDD.Add_Click({
     $formControls.btnASSD.Visibility="Visible"
     $formControls.btnDiskmark.Visibility="Visible"
     $formControls.btnHDD.Visibility="Collapsed"
-    Get-RemoteFile "HDD.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip' "$appPathSource"
+    Get-RemoteFile "HDD.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip" $appPathSource
 })
 $formControls.btnGPU.Add_Click({
     $formControls.btnFurmark.Visibility="Visible"
     $formControls.btnFurmarkV2.Visibility="Visible"
     $formControls.btnUnigine.Visibility="Visible"
     $formControls.btnGPU.Visibility="Collapsed"
-    Get-RemoteFile "GPU.zip" 'https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip' "$appPathSource"
+    Get-RemoteFile "GPU.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip" $appPathSource
 })
 $formControls.btnRAM.Add_Click({
     mdsched.exe
@@ -157,7 +157,6 @@ $formControls.btnASSD.Add_Click({
 $formControls.btnDiskmark.Add_Click({
     Start-Process -wait  "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"  -ArgumentList "/copy"
     Add-Log $logFileName "Vérifier la santé du disque dur"
-    #diskmarkinfolog | Out-File $logfilepath -Append
 })
 
 $formControls.btnFurmark.Add_Click({
@@ -176,15 +175,15 @@ $formControls.btnUnigine.Add_Click({
 })
 
 $formControls.btnSpeccy.Add_Click({
-    Invoke-App "Speccy.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" "$appPathSource"
+    Invoke-App "Speccy.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Speccy.zip" $appPathSource
 })
 
 $formControls.btnHWMonitor.Add_Click({
-    Invoke-App "HWMonitor_x64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor_x64.zip" "$appPathSource"
+    Invoke-App "HWMonitor_x64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HWMonitor_x64.zip" $appPathSource
 })
 
 $formControls.btnWhocrashed.Add_Click({
-    Invoke-App "WhoCrashedEx.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashedEx.zip" "$appPathSource"
+    Invoke-App "WhoCrashedEx.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/WhoCrashedEx.zip" $appPathSource
 })
 
 $formControls.btnSysinfo.Add_Click({

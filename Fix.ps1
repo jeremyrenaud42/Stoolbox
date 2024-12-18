@@ -22,13 +22,13 @@ Function menu
     {
     0{sortie;break}
     1{submenuScripts;Break}
-    2{Get-RemoteFile "Tweak.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Tweak.zip" "$appPathSource"; submenuTweak;Break}
-    3{Get-RemoteFile "Sterjo.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Sterjo.zip" "$appPathSource"; submenuMDP;Break}
-    4{Invoke-App "Display Driver Uninstaller.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Display Driver Uninstaller.zip" "$appPathSource";Add-Log $logFileName "Désinstallation du pilote graphique avec DDU";Break}
-    5{Invoke-App "WiseForceDeleterPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WiseForceDeleterPortable.zip" "$appPathSource";Break}
-    6{Invoke-App "WinDirStatPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WinDirStatPortable.zip" "$appPathSource";Break}
+    2{Get-RemoteFile "Tweak.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Tweak.zip" $appPathSource; submenuTweak;Break}
+    3{Get-RemoteFile "Sterjo.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Sterjo.zip" $appPathSource; submenuMDP;Break}
+    4{Invoke-App "Display Driver Uninstaller.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Display Driver Uninstaller.zip" $appPathSource;Add-Log $logFileName "Désinstallation du pilote graphique avec DDU";Break}
+    5{Invoke-App "WiseForceDeleterPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WiseForceDeleterPortable.zip" $appPathSource;Break}
+    6{Invoke-App "WinDirStatPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WinDirStatPortable.zip" $appPathSource;Break}
     7{Get-PW;Break} 
-    8{Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/ComIntRep_X64.zip" "$appPathSource";Add-Log $logFileName "Réparer Internet";Break}
+    8{Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/ComIntRep_X64.zip" $appPathSource;Add-Log $logFileName "Réparer Internet";Break}
     T{$number = SubmenuTheme;Set-Theme -theme $number;Break}
     }
     start-sleep 1
@@ -144,7 +144,7 @@ function Get-PW
     if($path -eq $false)
     {
         Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Partition_Wizard.zip" -OutFile "$appPathSource\Partition_Wizard.zip"
-        Expand-Archive "$appPathSource\Partition_Wizard.zip" "$appPathSource"
+        Expand-Archive "$appPathSource\Partition_Wizard.zip" $appPathSource
         Remove-Item "$appPathSource\Partition_Wizard.zip"
         Copy-Item "$appPathSource\Partition_Wizard" -Recurse -Destination "$desktop\Partition_Wizard"
         Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
@@ -220,7 +220,7 @@ $formControls.btnCHKDSK.Add_Click({
     Start-Process cmd.exe -ArgumentList "/k chkdsk /f /r"
 })
 $formControls.btnSession.Add_Click({
-    Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/creer_session.txt" "$appPathSource"
+    Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/creer_session.txt" $appPathSource
     Start-Process "$appPathSource\creer_session.txt"
 })
 $formControls.btnFW10.Add_Click({
@@ -323,7 +323,7 @@ switch ($choix)
 1{Start-Process cmd.exe -ArgumentList "/k sfc /scannow";Add-Log $logFileName "Reparation des fichiers corrompus";Break}
 2{Start-Process cmd.exe -ArgumentList "/k DISM /online /cleanup-image /restorehealth";Add-Log $logFileName "Reparation du Windows";Break}
 3{Start-Process cmd.exe -ArgumentList "/k chkdsk /f /r";Add-Log $logFileName "Reparation du HDD";Break}
-4{Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/creer_session.txt" "$appPathSource";Start-Process "$appPathSource\creer_session.txt";Add-Log $logFileName "Nouvelle session créé";Break}
+4{Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/creer_session.txt" $appPathSource;Start-Process "$appPathSource\creer_session.txt";Add-Log $logFileName "Nouvelle session créé";Break}
 }
 start-sleep 1
 submenuScripts

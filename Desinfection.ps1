@@ -7,17 +7,17 @@ $formControls.btnQuit.Add_Click({
 })
 
 $formControls.btnProcess_Explorer.Add_Click({
-    Invoke-App "procexp64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/procexp64.exe" "$appPathSource"
+    Invoke-App "procexp64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/procexp64.exe" $appPathSource
     Add-Log $logFileName "Vérifier les process"
 })
 
 $formControls.btnRKill.Add_Click({
-    Invoke-App "rkill64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/rkill64.exe" "$appPathSource"
+    Invoke-App "rkill64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/rkill64.exe" $appPathSource
     Add-Log $logFileName "Désactiver les process"
 })
 
 $formControls.btnAutoruns.Add_Click({
-    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe" "$appPathSource"
+    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe" $appPathSource
     start-sleep 5
     taskmgr
     Add-Log $logFileName "Vérifier les logiciels au démarrage"
@@ -34,13 +34,13 @@ $formControls.btnCcleaner.Add_Click({
  })
 
 $formControls.btnRevo.Add_Click({
-    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip" "$appPathSource"
+    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip" $appPathSource
     Add-Log $logFileName "Vérifier les programmes nuisibles"
  })
 
 
 $formControls.btnADWcleaner.Add_Click({
-    Invoke-App "adwcleaner.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/adwcleaner.exe" "$appPathSource"
+    Invoke-App "adwcleaner.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/adwcleaner.exe" $appPathSource
     Add-Log $logFileName "Analyse ADW effectué"
  })
 
@@ -105,12 +105,12 @@ $formControls.btnSuperAntiSpyware.Add_Click({
  })
 
 $formControls.btnHitmanPro.Add_Click({
-    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/HitmanPro.exe" "$appPathSource"
+    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/HitmanPro.exe" $appPathSource
     Add-Log $logFileName "Vérifier les virus avec HitmanPro"
 })
 
 $formControls.btnRogueKiller.Add_Click({
-    Invoke-App "RogueKiller_portable64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/RogueKiller_portable64.zip" "$appPathSource"
+    Invoke-App "RogueKiller_portable64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/RogueKiller_portable64.zip" $appPathSource
     Add-Log $logFileName "Analyse RogueKiller effectué"
     #via le cmd, aller a l"emplacement RogueKillerCMD.exe -scan -no-interact -deleteall #-debuglog {path}
  })

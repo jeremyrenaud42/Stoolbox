@@ -79,7 +79,7 @@ function Get-RemotePsm1Files
     $modulesFolderPathExist = test-path -Path $modulesFolderPath
     if($modulesFolderPathExist -eq $false)
     {
-        $zipFileDownloadLink = 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip'
+        $zipFileDownloadLink = "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip"
         $zipFile = "Modules.zip"
         Invoke-WebRequest -Uri $zipFileDownloadLink -OutFile $sourceFolderPath\$zipFile
         Expand-Archive -Path $sourceFolderPath\$zipFile -DestinationPath $sourceFolderPath -Force
@@ -207,7 +207,7 @@ $global:sync['flag'] = $true
     $downloadXamlFile = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-    Get-RemoteFile "MainWindow.xaml" 'https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml' $sourceFolderPath
+    Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml" $sourceFolderPath
     }
 
     $downloadBackgroundFile = {
@@ -216,7 +216,7 @@ $global:sync['flag'] = $true
     Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
     Get-RemoteFile "Background_menu.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$sourceFolderPath\Images"
     Get-RemoteFile "Icone.ico" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/Icone.ico" "$sourceFolderPath\Images"
-    Get-RemoteFile "Settings.JSON" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Settings.JSON' $sourceFolderPath
+    Get-RemoteFile "Settings.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Settings.JSON" $sourceFolderPath
 }
 
 #Définitions des variables
@@ -576,7 +576,7 @@ $window.add_Closing({
     $downloadRemoveScript = {
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-        Get-RemoteFile "Remove.ps1" 'https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1' "$env:SystemDrive\Temp\Stoolbox"
+        Get-RemoteFile "Remove.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1" "$env:SystemDrive\Temp\Stoolbox"
     } 
     #Lancement des runspaces
     if($shortcutExist -eq $false)
