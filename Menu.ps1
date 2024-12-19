@@ -208,6 +208,7 @@ $global:sync['flag'] = $true
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     Get-RemoteFile "MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MainWindow.xaml" $sourceFolderPath
+    Get-RemoteFile "Resources.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Resources.xaml" $sourceFolderPath
     }
 
     $downloadBackgroundFile = {
