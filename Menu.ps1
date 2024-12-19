@@ -525,7 +525,16 @@ $Window.add_Loaded({
     $formControls.btnQuit.Add_Click({
         Remove-StoolboxApp
     })
-
+    $formControls.GridMenu.Add_MouseDown({
+        $window.DragMove()
+    })
+    $formControls.btnclose.Add_Click({
+        $window.Close()
+        Exit
+    })
+    $formControls.btnmin.Add_Click({
+        $window.WindowState = [System.Windows.WindowState]::Minimized
+    })
     $formControls.btnWinget.Add_Click({
         $installWinget = {
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
