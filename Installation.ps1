@@ -150,11 +150,11 @@ $windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
 $actualDate = (Get-Date).ToString()
 
 Get-InternetStatusLoop
-Get-RemoteFile "MainWindow1.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/MainWindow1.xaml" $appPathSource
+Get-RemoteFile "InstallationConfigMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationConfigMainWindow.xaml" $appPathSource
 Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" $appPathSource
 ############################GUI####################################
 #WPF - appMenuChoice
-$xamlFileMenuApp = "$appPathSource\MainWindow.xaml"
+$xamlFileMenuApp = "$appPathSource\InstallationConfigMainWindow.xaml"
 $xamlContentMenuApp = Read-XamlFileContent $xamlFileMenuApp
 $formatedXamlFileMenuApp = Format-XamlFile $xamlContentMenuApp
 $xamlDocMenuApp = Convert-ToXmlDocument $formatedXamlFileMenuApp
@@ -163,7 +163,7 @@ $windowMenuApp = New-WPFWindowFromXaml $XamlReaderMenuApp
 $formControlsMenuApp = Get-WPFControlsFromXaml $xamlDocMenuApp $windowMenuApp $sync
 
 #WPF - Main GUI
-$xamlFileMain = "$appPathSource\MainWindow1.xaml"
+$xamlFileMain = "$appPathSource\$($appName)MainWindow.xaml"
 $xamlContentMain = Read-XamlFileContent $xamlFileMain
 $formatedXamlFileMain = Format-XamlFile $xamlContentMain
 $xamlDocMain = Convert-ToXmlDocument $formatedXamlFileMain
