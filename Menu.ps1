@@ -262,7 +262,7 @@ if ($global:runspaceStates.ContainsKey('downloadBackgroundFile') -and $global:ru
 
 ########################GUI########################
 Import-Module "$sourceFolderPath\Modules\WPF.psm1"
-$xamlFile = "$sourceFolderPath\MainWindow.xaml"
+$xamlFile = "$sourceFolderPath\MenuMainWindow.xaml"
 $xamlContent = Read-XamlFileContent $xamlFile
 $formatedXamlFile = Format-XamlFile $xamlContent
 $xamlDoc = Convert-ToXmlDocument $formatedXamlFile
