@@ -96,29 +96,6 @@ function Get-RequiredModules
     }
 }
 
-function Test-ScriptsAreRunning 
-{
-    # Loop through each script identifier and check if it's running
-    foreach ($identifier in $Global:scriptIdentifiers) {
-        Get-Process powershell -ErrorAction SilentlyContinue | ForEach-Object {
-            if ($_.Id -ne $PID) # Exclude current script's process
-            {
-                # Get the command line arguments of the process
-                $processArguments = (Get-CimInstance -ClassName Win32_Process -Filter "ProcessId = $($_.Id)").CommandLine
-
-                # Check if the process is running one of the scripts by checking the identifier
-                if ($processArguments -like "*$identifier*") 
-                {
-                    $messageBoxText = "$identifier est en cours d'execution"
-                    $messageBoxTitle = "Menu - Boite à outils du technicien"
-                    $MessageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,0,48)
-                    return $true
-                }
-            }
-        }
-    }
-    return $false
-}
 
 function Initialize-Application($appName)
 {
@@ -156,14 +133,6 @@ function Initialize-Application($appName)
 
 ########################Déroulement########################
 Test-InternetConnection
-$Global:menuIdentifier = "Menu.ps1"
-$Global:scriptIdentifiers = @(
-    "Installation.ps1",
-    "Diagnostique.ps1",
-    "Optimisation_Nettoyage.ps1",
-    "Desinfection.ps1",
-    "Fix.ps1"
-)
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
@@ -171,7 +140,9 @@ Get-RemotePsm1Files
 Get-RequiredModules
 
 $dateFile = "$sourceFolderPath\installedDate.txt"
-$menuLockFile = "$sourceFolderPath\Menu.lock"
+$lockFile = "$sourceFolderPath\Menu.lock"
+$Global:appIdentifier = "Menu.ps1"
+$global:sync['flag'] = $true 
 
 if (-not (Test-Path $dateFile)) 
 {
@@ -184,7 +155,7 @@ if($adminStatus -eq $false)
     Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
 }
 
-Test-ScriptInstance $menuLockFile $Global:menuIdentifier
+Test-ScriptInstance $lockFile $Global:appIdentifier
 
 # Check if any script is already running
 if (Test-ScriptsAreRunning) 
@@ -194,13 +165,10 @@ if (Test-ScriptsAreRunning)
     $messageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,4,48)
     if($messageBox -eq 'no')
     {
-        Remove-Item -Path $menuLockFile -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
         exit
     }
 }
-Import-Module "$sourceFolderPath\Modules\Runspaces.psm1"
-$global:sync['flag'] = $true 
-
 
 #runspaces pour le GUI
 #Définitions des ScriptBlocks
@@ -211,7 +179,7 @@ $global:sync['flag'] = $true
     Get-RemoteFile "Resources.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Resources.xaml" $sourceFolderPath
     }
 
-    $downloadBackgroundFile = {
+    $downloadAssetsFile = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
@@ -225,7 +193,7 @@ $xamlPathExist = Test-Path $sourceFolderPath\MainWindow.xaml
 $guiPathExist = Test-Path $sourceFolderPath\Images
 
 $downloadXamlFileKey = "downloadXamlFile"
-$downloadBackgroundFileKey = "downloadBackgroundFile"
+$downloadAssetsFileKey = "downloadAssetsFile"
 
 #Lancement des runspaces
 if($xamlPathExist -eq $false)
@@ -237,9 +205,9 @@ if($xamlPathExist -eq $false)
 
 if($guiPathExist -eq $false)
 {
-    $global:sync['downloadBackgroundFileResult'] = Start-Runspace -RunspaceKey $downloadBackgroundFileKey -ScriptBlock $downloadBackgroundFile
-    Write-Host "downloadBackgroundFileResult"
-    Get-RunspaceState $global:sync['downloadBackgroundFileResult']  
+    $global:sync['downloadAssetsFileResult'] = Start-Runspace -RunspaceKey $downloadAssetsFileKey -ScriptBlock $downloadAssetsFile
+    Write-Host "downloadAssetsFileResult"
+    Get-RunspaceState $global:sync['downloadAssetsFileResult']  
 }
 
 #nettoyage des runspaces
@@ -252,12 +220,12 @@ if ($global:runspaceStates.ContainsKey('downloadXamlFile') -and $global:runspace
 }
 
 
-if ($global:runspaceStates.ContainsKey('downloadBackgroundFile') -and $global:runspaceStates['downloadBackgroundFile'] -eq 'Opened') 
+if ($global:runspaceStates.ContainsKey('downloadAssetsFile') -and $global:runspaceStates['downloadAssetsFile'] -eq 'Opened') 
 {
-    Write-Host "downloadBackgroundFile"
-    Complete-AsyncOperation -RunspaceResult $global:sync['downloadBackgroundFileResult']
-    Close-Runspace -RunspaceResult $global:sync['downloadBackgroundFileResult'] -RunspaceKey $downloadBackgroundFileKey
-    Get-RunspaceState $global:sync['downloadBackgroundFileResult']
+    Write-Host "downloadAssetsFile"
+    Complete-AsyncOperation -RunspaceResult $global:sync['downloadAssetsFileResult']
+    Close-Runspace -RunspaceResult $global:sync['downloadAssetsFileResult'] -RunspaceKey $downloadAssetsFileKey
+    Get-RunspaceState $global:sync['downloadAssetsFileResult']
 }
 
 ########################GUI########################
@@ -685,7 +653,7 @@ $window.add_Closing({
 })
 
 $Window.add_Closed({
-    Remove-Item -Path $menuLockFile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
 })
 
 Start-WPFAppDialog $window
