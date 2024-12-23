@@ -731,6 +731,7 @@ $appNames | ForEach-Object {
 #Install les logiciels cochés
 function Get-CheckBoxStatus 
 {
+    $Global:failStatus = $false
     $formControlsMain.lblSoftware.foreground = "DodgerBlue"
     $checkboxes = $formControlsMenuApp.GridInstallationMenuAppChoice.Children | Where-Object {$_ -is [System.Windows.Controls.CheckBox] -and $_.Name -like "chkbox*" -and $_.IsChecked -eq $true}
     foreach ($chkbox in $checkboxes) 
@@ -738,7 +739,18 @@ function Get-CheckBoxStatus
         $softwareName = "$($chkbox.Content)"
         Install-Software $appsInfo.$softwareName
     }
-    $formControlsMain.lblSoftware.foreground = "MediumSeaGreen"
+    if($Global:failStatus -eq $true)
+    {
+        $formControlsMain.lblSoftware.foreground = "red"
+    }
+    elseif ($Global:failStatus -eq $false) 
+    {
+        $formControlsMain.lblSoftware.foreground = "MediumSeaGreen"
+    }
+    else
+    {
+        $formControlsMain.lblSoftware.foreground = "red"
+    }
 }
 
 function Test-SoftwarePresence($appInfo)
@@ -804,6 +816,7 @@ function Install-SoftwareWithChoco($apsInfo)
     {
         Add-Text -text " - $softwareName a échoué" -colorName "red" -SameLine
         Add-Log $logFileName " - $softwareName a échoué"
+        $Global:failStatus = $true
         Install-SoftwareWithNinite $appInfo
     } 
 }
