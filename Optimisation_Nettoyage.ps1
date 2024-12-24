@@ -1,3 +1,73 @@
+$formControls.btnUpdate_Optimisation_Nettoyage.Add_Click({
+    start-Process "ms-settings:windowsupdate"
+    Add-Log $logFileName "Mises à jours de Windows effectuées"
+})
+
+$formControls.btnAutoruns_Optimisation_Nettoyage.Add_Click({
+    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/autoruns.exe" $appPathSource
+    start-sleep 5
+    taskmgr
+    Add-Log $logFileName "Vérifier les logiciels au démarrage"
+})
+
+$formControls.btnRevo_Optimisation_Nettoyage.Add_Click({
+    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/RevoUPort.zip" $appPathSource
+    Add-Log $logFileName "Vérifier les programmes nuisibles"
+})
+
+$formControls.btnHDD_Optimisation_Nettoyage.Add_Click({
+    Start-Process "$env:SystemDrive\Windows\SYSTEM32\cleanmgr.exe"
+    Add-Log $logFileName "Nettoyage du disque effectué"
+})
+
+$formControls.btnCcleaner_Optimisation_Nettoyage.Add_Click({
+    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/CCleaner64.zip" $appPathSource
+    Add-Log $logFileName "Nettoyage CCleaner effectué"
+})
+
+$formControls.btnSfc_Optimisation_Nettoyage.Add_Click({
+    Invoke-App "sfcScannow.bat" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/sfcScannow.bat" $appPathSource
+    Add-Log $logFileName "Vérifier les fichiers corrompus"
+})
+
+$formControls.btnHitmanPro_Optimisation_Nettoyage.Add_Click({
+    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe" $appPathSource
+    Add-Log $logFileName "Vérifier les virus avec HitmanPro"
+})
+
+$formControls.btnSysEvent_Optimisation_Nettoyage.Add_Click({
+    Invoke-App "sysevent.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/sysevent/sysevent.exe" $appPathSource
+    Add-Log $logFileName "Vérifier les evenements"
+})
+
+$formControls.btnCrystalDiskInfo_Optimisation_Nettoyage.Add_Click({
+    Invoke-App "CrystalDiskInfoPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip" $appPathSource
+    Add-Log $logFileName "Vérifier la santé du HDD"
+})
+
+$formControls.btnHDTune_Optimisation_Nettoyage.Add_Click({
+    Invoke-App "_HDTune.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/_HDTune.zip" $appPathSource
+    Add-Log $logFileName "Vérifier la Vitesse du disque dur"
+})
+
+$formControls.btnSysinfoz_Optimisation_Nettoyage.Add_Click({
+    msinfo32.exe
+})
+
+$formControls.btnQuit_Optimisation_Nettoyage.Add_Click({
+    Remove-StoolboxApp
+})
+
+$formControls.btnMenu_Optimisation_Nettoyage.Add_Click({
+    Open-Menu
+})
+
+$window.add_Closed({
+    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
+})
+
+Start-WPFAppDialog $window
+
 #choco install hdtune
 #choco install hdsentinel
 #choco install revo-uninstaller
@@ -9,76 +79,6 @@
 #RevoUninstaller.RevoUninstaller
 #Piriform.CCleaner
 #SingularLabs.CCEnhancer
-
-$formControls.btnUpdate.Add_Click({
-    start-Process "ms-settings:windowsupdate"
-    Add-Log $logFileName "Mises à jours de Windows effectuées"
-})
-
-$formControls.btnAutoruns.Add_Click({
-    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/autoruns.exe" "$appPathSource"
-    start-sleep 5
-    taskmgr
-    Add-Log $logFileName "Vérifier les logiciels au démarrage"
-})
-
-$formControls.btnRevo.Add_Click({
-    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/RevoUPort.zip" "$appPathSource"
-    Add-Log $logFileName "Vérifier les programmes nuisibles"
-})
-
-$formControls.btnHDD.Add_Click({
-    Start-Process "$env:SystemDrive\Windows\SYSTEM32\cleanmgr.exe"
-    Add-Log $logFileName "Nettoyage du disque effectué"
-})
-
-$formControls.btnCcleaner.Add_Click({
-    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/CCleaner64.zip" $appPathSource
-    Add-Log $logFileName "Nettoyage CCleaner effectué"
-})
-
-$formControls.btnsfc.Add_Click({
-    Invoke-App "sfcScannow.bat" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/sfcScannow.bat" "$appPathSource"
-    Add-Log $logFileName "Vérifier les fichiers corrompus"
-})
-
-$formControls.btnHitmanPro.Add_Click({
-    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe" "$appPathSource"
-    Add-Log $logFileName "Vérifier les virus avec HitmanPro"
-})
-
-$formControls.btnSysEvent.Add_Click({
-    Invoke-App "sysevent.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/sysevent/sysevent.exe" "$appPathSource"
-    Add-Log $logFileName "Vérifier les evenements"
-})
-
-$formControls.btnCrystalDiskInfo.Add_Click({
-    Invoke-App "CrystalDiskInfoPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip" "$appPathSource"
-    Add-Log $logFileName "Vérifier la santé du HDD"
-})
-
-$formControls.btnHDTune.Add_Click({
-    Invoke-App "_HDTune.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/_HDTune.zip" "$appPathSource"
-    Add-Log $logFileName "Vérifier la Vitesse du disque dur"
-})
-
-$formControls.btnSysinfoz.Add_Click({
-    msinfo32.exe
-})
-
-$formControls.btnQuit.Add_Click({
-    Remove-StoolboxApp
-})
-
-$formControls.btnMenu.Add_Click({
-    Open-Menu
-})
-
-$window.add_Closed({
-    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
-})
-
-Start-WPFAppDialog $window
 
 <#
 Import-Module -Name "$env:SystemDrive\\_TECH\\Applications\\Source\\Excel\\ImportExcel" #import le module Excel situ� dans la cl�
