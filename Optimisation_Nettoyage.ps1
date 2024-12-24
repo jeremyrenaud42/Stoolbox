@@ -26,7 +26,7 @@ $formControls.btnCcleaner_Optimisation_Nettoyage.Add_Click({
 })
 
 $formControls.btnSfc_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "sfcScannow.bat" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/sfcScannow.bat" $appPathSource
+    Start-Process cmd.exe -ArgumentList "/k sfc /scannow"
     Add-Log $logFileName "Vérifier les fichiers corrompus"
 })
 
