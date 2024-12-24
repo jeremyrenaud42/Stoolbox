@@ -96,7 +96,6 @@ function Get-RequiredModules
     }
 }
 
-
 function Initialize-Application($appName)
 {
     <#
@@ -138,22 +137,20 @@ $sourceFolderPath = "$applicationPath\source"
 New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
 Get-RemotePsm1Files
 Get-RequiredModules
-
-$dateFile = "$sourceFolderPath\installedDate.txt"
-$lockFile = "$sourceFolderPath\Menu.lock"
-$Global:appIdentifier = "Menu.ps1"
 $global:sync['flag'] = $true 
-
-if (-not (Test-Path $dateFile)) 
-{
-    (Get-Date).ToString("yyyy-MM-dd HH:mm:ss", [System.Globalization.CultureInfo]::CreateSpecificCulture("fr-FR")) | Out-File -FilePath $dateFile
-}
-
+$dateFile = "$sourceFolderPath\installedDate.txt"
 $adminStatus = Get-AdminStatus
 if($adminStatus -eq $false)
 {
     Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
 }
+if (-not (Test-Path $dateFile)) 
+{
+    (Get-Date).ToString("yyyy-MM-dd HH:mm:ss", [System.Globalization.CultureInfo]::CreateSpecificCulture("fr-FR")) | Out-File -FilePath $dateFile
+}
+
+$lockFile = "$sourceFolderPath\Menu.lock"
+$Global:appIdentifier = "Menu.ps1"
 
 Test-ScriptInstance $lockFile $Global:appIdentifier
 
@@ -274,11 +271,11 @@ $menuWinget = {
             }
 
             # Update the GUI with the new status details
-            $global:sync["txtBlkWingetVersion"].Dispatcher.Invoke([action]{
-                $global:sync["txtBlkWingetVersion"].Foreground = $ForeColor
-                $global:sync["txtBlkWingetVersion"].Text = $Text
-                $global:sync["btnWinget"].Visibility = $buttonVisibility
-                $global:sync["btnWinget"].Content = $buttonContent
+            $global:sync["txtBlkWingetVersion_Menu"].Dispatcher.Invoke([action]{
+                $global:sync["txtBlkWingetVersion_Menu"].Foreground = $ForeColor
+                $global:sync["txtBlkWingetVersion_Menu"].Text = $Text
+                $global:sync["btnWinget_Menu"].Visibility = $buttonVisibility
+                $global:sync["btnWinget_Menu"].Content = $buttonContent
             })
         }
         return $previousWingetVersion
@@ -326,11 +323,11 @@ $menuChoco = {
             }
 
             # Update the GUI with the new status details
-            $global:sync["txtBlkChocoVersion"].Dispatcher.Invoke([action]{
-                $global:sync["txtBlkChocoVersion"].Foreground = $ForeColor
-                $global:sync["txtBlkChocoVersion"].Text = $Text
-                $global:sync["btnChoco"].Visibility = $buttonVisibility
-                $global:sync["btnChoco"].Content = $buttonContent
+            $global:sync["txtBlkChocoVersion_Menu"].Dispatcher.Invoke([action]{
+                $global:sync["txtBlkChocoVersion_Menu"].Foreground = $ForeColor
+                $global:sync["txtBlkChocoVersion_Menu"].Text = $Text
+                $global:sync["btnChoco_Menu"].Visibility = $buttonVisibility
+                $global:sync["btnChoco_Menu"].Content = $buttonContent
             })
         }
         return $previousChocoStatus
@@ -369,9 +366,9 @@ $menuFTP = {
             }
 
             # Update the GUI with the new status details
-            $global:sync["txtBlkFTPVersion"].Dispatcher.Invoke([action]{
-                $global:sync["txtBlkFTPVersion"].Foreground = $ForeColor
-                $global:sync["txtBlkFTPVersion"].Text = $Text
+            $global:sync["txtBlkFTPVersion_Menu"].Dispatcher.Invoke([action]{
+                $global:sync["txtBlkFTPVersion_Menu"].Foreground = $ForeColor
+                $global:sync["txtBlkFTPVersion_Menu"].Text = $Text
             })
         }
         return $previousFtpStatus
@@ -409,9 +406,9 @@ $menuGit = {
             }
 
             # Update the GUI with the new status details
-            $global:sync["txtBlkGitVersion"].Dispatcher.Invoke([action]{
-                $global:sync["txtBlkGitVersion"].Foreground = $ForeColor
-                $global:sync["txtBlkGitVersion"].Text = $Text
+            $global:sync["txtBlkGitVersion_Menu"].Dispatcher.Invoke([action]{
+                $global:sync["txtBlkGitVersion_Menu"].Foreground = $ForeColor
+                $global:sync["txtBlkGitVersion_Menu"].Text = $Text
             })
         }
         return $previousGitStatus
@@ -449,33 +446,33 @@ Get-RunspaceState $global:sync['menuGitResult']
 
 ########################GUI Events########################
 $Window.add_Loaded({
-    $formControls.btnInstallation.Add_Click({
+    $formControls.btnLancementInstallation_Menu.Add_Click({
         $window.Close()
         Initialize-Application "Installation"
     })
-    $formControls.btnOptimisation_Nettoyage.Add_Click({
+    $formControls.btnLancementOptimisation_Nettoyage_Menu.Add_Click({
         $window.Close()
         Initialize-Application "Optimisation_Nettoyage"
     })
-    $formControls.btnDiagnostique.Add_Click({
+    $formControls.btnLancementDiagnostique_Menu.Add_Click({
         $window.Close()
         Initialize-Application "Diagnostique"
     })
-    $formControls.btnDesinfection.Add_Click({
+    $formControls.btnLancementDesinfection_Menu.Add_Click({
         $window.Close()
         Initialize-Application "Desinfection"
     })
-    $formControls.btnFix.Add_Click({
+    $formControls.btnLancementFix_Menu.Add_Click({
         $window.Close()
         Initialize-Application "Fix"
     })
-    $formControls.btnChangeLog.Add_Click({
+    $formControls.btnChangeLog_Menu.Add_Click({
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
         Get-RemoteFile "changelog.txt" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt" "$env:SystemDrive\_Tech\Applications\source"
         Start-Process "$env:SystemDrive\_Tech\Applications\source\changelog.txt"
     })
-    $formControls.btnForceUpdate.Add_Click({
+    $formControls.btnForceUpdate_Menu.Add_Click({
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
         Get-RemoteFileForce  "Installation.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1" "$env:SystemDrive\_Tech\Applications\Installation"
@@ -491,20 +488,20 @@ $Window.add_Loaded({
 	    $window.Close()
         Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
     })
-    $formControls.btnQuit.Add_Click({
+    $formControls.btnUninstall_Menu.Add_Click({
         Remove-StoolboxApp
     })
-    $formControls.GridMenu.Add_MouseDown({
+    $formControls.gridMenu.Add_MouseDown({
         $window.DragMove()
     })
-    $formControls.btnclose.Add_Click({
+    $formControls.btnClose_Menu.Add_Click({
         $window.Close()
         Exit
     })
-    $formControls.btnmin.Add_Click({
+    $formControls.btnMin_Menu.Add_Click({
         $window.WindowState = [System.Windows.WindowState]::Minimized
     })
-    $formControls.btnWinget.Add_Click({
+    $formControls.btnWinget_Menu.Add_Click({
         $installWinget = {
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\Verification.psm1"
@@ -517,7 +514,7 @@ $Window.add_Loaded({
         Get-RunspaceState $global:sync['installWingetResult']
    })
    
-   $formControls.btnChoco.Add_Click({
+   $formControls.btnChoco_Menu.Add_Click({
         $installChoco = {
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\Verification.psm1"
