@@ -210,9 +210,7 @@ $windowMenuApp.add_Loaded({
         $windowMenuApp.Close()
     })
     $formControlsMenuApp.btnReturn.Add_Click({
-        start-process "$env:SystemDrive\_Tech\Menu.ps1" -verb Runas
-        $windowMenuApp.Close()
-        Exit
+        Open-Menu
     })
     $formControlsMenuApp.btnclose.Add_Click({
         $windowMenuApp.Close()
