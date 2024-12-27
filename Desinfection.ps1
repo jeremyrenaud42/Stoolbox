@@ -1,50 +1,50 @@
-$formControls.btnMenu.Add_Click({
+$formControls.btnMenu_Desinfection.Add_Click({
     Open-Menu
 })
 
-$formControls.btnQuit.Add_Click({
+$formControls.btnQuit_Desinfection.Add_Click({
     Remove-StoolboxApp
 })
 
-$formControls.btnProcess_Explorer.Add_Click({
+$formControls.btnProcess_Explorer_Desinfection.Add_Click({
     Invoke-App "procexp64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/procexp64.exe" $appPathSource
     Add-Log $logFileName "Vérifier les process"
 })
 
-$formControls.btnRKill.Add_Click({
+$formControls.btnRKill_Desinfection.Add_Click({
     Invoke-App "rkill64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/rkill64.exe" $appPathSource
     Add-Log $logFileName "Désactiver les process"
 })
 
-$formControls.btnAutoruns.Add_Click({
+$formControls.btnAutoruns_Desinfection.Add_Click({
     Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe" $appPathSource
     start-sleep 5
     taskmgr
     Add-Log $logFileName "Vérifier les logiciels au démarrage"
 })
 
-$formControls.btnHDD.Add_Click({
+$formControls.btnHDD_Desinfection.Add_Click({
     Start-Process "$env:SystemDrive\Windows\SYSTEM32\cleanmgr.exe"
     Add-Log $logFileName "Nettoyage du disque effectué"
 })
 
-$formControls.btnCcleaner.Add_Click({
+$formControls.btnCcleaner_Desinfection.Add_Click({
     Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip" $appPathSource
     Add-Log $logFileName "Nettoyage CCleaner effectué"
  })
 
-$formControls.btnRevo.Add_Click({
+$formControls.btnRevo_Desinfection.Add_Click({
     Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip" $appPathSource
     Add-Log $logFileName "Vérifier les programmes nuisibles"
  })
 
 
-$formControls.btnADWcleaner.Add_Click({
+$formControls.btnADWcleaner_Desinfection.Add_Click({
     Invoke-App "adwcleaner.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/adwcleaner.exe" $appPathSource
     Add-Log $logFileName "Analyse ADW effectué"
  })
 
-$formControls.btnMalwareByte.Add_Click({
+$formControls.btnMalwareByte_Desinfection.Add_Click({
     $path = Test-Path "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe" 
     if($path -eq $false)
     {
@@ -74,7 +74,7 @@ $formControls.btnMalwareByte.Add_Click({
     Add-Log $logFileName "Analyse Malwarebyte effectué"
  })
 
-$formControls.btnSuperAntiSpyware.Add_Click({
+$formControls.btnSuperAntiSpyware_Desinfection.Add_Click({
     $path = Test-Path "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
     if($path -eq $false)
     {
@@ -104,12 +104,12 @@ $formControls.btnSuperAntiSpyware.Add_Click({
     Add-Log $logFileName "Analyse SuperAntiSpyware effectué"
  })
 
-$formControls.btnHitmanPro.Add_Click({
+$formControls.btnHitmanPro_Desinfection.Add_Click({
     Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/HitmanPro.exe" $appPathSource
     Add-Log $logFileName "Vérifier les virus avec HitmanPro"
 })
 
-$formControls.btnRogueKiller.Add_Click({
+$formControls.btnRogueKiller_Desinfection.Add_Click({
     Invoke-App "RogueKiller_portable64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/RogueKiller_portable64.zip" $appPathSource
     Add-Log $logFileName "Analyse RogueKiller effectué"
     #via le cmd, aller a l"emplacement RogueKillerCMD.exe -scan -no-interact -deleteall #-debuglog {path}
