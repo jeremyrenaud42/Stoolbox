@@ -1,0 +1,153 @@
+﻿<Window x:Name="windowMenu" x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        WindowStyle="None" Height="688" Width="1041" WindowStartupLocation="CenterScreen" AllowsTransparency="True" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Window.Resources>
+        <ResourceDictionary Source="c:\_Tech\Applications\source\Resources.xaml"/>
+    </Window.Resources>
+
+    <Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Image x:Name="imgBackGround" Source="c:\_tech\Applications\source\images\background_menu.jpeg" Grid.RowSpan="3" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill"/>
+        <Rectangle x:Name="rectBackGround" Fill="#4D000000" Grid.RowSpan="3" Grid.ColumnSpan="3" />
+        <Rectangle x:Name="rectTitleBar" Height="40" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.RowSpan="3" Grid.ColumnSpan="3">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#2b2d30" Offset="0" />
+                    <GradientStop Color="DarkRed" Offset="0.15" />
+                    <GradientStop Color="#2b2d30" Offset="0.90" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Button x:Name="btnClose" Grid.Row="0" Grid.Column="2" Content="X" Margin="0,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="60" Height="40" IsCancel="True" FontSize="25" Background="Transparent" Foreground ="Azure" BorderBrush="Transparent" FontWeight="Bold"/>
+        <Button x:Name="btnMin" Grid.Row="0" Grid.Column="2" Content="-" Margin="0,0,50,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="60" Height="40" FontSize="30" Background="Transparent" Foreground ="Azure" BorderBrush="Transparent" FontWeight="Bold"/>
+        <Image x:Name="imgLogo" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Margin="4,4,0,0" Width="32" Source="C:/_Tech/Applications/Source/Images/Icone.ico"/>
+        <Label x:Name="lblTitre" Content="Menu - Boite à outils du technicien" Grid.RowSpan="3" Grid.ColumnSpan="3" FontWeight="SemiBold" Foreground="Azure" FontSize="16" FontFamily="Arial" HorizontalAlignment="Left" Margin="50,6,0,0" VerticalAlignment="Top" Width="400"/>
+        <Label x:Name="lblChoisirOption" Style="{StaticResource LabelStyle}" Grid.Row="0" Grid.Column="1" Content="Choisissez une option" VerticalAlignment="top" Width="400" Background="DarkRed" Margin="0,60,0,0"/>
+
+        <Grid x:Name="gridMenu" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel x:Name="spBoutonsLancement_Menu" Grid.Row="1" Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
+                <Button x:Name="btnLancementInstallation_Menu" Style="{StaticResource MenuButtonStyle}" Content="Configuration&#xa; du Windows"/>
+                <Button x:Name="btnLancementOptimisation_Nettoyage_Menu" Style="{StaticResource MenuButtonStyle}" Content="Optimisation &#xa;et Nettoyage"/>
+                <Button x:Name="btnLancementDiagnostique_Menu" Style="{StaticResource MenuButtonStyle}" Content="Diagnostique"/>
+                <Button x:Name="btnLancementDesinfection_Menu" Style="{StaticResource MenuButtonStyle}" Content="Désinfection"/>
+                <Button x:Name="btnLancementFix_Menu" Style="{StaticResource MenuButtonStyle}" Content="Fix"/>
+            </StackPanel>
+            <Button x:Name="btnUninstall_Menu" Content="Désinstaller" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" Height="65" Width="150" FontFamily="Microsoft Sans Serif" FontSize="16" Background="black" BorderThickness="2" Foreground="#FFA50606" FontWeight="Bold" ToolTip="Supprime toutes les traces"/>
+            <Button x:Name="btnChangeLog_Menu" Content="Changelog" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" Height="43" Width="104" FontFamily="Microsoft Sans Serif" FontSize="16" Background="Black" BorderThickness="2" Foreground="White" ToolTip="Voir les dernières nouveautés"/>
+            <Button x:Name="btnForceUpdate_Menu" Content="Tout mettre à jour" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="32" Width="144" FontSize="16" Margin="30" ToolTip="Update tous les .PS1"/>
+            <Label x:Name="lblSignature_Menu" Content="Propriété de Jérémy Renaud" Grid.Row="2" Grid.Column="2" HorizontalAlignment="right" VerticalAlignment="Bottom" Background="black" Foreground="gray" Width="175"/>
+            <Label x:Name="lblStatus_Menu" Content="Statut" Style="{StaticResource LabelStyle}" Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" Width="113" Height="36" Background="#FF6A5858"/>
+            <StackPanel x:Name="spStatus_Menu" Grid.Row="1" Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="30">
+                <Label x:Name="lblWingetVersion_Menu" Content="Winget" Style="{StaticResource StatusLabelStyle}" ToolTip="Package manager"/>
+                <TextBlock x:Name="txtBlkWingetVersion_Menu" Text="Introuvable" Style="{StaticResource TextBlockStyle}"/>
+                <Label x:Name="lblChocoVersion_Menu" Content="Choco" Style="{StaticResource StatusLabelStyle}" ToolTip="Package manager"/>
+                <TextBlock x:Name="txtBlkChocoVersion_Menu" Text="Introuvable" Style="{StaticResource TextBlockStyle}"/>
+                <Label x:Name="lblGitVersion_Menu" Content="Github" Style="{StaticResource StatusLabelStyle}" ToolTip="Obligatoire"/>
+                <TextBlock x:Name="txtBlkGitVersion_Menu" Text="Introuvable" Style="{StaticResource TextBlockStyle}"/>
+                <Label x:Name="lblFTPVersion_Menu" Content="FTP" Style="{StaticResource StatusLabelStyle}" ToolTip="Obligatoire"/>
+                <TextBlock x:Name="txtBlkFTPVersion_Menu" Text="Introuvable" Style="{StaticResource TextBlockStyle}"/>
+            </StackPanel>
+            <Button x:Name="btnWinget_Menu" Grid.Row="1" Grid.Column="2" Content="Corriger" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,40,10,0"/>
+            <Button x:Name="btnChoco_Menu" Grid.Row="1" Grid.Column="2" Content="Corriger" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,105,25,0"/>
+        </Grid>
+        <Grid x:Name="gridOptimisation_Nettoyage" Visibility="Collapsed" Margin="0,60,0,0">
+            <Button x:Name="btnUpdate_Optimisation_Nettoyage" Content="Windows Update"  Style="{StaticResource ButtonStyle}" Margin="460,100,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnAutoruns_Optimisation_Nettoyage" Content="Logiciels démarrage"  Style="{StaticResource ButtonStyle}" Margin="330,200,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnRevo_Optimisation_Nettoyage" Content="Desinstaller Apps"  Style="{StaticResource ButtonStyle}" Margin="590,200,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnHDD_Optimisation_Nettoyage" Content="Nettoyage HDD"  Style="{StaticResource ButtonStyle}" Margin="200,300,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnCcleaner_Optimisation_Nettoyage" Content="Ccleaner"  Style="{StaticResource ButtonStyle}" Margin="460,300,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnSfc_Optimisation_Nettoyage" Content="Fichiers corrompus"  Style="{StaticResource ButtonStyle}" Margin="670,300,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnHitmanPro_Optimisation_Nettoyage" Content="HitmanPro"  Style="{StaticResource ButtonStyle}" Margin="70,400,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnSysEvent_Optimisation_Nettoyage" Content="SysEvent"  Style="{StaticResource ButtonStyle}" Margin="330,400,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnCrystalDiskInfo_Optimisation_Nettoyage" Content="Sante HDD"  Style="{StaticResource ButtonStyle}" Margin="590,400,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnHDTune_Optimisation_Nettoyage" Content="Vitesse HDD"  Style="{StaticResource ButtonStyle}" Margin="850,400,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnSysinfoz_Optimisation_Nettoyage" Content="Sysinfo"  Style="{StaticResource ButtonStyle}" Margin="825,565,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnQuit_Optimisation_Nettoyage" Content="Quitter"  Style="{StaticResource ButtonStyle}" Margin="460,575,0,0"  Background="darkred"/>
+            <Button x:Name="btnMenu_Optimisation_Nettoyage" Content="Menu principal"  Style="{StaticResource ButtonStyle}" Margin="25,35,0,0"  Background="darkred"/>
+        </Grid>
+        <Grid x:Name="gridDesinfection" Visibility="Collapsed" Margin="0,60,0,0">
+            <Button x:Name="btnProcess_Explorer_Desinfection" Content="Process_Explorer" Style="{StaticResource ButtonStyle}" Margin="670,300,0,0" Background="LightGray"/>
+            <Button x:Name="btnRKill_Desinfection" Content="RKill" Style="{StaticResource ButtonStyle}" Margin="670,200,0,0" Background="red"/>
+            <Button x:Name="btnAutoruns_Desinfection" Content="Autoruns" Style="{StaticResource ButtonStyle}" Margin="200,200,0,0" Background="LightGray"/>
+            <Button x:Name="btnHDD_Desinfection" Content="Nettoyage HDD" Style="{StaticResource ButtonStyle}" Margin="200,400,0,0" Background="darkcyan"/>
+            <Button x:Name="btnCcleaner_Desinfection" Content="Ccleaner" Style="{StaticResource ButtonStyle}" Margin="200,300,0,0" Background="darkgreen"/>
+            <Button x:Name="btnRevo_Desinfection" Content="Revo" Style="{StaticResource ButtonStyle}" Margin="670,400,0,0" Background="cyan"/>
+            <Button x:Name="btnADWcleaner_Desinfection" Content="ADWcleaner" Style="{StaticResource ButtonStyle}" Margin="460,100,0,0" Background="Yellow"/>
+            <Button x:Name="btnMalwareByte_Desinfection" Content="MalwareByte" Style="{StaticResource ButtonStyle}" Margin="460,200,0,0" Background="magenta"/>
+            <Button x:Name="btnSuperAntiSpyware_Desinfection" Content="SuperAntiSpyware" Style="{StaticResource ButtonStyle}" Margin="460,300,0,0" Background="cyan"/>
+            <Button x:Name="btnHitmanPro_Desinfection" Content="HitmanPro" Style="{StaticResource ButtonStyle}" Margin="460,400,0,0" Background="darkcyan"/>
+            <Button x:Name="btnRogueKiller_Desinfection" Content="RogueKiller" Style="{StaticResource ButtonStyle}" Margin="460,500,0,0" Background="darkgreen"/>
+            <Button x:Name="btnQuit_Desinfection" Content="Quitter" Style="{StaticResource ButtonStyle}" Margin="460,575,0,0" Background="darkred"/>
+            <Button x:Name="btnMenu_Desinfection" Content="Menu principal" Style="{StaticResource ButtonStyle}" Margin="25,35,0,0" Background="darkred"/>
+        </Grid>
+        <Grid x:Name="gridDiagnostique" Visibility="Collapsed" Margin="0,60,0,0">
+            <Button x:Name="btnbat_Diagnostique" Content="Batterie" Style="{StaticResource ButtonStyle}" Margin="445,100,0,0"  Background="White"/>
+            <Button x:Name="btnBattinfo_Diagnostique" Content="Battinfo" Style="{StaticResource ButtonStyle}" Margin="445,100,0,0"  Background="White" Visibility="Collapsed"/>
+            <Button x:Name="btnBattMonitor_Diagnostique" Content="BattMonitor" Style="{StaticResource ButtonStyle}" Margin="445,175,0,0"  Background="White" Visibility="Collapsed"/>
+            <Button x:Name="btnDontsleep_Diagnostique" Content="Dontsleep" Style="{StaticResource ButtonStyle}" Margin="445,250,0,0"  Background="White" Visibility="Collapsed"/>
+            <Button x:Name="btnCPU_Diagnostique" Content="CPU" Style="{StaticResource ButtonStyle}" Margin="105,100,0,0"  Background="red"/>
+            <Button x:Name="btnAida_Diagnostique" Content="Aida" Style="{StaticResource ButtonStyle}" Margin="105,100,0,0"  Background="red" Visibility="Collapsed"/>
+            <Button x:Name="btnCoretemp_Diagnostique" Content="Core Temp" Style="{StaticResource ButtonStyle}" Margin="105,175,0,0"  Background="red" Visibility="Collapsed"/>
+            <Button x:Name="btnPrime95_Diagnostique" Content="Prime95" Style="{StaticResource ButtonStyle}" Margin="105,250,0,0"  Background="red" Visibility="Collapsed"/>
+            <Button x:Name="btnHeavyLoad_Diagnostique" Content="HeavyLoad" Style="{StaticResource ButtonStyle}" Margin="105,325,0,0"  Background="red" Visibility="Collapsed"/>
+            <Button x:Name="btnThrottleStop_Diagnostique" Content="ThrottleStop" Style="{StaticResource ButtonStyle}" Margin="105,400,0,0"  Background="red" Visibility="Collapsed"/>
+            <Button x:Name="btnHDD_Diagnostique" Content="HDD" Style="{StaticResource ButtonStyle}" Margin="280,100,0,0"  Background="darkcyan"/>
+            <Button x:Name="btnHDSentinnel_Diagnostique" Content="HDSentinnel" Style="{StaticResource ButtonStyle}" Margin="280,100,0,0"  Background="darkcyan" Visibility="Collapsed"/>
+            <Button x:Name="btnHDTune_Diagnostique" Content="HDTune" Style="{StaticResource ButtonStyle}" Margin="280,325,0,0"  Background="darkcyan" Visibility="Collapsed"/>
+            <Button x:Name="btnASSD_Diagnostique" Content="As_SSD" Style="{StaticResource ButtonStyle}" Margin="280,250,0,0"  Background="darkcyan" Visibility="Collapsed"/>
+            <Button x:Name="btnDiskmark_Diagnostique" Content="Diskmark" Style="{StaticResource ButtonStyle}" Margin="280,175,0,0"  Background="darkcyan" Visibility="Collapsed"/>
+            <Button x:Name="btnGPU_Diagnostique" Content="GPU" Style="{StaticResource ButtonStyle}" Margin="760,100,0,0"  Background="yellow"/>
+            <Button x:Name="btnFurmark_Diagnostique" Content="Furmark" Style="{StaticResource ButtonStyle}" Margin="760,175,0,0"  Background="yellow" Visibility="Collapsed"/>
+            <Button x:Name="btnUnigine_Diagnostique" Content="Unigine" Style="{StaticResource ButtonStyle}" Margin="760,100,0,0"  Background="yellow" Visibility="Collapsed"/>
+            <Button x:Name="btnFurmarkV2_Diagnostique" Content="Furmark V2" Style="{StaticResource ButtonStyle}" Margin="760,250,0,0"  Background="yellow" Visibility="Collapsed"/>
+            <Button x:Name="btnRAM_Diagnostique" Content="RAM" Style="{StaticResource ButtonStyle}" Margin="600,100,0,0"  Background="darkgray"/>
+            <Button x:Name="btnQuit_Diagnostique" Content="Quitter" Style="{StaticResource ButtonStyle}" Margin="469,575,0,0"  Background="darkred"/>
+            <Button x:Name="btnMenu_Diagnostique" Content="Menu principal" Style="{StaticResource ButtonStyle}" Margin="25,25,0,0"  Background="darkred"/>
+            <Button x:Name="btnSysinfo_Diagnostique" Content="Sysinfo" Style="{StaticResource ButtonStyle}" Margin="825,525,0,0"  Background="red"/>
+            <Button x:Name="btnWhocrashed_Diagnostique" Content="Whocrashed" Style="{StaticResource ButtonStyle}" Margin="625,525,0,0"  Background="darkgreen"/>
+            <Button x:Name="btnHWMonitor_Diagnostique" Content="HWMonitor" Style="{StaticResource ButtonStyle}" Margin="325,525,0,0"  Background="magenta"/>
+            <Button x:Name="btnSpeccy_Diagnostique" Content="Speccy" Style="{StaticResource ButtonStyle}" Margin="105,525,0,0"  Background="green"/>
+        </Grid>
+        <Grid x:Name="gridFix" Visibility="Collapsed" Margin="0,60,0,0">
+            <Button x:Name="btnScript_Fix" Content="Scripts" Style="{StaticResource ButtonStyle}" Margin="195,200,0,0" Background="White"/>
+            <Button x:Name="btnSFC_Fix" Content="Sfc /scannow" Style="{StaticResource ButtonStyle}" Margin="195,200,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnDISM_Fix" Content="DISM" Style="{StaticResource ButtonStyle}" Margin="195,260,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnCHKDSK_Fix" Content="CHKDSK" Style="{StaticResource ButtonStyle}" Margin="195,320,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnSession_Fix" Content="Creer session admin" Style="{StaticResource ButtonStyle}" Margin="195,385,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnTweak_Fix" Content="Tweak" Style="{StaticResource ButtonStyle}" Margin="445,200,0,0" Background="White"/>
+            <Button x:Name="btnFW10_Fix" Content="Fix w10" Style="{StaticResource ButtonStyle}" Margin="445,200,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnFW11_Fix" Content="Fix w11" Style="{StaticResource ButtonStyle}" Margin="445,260,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnUWT10_Fix" Content="Tweaker W10" Style="{StaticResource ButtonStyle}" Margin="445,320,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnUWT11_Fix" Content="Tweaker W11" Style="{StaticResource ButtonStyle}" Margin="445,380,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnTweaking_Fix" Content="Tweaking" Style="{StaticResource ButtonStyle}" Margin="445,440,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnSterjo_Fix" Content="Sterjo" Style="{StaticResource ButtonStyle}" Margin="700,200,0,0" Background="White"/>
+            <Button x:Name="btnSterjoBrowser_Fix" Content="Browser" Style="{StaticResource ButtonStyle}" Margin="700,200,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnSterjoChrome_Fix" Content="Chrome" Style="{StaticResource ButtonStyle}" Margin="700,260,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnSterjoFirefox_Fix" Content="Firefox" Style="{StaticResource ButtonStyle}" Margin="700,320,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnSterjoKeys_Fix" Content="Keys" Style="{StaticResource ButtonStyle}" Margin="700,380,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnSterjoMail_Fix" Content="Mail" Style="{StaticResource ButtonStyle}" Margin="700,440,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnSterjoWireless_Fix" Content="Wireless" Style="{StaticResource ButtonStyle}" Margin="700,500,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnDDU_Fix" Content="DDU" Style="{StaticResource ButtonStyle}" Margin="105,125,0,0" Background="White"/>
+            <Button x:Name="btnWFD_Fix" Content="WiseForceDeleter" Style="{StaticResource ButtonStyle}" Margin="280,125,0,0" Background="White"/>
+            <Button x:Name="btnWinDirStat_Fix" Content="WinDirStat" Style="{StaticResource ButtonStyle}" Margin="445,125,0,0" Background="White"/>
+            <Button x:Name="btnPW_Fix" Content="Minitool PW" Style="{StaticResource ButtonStyle}" Margin="600,125,0,0" Background="White"/>
+            <Button x:Name="btnInternet_Fix" Content="Internet Repair" Style="{StaticResource ButtonStyle}" Margin="760,125,0,0" Background="White"/>
+            <Button x:Name="btnQuit_Fix" Content="Quitter" Style="{StaticResource ButtonStyle}" Margin="469,575,0,0" Background="darkred"/>
+            <Button x:Name="btnMenu_Fix" Content="Menu principal" Style="{StaticResource ButtonStyle}" Margin="25,25,0,0" Background="darkred"/>
+        </Grid>
+    </Grid>
+</Window>
