@@ -733,7 +733,7 @@ function Get-CheckBoxStatus
 {
     $Global:failStatus = $false
     $formControlsMain.lblSoftware.foreground = "DodgerBlue"
-    $checkboxes = $formControlsMenuApp.GridInstallationMenuAppChoice.Children | Where-Object {$_ -is [System.Windows.Controls.CheckBox] -and $_.Name -like "chkbox*" -and $_.IsChecked -eq $true}
+    $checkboxes = $formControlsMenuApp.gridInstallationConfig.Children | Where-Object {$_ -is [System.Windows.Controls.CheckBox] -and $_.Name -like "chkbox*" -and $_.IsChecked -eq $true}
     foreach ($chkbox in $checkboxes) 
     {
         $softwareName = "$($chkbox.Content)"
