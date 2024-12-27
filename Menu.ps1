@@ -179,7 +179,7 @@ Test-ScriptInstance $lockFile $Global:appIdentifier
     $downloadXamlFile = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-    Get-RemoteFile "MenuMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/MenuMainWindow.xaml" $sourceFolderPath
+    Get-RemoteFile "MenuMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/MenuMainWindow.xaml" $sourceFolderPath
     Get-RemoteFile "Resources.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Resources.xaml" $sourceFolderPath
     }
 
@@ -193,8 +193,8 @@ Test-ScriptInstance $lockFile $Global:appIdentifier
 }
 
 #Définitions des variables
-$xamlPathExist = Test-Path $sourceFolderPath\MainWindow.xaml
-$guiPathExist = Test-Path $sourceFolderPath\Images
+$xamlPathExist = Test-Path "$sourceFolderPath\MenuMainWindow.xaml"
+$guiPathExist = Test-Path "$sourceFolderPath\Images"
 
 $downloadXamlFileKey = "downloadXamlFile"
 $downloadAssetsFileKey = "downloadAssetsFile"
