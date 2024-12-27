@@ -128,7 +128,7 @@ function Install-SoftwareMenuApp($softwareName)
     $status = Test-SoftwarePresence $appsInfo.$softwareName
     if ($status) 
     {
-        $formControlsMenuApp.richTextBxOutput.AppendText("$softwareName est déja installé`r")
+        $formControlsMenuApp.rtbOutput_InstallationConfig.AppendText("$softwareName est déja installé`r")
     }
     else 
     {
@@ -136,11 +136,11 @@ function Install-SoftwareMenuApp($softwareName)
         $status = Test-SoftwarePresence $appsInfo.$softwareName
         if ($status) 
         {
-            $formControlsMenuApp.richTextBxOutput.AppendText("$softwareName a été installé`r")
+            $formControlsMenuApp.rtbOutput_InstallationConfig.AppendText("$softwareName a été installé`r")
         }
         else 
         {
-            $formControlsMenuApp.richTextBxOutput.AppendText("$softwareName n'a pas été installé`r")
+            $formControlsMenuApp.rtbOutput_InstallationConfig.AppendText("$softwareName n'a pas été installé`r")
         }   
     }      
 } 
@@ -206,19 +206,19 @@ $windowMenuApp.add_Loaded({
         $formControlsMenuApp.chkboxDeleteFolder.IsChecked = $false
         $formControlsMenuApp.chkboxDeleteBin.IsChecked = $false
     })
-    $formControlsMenuApp.btnGo.Add_Click({
+    $formControlsMenuApp.btnGo_InstallationConfig.Add_Click({
         $windowMenuApp.Close()
     })
-    $formControlsMenuApp.btnReturn.Add_Click({
+    $formControlsMenuApp.btnReturn_InstallationConfig.Add_Click({
         $windowMenuApp.Close()
         Start-Process -FilePath "powershell.exe" -ArgumentList "-WindowStyle Hidden -ExecutionPolicy Unrestricted -File `"$env:SystemDrive\_TECH\Menu.ps1`""
         Exit
     })
-    $formControlsMenuApp.btnclose.Add_Click({
+    $formControlsMenuApp.btnClose_InstallationConfig.Add_Click({
         $windowMenuApp.Close()
         Exit
     })
-    $formControlsMenuApp.btnQuit.Add_Click({
+    $formControlsMenuApp.btnQuit_InstallationConfig.Add_Click({
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         $jsonFilePath = "$sourceFolderPath\Settings.JSON"
         $jsonContent = Get-Content $jsonFilePath -Raw | ConvertFrom-Json
@@ -238,7 +238,7 @@ $windowMenuApp.add_Loaded({
         $windowMenuApp.Close()
         Exit
     })
-    $formControlsMenuApp.GridToolbar.Add_MouseDown({
+    $formControlsMenuApp.GridToolbar_InstallationConfig.Add_MouseDown({
         $windowMenuApp.DragMove()
     })
     $formControlsMenuApp.btnAdobe.Add_Click({
