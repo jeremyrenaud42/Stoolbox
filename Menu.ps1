@@ -135,15 +135,18 @@ function Initialize-Application($appName)
         $Global:appIdentifier = "$appName.ps1"
         $lockFile = "$sourceFolderPath\$appName.lock"
         Test-ScriptInstance $lockFile $Global:appIdentifier
-    } 
-    $formControls.gridMenu.Visibility = 'collapsed'
-    $formControls.imgBackGround.source = "c:\_tech\Applications\$appName\source\Background_$appName.jpeg"
-    $formControls.lblTitre.Content = $appName
-    # Dynamically construct the grid variable name
-    $gridVariableName = "grid$appName"
-    # Retrieve the value of the variable dynamically
-    $GridToShow = (Get-Variable -Name $gridVariableName -ValueOnly)
-    Show-Grid -GridToShow $GridToShow -AllGrids $grids
+    }
+    else
+    {
+        $formControls.gridMenu.Visibility = 'collapsed'
+        $formControls.imgBackGround.source = "c:\_tech\Applications\$appName\source\Background_$appName.jpeg"
+        $formControls.lblTitre.Content = $appName
+        # Dynamically construct the grid variable name
+        $gridVariableName = "grid$appName"
+        # Retrieve the value of the variable dynamically
+        $GridToShow = (Get-Variable -Name $gridVariableName -ValueOnly)
+        Show-Grid -GridToShow $GridToShow -AllGrids $grids
+    }
     . $appPath\$appName.ps1
 }
 
