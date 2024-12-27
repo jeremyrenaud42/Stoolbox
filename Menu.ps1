@@ -125,7 +125,6 @@ function Initialize-Application($appName)
     }
     else
     {
-        $formControls.gridMenu.Visibility = 'collapsed'
         $formControls.imgBackGround.source = "c:\_tech\Applications\$appName\source\Background_$appName.jpeg"
         $formControls.lblTitre.Content = $appName
         # Dynamically construct the grid variable name
@@ -167,7 +166,7 @@ Test-ScriptInstance $lockFile $Global:appIdentifier
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     Get-RemoteFile "MenuMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/MenuMainWindow.xaml" $sourceFolderPath
-    Get-RemoteFile "Resources.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Resources.xaml" $sourceFolderPath
+    Get-RemoteFile "Resources.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Resources.xaml" $sourceFolderPath
     }
 
     $downloadAssetsFile = {
