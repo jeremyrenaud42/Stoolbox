@@ -15,8 +15,6 @@ $appNames | ForEach-Object {
     }
 
 Get-InternetStatusLoop
-Get-RemoteFile "InstallationConfigMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationConfigMainWindow.xaml" $appPathSource
-Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" $appPathSource
 
 function Add-Text 
 {

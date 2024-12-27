@@ -119,6 +119,8 @@ function Initialize-Application($appName)
     if ($appName -eq "Installation")
     {
         Get-RemoteFile "$($appName)MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/$($appName)MainWindow.xaml" $appPathSource
+        Get-RemoteFile "InstallationConfigMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationConfigMainWindow.xaml" $appPathSource
+        Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" $appPathSource
         $Global:appIdentifier = "$appName.ps1"
         $lockFile = "$sourceFolderPath\$appName.lock"
         Test-ScriptInstance $lockFile $Global:appIdentifier
