@@ -534,7 +534,6 @@ $window.add_Closing({
     $desktop = [Environment]::GetFolderPath("Desktop")
 
     $shortcutExist = test-path "$desktop\Menu.lnk"
-    $removeBatExist = test-path "$env:SystemDrive\Temp\Stoolbox\remove.bat"
     $removePs1Exist = test-path "$env:SystemDrive\Temp\Stoolbox\remove.ps1"
 
     $createShortcutKey = "createShortcut"
@@ -561,7 +560,7 @@ $window.add_Closing({
         Get-RunspaceState $global:sync['createShortcutResult']
     }
 
-    if($removeBatExist -eq $false -or $removePs1Exist -eq $false)
+    if($removePs1Exist -eq $false)
     {
         $global:sync['downloadRemoveScriptResult'] =  Start-Runspace -RunspaceKey $downloadRemoveScriptKey -ScriptBlock $downloadRemoveScript
         Write-Host "downloadRemoveScriptResult"
