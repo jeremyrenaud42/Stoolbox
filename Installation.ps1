@@ -1,4 +1,24 @@
-﻿function Add-Text 
+﻿$ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
+$windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
+$actualDate = (Get-Date).ToString()
+
+$jsonFilePath = "$appPathSource\InstallationApps.JSON"
+$jsonString = Get-Content -Raw $jsonFilePath
+$appsInfo = ConvertFrom-Json $jsonString
+$appNames = $appsInfo.psobject.Properties.Name
+$appNames | ForEach-Object {
+    $softwareName = $_
+    $appsInfo.$softwareName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path64)
+    $appsInfo.$softwareName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path32)
+    $appsInfo.$softwareName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.pathAppData)
+    $appsInfo.$softwareName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.NiniteName)
+    }
+
+Get-InternetStatusLoop
+Get-RemoteFile "InstallationConfigMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationConfigMainWindow.xaml" $appPathSource
+Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" $appPathSource
+
+function Add-Text 
 {
     param
     (
@@ -145,13 +165,6 @@ function Install-SoftwareMenuApp($softwareName)
     }      
 } 
 
-$ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
-$windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
-$actualDate = (Get-Date).ToString()
-
-Get-InternetStatusLoop
-Get-RemoteFile "InstallationConfigMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationConfigMainWindow.xaml" $appPathSource
-Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" $appPathSource
 ############################GUI####################################
 #WPF - appMenuChoice
 $xamlFileMenuApp = "$appPathSource\InstallationConfigMainWindow.xaml"
@@ -208,6 +221,82 @@ $windowMenuApp.add_Loaded({
     })
     $formControlsMenuApp.btnGo_InstallationConfig.Add_Click({
         $windowMenuApp.Close()
+        #apres ouverture MenuApps
+        $cbBoxSizeDefaultValue = "250"
+        $cbBoxRestartTimereDefaultValue = "300"
+
+        if (-not $formControlsMenuApp.CbBoxSize.SelectedItem) 
+        {
+            $formControlsMenuApp.CbBoxSize.SelectedItem = $formControlsMenuApp.CbBoxSize.Items | Where-Object { $_.Content -eq $cbBoxSizeDefaultValue }
+        }
+
+        if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem) 
+        {
+            $formControlsMenuApp.CbBoxRestartTimer.SelectedItem = $formControlsMenuApp.CbBoxRestartTimer.Items | Where-Object { $_.Content -eq $cbBoxRestartTimereDefaultValue }
+        }
+
+        $formControlsMain.lblWinget.foreground = "white"
+        $formControlsMain.lblChoco.foreground = "white"
+        $formControlsMain.lblNuget.foreground = "white"
+        $formControlsMain.lblSoftware.foreground = "white"
+        $formControlsMain.lblActivation.foreground = "white"
+        $formControlsMain.lblManualComplete.foreground = "white"
+        if($formControlsMenuApp.chkboxMSStore.IsChecked)
+        { 
+            $formControlsMain.lblStore.foreground = "white"
+        }
+        if($formControlsMenuApp.chkboxDisque.IsChecked)
+        { 
+            $formControlsMain.lblDisk.foreground = "white"
+        }
+        if($formControlsMenuApp.chkboxExplorer.IsChecked)
+        { 
+            $formControlsMain.lblExplorer.foreground = "white"
+        }
+        if($formControlsMenuApp.chkboxBitlocker.IsChecked)
+        { 
+            $formControlsMain.lblBitlocker.foreground = "white"
+        }
+        if($formControlsMenuApp.chkboxStartup.IsChecked)
+        { 
+            $formControlsMain.lblStartup.foreground = "white"
+        }
+        if($formControlsMenuApp.chkboxClavier.IsChecked)
+        { 
+            $formControlsMain.lblkeyboard.foreground = "white"
+        }
+        if($formControlsMenuApp.chkboxConfi.IsChecked)
+        { 
+            $formControlsMain.lblPrivacy.foreground = "white"
+        }
+        if($formControlsMenuApp.chkboxIcone.IsChecked)
+        {
+            $formControlsMain.lblDesktopIcon.foreground = "white"  
+        }
+        if($formControlsMenuApp.chkboxMSStore.IsChecked)
+        { 
+            $formControlsMain.lblStore2.foreground = "white"
+        }
+        if($formControlsMenuApp.chkboxWindowsUpdate.IsChecked)
+        { 
+            $formControlsMain.lblUpdate.foreground = "white"
+        }
+        if($formControlsMenuApp.chkboxDeleteFolder.IsChecked -eq $false)
+        { 
+            $jsonFilePath = "$sourceFolderPath\Settings.JSON"
+            $jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
+            $jsonContent.RemoveDownloadFolder.Status = "0"
+            $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath
+        }
+        if($formControlsMenuApp.chkboxDeleteBin.IsChecked -eq $false)
+        { 
+                $jsonFilePath = "$sourceFolderPath\Settings.JSON"
+                $jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
+                $jsonContent.EmptyRecycleBin.Status = "0"
+                $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath
+        }
+        Start-WPFApp $windowMain
+        Main
     })
     $formControlsMenuApp.btnReturn_InstallationConfig.Add_Click({
         $windowMenuApp.Close()
@@ -329,7 +418,7 @@ $windowMenuApp.add_Loaded({
 })
 
 $windowMenuApp.add_Closed({
-    Remove-Item -Path "$env:SystemDrive\_Tech\Applications\source\Installation.lock" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$env:SystemDrive\_Tech\Applications\source\Installation.lock" -Force 
 })
 
 $windowMain.add_Loaded({
@@ -345,7 +434,7 @@ $windowMain.add_Loaded({
         })
     })    
 $windowMain.add_Closed({
-        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\source\installation.lock" -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\source\installation.lock" -Force 
         exit
 })
 
@@ -600,7 +689,7 @@ Function Remove-EngKeyboard($selectedLanguage)
     if(($filteredUserLangList).LanguageTag -eq $selectedLanguage)
     {
         $langList.Remove($filteredUserLangList) #supprimer la clavier sélectionner
-        Set-WinUserLanguageList $langList -Force -WarningAction SilentlyContinue #applique le changement
+        Set-WinUserLanguageList $langList -Force #applique le changement
         $filteredUserLangList = $langList | Where-Object LanguageTag -eq $selectedLanguage #sélectionne le clavier anglais canada de la liste
         if(($filteredUserLangList).LanguageTag -eq $selectedLanguage)
         {
@@ -715,18 +804,6 @@ Function Enable-DesktopIcon
         }
     }  
 }
-
-$jsonFilePath = "$appPathSource\InstallationApps.JSON"
-$jsonString = Get-Content -Raw $jsonFilePath
-$appsInfo = ConvertFrom-Json $jsonString
-$appNames = $appsInfo.psobject.Properties.Name
-$appNames | ForEach-Object {
-    $softwareName = $_
-    $appsInfo.$softwareName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path64)
-    $appsInfo.$softwareName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path32)
-    $appsInfo.$softwareName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.pathAppData)
-    $appsInfo.$softwareName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.NiniteName)
-    }
 
 #Install les logiciels cochés
 function Get-CheckBoxStatus 
@@ -1005,7 +1082,7 @@ function Complete-Installation
             shutdown /r /t $restartTime
         }  
     }
-    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $lockFile -Force 
     if($formControlsMenuApp.chkboxRemove.IsChecked)
     { 
         Invoke-Task -TaskName 'delete _tech' -ExecutedScript "$env:SystemDrive\Temp\Stoolbox\Remove.ps1"
@@ -1065,79 +1142,3 @@ function Main
 }
 
 Start-WPFAppDialog $windowMenuApp
-#apres ouverture MenuApps
-$cbBoxSizeDefaultValue = "250"
-$cbBoxRestartTimereDefaultValue = "300"
-
-if (-not $formControlsMenuApp.CbBoxSize.SelectedItem) 
-{
-    $formControlsMenuApp.CbBoxSize.SelectedItem = $formControlsMenuApp.CbBoxSize.Items | Where-Object { $_.Content -eq $cbBoxSizeDefaultValue }
-}
-
-if (-not $formControlsMenuApp.CbBoxRestartTimer.SelectedItem) 
-{
-    $formControlsMenuApp.CbBoxRestartTimer.SelectedItem = $formControlsMenuApp.CbBoxRestartTimer.Items | Where-Object { $_.Content -eq $cbBoxRestartTimereDefaultValue }
-}
-
-$formControlsMain.lblWinget.foreground = "white"
-$formControlsMain.lblChoco.foreground = "white"
-$formControlsMain.lblNuget.foreground = "white"
-$formControlsMain.lblSoftware.foreground = "white"
-$formControlsMain.lblActivation.foreground = "white"
-$formControlsMain.lblManualComplete.foreground = "white"
-if($formControlsMenuApp.chkboxMSStore.IsChecked)
-{ 
-    $formControlsMain.lblStore.foreground = "white"
-}
-if($formControlsMenuApp.chkboxDisque.IsChecked)
-{ 
-    $formControlsMain.lblDisk.foreground = "white"
-}
-if($formControlsMenuApp.chkboxExplorer.IsChecked)
-{ 
-    $formControlsMain.lblExplorer.foreground = "white"
-}
-if($formControlsMenuApp.chkboxBitlocker.IsChecked)
-{ 
-    $formControlsMain.lblBitlocker.foreground = "white"
-}
-if($formControlsMenuApp.chkboxStartup.IsChecked)
-{ 
-    $formControlsMain.lblStartup.foreground = "white"
-}
-if($formControlsMenuApp.chkboxClavier.IsChecked)
-{ 
-    $formControlsMain.lblkeyboard.foreground = "white"
-}
-if($formControlsMenuApp.chkboxConfi.IsChecked)
-{ 
-    $formControlsMain.lblPrivacy.foreground = "white"
-}
-if($formControlsMenuApp.chkboxIcone.IsChecked)
-{
-    $formControlsMain.lblDesktopIcon.foreground = "white"  
-}
-if($formControlsMenuApp.chkboxMSStore.IsChecked)
-{ 
-    $formControlsMain.lblStore2.foreground = "white"
-}
-if($formControlsMenuApp.chkboxWindowsUpdate.IsChecked)
-{ 
-    $formControlsMain.lblUpdate.foreground = "white"
-}
-if($formControlsMenuApp.chkboxDeleteFolder.IsChecked -eq $false)
-{ 
-    $jsonFilePath = "$sourceFolderPath\Settings.JSON"
-    $jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
-    $jsonContent.RemoveDownloadFolder.Status = "0"
-    $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath
-}
-if($formControlsMenuApp.chkboxDeleteBin.IsChecked -eq $false)
-{ 
-        $jsonFilePath = "$sourceFolderPath\Settings.JSON"
-        $jsonContent = Get-Content $jsonFilePath | ConvertFrom-Json
-        $jsonContent.EmptyRecycleBin.Status = "0"
-        $jsonContent | ConvertTo-Json | Set-Content $jsonFilePath
-}
-Start-WPFApp $windowMain
-Main
