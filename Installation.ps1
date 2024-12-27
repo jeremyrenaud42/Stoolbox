@@ -210,7 +210,7 @@ $windowMenuApp.add_Loaded({
         $windowMenuApp.Close()
     })
     $formControlsMenuApp.btnReturn.Add_Click({
-        $window.Close()
+        $windowMenuApp.Close()
         Start-Process -FilePath "powershell.exe" -ArgumentList "-WindowStyle Hidden -ExecutionPolicy Unrestricted -File `"$env:SystemDrive\_TECH\Menu.ps1`""
         Exit
     })
@@ -329,7 +329,7 @@ $windowMenuApp.add_Loaded({
 })
 
 $windowMenuApp.add_Closed({
-    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$env:SystemDrive\_Tech\Applications\source\Installation.lock" -Force -ErrorAction SilentlyContinue
 })
 
 $windowMain.add_Loaded({
@@ -338,14 +338,14 @@ $windowMain.add_Loaded({
         Exit
     })
     $formControlsMain.btnmin.Add_Click({
-        $windowMain.WindowState = [System.Windows.WindowState]::Minimized
-    })
+            $windowMain.WindowState = [System.Windows.WindowState]::Minimized
+        })
     $formControlsMain.Titlebar.Add_MouseDown({
-        $windowMain.DragMove()
-    })
-})    
-    $windowMain.add_Closed({
-        Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
+            $windowMain.DragMove()
+        })
+    })    
+$windowMain.add_Closed({
+        Remove-Item -Path "$env:SystemDrive\_Tech\Applications\source\installation.lock" -Force -ErrorAction SilentlyContinue
         exit
 })
 
