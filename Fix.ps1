@@ -163,10 +163,6 @@ $formControls.btnQuit_Fix.Add_Click({
     Remove-StoolboxApp
 })
 
-$window.add_Closed({
-    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
-})
-
 $formControls.btnScript_Fix.Add_Click({
     $formControls.btnSFC_Fix.Visibility="Visible"
     $formControls.btnDISM_Fix.Visibility="Visible"
@@ -256,8 +252,6 @@ $formControls.btnSterjoMail_Fix.Add_Click({
 $formControls.btnSterjoWireless_Fix.Add_Click({
     Start-Process "$appPathSource\Sterjo\Sterjo_Wireless\WiFiPasswords.exe"
 })
-
-Start-WPFAppDialog $window
 <#
 function sortie
 {

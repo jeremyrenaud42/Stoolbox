@@ -96,6 +96,19 @@ function Get-RequiredModules
     }
 }
 
+function Show-Grid {
+    param 
+    (
+        [Parameter(Mandatory)]
+        [System.Windows.Controls.Grid]$GridToShow,
+        [System.Collections.ArrayList]$AllGrids
+    )
+    # Hide all grids
+    $AllGrids | ForEach-Object { $_.Visibility = 'Collapsed' }
+    # Show the selected grid
+    $GridToShow.Visibility = 'Visible'
+}
+
 function Initialize-Application($appName)
 {
     <#
@@ -112,21 +125,25 @@ function Initialize-Application($appName)
     $appPath = "$applicationPath\$appName"
     $appPathSource = "$appPath\source"
     Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" $appPathSource
-    Get-RemoteFile "$($appName)MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/$($appName)MainWindow.xaml" $appPathSource
     New-Item -Path $appPath -ItemType 'Directory' -Force
     Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $appPath 
     set-location $appPath
     $logFileName = Initialize-LogFile $appPathSource $appName
-    $lockFile = "$sourceFolderPath\$appName.lock"
-    $Global:appIdentifier = "$appName.ps1"
-    Test-ScriptInstance $lockFile $Global:appIdentifier
-    $xamlFile = "$appPathSource\$($appName)MainWindow.xaml"
-    $xamlContent = Read-XamlFileContent $xamlFile
-    $formatedXamlFile = Format-XamlFile $xamlContent
-    $xamlDoc = Convert-ToXmlDocument $formatedXamlFile
-    $XamlReader = New-XamlReader $xamlDoc
-    $window = New-WPFWindowFromXaml $XamlReader
-    $formControls = Get-WPFControlsFromXaml $xamlDoc $window $sync
+    if ($appName -eq "Installation")
+    {
+        Get-RemoteFile "$($appName)MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/$($appName)MainWindow.xaml" $appPathSource
+        $Global:appIdentifier = "$appName.ps1"
+        $lockFile = "$sourceFolderPath\$appName.lock"
+        Test-ScriptInstance $lockFile $Global:appIdentifier
+    } 
+    $formControls.gridMenu.Visibility = 'collapsed'
+    $formControls.imgBackGround.source = "c:\_tech\Applications\$appName\source\Background_$appName.jpeg"
+    $formControls.lblTitre.Content = $appName
+    # Dynamically construct the grid variable name
+    $gridVariableName = "grid$appName"
+    # Retrieve the value of the variable dynamically
+    $GridToShow = (Get-Variable -Name $gridVariableName -ValueOnly)
+    Show-Grid -GridToShow $GridToShow -AllGrids $grids
     . $appPath\$appName.ps1
 }
 
@@ -151,21 +168,8 @@ if (-not (Test-Path $dateFile))
 
 $lockFile = "$sourceFolderPath\Menu.lock"
 $Global:appIdentifier = "Menu.ps1"
-
 Test-ScriptInstance $lockFile $Global:appIdentifier
 
-# Check if any script is already running
-if (Test-ScriptsAreRunning) 
-{
-    $messageBoxText = "Voulez-vous poursuivre avec l'ouverture du Menu ?"
-    $messageBoxTitle = "Menu - Boite à outils du technicien"
-    $messageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,4,48)
-    if($messageBox -eq 'no')
-    {
-        Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
-        exit
-    }
-}
 
 #runspaces pour le GUI
 #Définitions des ScriptBlocks
@@ -234,6 +238,13 @@ $xamlDoc = Convert-ToXmlDocument $formatedXamlFile
 $XamlReader = New-XamlReader $xamlDoc
 $window = New-WPFWindowFromXaml $XamlReader
 $formControls = Get-WPFControlsFromXaml $xamlDoc $window $global:sync
+
+$gridMenu = $formcontrols.gridMenu
+$gridOptimisation_Nettoyage = $formcontrols.gridOptimisation_Nettoyage
+$gridDiagnostique= $formcontrols.gridDiagnostique
+$gridDesinfection = $formcontrols.gridDesinfection
+$gridFix= $formcontrols.gridFix
+$grids = @($gridMenu, $gridOptimisation_Nettoyage, $gridDiagnostique,$gridDesinfection,$gridFix)
 
 #Fonctions pour runspaces
 $menuWinget = {
@@ -451,19 +462,15 @@ $Window.add_Loaded({
         Initialize-Application "Installation"
     })
     $formControls.btnLancementOptimisation_Nettoyage_Menu.Add_Click({
-        $window.Close()
         Initialize-Application "Optimisation_Nettoyage"
     })
     $formControls.btnLancementDiagnostique_Menu.Add_Click({
-        $window.Close()
         Initialize-Application "Diagnostique"
     })
     $formControls.btnLancementDesinfection_Menu.Add_Click({
-        $window.Close()
         Initialize-Application "Desinfection"
     })
     $formControls.btnLancementFix_Menu.Add_Click({
-        $window.Close()
         Initialize-Application "Fix"
     })
     $formControls.btnChangeLog_Menu.Add_Click({
@@ -491,14 +498,14 @@ $Window.add_Loaded({
     $formControls.btnUninstall_Menu.Add_Click({
         Remove-StoolboxApp
     })
-    $formControls.gridMenu.Add_MouseDown({
+    $formControls.gridMain.Add_MouseDown({
         $window.DragMove()
     })
-    $formControls.btnClose_Menu.Add_Click({
+    $formControls.btnClose.Add_Click({
         $window.Close()
         Exit
     })
-    $formControls.btnMin_Menu.Add_Click({
+    $formControls.btnMin.Add_Click({
         $window.WindowState = [System.Windows.WindowState]::Minimized
     })
     $formControls.btnWinget_Menu.Add_Click({

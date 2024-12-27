@@ -62,12 +62,6 @@ $formControls.btnMenu_Optimisation_Nettoyage.Add_Click({
     Open-Menu
 })
 
-$window.add_Closed({
-    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
-})
-
-Start-WPFAppDialog $window
-
 #choco install hdtune
 #choco install hdsentinel
 #choco install revo-uninstaller

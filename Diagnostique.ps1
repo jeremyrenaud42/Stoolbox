@@ -190,12 +190,6 @@ $formControls.btnSysinfo_Diagnostique.Add_Click({
     msinfo32
 })
 
-$window.add_Closed({
-    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
-})
-
-Start-WPFAppDialog $window
-
 <#
 $JSONFilePath = "$env:SystemDrive\_Tech\Applications\Diagnostique\source\DiagApps.JSON"
 $jsonString = Get-Content -Raw $JSONFilePath

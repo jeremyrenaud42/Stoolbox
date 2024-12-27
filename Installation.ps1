@@ -210,7 +210,9 @@ $windowMenuApp.add_Loaded({
         $windowMenuApp.Close()
     })
     $formControlsMenuApp.btnReturn.Add_Click({
-        Open-Menu
+        $window.Close()
+        Start-Process -FilePath "powershell.exe" -ArgumentList "-WindowStyle Hidden -ExecutionPolicy Unrestricted -File `"$env:SystemDrive\_TECH\Menu.ps1`""
+        Exit
     })
     $formControlsMenuApp.btnclose.Add_Click({
         $windowMenuApp.Close()

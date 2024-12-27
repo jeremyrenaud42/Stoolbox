@@ -114,9 +114,3 @@ $formControls.btnRogueKiller_Desinfection.Add_Click({
     Add-Log $logFileName "Analyse RogueKiller effectué"
     #via le cmd, aller a l"emplacement RogueKillerCMD.exe -scan -no-interact -deleteall #-debuglog {path}
  })
-
-$window.add_Closed({
-    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
-})
-
-Start-WPFAppDialog $window
