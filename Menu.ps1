@@ -209,7 +209,6 @@ if ($global:runspaceStates.ContainsKey('downloadXamlFile') -and $global:runspace
     Get-RunspaceState $global:sync['downloadXamlFileResult']
 }
 
-
 if ($global:runspaceStates.ContainsKey('downloadAssetsFile') -and $global:runspaceStates['downloadAssetsFile'] -eq 'Opened') 
 {
     Write-Host "downloadAssetsFile"
