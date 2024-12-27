@@ -79,7 +79,7 @@ function Get-RemotePsm1Files
     $modulesFolderPathExist = test-path -Path $modulesFolderPath
     if($modulesFolderPathExist -eq $false)
     {
-        $zipFileDownloadLink = "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip"
+        $zipFileDownloadLink = "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules.zip"
         $zipFile = "Modules.zip"
         Invoke-WebRequest -Uri $zipFileDownloadLink -OutFile $sourceFolderPath\$zipFile
         Expand-Archive -Path $sourceFolderPath\$zipFile -DestinationPath $sourceFolderPath -Force
@@ -94,19 +94,6 @@ function Get-RequiredModules
     {
         Import-Module $modulesFolder\$module
     }
-}
-
-function Show-Grid {
-    param 
-    (
-        [Parameter(Mandatory)]
-        [System.Windows.Controls.Grid]$GridToShow,
-        [System.Collections.ArrayList]$AllGrids
-    )
-    # Hide all grids
-    $AllGrids | ForEach-Object { $_.Visibility = 'Collapsed' }
-    # Show the selected grid
-    $GridToShow.Visibility = 'Visible'
 }
 
 function Initialize-Application($appName)
