@@ -448,6 +448,12 @@ Write-Host "menuGitResult"
 Get-RunspaceState $global:sync['menuGitResult']
 
 ########################GUI Events########################
+$window.Add_StateChanged({
+    if ($window.WindowState -eq [System.Windows.WindowState]::Maximized) 
+    {
+        $window.WindowState = [System.Windows.WindowState]::Normal
+    }
+})
 $Window.add_Loaded({
     $formControls.btnLancementInstallation_Menu.Add_Click({
         $window.Close()
