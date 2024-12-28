@@ -197,10 +197,10 @@ $appsInfo = ConvertFrom-Json $jsonString
 $appNames = $appsInfo.psobject.Properties.Name
 #Iterate over the applications in the JSON and interpolate the variables
 $appNames | ForEach-Object {
-    $appName = $_
-    $appsInfo.$appName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path64)
-    $appsInfo.$appName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.path32)
-    $appsInfo.$appName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.pathAppData)
-    $appsInfo.$appName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$appName.NiniteName)
+    Diagnostique = $_
+    $appsInfo.Diagnostique.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.Diagnostique.path64)
+    $appsInfo.Diagnostique.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.Diagnostique.path32)
+    $appsInfo.Diagnostique.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.Diagnostique.pathAppData)
+    $appsInfo.Diagnostique.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.Diagnostique.NiniteName)
     }
 #>

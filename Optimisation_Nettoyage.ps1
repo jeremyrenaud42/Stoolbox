@@ -4,14 +4,14 @@ $formControls.btnUpdate_Optimisation_Nettoyage.Add_Click({
 })
 
 $formControls.btnAutoruns_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/autoruns.exe" $global:appPathSource
+    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe" $global:appPathSource
     start-sleep 5
     taskmgr
     Add-Log $global:logFileName "Vérifier les logiciels au démarrage"
 })
 
 $formControls.btnRevo_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/RevoUPort.zip" $global:appPathSource
+    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip" $global:appPathSource
     Add-Log $global:logFileName "Vérifier les programmes nuisibles"
 })
 
@@ -21,7 +21,7 @@ $formControls.btnHDD_Optimisation_Nettoyage.Add_Click({
 })
 
 $formControls.btnCcleaner_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/CCleaner64.zip" $global:appPathSource
+    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip" $global:appPathSource
     Add-Log $global:logFileName "Nettoyage CCleaner effectué"
 })
 
@@ -36,7 +36,7 @@ $formControls.btnHitmanPro_Optimisation_Nettoyage.Add_Click({
 })
 
 $formControls.btnSysEvent_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "sysevent.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/sysevent/sysevent.exe" $global:appPathSource
+    Invoke-App "sysevent.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe" $global:appPathSource
     Add-Log $global:logFileName "Vérifier les evenements"
 })
 
