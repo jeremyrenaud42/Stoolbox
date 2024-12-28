@@ -178,6 +178,7 @@ Test-ScriptInstance $lockFile $Global:appIdentifier
     Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
     Get-RemoteFile "Background_menu.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$sourceFolderPath\Images"
     Get-RemoteFile "Icone.ico" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/Icone.ico" "$sourceFolderPath\Images"
+    Get-RemoteFile "IconeNyxSky.png" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/IconeNyxSky.png" "$sourceFolderPath\Images"
     Get-RemoteFile "Settings.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Settings.JSON" $sourceFolderPath
 }
 
