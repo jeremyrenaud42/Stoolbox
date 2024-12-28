@@ -499,6 +499,9 @@ $Window.add_Loaded({
     $formControls.btnMin.Add_Click({
         $window.WindowState = [System.Windows.WindowState]::Minimized
     })
+    $formControls.btnNyxSky.Add_Click({
+        Start-Process 'https://sto.alexchato9.com/'
+    })
     $formControls.btnWinget_Menu.Add_Click({
         $installWinget = {
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
