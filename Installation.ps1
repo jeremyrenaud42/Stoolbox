@@ -1,4 +1,15 @@
-﻿function Add-Text 
+﻿$jsonFilePath = "$applicationPath\installation\source\InstallationApps.JSON"
+$jsonString = Get-Content -Raw $jsonFilePath
+$appsInfo = ConvertFrom-Json $jsonString
+$appNames = $appsInfo.psobject.Properties.Name
+$appNames | ForEach-Object {
+    $softwareName = $_
+    $appsInfo.$softwareName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path64)
+    $appsInfo.$softwareName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path32)
+    $appsInfo.$softwareName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.pathAppData)
+    $appsInfo.$softwareName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.NiniteName)
+    }
+function Add-Text 
 {
     param
     (

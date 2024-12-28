@@ -129,9 +129,7 @@ function Initialize-Application($appName)
     {
         $formControls.imgBackGround.source = "c:\_tech\Applications\$appName\source\Background_$appName.jpeg"
         $formControls.lblTitre.Content = $appName
-        # Dynamically construct the grid variable name
         $gridVariableName = "grid$appName"
-        # Retrieve the value of the variable dynamically
         $GridToShow = (Get-Variable -Name $gridVariableName -ValueOnly)
         Show-Grid -GridToShow $GridToShow -AllGrids $grids
     }
@@ -149,17 +147,6 @@ $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cel
 $windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
 $actualDate = (Get-Date).ToString()
 
-$jsonFilePath = "$applicationPath\installation\source\InstallationApps.JSON"
-$jsonString = Get-Content -Raw $jsonFilePath
-$appsInfo = ConvertFrom-Json $jsonString
-$appNames = $appsInfo.psobject.Properties.Name
-$appNames | ForEach-Object {
-    $softwareName = $_
-    $appsInfo.$softwareName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path64)
-    $appsInfo.$softwareName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path32)
-    $appsInfo.$softwareName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.pathAppData)
-    $appsInfo.$softwareName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.NiniteName)
-    }
 $global:sync['flag'] = $true 
 $dateFile = "$sourceFolderPath\installedDate.txt"
 $adminStatus = Get-AdminStatus
