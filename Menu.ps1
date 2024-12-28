@@ -145,6 +145,21 @@ $sourceFolderPath = "$applicationPath\source"
 New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
 Get-RemotePsm1Files
 Get-RequiredModules
+$ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
+$windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
+$actualDate = (Get-Date).ToString()
+
+$jsonFilePath = "$applicationPath\installation\source\InstallationApps.JSON"
+$jsonString = Get-Content -Raw $jsonFilePath
+$appsInfo = ConvertFrom-Json $jsonString
+$appNames = $appsInfo.psobject.Properties.Name
+$appNames | ForEach-Object {
+    $softwareName = $_
+    $appsInfo.$softwareName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path64)
+    $appsInfo.$softwareName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path32)
+    $appsInfo.$softwareName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.pathAppData)
+    $appsInfo.$softwareName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.NiniteName)
+    }
 $global:sync['flag'] = $true 
 $dateFile = "$sourceFolderPath\installedDate.txt"
 $adminStatus = Get-AdminStatus
@@ -160,7 +175,6 @@ if (-not (Test-Path $dateFile))
 $lockFile = "$sourceFolderPath\Menu.lock"
 $Global:appIdentifier = "Menu.ps1"
 Test-ScriptInstance $lockFile $Global:appIdentifier
-
 
 #runspaces pour le GUI
 #Définitions des ScriptBlocks
