@@ -110,17 +110,17 @@ function Initialize-Application($appName)
         N'est pas dans un module, car c'est spécific au menu seulement
     #>
     $appPath = "$applicationPath\$appName"
-    $appPathSource = "$appPath\source"
-    Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" $appPathSource
+    $global:appPathSource = "$appPath\source"
+    Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" $global:appPathSource
     New-Item -Path $appPath -ItemType 'Directory' -Force
     Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $appPath 
     set-location $appPath
-    $logFileName = Initialize-LogFile $appPathSource $appName
+    $global:logFileName = Initialize-LogFile $global:appPathSource $appName
     if ($appName -eq "Installation")
     {
-        Get-RemoteFile "$($appName)MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/$($appName)MainWindow.xaml" $appPathSource
-        Get-RemoteFile "InstallationConfigMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationConfigMainWindow.xaml" $appPathSource
-        Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" $appPathSource
+        Get-RemoteFile "$($appName)MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/$($appName)MainWindow.xaml" $global:appPathSource
+        Get-RemoteFile "InstallationConfigMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationConfigMainWindow.xaml" $global:appPathSource
+        Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" $global:appPathSource
         $Global:appIdentifier = "$appName.ps1"
         $lockFile = "$sourceFolderPath\$appName.lock"
         Test-ScriptInstance $lockFile $Global:appIdentifier

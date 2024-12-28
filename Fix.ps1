@@ -22,13 +22,13 @@ Function menu
     {
     0{sortie;break}
     1{submenuScripts;Break}
-    2{Get-RemoteFile "Tweak.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Tweak.zip" $appPathSource; submenuTweak;Break}
-    3{Get-RemoteFile "Sterjo.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Sterjo.zip" $appPathSource; submenuMDP;Break}
-    4{Invoke-App "Display Driver Uninstaller.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Display Driver Uninstaller.zip" $appPathSource;Add-Log $logFileName "Désinstallation du pilote graphique avec DDU";Break}
-    5{Invoke-App "WiseForceDeleterPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WiseForceDeleterPortable.zip" $appPathSource;Break}
-    6{Invoke-App "WinDirStatPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WinDirStatPortable.zip" $appPathSource;Break}
+    2{Get-RemoteFile "Tweak.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Tweak.zip" $global:appPathSource; submenuTweak;Break}
+    3{Get-RemoteFile "Sterjo.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Sterjo.zip" $global:appPathSource; submenuMDP;Break}
+    4{Invoke-App "Display Driver Uninstaller.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Display Driver Uninstaller.zip" $global:appPathSource;Add-Log $global:logFileName "Désinstallation du pilote graphique avec DDU";Break}
+    5{Invoke-App "WiseForceDeleterPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WiseForceDeleterPortable.zip" $global:appPathSource;Break}
+    6{Invoke-App "WinDirStatPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WinDirStatPortable.zip" $global:appPathSource;Break}
     7{Get-PW;Break} 
-    8{Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/ComIntRep_X64.zip" $appPathSource;Add-Log $logFileName "Réparer Internet";Break}
+    8{Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/ComIntRep_X64.zip" $global:appPathSource;Add-Log $global:logFileName "Réparer Internet";Break}
     T{$number = SubmenuTheme;Set-Theme -theme $number;Break}
     }
     start-sleep 1
@@ -122,14 +122,14 @@ Set-Theme -theme 1
 #>
 function Get-Tweaking
 {
-    $path = Test-Path "$appPathSource\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
+    $path = Test-Path "$global:appPathSource\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
     if($path -eq $false)
     {
         #choco install windowsrepair , il faudra revoir le start process aussi
-        Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/tweaking.com - Windows Repair.zip" -OutFile "$appPathSource\Tweak\tweaking.com - Windows Repair.zip"
-        Expand-Archive "$appPathSource\Tweak\tweaking.com - Windows Repair.zip" "$appPathSource\Tweak"
-        Remove-Item "$appPathSource\Tweak\tweaking.com - Windows Repair.zip"
-        Copy-Item "$appPathSource\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$desktop\Tweaking.com - Windows Repair"
+        Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/tweaking.com - Windows Repair.zip" -OutFile "$global:appPathSource\Tweak\tweaking.com - Windows Repair.zip"
+        Expand-Archive "$global:appPathSource\Tweak\tweaking.com - Windows Repair.zip" "$global:appPathSource\Tweak"
+        Remove-Item "$global:appPathSource\Tweak\tweaking.com - Windows Repair.zip"
+        Copy-Item "$global:appPathSource\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$desktop\Tweaking.com - Windows Repair"
         Start-Process "$desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
     }    
     elseif($path)
@@ -140,13 +140,13 @@ function Get-Tweaking
 
 function Get-PW
 {
-    $path = Test-Path "$appPathSource\Partition_Wizard\partitionwizard.exe"
+    $path = Test-Path "$global:appPathSource\Partition_Wizard\partitionwizard.exe"
     if($path -eq $false)
     {
-        Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Partition_Wizard.zip" -OutFile "$appPathSource\Partition_Wizard.zip"
-        Expand-Archive "$appPathSource\Partition_Wizard.zip" $appPathSource
-        Remove-Item "$appPathSource\Partition_Wizard.zip"
-        Copy-Item "$appPathSource\Partition_Wizard" -Recurse -Destination "$desktop\Partition_Wizard"
+        Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Partition_Wizard.zip" -OutFile "$global:appPathSource\Partition_Wizard.zip"
+        Expand-Archive "$global:appPathSource\Partition_Wizard.zip" $global:appPathSource
+        Remove-Item "$global:appPathSource\Partition_Wizard.zip"
+        Copy-Item "$global:appPathSource\Partition_Wizard" -Recurse -Destination "$desktop\Partition_Wizard"
         Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
     }    
     elseif($path)
@@ -177,7 +177,7 @@ $formControls.btnTweak_Fix.Add_Click({
     $formControls.btnUWT11_Fix.Visibility="Visible"
     $formControls.btnTweaking_Fix.Visibility="Visible"
     $formControls.btnTweak_Fix.Visibility="Collapsed"
-    Get-RemoteFile "Tweak.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Tweak.zip" $appPathSource
+    Get-RemoteFile "Tweak.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Tweak.zip" $global:appPathSource
 })
 $formControls.btnSterjo_Fix.Add_Click({
     $formControls.btnSterjoBrowser_Fix.Visibility="Visible"
@@ -187,70 +187,70 @@ $formControls.btnSterjo_Fix.Add_Click({
     $formControls.btnSterjoMail_Fix.Visibility="Visible"
     $formControls.btnSterjoWireless_Fix.Visibility="Visible"
     $formControls.btnSterjo_Fix.Visibility="Collapsed"
-    Get-RemoteFile "Sterjo.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Sterjo.zip" $appPathSource
+    Get-RemoteFile "Sterjo.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Sterjo.zip" $global:appPathSource
 })
 
 $formControls.btnDDU_Fix.Add_Click({
-    Invoke-App "Display Driver Uninstaller.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Display Driver Uninstaller.zip" $appPathSource
+    Invoke-App "Display Driver Uninstaller.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Display Driver Uninstaller.zip" $global:appPathSource
 })
 $formControls.btnWFD_Fix.Add_Click({
-    Invoke-App "WiseForceDeleterPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WiseForceDeleterPortable.zip" $appPathSource
+    Invoke-App "WiseForceDeleterPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WiseForceDeleterPortable.zip" $global:appPathSource
 })
 $formControls.btnWinDirStat_Fix.Add_Click({
-    Invoke-App "WinDirStatPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WinDirStatPortable.zip" $appPathSource
+    Invoke-App "WinDirStatPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/WinDirStatPortable.zip" $global:appPathSource
 })
 $formControls.btnPW_Fix.Add_Click({
     Get-PW
 })
 $formControls.btnInternet_Fix.Add_Click({
-    Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/ComIntRep_X64.zip"  $appPathSource
+    Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/ComIntRep_X64.zip"  $global:appPathSource
 })
 
 $formControls.btnSFC_Fix.Add_Click({
     Start-Process cmd.exe -ArgumentList "/k sfc /scannow"
 })
 $formControls.btnDISM_Fix.Add_Click({
-    Start-Process cmd.exe -ArgumentList "/k DISM /online /cleanup-image /restorehealth";Add-Log $logFileName "Reparation du Windows"
+    Start-Process cmd.exe -ArgumentList "/k DISM /online /cleanup-image /restorehealth";Add-Log $global:logFileName "Reparation du Windows"
 })
 $formControls.btnCHKDSK_Fix.Add_Click({
     Start-Process cmd.exe -ArgumentList "/k chkdsk /f /r"
 })
 $formControls.btnSession_Fix.Add_Click({
-    Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/creer_session.txt" $appPathSource
-    Start-Process "$appPathSource\creer_session.txt"
+    Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/creer_session.txt" $global:appPathSource
+    Start-Process "$global:appPathSource\creer_session.txt"
 })
 $formControls.btnFW10_Fix.Add_Click({
-    Start-Process "$appPathSource\Tweak\FixWin10\FixWin 10.2.2.exe"
+    Start-Process "$global:appPathSource\Tweak\FixWin10\FixWin 10.2.2.exe"
 })
 $formControls.btnFW11_Fix.Add_Click({
-    Start-Process "$appPathSource\Tweak\FixWin11\FixWin 11.1.exe"
+    Start-Process "$global:appPathSource\Tweak\FixWin11\FixWin 11.1.exe"
 })
 $formControls.btnUWT10_Fix.Add_Click({
-    Start-Process "$appPathSource\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe"
+    Start-Process "$global:appPathSource\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe"
 })
 $formControls.btnUWT11_Fix.Add_Click({
-    Start-Process "$appPathSource\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe"
+    Start-Process "$global:appPathSource\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe"
 })
 $formControls.btnTweaking_Fix.Add_Click({
     Get-Tweaking 
 })
 $formControls.btnSterjoBrowser_Fix.Add_Click({
-    Start-Process "$appPathSource\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe"
+    Start-Process "$global:appPathSource\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe"
 })
 $formControls.btnSterjoChrome_Fix.Add_Click({
-    Start-Process "$appPathSource\Sterjo\SterJo_Chrome_Passwords_sps\ChromePasswords.exe"
+    Start-Process "$global:appPathSource\Sterjo\SterJo_Chrome_Passwords_sps\ChromePasswords.exe"
 })
 $formControls.btnSterjoFirefox_Fix.Add_Click({
-    Start-Process "$appPathSource\Sterjo\Sterjo_Firefox\FirefoxPasswords.exe"
+    Start-Process "$global:appPathSource\Sterjo\Sterjo_Firefox\FirefoxPasswords.exe"
 })
 $formControls.btnSterjoKeys_Fix.Add_Click({
-    Start-Process "$appPathSource\Sterjo\Sterjo_Key\KeyFinder.exe"
+    Start-Process "$global:appPathSource\Sterjo\Sterjo_Key\KeyFinder.exe"
 })
 $formControls.btnSterjoMail_Fix.Add_Click({
-    Start-Process "$appPathSource\Sterjo\SterJo_Mail_Passwords_sps\MailPasswords.exe"
+    Start-Process "$global:appPathSource\Sterjo\SterJo_Mail_Passwords_sps\MailPasswords.exe"
 })
 $formControls.btnSterjoWireless_Fix.Add_Click({
-    Start-Process "$appPathSource\Sterjo\Sterjo_Wireless\WiFiPasswords.exe"
+    Start-Process "$global:appPathSource\Sterjo\Sterjo_Wireless\WiFiPasswords.exe"
 })
 <#
 function sortie
@@ -314,10 +314,10 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{menu}
-1{Start-Process cmd.exe -ArgumentList "/k sfc /scannow";Add-Log $logFileName "Reparation des fichiers corrompus";Break}
-2{Start-Process cmd.exe -ArgumentList "/k DISM /online /cleanup-image /restorehealth";Add-Log $logFileName "Reparation du Windows";Break}
-3{Start-Process cmd.exe -ArgumentList "/k chkdsk /f /r";Add-Log $logFileName "Reparation du HDD";Break}
-4{Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/creer_session.txt" $appPathSource;Start-Process "$appPathSource\creer_session.txt";Add-Log $logFileName "Nouvelle session créé";Break}
+1{Start-Process cmd.exe -ArgumentList "/k sfc /scannow";Add-Log $global:logFileName "Reparation des fichiers corrompus";Break}
+2{Start-Process cmd.exe -ArgumentList "/k DISM /online /cleanup-image /restorehealth";Add-Log $global:logFileName "Reparation du Windows";Break}
+3{Start-Process cmd.exe -ArgumentList "/k chkdsk /f /r";Add-Log $global:logFileName "Reparation du HDD";Break}
+4{Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/creer_session.txt" $global:appPathSource;Start-Process "$global:appPathSource\creer_session.txt";Add-Log $global:logFileName "Nouvelle session créé";Break}
 }
 start-sleep 1
 submenuScripts
@@ -344,12 +344,12 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{menu}
-1{Start-Process "$appPathSource\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe";Break}
-2{Start-Process "$appPathSource\Sterjo\SterJo_Chrome_Passwords_sps\ChromePasswords.exe";Break}
-3{Start-Process "$appPathSource\Sterjo\Sterjo_Firefox\FirefoxPasswords.exe";Break}
-4{Start-Process "$appPathSource\Sterjo\Sterjo_Key\KeyFinder.exe";Break}
-5{Start-Process "$appPathSource\Sterjo\SterJo_Mail_Passwords_sps\MailPasswords.exe";Break}
-6{Start-Process "$appPathSource\Sterjo\Sterjo_Wireless\WiFiPasswords.exe";Break}
+1{Start-Process "$global:appPathSource\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe";Break}
+2{Start-Process "$global:appPathSource\Sterjo\SterJo_Chrome_Passwords_sps\ChromePasswords.exe";Break}
+3{Start-Process "$global:appPathSource\Sterjo\Sterjo_Firefox\FirefoxPasswords.exe";Break}
+4{Start-Process "$global:appPathSource\Sterjo\Sterjo_Key\KeyFinder.exe";Break}
+5{Start-Process "$global:appPathSource\Sterjo\SterJo_Mail_Passwords_sps\MailPasswords.exe";Break}
+6{Start-Process "$global:appPathSource\Sterjo\Sterjo_Wireless\WiFiPasswords.exe";Break}
 }
 Start-Sleep 1
 submenuMDP
@@ -374,10 +374,10 @@ $choix = read-host "Choisissez une option"
 switch ($choix)
 {
 0{menu}
-1{Start-Process "$appPathSource\Tweak\FixWin10\FixWin 10.2.2.exe";Break}
-2{Start-Process "$appPathSource\Tweak\FixWin11\FixWin 11.1.exe";break}
-3{Start-Process "$appPathSource\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe";Break}
-4{Start-Process "$appPathSource\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe";break}
+1{Start-Process "$global:appPathSource\Tweak\FixWin10\FixWin 10.2.2.exe";Break}
+2{Start-Process "$global:appPathSource\Tweak\FixWin11\FixWin 11.1.exe";break}
+3{Start-Process "$global:appPathSource\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe";Break}
+4{Start-Process "$global:appPathSource\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe";break}
 5{Get-Tweaking;Break} 
 }
 Start-Sleep 1

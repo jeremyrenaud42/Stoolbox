@@ -7,41 +7,41 @@ $formControls.btnQuit_Desinfection.Add_Click({
 })
 
 $formControls.btnProcess_Explorer_Desinfection.Add_Click({
-    Invoke-App "procexp64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/procexp64.exe" $appPathSource
-    Add-Log $logFileName "Vérifier les process"
+    Invoke-App "procexp64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/procexp64.exe" $global:appPathSource
+    Add-Log $global:logFileName "Vérifier les process"
 })
 
 $formControls.btnRKill_Desinfection.Add_Click({
-    Invoke-App "rkill64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/rkill64.exe" $appPathSource
-    Add-Log $logFileName "Désactiver les process"
+    Invoke-App "rkill64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/rkill64.exe" $global:appPathSource
+    Add-Log $global:logFileName "Désactiver les process"
 })
 
 $formControls.btnAutoruns_Desinfection.Add_Click({
-    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe" $appPathSource
+    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe" $global:appPathSource
     start-sleep 5
     taskmgr
-    Add-Log $logFileName "Vérifier les logiciels au démarrage"
+    Add-Log $global:logFileName "Vérifier les logiciels au démarrage"
 })
 
 $formControls.btnHDD_Desinfection.Add_Click({
     Start-Process "$env:SystemDrive\Windows\SYSTEM32\cleanmgr.exe"
-    Add-Log $logFileName "Nettoyage du disque effectué"
+    Add-Log $global:logFileName "Nettoyage du disque effectué"
 })
 
 $formControls.btnCcleaner_Desinfection.Add_Click({
-    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip" $appPathSource
-    Add-Log $logFileName "Nettoyage CCleaner effectué"
+    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip" $global:appPathSource
+    Add-Log $global:logFileName "Nettoyage CCleaner effectué"
  })
 
 $formControls.btnRevo_Desinfection.Add_Click({
-    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip" $appPathSource
-    Add-Log $logFileName "Vérifier les programmes nuisibles"
+    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip" $global:appPathSource
+    Add-Log $global:logFileName "Vérifier les programmes nuisibles"
  })
 
 
 $formControls.btnADWcleaner_Desinfection.Add_Click({
-    Invoke-App "adwcleaner.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/adwcleaner.exe" $appPathSource
-    Add-Log $logFileName "Analyse ADW effectué"
+    Invoke-App "adwcleaner.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/adwcleaner.exe" $global:appPathSource
+    Add-Log $global:logFileName "Analyse ADW effectué"
  })
 
 $formControls.btnMalwareByte_Desinfection.Add_Click({
@@ -71,7 +71,7 @@ $formControls.btnMalwareByte_Desinfection.Add_Click({
     {
         Start-Process "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
     }
-    Add-Log $logFileName "Analyse Malwarebyte effectué"
+    Add-Log $global:logFileName "Analyse Malwarebyte effectué"
  })
 
 $formControls.btnSuperAntiSpyware_Desinfection.Add_Click({
@@ -101,16 +101,16 @@ $formControls.btnSuperAntiSpyware_Desinfection.Add_Click({
     {
         Start-Process "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
     }
-    Add-Log $logFileName "Analyse SuperAntiSpyware effectué"
+    Add-Log $global:logFileName "Analyse SuperAntiSpyware effectué"
  })
 
 $formControls.btnHitmanPro_Desinfection.Add_Click({
-    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/HitmanPro.exe" $appPathSource
-    Add-Log $logFileName "Vérifier les virus avec HitmanPro"
+    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/HitmanPro.exe" $global:appPathSource
+    Add-Log $global:logFileName "Vérifier les virus avec HitmanPro"
 })
 
 $formControls.btnRogueKiller_Desinfection.Add_Click({
-    Invoke-App "RogueKiller_portable64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/RogueKiller_portable64.zip" $appPathSource
-    Add-Log $logFileName "Analyse RogueKiller effectué"
+    Invoke-App "RogueKiller_portable64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/RogueKiller_portable64.zip" $global:appPathSource
+    Add-Log $global:logFileName "Analyse RogueKiller effectué"
     #via le cmd, aller a l"emplacement RogueKillerCMD.exe -scan -no-interact -deleteall #-debuglog {path}
  })

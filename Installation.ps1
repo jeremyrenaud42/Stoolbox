@@ -55,20 +55,20 @@ function Get-Winget
         $wingetStatus = Get-WingetStatus
         if($wingetStatus -ge '1.8')
         {
-            Add-Log $logFileName " - Winget a été installé"
+            Add-Log $global:logFileName " - Winget a été installé"
             Add-Text -Text " - Winget a été installé" -SameLine
             $formControlsMain.lblWinget.foreground = "MediumSeaGreen"
         }
         else 
         {
-            Add-Log $logFileName " - Winget a échoué"
+            Add-Log $global:logFileName " - Winget a échoué"
             Add-Text -Text " - Winget a échoué" -colorName "red" -SameLine
             $formControlsMain.lblWinget.foreground = "red"
         }
     }
     else 
     {
-        Add-Log $logFileName " - Winget est déja installé"
+        Add-Log $global:logFileName " - Winget est déja installé"
         Add-Text -Text " - Winget est déja installé" -SameLine
         $formControlsMain.lblWinget.foreground = "MediumSeaGreen"
     }
@@ -85,20 +85,20 @@ function Get-Choco
         $chocostatus = Get-ChocoStatus
         if($chocostatus -eq $true)
         {
-            Add-Log $logFileName " - Chocolatey a été installé"
+            Add-Log $global:logFileName " - Chocolatey a été installé"
             Add-Text -Text " - Chocolatey a été installé" -SameLine
             $formControlsMain.lblChoco.foreground = "MediumSeaGreen"
         }
         else 
         {
-            Add-Log $logFileName " - Chocolatey a échoué"
+            Add-Log $global:logFileName " - Chocolatey a échoué"
             Add-Text -Text " - Chocolatey a échoué" -colorName "red" -SameLine
             $formControlsMain.lblChoco.foreground = "red"
         }
     }
     else 
     {
-        Add-Log $logFileName " - Chocolatey  est déja installé"
+        Add-Log $global:logFileName " - Chocolatey  est déja installé"
         Add-Text -Text " - Chocolatey est déja installé" -SameLine 
         $formControlsMain.lblChoco.foreground = "MediumSeaGreen"
     }
@@ -114,20 +114,20 @@ function Get-Nuget
         $nugetExist = Test-AppPresence "$env:SystemDrive\Program Files\WindowsPowerShell\Modules\NuGet" #permet de géré si lancé via autre user
         if($nugetExist -eq $true)
         {
-            Add-Log $logFileName " - Nuget a été installé"
+            Add-Log $global:logFileName " - Nuget a été installé"
             Add-Text -Text " - Nuget a été installé" -SameLine
             $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
         }
         else 
         {
-            Add-Log $logFileName " - Nuget a échoué"
+            Add-Log $global:logFileName " - Nuget a échoué"
             Add-Text -Text " - Nuget a échoué" -colorName = "red" -SameLine
             $formControlsMain.lblNuget.foreground = "red"
         }
     }
     else 
     {   
-        Add-Log $logFileName " - Nuget est déja installé" 
+        Add-Log $global:logFileName " - Nuget est déja installé" 
         Add-Text -Text " - Nuget est déja installé" -SameLine
         $formControlsMain.lblNuget.foreground = "MediumSeaGreen"
     }
@@ -158,7 +158,7 @@ function Install-SoftwareMenuApp($softwareName)
 
 ############################GUI####################################
 #WPF - appMenuChoice
-$xamlFileMenuApp = "$appPathSource\InstallationConfigMainWindow.xaml"
+$xamlFileMenuApp = "$global:appPathSource\InstallationConfigMainWindow.xaml"
 $xamlContentMenuApp = Read-XamlFileContent $xamlFileMenuApp
 $formatedXamlFileMenuApp = Format-XamlFile $xamlContentMenuApp
 $xamlDocMenuApp = Convert-ToXmlDocument $formatedXamlFileMenuApp
@@ -167,7 +167,7 @@ $windowMenuApp = New-WPFWindowFromXaml $XamlReaderMenuApp
 $formControlsMenuApp = Get-WPFControlsFromXaml $xamlDocMenuApp $windowMenuApp $sync
 
 #WPF - Main GUI
-$xamlFileMain = "$appPathSource\$($appName)MainWindow.xaml"
+$xamlFileMain = "$global:appPathSource\$($appName)MainWindow.xaml"
 $xamlContentMain = Read-XamlFileContent $xamlFileMain
 $formatedXamlFileMain = Format-XamlFile $xamlContentMain
 $xamlDocMain = Convert-ToXmlDocument $formatedXamlFileMain
@@ -437,7 +437,7 @@ $formControlsMain.richTxtBxOutput.add_Textchanged({
 function Install-SoftwaresManager
 {
     New-Item -Path $lockFile -ItemType 'File' -Force
-    Add-Log $logFileName "Installation de $windowsVersion le $actualDate"
+    Add-Log $global:logFileName "Installation de $windowsVersion le $actualDate"
     $formControlsMain.lblProgress.content = "Préparation"
     Clear-RichTextBox $global:sync["richTxtBxOutput"]
     Get-Winget
@@ -468,11 +468,11 @@ function Update-MsStore
         Add-Text -Text " - Mises à jour du Microsoft Store lancées" -SameLine
         $formControlsMenuApp.richTextBxOutput.AppendText(" - Mises à jour du Microsoft Store lancées`r")
         $formControlsMain.lblStore.foreground = "MediumSeaGreen"
-        Add-Log $logFileName "Mises à jour de Microsoft Store lancées" 
+        Add-Log $global:logFileName "Mises à jour de Microsoft Store lancées" 
     } 
     else 
     {
-        Add-Log $logFileName " - Échec des mises à jour du Microsoft Store" 
+        Add-Log $global:logFileName " - Échec des mises à jour du Microsoft Store" 
         Add-Text -Text " - Échec des mises à jour du Microsoft Store" -colorName "red" -SameLine
         $formControlsMenuApp.richTextBxOutput.AppendText(" - Échec des mises à jour du Microsoft Store`r")
         $formControlsMain.lblStore.foreground = "red"
@@ -508,7 +508,7 @@ Function Rename-SystemDrive
     if($diskName -match $NewDiskName)
     {
         $formControlsMain.lblDisk.foreground = "MediumSeaGreen"
-        Add-Log $logFileName "Le disque est déja nommé $NewDiskName"
+        Add-Log $global:logFileName "Le disque est déja nommé $NewDiskName"
         Add-Text -Text "Le disque est déja nommé $NewDiskName"
         $formControlsMenuApp.richTextBxOutput.AppendText("Le disque est déja nommé $NewDiskName`r") 
     }
@@ -522,13 +522,13 @@ Function Rename-SystemDrive
             $formControlsMain.lblDisk.foreground = "MediumSeaGreen"
             Add-Text -Text "Le disque $env:SystemDrive a été renommé $NewDiskName" 
             $formControlsMenuApp.richTextBxOutput.AppendText("Le disque $env:SystemDrive a été renommé $NewDiskName`r") 
-            Add-Log $logFileName "Le disque $env:SystemDrive a été renommé $NewDiskName"
+            Add-Log $global:logFileName "Le disque $env:SystemDrive a été renommé $NewDiskName"
         }
         else
         {
             Add-Text -Text "Échec du renommage de disque" -colorName "red"
             $formControlsMenuApp.richTextBxOutput.AppendText("Échec du renommage de disque`r")    
-            Add-Log $logFileName "Échec du renommage de disque"
+            Add-Log $global:logFileName "Échec du renommage de disque"
             $formControlsMain.lblDisk.foreground = "red"
         }
     } 
@@ -544,7 +544,7 @@ Function Set-ExplorerDisplay
     {
         Add-Text -Text "Ce PC remplace déja l'accès rapide"
         $formControlsMenuApp.richTextBxOutput.AppendText("Ce PC remplace déja l'accès rapide`r")
-        Add-Log $logFileName "Ce PC remplace déja l'accès rapide"
+        Add-Log $global:logFileName "Ce PC remplace déja l'accès rapide"
     }
     else 
     {
@@ -552,7 +552,7 @@ Function Set-ExplorerDisplay
         $explorerLaunchWindow = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'LaunchTo').LaunchTo 
         if($explorerLaunchWindow -eq '1')   
         {
-            Add-Log $logFileName "L'accès rapide a été remplacé par Ce PC"
+            Add-Log $global:logFileName "L'accès rapide a été remplacé par Ce PC"
             Add-Text -Text "L'accès rapide a été remplacé par Ce PC"
             $formControlsMenuApp.richTextBxOutput.AppendText("L'accès rapide a été remplacé par Ce PC`r")
         }
@@ -560,14 +560,14 @@ Function Set-ExplorerDisplay
         {
             Add-Text -Text "L'accès rapide n'a pas été remplacé par Ce PC" -colorName "red"
             $formControlsMenuApp.richTextBxOutput.AppendText("L'accès rapide n'a pas été remplacé par Ce PC`r")
-            Add-Log $logFileName "L'accès rapide n'a pas été remplacé par Ce PC"
+            Add-Log $global:logFileName "L'accès rapide n'a pas été remplacé par Ce PC"
         }
     }
 
     $providerNotifications = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications').ShowSyncProviderNotifications
     if($providerNotifications -eq '0')
     {
-        Add-Log $logFileName "Le fournisseur de synchronisation est déjà décoché"
+        Add-Log $global:logFileName "Le fournisseur de synchronisation est déjà décoché"
         Add-Text -Text "Le fournisseur de synchronisation est déjà décoché"
         $formControlsMenuApp.richTextBxOutput.AppendText("Le fournisseur de synchronisation est déjà décoché`r")
     }
@@ -577,7 +577,7 @@ Function Set-ExplorerDisplay
         $providerNotifications = (get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name 'ShowSyncProviderNotifications').ShowSyncProviderNotifications
         if($providerNotifications -eq '0')
         {
-            Add-Log $logFileName "Le fournisseur de synchronisation a été decoché"
+            Add-Log $global:logFileName "Le fournisseur de synchronisation a été decoché"
             Add-Text -Text "Le fournisseur de synchronisation a été decoché" 
             $formControlsMenuApp.richTextBxOutput.AppendText("Le fournisseur de synchronisation a été decoché`r")
         }
@@ -585,7 +585,7 @@ Function Set-ExplorerDisplay
         {
             Add-Text -Text "Le fournisseur de synchronisation n'a pas été decoché" -colorName "red"
             $formControlsMenuApp.richTextBxOutput.AppendText("Le fournisseur de synchronisation n'a pas été decoché`r")
-            Add-Log $logFileName "Le fournisseur de synchronisation n'a pas été decoché"
+            Add-Log $global:logFileName "Le fournisseur de synchronisation n'a pas été decoché"
         }
     }
     if(($explorerLaunchWindow -eq '1') -and ($providerNotifications -eq '0'))
@@ -609,7 +609,7 @@ Function Disable-Bitlocker
         $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
         Add-Text -Text "Bitlocker a été désactivé"
         $formControlsMenuApp.richTextBxOutput.AppendText("Bitlocker a été désactivé`r")
-        Add-Log $logFileName "Bitlocker a été désactivé"
+        Add-Log $global:logFileName "Bitlocker a été désactivé"
     }
     elseif ($bitlockerStatus -eq 'EncryptionInProgress')
     {
@@ -617,28 +617,28 @@ Function Disable-Bitlocker
         $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
         Add-Text -Text "Bitlocker a été désactivé"
         $formControlsMenuApp.richTextBxOutput.AppendText("Bitlocker a été désactivé`r")
-        Add-Log $logFileName "Bitlocker a été désactivé"
+        Add-Log $global:logFileName "Bitlocker a été désactivé"
     }
     elseif ($bitlockerStatus -eq 'FullyDecrypted')
     {
         $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
         Add-Text -Text "Bitlocker est déja désactivé"
         $formControlsMenuApp.richTextBxOutput.AppendText("Bitlocker est déja désactivé`r")
-        Add-Log $logFileName "Bitlocker est déja désactivé"
+        Add-Log $global:logFileName "Bitlocker est déja désactivé"
     }
     elseif ($bitlockerStatus -eq 'DecryptionInProgress')
     {
         $formControlsMain.lblBitlocker.foreground = "MediumSeaGreen"
         Add-Text -Text "Bitlocker est déja en cours de déchiffrement" 
         $formControlsMenuApp.richTextBxOutput.AppendText("Bitlocker est déja en cours de déchiffrement`r")
-        Add-Log $logFileName "Bitlocker est déja en cours de déchiffrement"
+        Add-Log $global:logFileName "Bitlocker est déja en cours de déchiffrement"
     }
     else 
     {
         $formControlsMain.lblBitlocker.foreground = "red"
         Add-Text -Text "Bitlocker a échoué" -colorName "red"
         $formControlsMenuApp.richTextBxOutput.AppendText("Bitlocker a échoué`r")
-        Add-Log $logFileName "Bitlocker a échoué"
+        Add-Log $global:logFileName "Bitlocker a échoué"
     }
 }
 
@@ -651,7 +651,7 @@ Function Disable-FastBoot
     {  
         Add-Text -Text "Le démarrage rapide est déjà désactivé"
         $formControlsMenuApp.richTextBxOutput.AppendText("Le démarrage rapide est déjà désactivé`r")
-        Add-Log $logFileName "Le démarrage rapide est déjà désactivé"
+        Add-Log $global:logFileName "Le démarrage rapide est déjà désactivé"
         $formControlsMain.lblStartup.foreground = "MediumSeaGreen"
     }
     elseif($power -eq '1')
@@ -659,14 +659,14 @@ Function Disable-FastBoot
         set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Name 'HiberbootEnabled' -Type 'DWord' -Value '0'  
         Add-Text -Text "Le démarrage rapide a été désactivé"
         $formControlsMenuApp.richTextBxOutput.AppendText("Le démarrage rapide a été désactivé`r")
-        Add-Log $logFileName "Le démarrage rapide a été désactivé"
+        Add-Log $global:logFileName "Le démarrage rapide a été désactivé"
         $formControlsMain.lblStartup.foreground = "MediumSeaGreen"
     }
     else  
     {
         Add-Text -Text "Le démarrage rapide n'a pas été désactivé" -colorName "red"
         $formControlsMenuApp.richTextBxOutput.AppendText("Le démarrage rapide n'a pas été désactivé`r")
-        Add-Log $logFileName "Le démarrage rapide n'a pas été désactivé"
+        Add-Log $global:logFileName "Le démarrage rapide n'a pas été désactivé"
         $formControlsMain.lblStartup.foreground = "red"
     }
 }
@@ -686,7 +686,7 @@ Function Remove-EngKeyboard($selectedLanguage)
         {
             Add-Text -Text "Le clavier $selectedLanguage n'a pas été supprimé" -colorName "red"
             $formControlsMenuApp.richTextBxOutput.AppendText("Le clavier $selectedLanguage n'a pas été supprimé`r")
-            Add-Log $logFileName "Le clavier $selectedLanguage n'a pas été supprimé"
+            Add-Log $global:logFileName "Le clavier $selectedLanguage n'a pas été supprimé"
             $formControlsMain.lblkeyboard.foreground = "red"
         }
         else
@@ -694,14 +694,14 @@ Function Remove-EngKeyboard($selectedLanguage)
             Add-Text -Text "Le clavier $selectedLanguage a été supprimé"
             $formControlsMenuApp.richTextBxOutput.AppendText("Le clavier $selectedLanguage a été supprimé`r")
             $formControlsMain.lblkeyboard.foreground = "MediumSeaGreen"
-            Add-Log $logFileName "Le clavier $selectedLanguage a été supprimé"
+            Add-Log $global:logFileName "Le clavier $selectedLanguage a été supprimé"
         }
     }
     else 
     {
         Add-Text -Text "Le clavier $selectedLanguage est déja supprimé"
         $formControlsMenuApp.richTextBxOutput.AppendText("Le clavier $selectedLanguage est déja supprimé`r")
-        Add-Log $logFileName "Le clavier $selectedLanguage est déja supprimé"
+        Add-Log $global:logFileName "Le clavier $selectedLanguage est déja supprimé"
         $formControlsMain.lblkeyboard.foreground = "MediumSeaGreen"
     }   
 }
@@ -719,7 +719,7 @@ Function Set-Privacy
     {
         Add-Text -Text "Les options de confidentialité sont déjà configurées"
         $formControlsMenuApp.richTextBxOutput.AppendText("Les options de confidentialité sont déjà configurées`r")
-        Add-Log $logFileName "Les options de confidentialité sont déjà configurées"
+        Add-Log $global:logFileName "Les options de confidentialité sont déjà configurées"
         $formControlsMain.lblPrivacy.foreground = "MediumSeaGreen"
     }
     else 
@@ -737,7 +737,7 @@ Function Set-Privacy
         { 
             Add-Text -Text "Les options de confidentialité ont été configurées"
             $formControlsMenuApp.richTextBxOutput.AppendText("Les options de confidentialité ont été configurées`r")
-            Add-Log $logFileName "Les options de confidentialité ont été configurées"
+            Add-Log $global:logFileName "Les options de confidentialité ont été configurées"
             $formControlsMain.lblPrivacy.foreground = "MediumSeaGreen" 
         }
         else 
@@ -745,7 +745,7 @@ Function Set-Privacy
             $formControlsMain.lblPrivacy.foreground = "red" 
             Add-Text -Text "Les options de confidentialité n'ont pas été configurées" -colorName "red"
             $formControlsMenuApp.richTextBxOutput.AppendText("Les options de confidentialité n'ont pas été configurées`r")
-            Add-Log $logFileName "Les options de confidentialité n'ont pas été configurées"
+            Add-Log $global:logFileName "Les options de confidentialité n'ont pas été configurées"
         } 
     }    
 }
@@ -767,7 +767,7 @@ Function Enable-DesktopIcon
     {
         Add-Text -Text "Les icones systèmes sont déjà installés sur le bureau"
         $formControlsMenuApp.richTextBxOutput.AppendText("Les icones systèmes sont déjà installés sur le bureau`r")
-        Add-Log $logFileName "Les icones systèmes sont déjà installés sur le bureau"
+        Add-Log $global:logFileName "Les icones systèmes sont déjà installés sur le bureau"
         $formControlsMain.lblDesktopIcon.foreground = "MediumSeaGreen"
     }
     else 
@@ -783,14 +783,14 @@ Function Enable-DesktopIcon
         {
             Add-Text -Text "Les icones systèmes ont été installés sur le bureau"
             $formControlsMenuApp.richTextBxOutput.AppendText("Les icones systèmes ont été installés sur le bureau`r")
-            Add-Log $logFileName "Les icones systèmes ont été installés sur le bureau"
+            Add-Log $global:logFileName "Les icones systèmes ont été installés sur le bureau"
             $formControlsMain.lblDesktopIcon.foreground = "MediumSeaGreen"  
         }
         else 
         {
             Add-Text -Text "Les icones systèmes n'ont pas été installés sur le bureau" -colorName "red"
             $formControlsMenuApp.richTextBxOutput.AppendText("Les icones systèmes n'ont pas été installés sur le bureau`r")
-            Add-Log $logFileName "Les icones systèmes n'ont pas été installés sur le bureau"
+            Add-Log $global:logFileName "Les icones systèmes n'ont pas été installés sur le bureau"
             $formControlsMain.lblDesktopIcon.foreground = "red"
         }
     }  
@@ -837,12 +837,12 @@ function Install-Software($appInfo)
 {
     $formControlsMain.lblProgress.Content = "Installation de $softwareName"
     Add-Text -Text "Installation de $softwareName en cours"
-    Add-Log $logFileName "Installation de $softwareName"
+    Add-Log $global:logFileName "Installation de $softwareName"
     $softwareInstallationStatus = Test-SoftwarePresence $appInfo
         if($softwareInstallationStatus)
         {
             Add-Text -Text "- $softwareName est déja installé" -SameLine
-            Add-Log $logFileName "- $softwareName est déja installé"
+            Add-Log $global:logFileName "- $softwareName est déja installé"
         }
         elseif($softwareInstallationStatus -eq $false)
         {  
@@ -860,7 +860,7 @@ function Install-SoftwareWithWinget($appInfo)
         if($softwareInstallationStatus)
         {
             Add-Text -Text " - $softwareName installé avec succès" -SameLine
-            Add-Log $logFileName " - $softwareName installé avec succès"
+            Add-Log $global:logFileName " - $softwareName installé avec succès"
         } 
         else
         {
@@ -878,12 +878,12 @@ function Install-SoftwareWithChoco($apsInfo)
     if($softwareInstallationStatus)
     {     
         Add-Text -Text " - $softwareName installé avec succès" -SameLine
-        Add-Log $logFileName " - $softwareName installé avec succès"
+        Add-Log $global:logFileName " - $softwareName installé avec succès"
     }
     else
     {
         Add-Text -Text " - $softwareName a échoué" -colorName "red" -SameLine
-        Add-Log $logFileName " - $softwareName a échoué"
+        Add-Log $global:logFileName " - $softwareName a échoué"
         $Global:failStatus = $true
         Install-SoftwareWithNinite $appInfo
     } 
@@ -906,13 +906,13 @@ function Get-ActivationStatus
     if($activated -eq "1")
     {
         Add-Text -Text "$windowsVersion est activé sur cet ordinateur"
-        Add-Log $logFileName "$windowsVersion est activé sur cet ordinateur"
+        Add-Log $global:logFileName "$windowsVersion est activé sur cet ordinateur"
         $formControlsMain.lblActivation.foreground = "MediumSeaGreen"      
     }
     else 
     {  
         Add-Text -Text "Windows n'est pas activé" -colorName "red"
-        Add-Log $logFileName "Windows n'est pas activé"
+        Add-Log $global:logFileName "Windows n'est pas activé"
         [System.Windows.MessageBox]::Show("Windows n'est pas activé","Installation Windows",0,64)   
         $formControlsMain.lblActivation.foreground = "red"
     }  
@@ -983,20 +983,20 @@ function Install-WindowsUpdate
         if($totalUpdates -eq 0)
         {
             Add-Text -Text " - Toutes les mises à jour sont deja installées" -SameLine 
-            Add-Log $logFileName " - Toutes les mises à jour sont deja installées"
+            Add-Log $global:logFileName " - Toutes les mises à jour sont deja installées"
             $formControlsMain.lblUpdate.foreground = "MediumSeaGreen"   
         }
         elseif($totalUpdates -gt 0)
         {
             Add-Text -Text " - $totalUpdates mises à jour de disponibles" -SameLine 
-            Add-Log $logFileName " - $totalUpdates mises à jour de disponibles"
+            Add-Log $global:logFileName " - $totalUpdates mises à jour de disponibles"
             $currentUpdate = 0
                 foreach($update in $updates)
                 { 
                     $currentUpdate++ 
                     $kb = $update.KB
                     Add-Text -Text "Mise à jour $($currentUpdate) sur $($totalUpdates): $($update.Title)"
-                    Add-Log $logFileName "Mise à jour $($currentUpdate) sur $($totalUpdates): $($update.Title)"
+                    Add-Log $global:logFileName "Mise à jour $($currentUpdate) sur $($totalUpdates): $($update.Title)"
                     Get-WindowsUpdate -KBArticleID $kb -MaxSize $maxSizeBytes -Install -AcceptAll -IgnoreReboot     
                 }
                 $formControlsMain.lblUpdate.foreground = "MediumSeaGreen"
@@ -1004,7 +1004,7 @@ function Install-WindowsUpdate
         else
         {
             Add-Text -Text " - Échec de la vérification des mise a jours de Windows" -colorName "red" -SameLine
-            Add-Log $logFileName " - Échec de la vérification des mise a jours de Windows"
+            Add-Log $global:logFileName " - Échec de la vérification des mise a jours de Windows"
             $formControlsMain.lblUpdate.foreground = "red"
         } 
 }
@@ -1042,9 +1042,9 @@ function Set-GooglePinnedTaskbar
 function Complete-Installation
 {
     $formControlsMain.lblManualComplete.foreground = "DodgerBlue"
-    Add-Log $logFileName "Installation de Windows effectué avec Succès"
-    Copy-Log $logFileName "$env:SystemDrive\Temp"
-    Send-FTPLogs $appPathSource\$logFileName
+    Add-Log $global:logFileName "Installation de Windows effectué avec Succès"
+    Copy-Log $global:logFileName "$env:SystemDrive\Temp"
+    Send-FTPLogs $global:appPathSource\$global:logFileName
     [Audio]::Volume = 0.25
     [console]::beep(1000,666)
     Start-Sleep -s 1

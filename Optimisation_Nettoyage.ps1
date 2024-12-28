@@ -1,53 +1,53 @@
 $formControls.btnUpdate_Optimisation_Nettoyage.Add_Click({
     start-Process "ms-settings:windowsupdate"
-    Add-Log $logFileName "Mises à jours de Windows effectuées"
+    Add-Log $global:logFileName "Mises à jours de Windows effectuées"
 })
 
 $formControls.btnAutoruns_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/autoruns.exe" $appPathSource
+    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/autoruns.exe" $global:appPathSource
     start-sleep 5
     taskmgr
-    Add-Log $logFileName "Vérifier les logiciels au démarrage"
+    Add-Log $global:logFileName "Vérifier les logiciels au démarrage"
 })
 
 $formControls.btnRevo_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/RevoUPort.zip" $appPathSource
-    Add-Log $logFileName "Vérifier les programmes nuisibles"
+    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/RevoUPort.zip" $global:appPathSource
+    Add-Log $global:logFileName "Vérifier les programmes nuisibles"
 })
 
 $formControls.btnHDD_Optimisation_Nettoyage.Add_Click({
     Start-Process "$env:SystemDrive\Windows\SYSTEM32\cleanmgr.exe"
-    Add-Log $logFileName "Nettoyage du disque effectué"
+    Add-Log $global:logFileName "Nettoyage du disque effectué"
 })
 
 $formControls.btnCcleaner_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/CCleaner64.zip" $appPathSource
-    Add-Log $logFileName "Nettoyage CCleaner effectué"
+    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/CCleaner64.zip" $global:appPathSource
+    Add-Log $global:logFileName "Nettoyage CCleaner effectué"
 })
 
 $formControls.btnSfc_Optimisation_Nettoyage.Add_Click({
     Start-Process cmd.exe -ArgumentList "/k sfc /scannow"
-    Add-Log $logFileName "Vérifier les fichiers corrompus"
+    Add-Log $global:logFileName "Vérifier les fichiers corrompus"
 })
 
 $formControls.btnHitmanPro_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe" $appPathSource
-    Add-Log $logFileName "Vérifier les virus avec HitmanPro"
+    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe" $global:appPathSource
+    Add-Log $global:logFileName "Vérifier les virus avec HitmanPro"
 })
 
 $formControls.btnSysEvent_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "sysevent.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/sysevent/sysevent.exe" $appPathSource
-    Add-Log $logFileName "Vérifier les evenements"
+    Invoke-App "sysevent.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/sysevent/sysevent.exe" $global:appPathSource
+    Add-Log $global:logFileName "Vérifier les evenements"
 })
 
 $formControls.btnCrystalDiskInfo_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "CrystalDiskInfoPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip" $appPathSource
-    Add-Log $logFileName "Vérifier la santé du HDD"
+    Invoke-App "CrystalDiskInfoPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip" $global:appPathSource
+    Add-Log $global:logFileName "Vérifier la santé du HDD"
 })
 
 $formControls.btnHDTune_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "_HDTune.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/_HDTune.zip" $appPathSource
-    Add-Log $logFileName "Vérifier la Vitesse du disque dur"
+    Invoke-App "_HDTune.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/_HDTune.zip" $global:appPathSource
+    Add-Log $global:logFileName "Vérifier la Vitesse du disque dur"
 })
 
 $formControls.btnSysinfoz_Optimisation_Nettoyage.Add_Click({
