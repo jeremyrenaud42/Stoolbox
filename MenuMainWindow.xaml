@@ -13,19 +13,21 @@
     <Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Image x:Name="imgBackGround" Source="c:\_tech\Applications\source\images\background_menu.jpeg" Grid.RowSpan="3" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill"/>
         <Rectangle x:Name="rectBackGround" Fill="#4D000000" Grid.RowSpan="3" Grid.ColumnSpan="3" />
-        <Rectangle x:Name="rectTitleBar" Height="40" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.RowSpan="3" Grid.ColumnSpan="3">
-            <Rectangle.Fill>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#2b2d30" Offset="0" />
-                    <GradientStop Color="DarkRed" Offset="0.15" />
-                    <GradientStop Color="#2b2d30" Offset="0.90" />
-                </LinearGradientBrush>
-            </Rectangle.Fill>
-        </Rectangle>
-        <Button x:Name="btnClose" Grid.Row="0" Grid.Column="2" Content="X" Margin="0,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="60" Height="40" IsCancel="True" FontSize="25" Background="Transparent" Foreground ="Azure" BorderBrush="Transparent" FontWeight="Bold"/>
-        <Button x:Name="btnMin" Grid.Row="0" Grid.Column="2" Content="-" Margin="0,0,50,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="60" Height="40" FontSize="30" Background="Transparent" Foreground ="Azure" BorderBrush="Transparent" FontWeight="Bold"/>
-        <Image x:Name="imgLogo" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Margin="4,4,0,0" Width="32" Source="C:/_Tech/Applications/Source/Images/Icone.ico"/>
-        <Label x:Name="lblTitre" Content="Menu - Boite à outils du technicien" Grid.RowSpan="3" Grid.ColumnSpan="3" FontWeight="SemiBold" Foreground="Azure" FontSize="16" FontFamily="Arial" HorizontalAlignment="Left" Margin="50,6,0,0" VerticalAlignment="Top" Width="400"/>
+        <Grid x:Name="gridToolbar" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Rectangle x:Name="rectTitleBar" Height="40" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.RowSpan="3" Grid.ColumnSpan="3">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#2b2d30" Offset="0" />
+                        <GradientStop Color="DarkRed" Offset="0.15" />
+                        <GradientStop Color="#2b2d30" Offset="0.90" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Button x:Name="btnClose" Grid.Row="0" Grid.Column="2" Content="X" Margin="0,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="60" Height="40" IsCancel="True" FontSize="25" Background="Transparent" Foreground ="Azure" BorderBrush="Transparent" FontWeight="Bold"/>
+            <Button x:Name="btnMin" Grid.Row="0" Grid.Column="2" Content="-" Margin="0,0,50,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="60" Height="40" FontSize="30" Background="Transparent" Foreground ="Azure" BorderBrush="Transparent" FontWeight="Bold"/>
+            <Image x:Name="imgLogo" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Margin="4,4,0,0" Width="32" Source="C:/_Tech/Applications/Source/Images/Icone.ico"/>
+            <Label x:Name="lblTitre" Content="Menu - Boite à outils du technicien" Grid.RowSpan="3" Grid.ColumnSpan="3" FontWeight="SemiBold" Foreground="Azure" FontSize="16" FontFamily="Arial" HorizontalAlignment="Left" Margin="50,6,0,0" VerticalAlignment="Top" Width="400"/>
+        </Grid>
         <Label x:Name="lblChoisirOption" Style="{StaticResource LabelStyle}" Grid.Row="0" Grid.Column="1" Content="Choisissez une option" VerticalAlignment="top" Width="400" Background="DarkRed" Margin="0,60,0,0"/>
 
         <Grid x:Name="gridMenu" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

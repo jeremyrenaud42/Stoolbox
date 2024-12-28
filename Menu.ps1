@@ -490,7 +490,7 @@ $Window.add_Loaded({
     $formControls.btnUninstall_Menu.Add_Click({
         Remove-StoolboxApp
     })
-    $formControls.gridMain.Add_MouseDown({
+    $formControls.gridToolbar.Add_MouseDown({
         $window.DragMove()
     })
     $formControls.btnClose.Add_Click({
