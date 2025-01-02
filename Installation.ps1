@@ -7,7 +7,7 @@ $appNames | ForEach-Object {
     $appsInfo.$softwareName.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path64)
     $appsInfo.$softwareName.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.path32)
     $appsInfo.$softwareName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.pathAppData)
-    $appsInfo.$softwareName.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.NiniteName)
+    $appsInfo.$softwareName.RemoteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.RemoteName)
     }
 function Add-Text 
 {
@@ -891,10 +891,10 @@ function Install-SoftwareWithChoco($apsInfo)
 
 function Install-SoftwareWithNinite($appInfo)
 {
-    if($appInfo.NiniteName)
+    if($appInfo.RemoteName)
     {
-        Invoke-WebRequest $appInfo.NiniteGithubLink -OutFile $appInfo.NiniteName
-        Start-Process $appInfo.NiniteName -Verb runAs
+        Invoke-WebRequest $appInfo.RemoteLink -OutFile $appInfo.RemoteName
+        Start-Process $appInfo.RemoteName -Verb runAs
     }
 }
 
