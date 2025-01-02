@@ -120,40 +120,6 @@ function SubmenuTheme
 }
 Set-Theme -theme 1
 #>
-function Get-Tweaking
-{
-    $path = Test-Path "$global:appPathSource\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
-    if($path -eq $false)
-    {
-        #choco install windowsrepair , il faudra revoir le start process aussi
-        Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/tweaking.com - Windows Repair.zip" -OutFile "$global:appPathSource\Tweak\tweaking.com - Windows Repair.zip"
-        Expand-Archive "$global:appPathSource\Tweak\tweaking.com - Windows Repair.zip" "$global:appPathSource\Tweak"
-        Remove-Item "$global:appPathSource\Tweak\tweaking.com - Windows Repair.zip"
-        Copy-Item "$global:appPathSource\Tweak\Tweaking.com - Windows Repair" -Recurse -Destination "$desktop\Tweaking.com - Windows Repair"
-        Start-Process "$desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
-    }    
-    elseif($path)
-    {
-        Start-Process "$desktop\Tweaking.com - Windows Repair\Repair_Windows.exe"
-    }
-}
-
-function Get-PW
-{
-    $path = Test-Path "$global:appPathSource\Partition_Wizard\partitionwizard.exe"
-    if($path -eq $false)
-    {
-        Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Partition_Wizard.zip" -OutFile "$global:appPathSource\Partition_Wizard.zip"
-        Expand-Archive "$global:appPathSource\Partition_Wizard.zip" $global:appPathSource
-        Remove-Item "$global:appPathSource\Partition_Wizard.zip"
-        Copy-Item "$global:appPathSource\Partition_Wizard" -Recurse -Destination "$desktop\Partition_Wizard"
-        Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
-    }    
-    elseif($path)
-    {
-        Start-Process "$desktop\Partition_Wizard\partitionwizard.exe"
-    }
-}
 
 $formControls.btnMenu_Fix.Add_Click({
     Open-Menu
@@ -200,7 +166,16 @@ $formControls.btnWinDirStat_Fix.Add_Click({
     Invoke-App "WinDirStatPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip" $global:appPathSource
 })
 $formControls.btnPW_Fix.Add_Click({
-    Get-PW
+    $path = Test-Path "$global:appPathSource\Partition_Wizard\partitionwizard.exe"
+    if($path -eq $false)
+    {
+        Get-RemoteFile "Partition_Wizard.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Partition_Wizard.zip" $global:appPathSource
+        Start-Process "$global:appPathSource\Partition_Wizard\partitionwizard.exe"
+    }    
+    elseif($path)
+    {
+        Start-Process "$global:appPathSource\Partition_Wizard\partitionwizard.exe"
+    }
 })
 $formControls.btnInternet_Fix.Add_Click({
     Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip"  $global:appPathSource
@@ -232,7 +207,16 @@ $formControls.btnUWT11_Fix.Add_Click({
     Start-Process "$global:appPathSource\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe"
 })
 $formControls.btnTweaking_Fix.Add_Click({
-    Get-Tweaking 
+    $path = Test-Path "$global:appPathSource\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
+    if($path -eq $false)
+    {
+        Get-RemoteFile "tweaking.com - Windows Repair.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/tweaking.com - Windows Repair.zip" $global:appPathSource
+        Start-Process "$global:appPathSource\Tweak\Tweaking.com - Windows Repair"
+    }    
+    elseif($path)
+    {
+        Start-Process "$global:appPathSource\Tweak\Tweaking.com - Windows Repair"
+    }
 })
 $formControls.btnSterjoBrowser_Fix.Add_Click({
     Start-Process "$global:appPathSource\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe"
