@@ -166,16 +166,7 @@ $formControls.btnWinDirStat_Fix.Add_Click({
     Invoke-App "WinDirStatPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip" $global:appPathSource
 })
 $formControls.btnPW_Fix.Add_Click({
-     $path = Test-Path "$global:appPathSource\Partition_Wizard\partitionwizard.exe"
-    if($path -eq $false)
-    {
-        Get-RemoteFile "Partition_Wizard.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Partition_Wizard.zip" $global:appPathSource
-        Start-Process "$global:appPathSource\Partition_Wizard\partitionwizard.exe"
-    }    
-    elseif($path)
-    {
-        Start-Process "$global:appPathSource\Partition_Wizard\partitionwizard.exe"
-    }
+    Invoke-App "PartitionWizard.zip" "https://ftp.alexchato9.com/public/file/eortitew8kkil6hdeh2lgw/PartitionWizard.zip" $global:appPathSource
 })
 $formControls.btnInternet_Fix.Add_Click({
     Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip"  $global:appPathSource
@@ -207,16 +198,7 @@ $formControls.btnUWT11_Fix.Add_Click({
     Start-Process "$global:appPathSource\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe"
 })
 $formControls.btnTweaking_Fix.Add_Click({
-    $path = Test-Path "$global:appPathSource\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
-    if($path -eq $false)
-    {
-        Get-RemoteFile "tweaking.com - Windows Repair.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/tweaking.com - Windows Repair.zip" "$global:appPathSource\Tweak"
-        Start-Process "$global:appPathSource\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
-    }    
-    elseif($path)
-    {
-        Start-Process "$global:appPathSource\Tweak\Tweaking.com - Windows Repair\Repair_Windows.exe"
-    }
+    Invoke-App "Repair_Windows.zip" "https://ftp.alexchato9.com/public/file/7mop4guroekrtvbrhb_0wq/Repair_Windows.zip" "$global:appPathSource\Tweak"
 })
 $formControls.btnSterjoBrowser_Fix.Add_Click({
     Start-Process "$global:appPathSource\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe"
