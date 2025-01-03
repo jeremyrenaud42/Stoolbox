@@ -1,5 +1,5 @@
-﻿$jsonFilePath = "$applicationPath\installation\source\InstallationApps.JSON"
-$jsonString = Get-Content -Raw $jsonFilePath
+﻿$jsonAppsFilePath = "$applicationPath\installation\source\InstallationApps.JSON"
+$jsonString = Get-Content -Raw $jsonAppsFilePath
 $appsInfo = ConvertFrom-Json $jsonString
 $appNames = $appsInfo.psobject.Properties.Name
 $appNames | ForEach-Object {
@@ -9,6 +9,18 @@ $appNames | ForEach-Object {
     $appsInfo.$softwareName.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.pathAppData)
     $appsInfo.$softwareName.RemoteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.$softwareName.RemoteName)
     }
+
+function Update-InstallationStatus($softwareName) 
+{
+    $jsonAppsFilePath = "$applicationPath\installation\source\InstallationApps.JSON"
+    $jsonString = Get-Content -Raw $jsonAppsFilePath
+    $appsInfo = ConvertFrom-Json $jsonString
+    if (Test-SoftwarePresence $appsInfo.$softwareName) 
+    {
+        $appsInfo.$softwareName.InstalledStatus = "1"
+        $appsInfo | ConvertTo-Json | Set-Content $jsonAppsFilePath
+    }
+}
 function Add-Text 
 {
     param
@@ -861,6 +873,7 @@ function Install-SoftwareWithWinget($appInfo)
         {
             Add-Text -Text " - $softwareName installé avec succès" -SameLine
             Add-Log $global:logFileName " - $softwareName installé avec succès"
+            Update-InstallationStatus $softwareName
         } 
         else
         {
@@ -868,23 +881,21 @@ function Install-SoftwareWithWinget($appInfo)
         }     
 }
 
-function Install-SoftwareWithChoco($apsInfo)
+function Install-SoftwareWithChoco($appInfo)
 {
     if($appInfo.ChocoName)
     {
         choco install $appInfo.ChocoName -y
     }
-    $softwareInstallationStatus = Test-SoftwarePresence $apsInfo
+    $softwareInstallationStatus = Test-SoftwarePresence $appInfo
     if($softwareInstallationStatus)
     {     
         Add-Text -Text " - $softwareName installé avec succès" -SameLine
         Add-Log $global:logFileName " - $softwareName installé avec succès"
+        Update-InstallationStatus $softwareName
     }
     else
     {
-        Add-Text -Text " - $softwareName a échoué" -colorName "red" -SameLine
-        Add-Log $global:logFileName " - $softwareName a échoué"
-        $Global:failStatus = $true
         Install-SoftwareWithNinite $appInfo
     } 
 }
@@ -896,6 +907,19 @@ function Install-SoftwareWithNinite($appInfo)
         Invoke-WebRequest $appInfo.RemoteLink -OutFile $appInfo.RemoteName
         Start-Process $appInfo.RemoteName -Verb runAs
     }
+    $softwareInstallationStatus = Test-SoftwarePresence $appInfo
+    if($softwareInstallationStatus)
+    {     
+        Add-Text -Text " - $softwareName installé avec succès" -SameLine
+        Add-Log $global:logFileName " - $softwareName installé avec succès"
+        Update-InstallationStatus $softwareName
+    }
+    else
+    {
+        Add-Text -Text " - $softwareName a échoué" -colorName "red" -SameLine
+        Add-Log $global:logFileName " - $softwareName a échoué"
+        $Global:failStatus = $true
+    } 
 }
 
 function Get-ActivationStatus
