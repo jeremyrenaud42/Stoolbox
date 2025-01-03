@@ -156,7 +156,7 @@ New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
 Get-RemotePsm1Files
 Get-RequiredModules
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
-$windowsVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion") | Select-Object -expand ProductName
+$windowsVersion = ((Get-CimInstance -ClassName Win32_OperatingSystem).Caption) -replace 'Microsoft ', ''
 $OSUpdate = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion") | Select-Object -expand DisplayVersion
 $actualDate = (Get-Date).ToString()
 
