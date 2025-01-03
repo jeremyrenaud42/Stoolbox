@@ -1,4 +1,5 @@
-﻿$desktop = [Environment]::GetFolderPath("Desktop")
+﻿Add-Type -AssemblyName System.Windows.Forms #pour éviter des erreurs de Messagebox
+$desktop = [Environment]::GetFolderPath("Desktop")
 $techFolder = "$env:SystemDrive\_Tech"
 $tempFolder = "$env:SystemDrive\Temp\Stoolbox"
 $lockfile = "$env:SystemDrive\_Tech\Applications\source\*.lock"
