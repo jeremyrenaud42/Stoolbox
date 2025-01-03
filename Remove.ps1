@@ -102,7 +102,7 @@ function Remove-techFolder
     Remove-Item $techFolder -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     if (Test-Path $techFolder)
     {
-        Add-Type -AssemblyName System.Windows.Forms #pour éviter des erreurs de Messagebox
+        Add-Type -AssemblyName "PresentationFramework" #pour éviter des erreurs de Messagebox
         [System.Windows.MessageBox]::Show("La suppression du dossier $techFolder a échoué","Suppression",0,48) | Out-Null
     }
     else 
