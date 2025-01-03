@@ -48,6 +48,7 @@
                 <Button x:Name="btnLancementDesinfection_Menu" Style="{StaticResource MenuButtonStyle}" Content="Désinfection"/>
                 <Button x:Name="btnLancementFix_Menu" Style="{StaticResource MenuButtonStyle}" Content="Fix"/>
             </StackPanel>
+            <Label x:Name="lblOS_Menu" Content="" HorizontalContentAlignment="Center" Grid.Row="0" Grid.Column="0" HorizontalAlignment="center" VerticalAlignment="bottom" Background="Transparent" Foreground="white" Width="250" FontSize="16"/>
             <Button x:Name="btnUninstall_Menu" Content="Désinstaller" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" Height="65" Width="150" FontFamily="Microsoft Sans Serif" FontSize="16" Background="black" BorderThickness="2" Foreground="#FFA50606" FontWeight="Bold" ToolTip="Supprime toutes les traces"/>
             <Button x:Name="btnChangeLog_Menu" Content="Changelog" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" Height="43" Width="104" FontFamily="Microsoft Sans Serif" FontSize="16" Background="Black" BorderThickness="2" Foreground="White" ToolTip="Voir les dernières nouveautés"/>
             <Button x:Name="btnNyxSky_Menu" Content="NyxSky" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Height="55" Width="150" FontFamily="Microsoft Sans Serif" FontSize="16" Background="#3c1361" BorderThickness="2" Foreground="White" HorizontalContentAlignment="Right" Padding="0,0,30,0" ToolTip="Lien vers le site"/>
