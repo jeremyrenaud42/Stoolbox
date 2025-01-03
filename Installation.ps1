@@ -452,7 +452,7 @@ $formControlsMain.richTxtBxOutput.add_Textchanged({
 function Install-SoftwaresManager
 {
     New-Item -Path $lockFile -ItemType 'File' -Force
-    Add-Log $global:logFileName "Installation de $windowsVersion le $actualDate"
+    Add-Log $global:logFileName "Installation de $windowsVersion $OSUpdate le $actualDate"
     $formControlsMain.lblProgress.content = "Préparation"
     Clear-RichTextBox $global:sync["richTxtBxOutput"]
     Get-Winget

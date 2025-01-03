@@ -104,14 +104,39 @@
     </Setter>
     </Style>
     <Style x:Key="LabelStyle" TargetType="Label">
-        <Setter Property="FontFamily" Value="Microsoft Sans Serif"/>
-        <Setter Property="FontSize" Value="22"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Height" Value="42"/>
-        <Setter Property="HorizontalAlignment" Value="center"/>
-    </Style>
+    <!-- Basic Style -->
+    <Setter Property="FontFamily" Value="Microsoft Sans Serif"/>
+    <Setter Property="FontSize" Value="22"/>
+    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="Height" Value="42"/>
+    <Setter Property="HorizontalAlignment" Value="Center"/>
+    <Setter Property="Background">
+        <Setter.Value>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="DarkRed" Offset="0.0"/>
+                <GradientStop Color="Maroon" Offset="1.0"/>
+            </LinearGradientBrush>
+        </Setter.Value>
+    </Setter>
+    <Setter Property="Effect">
+        <Setter.Value>
+            <DropShadowEffect Color="Black" BlurRadius="10" Direction="270" ShadowDepth="5"/>
+        </Setter.Value>
+    </Setter>
+    <Setter Property="Padding" Value="10,5"/>
+    <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate TargetType="Label">
+                <Border BorderBrush="Black" BorderThickness="2" CornerRadius="10" Background="{TemplateBinding Background}">
+                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+            </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+</Style>
+
     <Style x:Key="TextBlockStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="Foreground" Value="red"/>

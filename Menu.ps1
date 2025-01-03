@@ -157,6 +157,7 @@ Get-RemotePsm1Files
 Get-RequiredModules
 $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
 $windowsVersion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
+$OSUpdate = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion") | Select-Object -expand DisplayVersion
 $actualDate = (Get-Date).ToString()
 
 $global:sync['flag'] = $true 
