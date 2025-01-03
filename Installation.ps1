@@ -310,6 +310,9 @@ $windowMenuApp.add_Loaded({
         $windowMenuApp.Close()
         Exit
     })
+    $formControlsMenuApp.btnMin_InstallationConfig.Add_Click({
+        $windowMenuApp.WindowState = [System.Windows.WindowState]::Minimized
+    })
     $formControlsMenuApp.btnQuit_InstallationConfig.Add_Click({
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         $jsonFilePath = "$sourceFolderPath\Settings.JSON"
