@@ -1,5 +1,4 @@
-﻿Add-Type -AssemblyName System.Windows.Forms #pour éviter des erreurs de Messagebox
-$desktop = [Environment]::GetFolderPath("Desktop")
+﻿$desktop = [Environment]::GetFolderPath("Desktop")
 $techFolder = "$env:SystemDrive\_Tech"
 $tempFolder = "$env:SystemDrive\Temp\Stoolbox"
 $lockfile = "$env:SystemDrive\_Tech\Applications\source\*.lock"
@@ -103,6 +102,7 @@ function Remove-techFolder
     Remove-Item $techFolder -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     if (Test-Path $techFolder)
     {
+        Add-Type -AssemblyName System.Windows.Forms #pour éviter des erreurs de Messagebox
         [System.Windows.MessageBox]::Show("La suppression du dossier $techFolder a échoué","Suppression",0,48) | Out-Null
     }
     else 
