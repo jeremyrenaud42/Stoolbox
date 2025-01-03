@@ -13,13 +13,11 @@
 .NOTES
     est initialement downloadé par Stoolbox.exe depuis github
     Par la suite il ya un raccourci sur le bureau pour l'appeler
-    Ou directement via le menu.bat dans c:\_tech
 #>
 
 #Load les assemblies nécéssaire au fonctionnement
 Add-Type -AssemblyName PresentationFramework,System.Windows.Forms,System.speech,System.Drawing,presentationCore
 ########################Fonctions nécéssaire au déroulement########################
-
 function Test-InternetConnection
 {
     <#
@@ -35,12 +33,11 @@ function Test-InternetConnection
         Le nombre de délai avant de recommencer la reqête ping. Defaut = 5 secondes
     .EXAMPLE
         Test-InternetConnection
-        Tests the internet connection using default parameters (pinging 8.8.8.8 every 5 seconds).
     .EXAMPLE
         Test-InternetConnection -PingAddress "1.1.1.1" -CheckInterval 10
-        Tests the internet connection by pinging 1.1.1.1 and checking every 10 seconds.
+        Utilise un autre ip pour tester chaque 10 secondes
     .Notes
-        Ne prend pas la fonction deja inclus dans le module Verifiation car a ce moment la on a pas les modules de downloadé
+        Ne prend pas la fonction deja inclus dans le module Verifiation car a ce moment la on a pas les modules de téléchargé
     #>
 
 
@@ -73,7 +70,7 @@ function Get-RemotePsm1Files
         Download les modules nécéssaires pour tous les scripts
     .DESCRIPTION
         Download depuis github vers c:\_tech\applications\source
-        C'est un zip qui les contient tous qui va être dezippé sous le dossier module
+        C'est un zip qui les contient tous les modules(psm1) qui vont être dezippé sous le dossier module
     #>
     $modulesFolderPath = "$sourceFolderPath\Modules"
     $modulesFolderPathExist = test-path -Path $modulesFolderPath
@@ -81,7 +78,9 @@ function Get-RemotePsm1Files
     {
         $zipFileDownloadLink = "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules.zip"
         $zipFile = "Modules.zip"
-        Invoke-WebRequest -Uri $zipFileDownloadLink -OutFile $sourceFolderPath\$zipFile
+        $webClient = New-Object System.Net.WebClient
+        $webClient.DownloadFile($zipFileDownloadLink, "$sourceFolderPath\$zipFile")
+        $webClient.Dispose()
         Expand-Archive -Path $sourceFolderPath\$zipFile -DestinationPath $sourceFolderPath -Force
         Remove-Item -Path $sourceFolderPath\$zipFile
     }
@@ -89,6 +88,12 @@ function Get-RemotePsm1Files
 
 function Get-RequiredModules
 {
+    <#
+    .SYNOPSIS
+        Importe les modules nécéssaires pour tous les scripts
+    .DESCRIPTION
+        Permet l'utilisation de toutes les commandes et fonctions dans les modules .psm1 situé dans C:\_Tech\Applications\Source\modules
+    #>
     $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
     foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
     {
@@ -102,11 +107,18 @@ function Initialize-Application($appName)
     .SYNOPSIS
         Configure et lance les scripts
     .DESCRIPTION
-        Est utilisé lorsque qu'un bouton est cliqué
+        Télécharge le fond d'écran
         Créer un dossier au nom de l'application
         Download le .ps1
-        Execute le script
+        Met son emplacement dans son dossier
+        Créer un logFile
+        change la grid (sauf installation)
+        dot source le ps1
+        Pour installation seulement: 
+        Télécharge les xaml et un json
+        vérifie si déja ouvert grace au lockfile
     .NOTES
+        Est utilisé lorsque qu'un bouton est cliqué
         N'est pas dans un module, car c'est spécific au menu seulement
     #>
     $appPath = "$applicationPath\$appName"
@@ -170,6 +182,7 @@ Test-ScriptInstance $lockFile $Global:appIdentifier
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     Get-RemoteFile "MenuMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/MenuMainWindow.xaml" $sourceFolderPath
     Get-RemoteFile "Resources.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Resources.xaml" $sourceFolderPath
+    Get-RemoteFile "Settings.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Settings.JSON" $sourceFolderPath
     }
 
     $downloadAssetsFile = {
@@ -179,12 +192,22 @@ Test-ScriptInstance $lockFile $Global:appIdentifier
     Get-RemoteFile "Background_menu.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$sourceFolderPath\Images"
     Get-RemoteFile "Icone.ico" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/Icone.ico" "$sourceFolderPath\Images"
     Get-RemoteFile "IconeNyxSky.png" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/IconeNyxSky.png" "$sourceFolderPath\Images"
-    Get-RemoteFile "Settings.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Settings.JSON" $sourceFolderPath
 }
 
 #Définitions des variables
-$xamlPathExist = Test-Path "$sourceFolderPath\MenuMainWindow.xaml"
-$guiPathExist = Test-Path "$sourceFolderPath\Images"
+$xamlFiles = @(
+    "$sourceFolderPath\MenuMainWindow.xaml",
+    "$sourceFolderPath\Resources.xaml",
+    "$sourceFolderPath\Settings.JSON"
+)
+$guiFiles = @(
+    "$sourceFolderPath\Images\Background_menu.jpeg",
+    "$sourceFolderPath\Images\Icone.ico",
+    "$sourceFolderPath\Images\IconeNyxSky.png"
+)
+
+$xamlPathExist = -not ($xamlFiles | Where-Object { -not (Test-Path $_) })
+$guiPathExist = -not ($guiFiles | Where-Object { -not (Test-Path $_) })
 
 $downloadXamlFileKey = "downloadXamlFile"
 $downloadAssetsFileKey = "downloadAssetsFile"
@@ -472,25 +495,21 @@ $Window.add_Loaded({
         Initialize-Application "Fix"
     })
     $formControls.btnChangeLog_Menu.Add_Click({
-        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-        Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
         Get-RemoteFile "changelog.txt" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt" "$env:SystemDrive\_Tech\Applications\source"
         Start-Process "$env:SystemDrive\_Tech\Applications\source\changelog.txt"
     })
     $formControls.btnForceUpdate_Menu.Add_Click({
-        $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-        Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-        Get-RemoteFileForce  "Installation.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1" "$env:SystemDrive\_Tech\Applications\Installation"
-        Get-RemoteFileForce  "Optimisation_Nettoyage.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1" "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
-        Get-RemoteFileForce  "Diagnostique.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1" "$env:SystemDrive\_Tech\Applications\Diagnostique"
-        Get-RemoteFileForce  "Desinfection.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1" "$env:SystemDrive\_Tech\Applications\Desinfection"
-        Get-RemoteFileForce  "Fix.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1" "$env:SystemDrive\_Tech\Applications\Fix"
+        Get-RemoteFileForce "Installation.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1" "$env:SystemDrive\_Tech\Applications\Installation"
+        Get-RemoteFileForce "Optimisation_Nettoyage.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1" "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
+        Get-RemoteFileForce "Diagnostique.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1" "$env:SystemDrive\_Tech\Applications\Diagnostique"
+        Get-RemoteFileForce "Desinfection.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1" "$env:SystemDrive\_Tech\Applications\Desinfection"
+        Get-RemoteFileForce "Fix.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1" "$env:SystemDrive\_Tech\Applications\Fix"
         Get-RemoteFileForce "Remove.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1" "$env:SystemDrive\Temp\Stoolbox"
-        Get-RemoteFileForce  "Menu.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1" "$env:SystemDrive\_Tech"
+        Get-RemoteFileForce "Menu.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1" "$env:SystemDrive\_Tech"
         Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip" -OutFile "$applicationPath\source\Modules.zip" | Out-Null
         Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
         Remove-Item "$applicationPath\source\Modules.zip"
-	    $window.Close()
+        $window.Close()
         Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
     })
     $formControls.btnUninstall_Menu.Add_Click({
