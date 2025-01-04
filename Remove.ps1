@@ -36,7 +36,7 @@ function Remove-DownloadFolder
         $dateString = $logContent.Trim()  # Trim whitespace and newlines
         $targetDateTime = [DateTime]::ParseExact($dateString, "yyyy-MM-dd HH:mm:ss", $null) # Convert the date string to a DateTime object
         # Get the list of files with a LastWriteTime on or before the target date and time
-        $files = Get-ChildItem -Path "$env:USERPROFILE\Downloads" | Where-Object { $_.LastWriteTime -ge $targetDateTime }
+        $files = Get-ChildItem -Path "$env:USERPROFILE\Downloads" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -ge $targetDateTime }
         if ($files.Count -eq 0) 
         {
             Write-Host "Aucun fichiers récents trouvé dans le dossier des téléchargements."
@@ -98,6 +98,11 @@ function Get-LockFile
 function Remove-techFolder
 {
     Write-Host "Suppression du dossier $techFolder" -ForegroundColor DarkCyan
+    $getCaffeineProcess = get-process -name caffeine64
+    foreach ($caffeineProcess in $getCaffeineProcess)
+    {
+        Stop-Process $caffeineProcess -Force
+    }
     Remove-Item "$techFolder\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     Remove-Item $techFolder -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     if (Test-Path $techFolder)
