@@ -133,9 +133,11 @@ function Initialize-Application($appName)
         Get-RemoteFile "$($appName)MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/$($appName)MainWindow.xaml" $global:appPathSource
         Get-RemoteFile "InstallationConfigMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationConfigMainWindow.xaml" $global:appPathSource
         Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" $global:appPathSource
+        Get-RemoteFile "caffeine64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/caffeine64.exe" $global:appPathSource
         $Global:appIdentifier = "$appName.ps1"
         $lockFile = "$sourceFolderPath\$appName.lock"
         Test-ScriptInstance $lockFile $Global:appIdentifier
+        start-Process "$global:appPathSource\caffeine64.exe"
     }
     else
     {

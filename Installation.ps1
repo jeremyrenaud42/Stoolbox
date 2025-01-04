@@ -1081,6 +1081,7 @@ function Complete-Installation
     Add-Text -Text "`n"
     Add-Text -Text "Vous avez terminer la configuration du Windows."
     Stop-Process -Name "ninite" -Force -erroraction ignore
+    start-Process -FilePath "$global:appPathSource\caffeine64.exe" -ArgumentList "-appexit"
     if($formControlsMenuApp.chkboxGoogleChrome.IsChecked -eq $true)
     {
         Set-DefaultBrowser
