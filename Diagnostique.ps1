@@ -56,41 +56,26 @@ $formControls.btnDontsleep_Diagnostique.Add_Click({
 })
     
 $formControls.btnAida_Diagnostique.Add_Click({
-   $scriptBlock = {
-        $global:appPathSource = "$env:SystemDrive\_Tech\Applications\Diagnostique\source"
-        $modulesFolder = "$env:SystemDrive\_Tech\Applications\Source\modules"
-        foreach ($module in Get-Childitem $modulesFolder -Name -Filter "*.psm1")
-        {
-            Import-Module $modulesFolder\$module
-        }
-    Invoke-App "Aida64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Aida64.zip" "$global:appPathSource\cpu" 
+    Invoke-App "Aida64.zip" "https://ftp.alexchato9.com/public/file/jbwonaj8zemkbhagl4f47a/Aida64.zip" "$global:appPathSource\cpu" 
     Add-Log $global:logFileName "Test de stabilité du système effectué"
-    } 
-    if ($PSVersionTable.PSVersion.Major -lt 7 -and -not (Get-Command -Type Cmdlet Start-ThreadJob -ErrorAction SilentlyContinue)) 
-    {
-        Install-Nuget
-        Install-Module -Scope CurrentUser ThreadJob -Force #ca prend nuget
-    }
-    Import-Module -Name ThreadJob     
-    Start-ThreadJob -ScriptBlock $scriptBlock | Wait-Job | Remove-Job
 })
     
 $formControls.btnCoretemp_Diagnostique.Add_Click({
-    Invoke-App "Core Temp.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Core Temp.zip" "$global:appPathSource\cpu"
+    Invoke-App "Core Temp.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CPU/Core Temp.zip" "$global:appPathSource\cpu"
     Add-Log $global:logFileName "Température du CPU vérifié"
 })
 
 $formControls.btnPrime95_Diagnostique.Add_Click({
-    Invoke-App "Prime95.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Prime95.zip" "$global:appPathSource\cpu"
+    Invoke-App "Prime95.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CPU/Prime95.zip" "$global:appPathSource\cpu"
     Add-Log $global:logFileName "Stress test du CPU effectué"
 })
 
 $formControls.btnHeavyLoad_Diagnostique.Add_Click({
-    Invoke-App "HeavyLoad.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HeavyLoad.zip" "$global:appPathSource\cpu"
+    Invoke-App "HeavyLoad.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CPU/HeavyLoad.zip" "$global:appPathSource\cpu"
     Add-Log $global:logFileName "Test de stabilité du système effectué"
 })
 $formControls.btnThrottleStop_Diagnostique.Add_Click({
-    Invoke-App "ThrottleStop.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/ThrottleStop.zip" "$global:appPathSource\cpu"
+    Invoke-App "ThrottleStop.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CPU/ThrottleStop.zip" "$global:appPathSource\cpu"
     Add-Log $global:logFileName "Stress test du CPU effectué"
 })
 
