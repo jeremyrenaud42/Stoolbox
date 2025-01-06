@@ -26,7 +26,7 @@ $formControls.btnHDD_Diagnostique.Add_Click({
     $formControls.btnHDSentinnel_Diagnostique.Visibility="Visible"
     $formControls.btnHDTune_Diagnostique.Visibility="Visible"
     $formControls.btnASSD_Diagnostique.Visibility="Visible"
-    $formControls.btnDiskmark_Diagnostique.Visibility="Visible"
+    $formControls.btnCrystalDiskInfo_Diagnostique.Visibility="Visible"
     $formControls.btnHDD_Diagnostique.Visibility="Collapsed"
     New-Folder "$global:appPathSource\GPU"
 })
@@ -43,7 +43,7 @@ $formControls.btnRAM_Diagnostique.Add_Click({
 })
 
 $formControls.btnBattinfo_Diagnostique.Add_Click({
-    Invoke-App "batteryinfoview.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main//Batterie/battinfoview.exe" "$global:appPathSource/Batterie"
+    Invoke-App "batteryinfoview.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie/batteryinfoview.exe" "$global:appPathSource/Batterie"
     Add-Log $global:logFileName "Usure de la batterie vérifié"
 })
 $formControls.btnBattMonitor_Diagnostique.Add_Click({
