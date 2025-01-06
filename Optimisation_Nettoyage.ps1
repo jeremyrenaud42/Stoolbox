@@ -41,7 +41,7 @@ $formControls.btnSysEvent_Optimisation_Nettoyage.Add_Click({
 })
 
 $formControls.btnCrystalDiskInfo_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "CrystalDiskInfoPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/CrystalDiskInfoPortable.zip" $global:appPathSource
+    Invoke-App "CrystalDiskInfoPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD/CrystalDiskInfoPortable.zip" $global:appPathSource
     Add-Log $global:logFileName "Vérifier la santé du HDD"
 })
 

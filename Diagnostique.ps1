@@ -11,7 +11,7 @@ $formControls.btnbat_Diagnostique.Add_Click({
     $formControls.btnDontsleep_Diagnostique.Visibility="Visible"
     $formControls.btnBattMonitor_Diagnostique.Visibility="Visible"
     $formControls.btnbat_Diagnostique.Visibility="Collapsed"
-    Get-RemoteFile "Batterie.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/Batterie.zip" $global:appPathSource
+    New-Folder "$global:appPathSource\Batterie"
 })
 $formControls.btnCPU_Diagnostique.Add_Click({
     $formControls.btnAida_Diagnostique.Visibility="Visible"
@@ -28,14 +28,14 @@ $formControls.btnHDD_Diagnostique.Add_Click({
     $formControls.btnASSD_Diagnostique.Visibility="Visible"
     $formControls.btnDiskmark_Diagnostique.Visibility="Visible"
     $formControls.btnHDD_Diagnostique.Visibility="Collapsed"
-    Get-RemoteFile "HDD.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD.zip" $global:appPathSource
+    New-Folder "$global:appPathSource\GPU"
 })
 $formControls.btnGPU_Diagnostique.Add_Click({
     $formControls.btnFurmark_Diagnostique.Visibility="Visible"
     $formControls.btnFurmarkV2_Diagnostique.Visibility="Visible"
     $formControls.btnUnigine_Diagnostique.Visibility="Visible"
     $formControls.btnGPU_Diagnostique.Visibility="Collapsed"
-    Get-RemoteFile "GPU.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU.zip" $global:appPathSource
+    New-Folder "$global:appPathSource\GPU"
 })
 $formControls.btnRAM_Diagnostique.Add_Click({
     mdsched.exe
@@ -43,17 +43,16 @@ $formControls.btnRAM_Diagnostique.Add_Click({
 })
 
 $formControls.btnBattinfo_Diagnostique.Add_Click({
-    Start-App "batteryinfoview.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\battinfoview"
+    Invoke-App "batteryinfoview.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main//Batterie/battinfoview.exe" "$global:appPathSource/Batterie"
     Add-Log $global:logFileName "Usure de la batterie vérifié"
 })
 $formControls.btnBattMonitor_Diagnostique.Add_Click({
-    Start-App "BatteryMonx64.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\BatteryMonx64"
+    Invoke-App "BatteryMonx64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main//Batterie/BatteryMonx64.exe" "$global:appPathSource/Batterie"
     Add-Log $global:logFileName "Usure de la batterie vérifié"
 })
     
 $formControls.btnDontsleep_Diagnostique.Add_Click({
-    Start-App "DontSleep_x64_p.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\Batterie\DontSleep"
-    Add-Log $global:logFileName "Dontsleep a été utilisé pour tester la batterie"
+    Invoke-App "DontSleep_x64_p.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main//Batterie/DontSleep_x64_p.exe" "$global:appPathSource/Batterie"
 })
     
 $formControls.btnAida_Diagnostique.Add_Click({
@@ -145,27 +144,27 @@ $formControls.btnHDSentinnel_Diagnostique.Add_Click({
 })
 
 $formControls.btnHDTune_Diagnostique.Add_Click({
-    Start-App "_HDTune.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\_HDTune"
+    Invoke-App "_HDTune.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD/_HDTune.exe" "$global:appPathSource/HDD"
     Add-Log $global:logFileName "Vérifier la Vitesse du disque dur"
 })
 
 $formControls.btnASSD_Diagnostique.Add_Click({
-    Start-App "AS SSD Benchmark.exe" "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\As_SSD"
+    Invoke-App "As_SSD.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD/As_SSD.zip" "$global:appPathSource/HDD"
     Add-Log $global:logFileName "Vérifier la Vitesse du disque dur"
 })
 
-$formControls.btnDiskmark_Diagnostique.Add_Click({
-    Start-Process -wait  "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\CrystalDiskInfoPortable.exe"  -ArgumentList "/copy"
+$formControls.btnCrystalDiskInfo_Diagnostique.Add_Click({
+    Invoke-App "CrystalDiskInfoPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD/CrystalDiskInfoPortable.zip" "$global:appPathSource/HDD"
     Add-Log $global:logFileName "Vérifier la santé du disque dur"
 })
 
 $formControls.btnFurmark_Diagnostique.Add_Click({
-Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\FurMark\FurMark.exe"
-Add-Log $global:logFileName "Stress test du GPU"
+    Invoke-App "FurMark.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU/FurMark.zip" "$global:appPathSource/GPU"
+    Add-Log $global:logFileName "Stress test du GPU"
 })
 
 $formControls.btnFurmarkV2_Diagnostique.Add_Click({
-    Start-Process "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\GPU\FurMark_GUI\FurMark_GUI.exe"
+    Invoke-App "FurMark_GUI.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/GPU/FurMark_GUI.zip" "$global:appPathSource/GPU"
     Add-Log $global:logFileName "Stress test du GPU"
 })
     
