@@ -908,7 +908,7 @@ function Install-SoftwareWithNinite($appInfo)
     if($appInfo.RemoteName)
     {
         Invoke-WebRequest $appInfo.RemoteLink -OutFile $appInfo.RemoteName
-        Start-Process $appInfo.RemoteName -Verb runAs
+        Start-Process $appInfo.RemoteName -Verb runAs -wait
     }
     $softwareInstallationStatus = Test-SoftwarePresence $appInfo
     if($softwareInstallationStatus)
