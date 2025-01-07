@@ -5,7 +5,7 @@ $formControls.btnUpdate_Optimisation_Nettoyage.Add_Click({
 
 $formControls.btnAutoruns_Optimisation_Nettoyage.Add_Click({
     Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe" $global:appPathSource
-    start-sleep 5
+    start-sleep 3
     taskmgr
     Add-Log $global:logFileName "Vérifier les logiciels au démarrage"
 })
@@ -22,7 +22,7 @@ $formControls.btnHDD_Optimisation_Nettoyage.Add_Click({
 
 $formControls.btnCcleaner_Optimisation_Nettoyage.Add_Click({
     Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip" $global:appPathSource
-    Add-Log $global:logFileName "Nettoyage CCleaner effectué"
+    Add-Log $global:logFileName "Nettoyage du disque avec CCleaner effectué"
 })
 
 $formControls.btnSfc_Optimisation_Nettoyage.Add_Click({

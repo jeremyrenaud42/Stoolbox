@@ -79,29 +79,6 @@ $formControls.btnThrottleStop_Diagnostique.Add_Click({
     Add-Log $global:logFileName "Stress test du CPU effectué"
 })
 
-function diskmarkinfoLog
-{
-    $logfile = "$env:SystemDrive\_Tech\Applications\Diagnostique\Source\HDD\CrystalDiskInfoPortable\App\CrystalDiskInfo\diskinfo.txt"
-    $contentlogfile = Get-Content $logfile
-    $lignedisk = "" #initialise la variable vide
-    foreach ($ligne in $contentlogfile) #pour chaque ligne dans le fichier, car chaque ligne est un objet
-    {
-        if($ligne -match "Model") #si une ligne match drive + un chiffre
-        {
-            $lignedisk = $ligne
-        }
-        elseif($lignedisk -and $ligne -match "Interface") 
-        {       
-            "$lignedisk `r`n $ligne`r`n"    
-        }
-        elseif($lignedisk -and $ligne -match " Health Status") 
-        {
-            "$ligne $ligneInterfaceused`r`n"
-            $lignedisk = "" #flusher une fois la variable a la fin
-        }
-    }
-}
-
 $formControls.btnHDSentinnel_Diagnostique.Add_Click({
     function HDSentinnel
     {
@@ -173,18 +150,3 @@ $formControls.btnWhocrashed_Diagnostique.Add_Click({
 $formControls.btnSysinfo_Diagnostique.Add_Click({
     msinfo32
 })
-
-<#
-$JSONFilePath = "$env:SystemDrive\_Tech\Applications\Diagnostique\source\DiagApps.JSON"
-$jsonString = Get-Content -Raw $JSONFilePath
-$appsInfo = ConvertFrom-Json $jsonString
-$appNames = $appsInfo.psobject.Properties.Name
-#Iterate over the applications in the JSON and interpolate the variables
-$appNames | ForEach-Object {
-    Diagnostique = $_
-    $appsInfo.Diagnostique.path64 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.Diagnostique.path64)
-    $appsInfo.Diagnostique.path32 = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.Diagnostique.path32)
-    $appsInfo.Diagnostique.pathAppData = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.Diagnostique.pathAppData)
-    $appsInfo.Diagnostique.NiniteName = $ExecutionContext.InvokeCommand.ExpandString($appsInfo.Diagnostique.NiniteName)
-    }
-#>

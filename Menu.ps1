@@ -151,33 +151,34 @@ function Initialize-Application($appName)
 }
 
 ########################Déroulement########################
-Test-InternetConnection
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
-New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
-Get-RemotePsm1Files
-Get-RequiredModules
-$ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
-$windowsVersion = ((Get-CimInstance -ClassName Win32_OperatingSystem).Caption) -replace 'Microsoft ', ''
-$OSUpdate = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion") | Select-Object -expand DisplayVersion
-$actualDate = (Get-Date).ToString()
-
-$global:sync['flag'] = $true 
-$dateFile = "$sourceFolderPath\installedDate.txt"
-$adminStatus = Get-AdminStatus
-if($adminStatus -eq $false)
+function Main
 {
-    Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
+    Test-InternetConnection
+    New-Item -Path $sourceFolderPath -ItemType 'Directory' -Force
+    Get-RemotePsm1Files
+    Get-RequiredModules
+    $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
+    $windowsVersion = ((Get-CimInstance -ClassName Win32_OperatingSystem).Caption) -replace 'Microsoft ', ''
+    $OSUpdate = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion") | Select-Object -expand DisplayVersion
+    $actualDate = (Get-Date).ToString()
+    $global:sync['flag'] = $true 
+    $dateFile = "$sourceFolderPath\installedDate.txt"
+    $adminStatus = Get-AdminStatus
+    if($adminStatus -eq $false)
+    {
+        Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
+    }
+    if (-not (Test-Path $dateFile)) 
+    {
+        (Get-Date).ToString("yyyy-MM-dd HH:mm:ss", [System.Globalization.CultureInfo]::CreateSpecificCulture("fr-FR")) | Out-File -FilePath $dateFile
+    }
+    $lockFile = "$sourceFolderPath\Menu.lock"
+    $Global:appIdentifier = "Menu.ps1"
+    Test-ScriptInstance $lockFile $Global:appIdentifier
 }
-if (-not (Test-Path $dateFile)) 
-{
-    (Get-Date).ToString("yyyy-MM-dd HH:mm:ss", [System.Globalization.CultureInfo]::CreateSpecificCulture("fr-FR")) | Out-File -FilePath $dateFile
-}
-
-$lockFile = "$sourceFolderPath\Menu.lock"
-$Global:appIdentifier = "Menu.ps1"
-Test-ScriptInstance $lockFile $Global:appIdentifier
-
+Main
 #runspaces pour le GUI
 #Définitions des ScriptBlocks
     $downloadXamlFile = {
@@ -203,14 +204,14 @@ $xamlFiles = @(
     "$sourceFolderPath\Resources.xaml",
     "$sourceFolderPath\Settings.JSON"
 )
-$guiFiles = @(
+$assetsFiles = @(
     "$sourceFolderPath\Images\Background_menu.jpeg",
     "$sourceFolderPath\Images\Icone.ico",
     "$sourceFolderPath\Images\IconeNyxSky.png"
 )
 
 $xamlPathExist = -not ($xamlFiles | Where-Object { -not (Test-Path $_) })
-$guiPathExist = -not ($guiFiles | Where-Object { -not (Test-Path $_) })
+$assetsPathExist = -not ($assetsFiles | Where-Object { -not (Test-Path $_) })
 
 $downloadXamlFileKey = "downloadXamlFile"
 $downloadAssetsFileKey = "downloadAssetsFile"
@@ -223,7 +224,7 @@ if($xamlPathExist -eq $false)
     Get-RunspaceState $global:sync['downloadXamlFileResult']
 }
 
-if($guiPathExist -eq $false)
+if($assetsPathExist -eq $false)
 {
     $global:sync['downloadAssetsFileResult'] = Start-Runspace -RunspaceKey $downloadAssetsFileKey -ScriptBlock $downloadAssetsFile
     Write-Host "downloadAssetsFileResult"
@@ -241,14 +242,13 @@ if ($global:runspaceStates.ContainsKey('downloadXamlFile') -and $global:runspace
 
 if ($global:runspaceStates.ContainsKey('downloadAssetsFile') -and $global:runspaceStates['downloadAssetsFile'] -eq 'Opened') 
 {
-    Write-Host "downloadAssetsFile"
+    Write-Host "downloadAssetsFileResult"
     Complete-AsyncOperation -RunspaceResult $global:sync['downloadAssetsFileResult']
     Close-Runspace -RunspaceResult $global:sync['downloadAssetsFileResult'] -RunspaceKey $downloadAssetsFileKey
     Get-RunspaceState $global:sync['downloadAssetsFileResult']
 }
 
 ########################GUI########################
-Import-Module "$sourceFolderPath\Modules\WPF.psm1"
 $xamlFile = "$sourceFolderPath\MenuMainWindow.xaml"
 $xamlContent = Read-XamlFileContent $xamlFile
 $formatedXamlFile = Format-XamlFile $xamlContent
@@ -510,9 +510,9 @@ $Window.add_Loaded({
         Get-RemoteFileForce "Fix.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1" "$env:SystemDrive\_Tech\Applications\Fix"
         Get-RemoteFileForce "Remove.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1" "$env:SystemDrive\Temp\Stoolbox"
         Get-RemoteFileForce "Menu.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1" "$env:SystemDrive\_Tech"
-        Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Menu/main/Modules.zip" -OutFile "$applicationPath\source\Modules.zip" | Out-Null
-        Expand-Archive "$applicationPath\source\Modules.zip" "$applicationPath\source" -Force
-        Remove-Item "$applicationPath\source\Modules.zip"
+        Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules.zip" -OutFile "$env:SystemDrive\_Tech\Applications\source\Modules.zip" | Out-Null
+        Expand-Archive "$env:SystemDrive\_Tech\Applications\source\Modules.zip" "$env:SystemDrive\_Tech\Applications\source" -Force
+        Remove-Item "$env:SystemDrive\_Tech\Applications\source\Modules.zip"
         $window.Close()
         Restart-Elevated -Path "$env:SystemDrive\_Tech\Menu.ps1"
     })
@@ -680,7 +680,6 @@ $window.add_Closing({
 })
 
 $Window.add_Closed({
-    Remove-Item -Path $lockFile -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$env:SystemDrive\_Tech\Applications\source\Menu.lock" -Force -ErrorAction 'SilentlyContinue'
 })
-
 Start-WPFAppDialog $window

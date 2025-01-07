@@ -18,7 +18,7 @@ $formControls.btnRKill_Desinfection.Add_Click({
 
 $formControls.btnAutoruns_Desinfection.Add_Click({
     Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe" $global:appPathSource
-    start-sleep 5
+    start-sleep 3
     taskmgr
     Add-Log $global:logFileName "Vérifier les logiciels au démarrage"
 })
@@ -112,5 +112,4 @@ $formControls.btnHitmanPro_Desinfection.Add_Click({
 $formControls.btnRogueKiller_Desinfection.Add_Click({
     Invoke-App "RogueKiller_portable64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/RogueKiller_portable64.zip" $global:appPathSource
     Add-Log $global:logFileName "Analyse RogueKiller effectué"
-    #via le cmd, aller a l"emplacement RogueKillerCMD.exe -scan -no-interact -deleteall #-debuglog {path}
  })
