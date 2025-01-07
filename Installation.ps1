@@ -238,12 +238,6 @@ $windowMenuApp.add_Loaded({
             $formControlsMenuApp.CbBoxRestartTimer.SelectedItem = $formControlsMenuApp.CbBoxRestartTimer.Items | Where-Object { $_.Content -eq $cbBoxRestartTimereDefaultValue }
         }
 
-        $formControlsMain.lblWinget.foreground = "white"
-        $formControlsMain.lblChoco.foreground = "white"
-        $formControlsMain.lblNuget.foreground = "white"
-        $formControlsMain.lblSoftware.foreground = "white"
-        $formControlsMain.lblActivation.foreground = "white"
-        $formControlsMain.lblManualComplete.foreground = "white"
         if($formControlsMenuApp.chkboxMSStore.IsChecked)
         { 
             $formControlsMain.lblStore.foreground = "white"
