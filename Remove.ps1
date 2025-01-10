@@ -98,7 +98,7 @@ function Get-LockFile
 function Remove-techFolder
 {
     Write-Host "Suppression du dossier $techFolder" -ForegroundColor DarkCyan
-    $getCaffeineProcess = get-process -name caffeine64
+    $getCaffeineProcess = get-process -name caffeine64 -erroraction ignore
     foreach ($caffeineProcess in $getCaffeineProcess)
     {
         Stop-Process $caffeineProcess -Force -erroraction ignore
