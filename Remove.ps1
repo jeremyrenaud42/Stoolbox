@@ -101,7 +101,7 @@ function Remove-techFolder
     $getCaffeineProcess = get-process -name caffeine64
     foreach ($caffeineProcess in $getCaffeineProcess)
     {
-        Stop-Process $caffeineProcess -Force
+        Stop-Process $caffeineProcess -Force -erroraction ignore
     }
     Remove-Item "$techFolder\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     Remove-Item $techFolder -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
