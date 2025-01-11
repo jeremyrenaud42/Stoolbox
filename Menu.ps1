@@ -125,28 +125,27 @@ function Initialize-Application($appName)
     $global:appPathSource = "$appPath\source"
     Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" $global:appPathSource
     New-Item -Path $appPath -ItemType 'Directory' -Force
-    Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $appPath 
+    Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $appPath
     set-location $appPath
     $global:logFileName = Initialize-LogFile $global:appPathSource $appName
     if ($appName -eq "Installation")
     {
         Get-RemoteFile "$($appName)MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/$($appName)MainWindow.xaml" $global:appPathSource
-        Get-RemoteFile "InstallationConfigMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationConfigMainWindow.xaml" $global:appPathSource
+        Get-RemoteFile "InstallationSettings.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationSettings.JSON" $global:appPathSource
         Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" $global:appPathSource
+        Get-RemoteFile "Installation.psm1" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Installation.psm1" $global:appPathSource
         Get-RemoteFile "caffeine64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/caffeine64.exe" $global:appPathSource
-        $Global:appIdentifier = "$appName.ps1"
-        $lockFile = "$sourceFolderPath\$appName.lock"
-        Test-ScriptInstance $lockFile $Global:appIdentifier
-        start-Process "$global:appPathSource\caffeine64.exe"
+        Import-Module "$applicationPath\installation\source\Installation.psm1"
+        $global:jsonSettingsFilePath = "$global:appPathSource\InstallationSettings.JSON"
+        $global:jsonChkboxContent = Get-Content -Raw $global:jsonSettingsFilePath | ConvertFrom-Json
     }
-    else
-    {
+
         $formControls.imgBackGround.source = "c:\_tech\Applications\$appName\source\Background_$appName.jpeg"
         $formControls.lblTitre.Content = $appName
         $gridVariableName = "grid$appName"
         $GridToShow = (Get-Variable -Name $gridVariableName -ValueOnly)
         Show-Grid -GridToShow $GridToShow -AllGrids $grids
-    }
+    
     . $appPath\$appName.ps1
 }
 
@@ -262,7 +261,51 @@ $gridOptimisation_Nettoyage = $formcontrols.gridOptimisation_Nettoyage
 $gridDiagnostique= $formcontrols.gridDiagnostique
 $gridDesinfection = $formcontrols.gridDesinfection
 $gridFix= $formcontrols.gridFix
-$grids = @($gridMenu, $gridOptimisation_Nettoyage, $gridDiagnostique,$gridDesinfection,$gridFix)
+$gridInstallation = $formcontrols.gridInstallation
+$grids = @($gridMenu, $gridOptimisation_Nettoyage, $gridDiagnostique,$gridDesinfection,$gridFix,$gridInstallation)
+
+$grids.add_IsVisibleChanged({
+    $chocostatus = Get-ChocoStatus
+    if ($global:sync['installChocoResult'].Runspace.RunspaceStateInfo.State -eq 'Opened' -and $chocostatus -eq $false)
+    {
+        $installChocoKey = "installChoco"
+        $messageBoxText = "En attente de l'installation de Choco"
+        $messageBoxTitle = "Menu - Boite à outils du technicien"
+        $chocoMessageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,0,64)
+        Write-Host "installChocoResult"
+        Complete-AsyncOperation -RunspaceResult $global:sync['installChocoResult']
+        Close-Runspace -RunspaceResult $global:sync['installChocoResult'] -RunspaceKey $installChocoKey
+        Get-RunspaceState $global:sync['installChocoResult']
+    }
+    elseif ($global:sync['installChocoResult'].Runspace.RunspaceStateInfo.State -eq 'Opened' -and $chocostatus -eq $true)
+    {
+        $installChocoKey = "installChoco"
+        Write-Host "installChocoResult"
+        Close-Runspace -RunspaceResult $global:sync['installChocoResult'] -RunspaceKey $installChocoKey
+        Get-RunspaceState $global:sync['installChocoResult']
+    }
+
+    $wingetStatus = Get-WingetStatus
+    if ($global:sync['installWingetResult'].Runspace.RunspaceStateInfo.State -eq 'Opened' -and
+    ([string]::IsNullOrEmpty($wingetStatus) -or $wingetStatus -le '1.8'))
+    {
+        $installWingetKey = "installWinget"
+        $messageBoxText = "En attente de l'installation de Winget"
+        $messageBoxTitle = "Menu - Boite à outils du technicien"
+        $wingetMessageBox = [System.Windows.MessageBox]::Show($messageBoxText,$messageBoxTitle,0,64)
+        Write-Host "installWingetResult"
+        Complete-AsyncOperation -RunspaceResult $global:sync['installWingetResult']
+        Close-Runspace -RunspaceResult $global:sync['installWingetResult'] -RunspaceKey $installWingetKey
+        Get-RunspaceState $global:sync['installWingetResult']
+    }
+    elseif ($global:sync['installWingetResult'].Runspace.RunspaceStateInfo.State -eq 'Opened' -and $wingetStatus -ge '1.8')
+    {
+        $installWingetKey = "installWinget"
+        Write-Host "installWingetResult"
+        Close-Runspace -RunspaceResult $global:sync['installWingetResult'] -RunspaceKey $installWingetKey
+        Get-RunspaceState $global:sync['installWingetResult']
+    }
+})
 
 #Fonctions pour runspaces
 $menuWinget = {
@@ -480,10 +523,9 @@ $window.Add_StateChanged({
         $window.WindowState = [System.Windows.WindowState]::Normal
     }
 })
-$Window.add_Loaded({
+$window.add_Loaded({
     $formControls.lblOS_Menu.content = "$windowsVersion $OSUpdate"
     $formControls.btnLancementInstallation_Menu.Add_Click({
-        $window.Close()
         Initialize-Application "Installation"
     })
     $formControls.btnLancementOptimisation_Nettoyage_Menu.Add_Click({
@@ -615,14 +657,9 @@ $window.add_Closing({
     Close-Runspace -RunspaceResult $global:sync['menuWingetResult'] -RunspaceKey $menuWingetKey
     Get-RunspaceState $global:sync['menuWingetResult']
 
-    $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\Verification.psm1"
-    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     $chocostatus = Get-ChocoStatus
-
     if ($global:sync['installChocoResult'].Runspace.RunspaceStateInfo.State -eq 'Opened' -and $chocostatus -eq $false)
     {
-        Write-Host "En attente de l'installation de Choco"
         $installChocoKey = "installChoco"
         $messageBoxText = "En attente de l'installation de Choco"
         $messageBoxTitle = "Menu - Boite à outils du technicien"
@@ -644,7 +681,6 @@ $window.add_Closing({
     if ($global:sync['installWingetResult'].Runspace.RunspaceStateInfo.State -eq 'Opened' -and
     ([string]::IsNullOrEmpty($wingetStatus) -or $wingetStatus -le '1.8'))
     {
-        Write-Host "En attente de l'installation de Winget"
         $installWingetKey = "installWinget"
         $messageBoxText = "En attente de l'installation de Winget"
         $messageBoxTitle = "Menu - Boite à outils du technicien"
@@ -679,7 +715,8 @@ $window.add_Closing({
     }
 })
 
-$Window.add_Closed({
+$window.add_Closed({
     Remove-Item -Path "$env:SystemDrive\_Tech\Applications\source\Menu.lock" -Force -ErrorAction 'SilentlyContinue'
 })
+
 Start-WPFAppDialog $window

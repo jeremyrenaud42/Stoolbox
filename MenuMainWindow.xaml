@@ -154,5 +154,101 @@
             <Button x:Name="btnQuit_Fix" Content="Quitter" Style="{StaticResource ButtonStyle}" Margin="469,575,0,0" Background="darkred"/>
             <Button x:Name="btnMenu_Fix" Content="Menu principal" Style="{StaticResource ButtonStyle}" Margin="25,25,0,0" Background="darkred"/>
         </Grid>
+<Grid x:Name="gridInstallation" Margin="0,60,0,0" Visibility="Collapsed">
+ <Grid x:Name="gridInstallationConfig">
+     <Label x:Name="lblbase" Content="Base" HorizontalAlignment="Left" Foreground="Azure" Margin="200,46,0,0" VerticalAlignment="Top" FontSize="18"/>
+     <Label x:Name="lblSystem" Content="Pilotes" HorizontalAlignment="Left" Foreground="Azure" Margin="415,46,0,0" VerticalAlignment="Top" FontSize="18"/>
+     <Label x:Name="lblAutres" Content="Autres" HorizontalAlignment="Left" Foreground="Azure" Margin="663,46,0,0" VerticalAlignment="Top" FontSize="18"/>
+     <CheckBox x:Name="chkboxAdobe" Content="Adobe Reader" Margin="150,100,0,0" IsChecked="True" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxGoogleChrome" Content="Google Chrome" Margin="150,125,0,0" IsChecked="True" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxTeamviewer" Content="TeamViewer" Margin="150,150,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxVLC" Content="VLC" Margin="150,175,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkbox7zip" Content="7Zip" Margin="150,200,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxMacrium" Content="Macrium" Margin="150,225,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxGeForce" Content="GeForce Experience" Margin="375,100,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxLenovoVantage" Content="Lenovo Vantage" Margin="375,125,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxLenovoSystemUpdate" Content="Lenovo System Update" Margin="375,150,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxHPSA" Content="HP support Assistant" Margin="375,175,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxMSICenter" Content="MSI Center" Margin="375,200,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxMyAsus" Content="MyAsus" Margin="375,225,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxDellsa" Content="Dell Command Update" Margin="375,250,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxSteam" Content="Steam" Margin="675,100,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxZoom" Content="Zoom" Margin="675,125,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxDiscord" Content="Discord" Margin="675,150,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxFirefox" Content="Firefox" Margin="675,175,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxLibreOffice" Content="Libre Office" Margin="675,200,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxIntel" Content="Intel Drivers Support" Margin="375,278,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <Button x:Name="btnGo_InstallationConfig" Content="Commencer" Margin="460,580,0,0" FontSize="18" IsDefault="True" Style="{StaticResource InstallConfigBottomButtonStyle}"/>
+     <Button x:Name="btnReturn_InstallationConfig" Content="Retour au Menu" Margin="320,580,0,0" Style="{StaticResource InstallConfigBottomButtonStyle}"/>
+     <Button x:Name="btnQuit_InstallationConfig" Content="Quitter et supprimer" Margin="600,580,185,0" Style="{StaticResource InstallConfigBottomButtonStyle}"/>
+     <Button x:Name="btnAdobe" Margin="285,100,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnGoogleChrome" Margin="285,125,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnTeamviewer" Margin="285,150,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnVLC" Margin="285,175,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btn7zip" Margin="285,200,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnMacrium" Margin="285,225,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnGeForce" Margin="555,100,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnLenovoVantage" Margin="555,125,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnLenovoSystemUpdate" Margin="555,150,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnHPSA" Margin="555,175,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnMSICenter" Margin="555,200,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnMyAsus" Margin="555,225,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnDellsa" Margin="555,250,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnIntel" Margin="555,275,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnSteam" Margin="790,100,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnZoom" Margin="790,125,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnDiscord" Margin="790,150,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnFirefox" Margin="790,175,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnLibreOffice" Margin="790,200,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Grid x:Name="gridSettingsInstallationConfig">
+         <CheckBox x:Name="chkboxDisque" Content="Renommer Disque" HorizontalAlignment="Left" Foreground="Azure" Margin="150,400,0,0" VerticalAlignment="Top" IsChecked="True" FontSize="15"/>
+         <Label x:Name="lblDisk" Content="Nom :" HorizontalAlignment="Left" Foreground="Azure" Margin="325,395,0,0" VerticalAlignment="Top" FontSize="15"/>
+         <TextBox x:Name="TxtBxDiskName" MaxLength="32" HorizontalAlignment="Left" Foreground="Black" Margin="400,400,0,0" TextWrapping="Wrap" Text="OS" VerticalAlignment="Top" Width="157" Height="26" FontSize="16"/>
+         <CheckBox x:Name="chkboxWindowsUpdate" Content="Update Windows" HorizontalAlignment="Left" Foreground="Azure" Margin="150,370,0,0" VerticalAlignment="Top" IsChecked="True" FontSize="15"/>
+         <Label x:Name="lblUpdateTimer" Content="Restart Timer (seconds)" HorizontalAlignment="Left" Foreground="Azure" Margin="475,370,0,0" VerticalAlignment="Top"/>
+         <ComboBox x:Name="CbBoxRestartTimer" SelectedItem="300" HorizontalAlignment="Left" Margin="610,370,0,0" VerticalAlignment="Top" Width="60">
+             <ComboBoxItem x:Name="CbBoxRestartTimer_1" Content = "60" />
+             <ComboBoxItem x:Name="CbBoxRestartTimer_5" Content = "300" />
+             <ComboBoxItem x:Name="CbBoxRestartTimer_15" Content = "900" />
+         </ComboBox>
+         <Label x:Name="lblUpdateSize" Content="Max size (mb)" HorizontalAlignment="Left" Foreground="Azure" Margin="325,370,0,0" VerticalAlignment="Top"/>
+         <ComboBox x:Name="CbBoxSize" SelectedItem="250" HorizontalAlignment="Left" Margin="410,371,0,0" VerticalAlignment="Top" Width="60">
+             <ComboBoxItem x:Name="CbBoxSize_250" Content = "250" />
+             <ComboBoxItem x:Name="CbBoxSize_500" Content = "1000" />
+             <ComboBoxItem x:Name="CbBoxSize_Aucune" Content = "9999" />
+         </ComboBox>
+         <CheckBox x:Name="chkboxMSStore" Content="Update MsStore" Style="{StaticResource InstallConfigCheckBoxStyle}" Margin="150,430,0,0" IsChecked="True"/>
+         <CheckBox x:Name="chkboxClavier" Content="Retirer clavier Anglais" Style="{StaticResource InstallConfigCheckBoxStyle}" Margin="150,520,0,0" IsChecked="True"/>
+         <CheckBox x:Name="chkboxConfi" Content="Améliorer Confidentialité" Style="{StaticResource InstallConfigCheckBoxStyle}" Margin="400,490,0,0" IsChecked="True"/>
+         <CheckBox x:Name="chkboxStartup" Content="Désactiver Fast startup" Style="{StaticResource InstallConfigCheckBoxStyle}" Margin="150,490,0,0" IsChecked="True"/>
+         <CheckBox x:Name="chkboxExplorer" Content="Configurer Explorer" Style="{StaticResource InstallConfigCheckBoxStyle}" Margin="400,430,0,0" IsChecked="True"/>
+         <CheckBox x:Name="chkboxIcone" Content="Afficher Icones sur bureau" Style="{StaticResource InstallConfigCheckBoxStyle}" Margin="400,460,0,0" IsChecked="True"/>
+         <CheckBox x:Name="chkboxBitlocker" Content="Désactiver Bitlocker" Style="{StaticResource InstallConfigCheckBoxStyle}" Margin="150,460,0,0" IsChecked="True"/>
+         <CheckBox x:Name="chkboxRemove" Content="Supprimer Stoolbox" Style="{StaticResource InstallConfigCheckBoxStyle}" Margin="400,520,0,0" IsChecked="True"/>
+         <CheckBox x:Name="chkboxDeleteFolder" Content="Effacer Téléchargements" Style="{StaticResource InstallConfigCheckBoxStyle}" Margin="560,520,0,0" IsChecked="True"/>
+         <CheckBox x:Name="chkboxDeleteBin" Content="Vider corbeille" Style="{StaticResource InstallConfigCheckBoxStyle}" Margin="750,520,0,0" IsChecked="True"/>
+         <Label x:Name="lblSettings" Content="Paramètres" Foreground="Azure" HorizontalAlignment="Left" VerticalAlignment="Top" Width="135" Margin="400,310,0,0" FontSize="25"/>
+         <Button x:Name="btnWindowsUpdate" Content="Update" Margin="675,370,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+         <Button x:Name="btnDisque" Content="Rename" Margin="600,400,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+         <Button x:Name="btnMSStore" Content="Update" Margin="325,430,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+         <Button x:Name="btnBitlocker" Content="Desacti" Margin="325,460,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+         <Button x:Name="btnStartup" Content="Desacti" Margin="325,490,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+         <Button x:Name="btnClavier" Content="Desacti" Margin="325,520,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+         <Button x:Name="btnExplorer" Content="Config" Margin="600,430,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+         <Button x:Name="btnIcone" Content="Install" Margin="600,460,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+         <Button x:Name="btnConfi" Content="Desacti" Margin="600,490,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+         <RichTextBox x:Name="rtbOutput_InstallationConfig" Margin="723,230,12,139" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" VerticalScrollBarVisibility="Auto">
+             <RichTextBox.OpacityMask>
+                 <SolidColorBrush Color="Black" Opacity="0.5"/>
+             </RichTextBox.OpacityMask>
+             <FlowDocument>
+                 <Paragraph>
+                     <Run Text=""/>
+                 </Paragraph>
+             </FlowDocument>
+         </RichTextBox>
+     </Grid>
+</Grid>
+ </Grid>
     </Grid>
 </Window>
