@@ -152,6 +152,9 @@ function Initialize-Application($appName)
 ########################Déroulement########################
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
+$global:windowsVersion = ((Get-CimInstance -ClassName Win32_OperatingSystem).Caption) -replace 'Microsoft ', ''
+$global:OSUpdate = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion") | Select-Object -expand DisplayVersion
+$global:actualDate = (Get-Date).ToString()
 function Main
 {
     Test-InternetConnection
@@ -159,9 +162,6 @@ function Main
     Get-RemotePsm1Files
     Get-RequiredModules
     $ErrorActionPreference = 'silentlycontinue'#Continuer même en cas d'erreur, cela évite que le script se ferme s'il rencontre une erreur
-    $windowsVersion = ((Get-CimInstance -ClassName Win32_OperatingSystem).Caption) -replace 'Microsoft ', ''
-    $OSUpdate = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion") | Select-Object -expand DisplayVersion
-    $actualDate = (Get-Date).ToString()
     $global:sync['flag'] = $true 
     $dateFile = "$sourceFolderPath\installedDate.txt"
     $adminStatus = Get-AdminStatus
@@ -524,7 +524,7 @@ $window.Add_StateChanged({
     }
 })
 $window.add_Loaded({
-    $formControls.lblOS_Menu.content = "$windowsVersion $OSUpdate"
+    $formControls.lblOS_Menu.content = "$global:windowsVersion $global:OSUpdate"
     $formControls.btnLancementInstallation_Menu.Add_Click({
         Initialize-Application "Installation"
     })
