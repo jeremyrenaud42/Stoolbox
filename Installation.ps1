@@ -153,7 +153,7 @@ $formControls.btnGo_InstallationConfig.Add_Click({
     $Global:appIdentifier = "Installation.ps1"
     Test-ScriptInstance $lockFile $Global:appIdentifier
     $processCaff = get-process -name caffeine64 -ErrorAction SilentlyContinue
-    if($processCaff -eq $false)
+    if($processCaff -eq $null)
     {
         start-Process "$global:appPathSource\caffeine64.exe"
     }
