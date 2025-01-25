@@ -10,6 +10,7 @@ $formControls.btnbat_Diagnostique.Add_Click({
     $formControls.btnBattinfo_Diagnostique.Visibility="Visible"
     $formControls.btnDontsleep_Diagnostique.Visibility="Visible"
     $formControls.btnBattMonitor_Diagnostique.Visibility="Visible"
+    $formControls.btnCaffeine_Diagnostique.Visibility="Visible"
     $formControls.btnbat_Diagnostique.Visibility="Collapsed"
     New-Folder "$global:appPathSource\Batterie"
 })
@@ -53,6 +54,10 @@ $formControls.btnBattMonitor_Diagnostique.Add_Click({
     
 $formControls.btnDontsleep_Diagnostique.Add_Click({
     Invoke-App "DontSleep_x64_p.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main//Batterie/DontSleep_x64_p.exe" "$global:appPathSource/Batterie"
+})
+
+$formControls.btnCaffeine_Diagnostique.Add_Click({
+    Invoke-App "caffeine64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Installation/main/caffeine64.exe" "$global:appPathSource/Batterie"
 })
     
 $formControls.btnAida_Diagnostique.Add_Click({
