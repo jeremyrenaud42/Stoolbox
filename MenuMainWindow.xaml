@@ -100,32 +100,33 @@
             <Button x:Name="btnMenu_Desinfection" Content="Menu principal" Style="{StaticResource ButtonStyle}" Margin="25,35,0,0" Background="darkred"/>
         </Grid>
         <Grid x:Name="gridDiagnostique" Visibility="Collapsed" Margin="0,60,0,0">
-            <Button x:Name="btnbat_Diagnostique" Content="Batterie" Style="{StaticResource ButtonStyle}" Margin="445,100,0,0"  Background="White"/>
-            <Button x:Name="btnBattinfo_Diagnostique" Content="Battinfo" Style="{StaticResource ButtonStyle}" Margin="445,100,0,0"  Background="White" Visibility="Collapsed"/>
-            <Button x:Name="btnBattMonitor_Diagnostique" Content="BattMonitor" Style="{StaticResource ButtonStyle}" Margin="445,175,0,0"  Background="White" Visibility="Collapsed"/>
+            <Button x:Name="btnbat_Diagnostique" Content="Batterie" Style="{StaticResource ButtonStyle}" Margin="445,100,0,0" Background="White"/>
+            <Button x:Name="btnBattinfo_Diagnostique" Content="Battinfo" Style="{StaticResource ButtonStyle}" Margin="445,100,0,0" Background="White" Visibility="Collapsed"/>
+            <Button x:Name="btnBattMonitor_Diagnostique" Content="BattMonitor" Style="{StaticResource ButtonStyle}" Margin="445,175,0,0" Background="White" Visibility="Collapsed"/>
             <Button x:Name="btnDontsleep_Diagnostique" Content="Dontsleep" Style="{StaticResource ButtonStyle}" Margin="445,250,0,0"  Background="White" Visibility="Collapsed"/>
-            <Button x:Name="btnCPU_Diagnostique" Content="CPU" Style="{StaticResource ButtonStyle}" Margin="105,100,0,0"  Background="red"/>
-            <Button x:Name="btnAida_Diagnostique" Content="Aida" Style="{StaticResource ButtonStyle}" Margin="105,100,0,0"  Background="red" Visibility="Collapsed"/>
-            <Button x:Name="btnCoretemp_Diagnostique" Content="Core Temp" Style="{StaticResource ButtonStyle}" Margin="105,175,0,0"  Background="red" Visibility="Collapsed"/>
-            <Button x:Name="btnPrime95_Diagnostique" Content="Prime95" Style="{StaticResource ButtonStyle}" Margin="105,250,0,0"  Background="red" Visibility="Collapsed"/>
-            <Button x:Name="btnHeavyLoad_Diagnostique" Content="HeavyLoad" Style="{StaticResource ButtonStyle}" Margin="105,325,0,0"  Background="red" Visibility="Collapsed"/>
-            <Button x:Name="btnThrottleStop_Diagnostique" Content="ThrottleStop" Style="{StaticResource ButtonStyle}" Margin="105,400,0,0"  Background="red" Visibility="Collapsed"/>
-            <Button x:Name="btnHDD_Diagnostique" Content="HDD" Style="{StaticResource ButtonStyle}" Margin="280,100,0,0"  Background="darkcyan"/>
-            <Button x:Name="btnHDSentinnel_Diagnostique" Content="HDSentinnel" Style="{StaticResource ButtonStyle}" Margin="280,100,0,0"  Background="darkcyan" Visibility="Collapsed"/>
-            <Button x:Name="btnHDTune_Diagnostique" Content="HDTune" Style="{StaticResource ButtonStyle}" Margin="280,325,0,0"  Background="darkcyan" Visibility="Collapsed"/>
-            <Button x:Name="btnASSD_Diagnostique" Content="As_SSD" Style="{StaticResource ButtonStyle}" Margin="280,250,0,0"  Background="darkcyan" Visibility="Collapsed"/>
-            <Button x:Name="btnCrystalDiskInfo_Diagnostique" Content="Diskmark" Style="{StaticResource ButtonStyle}" Margin="280,175,0,0"  Background="darkcyan" Visibility="Collapsed"/>
-            <Button x:Name="btnGPU_Diagnostique" Content="GPU" Style="{StaticResource ButtonStyle}" Margin="760,100,0,0"  Background="yellow"/>
-            <Button x:Name="btnFurmark_Diagnostique" Content="Furmark" Style="{StaticResource ButtonStyle}" Margin="760,175,0,0"  Background="yellow" Visibility="Collapsed"/>
-            <Button x:Name="btnUnigine_Diagnostique" Content="Unigine" Style="{StaticResource ButtonStyle}" Margin="760,100,0,0"  Background="yellow" Visibility="Collapsed"/>
-            <Button x:Name="btnFurmarkV2_Diagnostique" Content="Furmark V2" Style="{StaticResource ButtonStyle}" Margin="760,250,0,0"  Background="yellow" Visibility="Collapsed"/>
-            <Button x:Name="btnRAM_Diagnostique" Content="RAM" Style="{StaticResource ButtonStyle}" Margin="600,100,0,0"  Background="darkgray"/>
-            <Button x:Name="btnQuit_Diagnostique" Content="Quitter" Style="{StaticResource ButtonStyle}" Margin="469,575,0,0"  Background="darkred"/>
-            <Button x:Name="btnMenu_Diagnostique" Content="Menu principal" Style="{StaticResource ButtonStyle}" Margin="25,25,0,0"  Background="darkred"/>
-            <Button x:Name="btnSysinfo_Diagnostique" Content="Sysinfo" Style="{StaticResource ButtonStyle}" Margin="825,525,0,0"  Background="red"/>
-            <Button x:Name="btnWhocrashed_Diagnostique" Content="Whocrashed" Style="{StaticResource ButtonStyle}" Margin="625,525,0,0"  Background="darkgreen"/>
-            <Button x:Name="btnHWMonitor_Diagnostique" Content="HWMonitor" Style="{StaticResource ButtonStyle}" Margin="325,525,0,0"  Background="magenta"/>
-            <Button x:Name="btnSpeccy_Diagnostique" Content="Speccy" Style="{StaticResource ButtonStyle}" Margin="105,525,0,0"  Background="green"/>
+            <Button x:Name="btnCaffeine_Diagnostique" Content="Caffeine" Style="{StaticResource ButtonStyle}" Margin="445,325,0,0" Background="White" Visibility="Collapsed"/>
+            <Button x:Name="btnCPU_Diagnostique" Content="CPU" Style="{StaticResource ButtonStyle}" Margin="105,100,0,0" Background="red"/>
+            <Button x:Name="btnAida_Diagnostique" Content="Aida" Style="{StaticResource ButtonStyle}" Margin="105,100,0,0" Background="red" Visibility="Collapsed"/>
+            <Button x:Name="btnCoretemp_Diagnostique" Content="Core Temp" Style="{StaticResource ButtonStyle}" Margin="105,175,0,0" Background="red" Visibility="Collapsed"/>
+            <Button x:Name="btnPrime95_Diagnostique" Content="Prime95" Style="{StaticResource ButtonStyle}" Margin="105,250,0,0" Background="red" Visibility="Collapsed"/>
+            <Button x:Name="btnHeavyLoad_Diagnostique" Content="HeavyLoad" Style="{StaticResource ButtonStyle}" Margin="105,325,0,0" Background="red" Visibility="Collapsed"/>
+            <Button x:Name="btnThrottleStop_Diagnostique" Content="ThrottleStop" Style="{StaticResource ButtonStyle}" Margin="105,400,0,0" Background="red" Visibility="Collapsed"/>
+            <Button x:Name="btnHDD_Diagnostique" Content="HDD" Style="{StaticResource ButtonStyle}" Margin="280,100,0,0" Background="darkcyan"/>
+            <Button x:Name="btnHDSentinnel_Diagnostique" Content="HDSentinnel" Style="{StaticResource ButtonStyle}" Margin="280,100,0,0" Background="darkcyan" Visibility="Collapsed"/>
+            <Button x:Name="btnHDTune_Diagnostique" Content="HDTune" Style="{StaticResource ButtonStyle}" Margin="280,325,0,0" Background="darkcyan" Visibility="Collapsed"/>
+            <Button x:Name="btnASSD_Diagnostique" Content="As_SSD" Style="{StaticResource ButtonStyle}" Margin="280,250,0,0" Background="darkcyan" Visibility="Collapsed"/>
+            <Button x:Name="btnCrystalDiskInfo_Diagnostique" Content="Diskmark" Style="{StaticResource ButtonStyle}" Margin="280,175,0,0" Background="darkcyan" Visibility="Collapsed"/>
+            <Button x:Name="btnGPU_Diagnostique" Content="GPU" Style="{StaticResource ButtonStyle}" Margin="760,100,0,0" Background="yellow"/>
+            <Button x:Name="btnFurmark_Diagnostique" Content="Furmark" Style="{StaticResource ButtonStyle}" Margin="760,175,0,0" Background="yellow" Visibility="Collapsed"/>
+            <Button x:Name="btnUnigine_Diagnostique" Content="Unigine" Style="{StaticResource ButtonStyle}" Margin="760,100,0,0" Background="yellow" Visibility="Collapsed"/>
+            <Button x:Name="btnFurmarkV2_Diagnostique" Content="Furmark V2" Style="{StaticResource ButtonStyle}" Margin="760,250,0,0" Background="yellow" Visibility="Collapsed"/>
+            <Button x:Name="btnRAM_Diagnostique" Content="RAM" Style="{StaticResource ButtonStyle}" Margin="600,100,0,0" Background="darkgray"/>
+            <Button x:Name="btnQuit_Diagnostique" Content="Quitter" Style="{StaticResource ButtonStyle}" Margin="469,575,0,0" Background="darkred"/>
+            <Button x:Name="btnMenu_Diagnostique" Content="Menu principal" Style="{StaticResource ButtonStyle}" Margin="25,25,0,0" Background="darkred"/>
+            <Button x:Name="btnSysinfo_Diagnostique" Content="Sysinfo" Style="{StaticResource ButtonStyle}" Margin="825,525,0,0" Background="red"/>
+            <Button x:Name="btnWhocrashed_Diagnostique" Content="Whocrashed" Style="{StaticResource ButtonStyle}" Margin="625,525,0,0" Background="darkgreen"/>
+            <Button x:Name="btnHWMonitor_Diagnostique" Content="HWMonitor" Style="{StaticResource ButtonStyle}" Margin="325,525,0,0" Background="magenta"/>
+            <Button x:Name="btnSpeccy_Diagnostique" Content="Speccy" Style="{StaticResource ButtonStyle}" Margin="105,525,0,0" Background="green"/>
         </Grid>
         <Grid x:Name="gridFix" Visibility="Collapsed" Margin="0,60,0,0">
             <Button x:Name="btnScript_Fix" Content="Scripts" Style="{StaticResource ButtonStyle}" Margin="195,200,0,0" Background="White"/>
