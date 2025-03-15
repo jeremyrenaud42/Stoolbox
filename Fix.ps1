@@ -75,7 +75,7 @@ $formControls.btnUWT11_Fix.Add_Click({
     Start-Process "$global:appPathSource\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe"
 })
 $formControls.btnTweaking_Fix.Add_Click({
-    Invoke-App "Repair_Windows.zip" "https://ftp.alexchato9.com/public/file/7mop4guroekrtvbrhb_0wq/Repair_Windows.zip" "$global:appPathSource\Tweak"
+    Invoke-App "Repair_Windows.zip" "https://ftp.alexchato9.com/public/file/8xogge6k4uugcx2y9dp8vw/Repair_Windows.zip" "$global:appPathSource\Tweak"
 })
 $formControls.btnSterjoBrowser_Fix.Add_Click({
     Start-Process "$global:appPathSource\Sterjo\SterJo_Browser_Passwords_sps\BrowserPasswords.exe"
