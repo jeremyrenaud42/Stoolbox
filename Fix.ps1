@@ -43,7 +43,7 @@ $formControls.btnWinDirStat_Fix.Add_Click({
     Invoke-App "WinDirStatPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip" $global:appPathSource
 })
 $formControls.btnPW_Fix.Add_Click({
-    Invoke-App "PartitionWizard.zip" "https://ftp.alexchato9.com/public/file/eortitew8kkil6hdeh2lgw/PartitionWizard.zip" $global:appPathSource
+    Invoke-App "PartitionWizard.zip" "https://ftp.alexchato9.com/public/file/lmyigeszp0mea-kh9cbe0g/PartitionWizard.zip" $global:appPathSource
 })
 $formControls.btnInternet_Fix.Add_Click({
     Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip"  $global:appPathSource

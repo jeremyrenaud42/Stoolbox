@@ -61,7 +61,7 @@ $formControls.btnCaffeine_Diagnostique.Add_Click({
 })
     
 $formControls.btnAida_Diagnostique.Add_Click({
-    Invoke-App "Aida64.zip" "https://ftp.alexchato9.com/public/file/jbwonaj8zemkbhagl4f47a/Aida64.zip" "$global:appPathSource\cpu" 
+    Invoke-App "Aida64.zip" "https://ftp.alexchato9.com/public/file/usqmwleqye2mhazxdvahvw/Aida64.zip" "$global:appPathSource\cpu" 
     Add-Log $global:logFileName "Test de stabilité du système effectué"
 })
     
