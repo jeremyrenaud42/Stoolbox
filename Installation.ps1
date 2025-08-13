@@ -20,7 +20,7 @@ elseif($manufacturerBrand -like '*Micro-Star*')
 $videoController = Get-WmiObject win32_videoController | Select-Object -Property name
 if($videoController -match 'NVIDIA')
 {
-    $formControls.chkboxGeForce.IsChecked = $true
+    $formControls.chkboxNVIDIA.IsChecked = $true
 }
 
 #Actions lorsque boutons sont cliqués 
@@ -42,8 +42,8 @@ $formControls.btn7zip.Add_Click({
 $formControls.btnMacrium.Add_Click({
     Install-SoftwareMenuApp "Macrium"
 })
-$formControls.btnGeForce.Add_Click({
-    Install-SoftwareMenuApp "GeForce Experience"
+$formControls.btnNVIDIA.Add_Click({
+    Install-SoftwareMenuApp "NVIDIA Experience"
 })
 $formControls.btnLenovoVantage.Add_Click({
     Install-SoftwareMenuApp "Lenovo Vantage"

@@ -166,7 +166,7 @@
      <CheckBox x:Name="chkboxVLC" Content="VLC" Margin="150,175,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
      <CheckBox x:Name="chkbox7zip" Content="7Zip" Margin="150,200,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
      <CheckBox x:Name="chkboxMacrium" Content="Macrium" Margin="150,225,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
-     <CheckBox x:Name="chkboxGeForce" Content="GeForce Experience" Margin="375,100,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxGeForce" Content="NVIDIA App" Margin="375,100,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
      <CheckBox x:Name="chkboxLenovoVantage" Content="Lenovo Vantage" Margin="375,125,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
      <CheckBox x:Name="chkboxLenovoSystemUpdate" Content="Lenovo System Update" Margin="375,150,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
      <CheckBox x:Name="chkboxHPSA" Content="HP support Assistant" Margin="375,175,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
