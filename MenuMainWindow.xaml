@@ -166,7 +166,7 @@
      <CheckBox x:Name="chkboxVLC" Content="VLC" Margin="150,175,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
      <CheckBox x:Name="chkbox7zip" Content="7Zip" Margin="150,200,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
      <CheckBox x:Name="chkboxMacrium" Content="Macrium" Margin="150,225,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
-     <CheckBox x:Name="chkboxGeForce" Content="NVIDIA App" Margin="375,100,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
+     <CheckBox x:Name="chkboxNVIDIA" Content="NVIDIA App" Margin="375,100,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
      <CheckBox x:Name="chkboxLenovoVantage" Content="Lenovo Vantage" Margin="375,125,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
      <CheckBox x:Name="chkboxLenovoSystemUpdate" Content="Lenovo System Update" Margin="375,150,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
      <CheckBox x:Name="chkboxHPSA" Content="HP support Assistant" Margin="375,175,0,0" IsChecked="False" Style="{StaticResource InstallConfigCheckBoxStyle}"/>
@@ -188,7 +188,7 @@
      <Button x:Name="btnVLC" Margin="285,175,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
      <Button x:Name="btn7zip" Margin="285,200,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
      <Button x:Name="btnMacrium" Margin="285,225,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
-     <Button x:Name="btnGeForce" Margin="555,100,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
+     <Button x:Name="btnNVIDIA" Margin="555,100,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
      <Button x:Name="btnLenovoVantage" Margin="555,125,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
      <Button x:Name="btnLenovoSystemUpdate" Margin="555,150,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
      <Button x:Name="btnHPSA" Margin="555,175,0,0" Style="{StaticResource InstallConfigButtonStyle}"/>
