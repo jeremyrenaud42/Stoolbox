@@ -76,7 +76,7 @@ function Get-RemotePsm1Files
     $modulesFolderPathExist = test-path -Path $modulesFolderPath
     if($modulesFolderPathExist -eq $false)
     {
-        $zipFileDownloadLink = "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules.zip"
+        $zipFileDownloadLink = "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Modules.zip"
         $zipFile = "Modules.zip"
         $webClient = New-Object System.Net.WebClient
         $webClient.DownloadFile($zipFileDownloadLink, "$sourceFolderPath\$zipFile")
@@ -123,9 +123,9 @@ function Initialize-Application($appName)
     #>
     $appPath = "$applicationPath\$appName"
     $global:appPathSource = "$appPath\source"
-    Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" $global:appPathSource
+    Get-RemoteFile "Background_$appName.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" $global:appPathSource
     New-Item -Path $appPath -ItemType 'Directory' -Force
-    Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/$appName.ps1" $appPath
+    Get-RemoteFile "$appName.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/$appName.ps1" $appPath
     set-location $appPath
     $global:logFileName = Initialize-LogFile $global:appPathSource $appName
     if ($appName -eq "Installation")
@@ -183,18 +183,18 @@ Main
     $downloadXamlFile = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-    Get-RemoteFile "MenuMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/MenuMainWindow.xaml" $sourceFolderPath
-    Get-RemoteFile "Resources.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Resources.xaml" $sourceFolderPath
-    Get-RemoteFile "Settings.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Settings.JSON" $sourceFolderPath
+    Get-RemoteFile "MenuMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/MenuMainWindow.xaml" $sourceFolderPath
+    Get-RemoteFile "Resources.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Resources.xaml" $sourceFolderPath
+    Get-RemoteFile "Settings.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Settings.JSON" $sourceFolderPath
     }
 
     $downloadAssetsFile = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
     Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
     Import-Module "$sourceFolderPath\Modules\AssetsManagement.psm1"
-    Get-RemoteFile "Background_menu.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$sourceFolderPath\Images"
-    Get-RemoteFile "Icone.ico" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/$Global:seasonFolderName/Icone.ico" "$sourceFolderPath\Images"
-    Get-RemoteFile "IconeNyxSky.png" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/assets/IconeNyxSky.png" "$sourceFolderPath\Images"
+    Get-RemoteFile "Background_menu.jpeg" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/assets/$Global:seasonFolderName/$Global:NumberRDM.jpeg" "$sourceFolderPath\Images"
+    Get-RemoteFile "Icone.ico" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/assets/$Global:seasonFolderName/Icone.ico" "$sourceFolderPath\Images"
+    Get-RemoteFile "IconeNyxSky.png" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/assets/IconeNyxSky.png" "$sourceFolderPath\Images"
 }
 
 #Définitions des variables
@@ -541,18 +541,18 @@ $window.add_Loaded({
         Initialize-Application "Fix"
     })
     $formControls.btnChangeLog_Menu.Add_Click({
-        Get-RemoteFile "changelog.txt" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/changelog.txt" "$env:SystemDrive\_Tech\Applications\source"
+        Get-RemoteFile "changelog.txt" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/changelog.txt" "$env:SystemDrive\_Tech\Applications\source"
         Start-Process "$env:SystemDrive\_Tech\Applications\source\changelog.txt"
     })
     $formControls.btnForceUpdate_Menu.Add_Click({
-        Get-RemoteFileForce "Installation.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Installation.ps1" "$env:SystemDrive\_Tech\Applications\Installation"
-        Get-RemoteFileForce "Optimisation_Nettoyage.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Optimisation_Nettoyage.ps1" "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
-        Get-RemoteFileForce "Diagnostique.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Diagnostique.ps1" "$env:SystemDrive\_Tech\Applications\Diagnostique"
-        Get-RemoteFileForce "Desinfection.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Desinfection.ps1" "$env:SystemDrive\_Tech\Applications\Desinfection"
-        Get-RemoteFileForce "Fix.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Fix.ps1" "$env:SystemDrive\_Tech\Applications\Fix"
-        Get-RemoteFileForce "Remove.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1" "$env:SystemDrive\Temp\Stoolbox"
-        Get-RemoteFileForce "Menu.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Menu.ps1" "$env:SystemDrive\_Tech"
-        Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Modules.zip" -OutFile "$env:SystemDrive\_Tech\Applications\source\Modules.zip" | Out-Null
+        Get-RemoteFileForce "Installation.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Installation.ps1" "$env:SystemDrive\_Tech\Applications\Installation"
+        Get-RemoteFileForce "Optimisation_Nettoyage.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Optimisation_Nettoyage.ps1" "$env:SystemDrive\_Tech\Applications\Optimisation_Nettoyage"
+        Get-RemoteFileForce "Diagnostique.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Diagnostique.ps1" "$env:SystemDrive\_Tech\Applications\Diagnostique"
+        Get-RemoteFileForce "Desinfection.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Desinfection.ps1" "$env:SystemDrive\_Tech\Applications\Desinfection"
+        Get-RemoteFileForce "Fix.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Fix.ps1" "$env:SystemDrive\_Tech\Applications\Fix"
+        Get-RemoteFileForce "Remove.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Remove.ps1" "$env:SystemDrive\Temp\Stoolbox"
+        Get-RemoteFileForce "Menu.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Menu.ps1" "$env:SystemDrive\_Tech"
+        Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Modules.zip" -OutFile "$env:SystemDrive\_Tech\Applications\source\Modules.zip" | Out-Null
         Expand-Archive "$env:SystemDrive\_Tech\Applications\source\Modules.zip" "$env:SystemDrive\_Tech\Applications\source" -Force
         Remove-Item "$env:SystemDrive\_Tech\Applications\source\Modules.zip"
         $window.Close()
@@ -623,7 +623,7 @@ $window.add_Closing({
     $downloadRemoveScript = {
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
         Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
-        Get-RemoteFile "Remove.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Bat/main/Remove.ps1" "$env:SystemDrive\Temp\Stoolbox"
+        Get-RemoteFile "Remove.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Remove.ps1" "$env:SystemDrive\Temp\Stoolbox"
     } 
     #Lancement des runspaces
     if($shortcutExist -eq $false)
