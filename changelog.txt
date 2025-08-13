@@ -1,62 +1,45 @@
-2024-12-12:
-- Installation bouton pour quick install chaque logiciels et fonctions
+2024-12:
 - Tous les scripts ont le choix de vider corbeille/wiper download en cliquant sur Quitter
 - Desinfection et Optimisation_Nettoyage sont maintenant en WPF
-
-2024-12-01:
 - New gui pour installation
 - Corrigé bug menu qui pouvait freeze
 - Nouveau background pour tous les scripts
 - Dossier Temp modifié pour Temp/Stoolbox
 
-2024-08-22:
+2024-08:
 - Amélioration de Remove, supprime dossier download et plus de checkup
 - Il supprime remove.bat et remove.ps1 du dossier Temp
 - Il supprime le dossier Temp et la tâche planifiée
-
-2024-08-10:
 - Ajout de BattMonitor et Furmark V2
 - Ajout du bouton pour tout updater dans Menu 
-
-2024-08-01:
 - Installation peut être custom dans l'onglet settings 
 
-2024-07-25:
+2024-07:
 - Menu affiche des statuts et permet d'installer Winget et Choco
-
-2024-07-20:
 - Diagnostique est maintenant en WPF
 - Ajout de Throttlestop à Diagnostique
 - Amélioration d'installation
-
-2024-07-10:
 - Menu est maintenant en WPF
 - Installation est maintenant en WPF
 - Update Winget v1.8 (from 1.6)
 
-2023-12-17:
+2023-12:
 - Décocher Teamviewer par défaut
 - Modifier fonction fast boot pour seulement décocher la case
 - kill process ninite qui bug la suppression finale
 - Update Winget v1.6 (from 1.3) pour W11 23h2
 
-2023-03-06:
+2023-03:
 - Ajout du Menu de choix des applications pour Installation
 - Ajout d'une scrollbar pour output de Installation
 
-2023-02-22:
+2023-02:
 - Ajout raccourci sur le bureau de Menu.bat
-
-2023-02-02:
 - Enlever EaseUS de Fix
 
-2023-01-31:
+2023-01:
 - Menu vérifie la connexion Internet
 - Installation shutdown ordi après 5 minutes au lieu de 1 minute
-
-2023-01-14:
 - Vitesse et santé HDD download direct dans Optimisation now au lieu de reprendre celui de Diag
-
-2023-01-07:
 - Ajout du bouton changelog à Menu
 - Améliorer Secu_Dossier de Fix
