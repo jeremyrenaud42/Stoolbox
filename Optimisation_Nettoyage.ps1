@@ -36,7 +36,8 @@ $formControls.btnHitmanPro_Optimisation_Nettoyage.Add_Click({
 })
 
 $formControls.btnSysEvent_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "sysevent.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent/sysevent.exe" $global:appPathSource
+    Get-RemoteFile "sysevent.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent.ps1" $global:appPathSource
+    powershell -ExecutionPolicy Bypass -File "$global:appPathSource/sysevent.ps1"
     Add-Log $global:logFileName "Vérifier les evenements"
 })
 
