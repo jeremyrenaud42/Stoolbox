@@ -35,10 +35,10 @@ $formControls.btnDDU_Fix.Add_Click({
     Invoke-App "Display Driver Uninstaller.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip" $global:appPathSource
 })
 $formControls.btnWFD_Fix.Add_Click({
-    Invoke-App "WiseForceDeleterPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleterPortable.zip" $global:appPathSource
+    Invoke-App "WiseForceDeleter.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleter.zip" $global:appPathSource
 })
 $formControls.btnWinDirStat_Fix.Add_Click({
-    Invoke-App "WinDirStatPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStatPortable.zip" $global:appPathSource
+    Invoke-App "WinDirStat.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.exe" $global:appPathSource
 })
 $formControls.btnPW_Fix.Add_Click({
     Invoke-App "PartitionWizard.zip" "https://ftp.alexchato9.com/public/file/lmyigeszp0mea-kh9cbe0g/PartitionWizard.zip" $global:appPathSource
