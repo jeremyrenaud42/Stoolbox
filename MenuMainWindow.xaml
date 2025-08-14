@@ -142,11 +142,9 @@
             <Button x:Name="btnTweaking_Fix" Content="Tweaking" Style="{StaticResource ButtonStyle}" Margin="445,440,0,0" Background="White" Visibility="Hidden"/>
             <Button x:Name="btnSterjo_Fix" Content="Sterjo" Style="{StaticResource ButtonStyle}" Margin="700,200,0,0" Background="White"/>
             <Button x:Name="btnSterjoBrowser_Fix" Content="Browser" Style="{StaticResource ButtonStyle}" Margin="700,200,0,0" Background="White" Visibility="Hidden"/>
-            <Button x:Name="btnSterjoChrome_Fix" Content="Chrome" Style="{StaticResource ButtonStyle}" Margin="700,260,0,0" Background="White" Visibility="Hidden"/>
-            <Button x:Name="btnSterjoFirefox_Fix" Content="Firefox" Style="{StaticResource ButtonStyle}" Margin="700,320,0,0" Background="White" Visibility="Hidden"/>
-            <Button x:Name="btnSterjoKeys_Fix" Content="Keys" Style="{StaticResource ButtonStyle}" Margin="700,380,0,0" Background="White" Visibility="Hidden"/>
-            <Button x:Name="btnSterjoMail_Fix" Content="Mail" Style="{StaticResource ButtonStyle}" Margin="700,440,0,0" Background="White" Visibility="Hidden"/>
-            <Button x:Name="btnSterjoWireless_Fix" Content="Wireless" Style="{StaticResource ButtonStyle}" Margin="700,500,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnSterjoKeys_Fix" Content="Keys" Style="{StaticResource ButtonStyle}" Margin="700,260,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnSterjoMail_Fix" Content="Mail" Style="{StaticResource ButtonStyle}" Margin="700,320,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnSterjoWireless_Fix" Content="Wireless" Style="{StaticResource ButtonStyle}" Margin="700,380,0,0" Background="White" Visibility="Hidden"/>
             <Button x:Name="btnDDU_Fix" Content="DDU" Style="{StaticResource ButtonStyle}" Margin="105,125,0,0" Background="White"/>
             <Button x:Name="btnWFD_Fix" Content="WiseForceDeleter" Style="{StaticResource ButtonStyle}" Margin="280,125,0,0" Background="White"/>
             <Button x:Name="btnWinDirStat_Fix" Content="WinDirStat" Style="{StaticResource ButtonStyle}" Margin="445,125,0,0" Background="White"/>
