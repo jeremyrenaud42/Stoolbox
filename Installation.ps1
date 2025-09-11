@@ -43,7 +43,7 @@ $formControls.btnMacrium.Add_Click({
     Install-SoftwareMenuApp "Macrium"
 })
 $formControls.btnNVIDIA.Add_Click({
-    Install-SoftwareMenuApp "NVIDIA Experience"
+    Install-SoftwareMenuApp "NVIDIA App"
 })
 $formControls.btnLenovoVantage.Add_Click({
     Install-SoftwareMenuApp "Lenovo Vantage"
