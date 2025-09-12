@@ -3,16 +3,16 @@
     Affiche un menu qui permet de sélectionner les actions à faire
 .DESCRIPTION
     Directement téléchargé par le .exe il va permettre de poser les bases pour que tout fonctionne.
-    vérifie donc qu'Internet soit présent, que le script soit en admin
+    Vérifie donc qu'Internet soit présent et que le script soit en admin
     Créer les dossiers nécéssaires
-    télécharge les modules et les importes (executionpolicy doit etre a unrestricted pour que ca importe)
-    télécharge le script qui permet d'effacer/desisntaller le tout
-    affiche un menu généré en WPF par un fichier XAML
+    Télécharge les modules et les importes (executionpolicy unrestricted pour que ca importe)
+    Télécharge le script qui permet de desisntaller le tout
+    Affiche un menu généré en WPF par un fichier XAML
     Permet d'installer winget et choco tout de suite au besoin
     Affiche les boutons qui ouvre les autres scripts
 .NOTES
     est initialement downloadé par Stoolbox.exe depuis github
-    Par la suite il ya un raccourci sur le bureau pour l'appeler
+    Par la suite il ya un raccourci sur le bureau pour l'ouvrir
 #>
 
 #Load les assemblies nécéssaire au fonctionnement
@@ -310,7 +310,7 @@ $grids.add_IsVisibleChanged({
 #Fonctions pour runspaces
 $menuWinget = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\Verification.psm1"
+    Import-Module "$sourceFolderPath\Modules\PackageManager.psm1"
 
     function Set-MenuWinget 
     {
@@ -363,8 +363,7 @@ $menuWinget = {
 
 $menuChoco = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\Verification.psm1"
-    Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+    Import-Module "$sourceFolderPath\Modules\PackageManager.psm1"
 
     function Set-MenuChoco 
     {
@@ -416,7 +415,7 @@ $menuChoco = {
 
 $menuFTP = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\Verification.psm1"
+    Import-Module "$sourceFolderPath\Modules\PackageManager.psm1"
 
     function Set-MenuFTP 
     {
@@ -456,7 +455,7 @@ $menuFTP = {
 
 $menuGit = {
     $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-    Import-Module "$sourceFolderPath\Modules\Verification.psm1"
+    Import-Module "$sourceFolderPath\Modules\PackageManager.psm1"
 
     function Set-MenuGit 
     {
@@ -577,8 +576,7 @@ $window.add_Loaded({
     $formControls.btnWinget_Menu.Add_Click({
         $installWinget = {
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-        Import-Module "$sourceFolderPath\Modules\Verification.psm1"
-        Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+        Import-Module "$sourceFolderPath\Modules\PackageManager.psm1"
         Install-Winget
         }
         $installWingetKey = "installWinget"
@@ -590,8 +588,7 @@ $window.add_Loaded({
    $formControls.btnChoco_Menu.Add_Click({
         $installChoco = {
         $sourceFolderPath = "$env:SystemDrive\_Tech\Applications\source"
-        Import-Module "$sourceFolderPath\Modules\Verification.psm1"
-        Import-Module "$sourceFolderPath\Modules\AppManagement.psm1"
+        Import-Module "$sourceFolderPath\Modules\PackageManager.psm1"
         Install-Choco
         }
         $installChocoKey = "installChoco"
