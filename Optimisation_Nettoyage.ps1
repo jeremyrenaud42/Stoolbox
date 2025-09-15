@@ -4,14 +4,14 @@ $formControls.btnUpdate_Optimisation_Nettoyage.Add_Click({
 })
 
 $formControls.btnAutoruns_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe" $global:appPathSource
-    start-sleep 3
+    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Optimisation_Nettoyage/autoruns.exe" $global:appPathSource
+    start-sleep 3             
     taskmgr
     Add-Log $global:logFileName "Vérifier les logiciels au démarrage"
 })
 
 $formControls.btnRevo_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip" $global:appPathSource
+    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Optimisation_Nettoyage/RevoUPort.zip" $global:appPathSource
     Add-Log $global:logFileName "Vérifier les programmes nuisibles"
 })
 
@@ -21,7 +21,7 @@ $formControls.btnHDD_Optimisation_Nettoyage.Add_Click({
 })
 
 $formControls.btnCcleaner_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip" $global:appPathSource
+    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Optimisation_Nettoyage/CCleaner64.zip" $global:appPathSource
     Add-Log $global:logFileName "Nettoyage du disque avec CCleaner effectué"
 })
 
@@ -31,23 +31,23 @@ $formControls.btnSfc_Optimisation_Nettoyage.Add_Click({
 })
 
 $formControls.btnHitmanPro_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe" $global:appPathSource
+    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Desinfection/HitmanPro.exe" $global:appPathSource
     Add-Log $global:logFileName "Vérifier les virus avec HitmanPro"
 })
 
 $formControls.btnSysEvent_Optimisation_Nettoyage.Add_Click({
-    Get-RemoteFile "sysevent.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/sysevent.ps1" $global:appPathSource
+    Get-RemoteFile "sysevent.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Optimisation_Nettoyage/sysevent.ps1" $global:appPathSource
     powershell -ExecutionPolicy Bypass -File "$global:appPathSource/sysevent.ps1"
     Add-Log $global:logFileName "Vérifier les evenements"
 })
 
 $formControls.btnCrystalDiskInfo_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "CrystalDiskInfoPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/HDD/CrystalDiskInfoPortable.zip" $global:appPathSource
+    Invoke-App "CrystalDiskInfoPortable.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Diagnostique/HDD/CrystalDiskInfoPortable.zip" $global:appPathSource
     Add-Log $global:logFileName "Vérifier la santé du HDD"
 })
 
 $formControls.btnHDTune_Optimisation_Nettoyage.Add_Click({
-    Invoke-App "_HDTune.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Diagnostique/main/_HDTune.zip" $global:appPathSource
+    Invoke-App "_HDTune.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Diagnostique/HDD/_HDTune.exe" $global:appPathSource
     Add-Log $global:logFileName "Vérifier la Vitesse du disque dur"
 })
 

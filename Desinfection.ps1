@@ -7,17 +7,17 @@ $formControls.btnQuit_Desinfection.Add_Click({
 })
 
 $formControls.btnProcess_Explorer_Desinfection.Add_Click({
-    Invoke-App "procexp64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/procexp64.exe" $global:appPathSource
+    Invoke-App "procexp64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Desinfection/procexp64.exe" $global:appPathSource
     Add-Log $global:logFileName "Vérifier les process"
 })
 
 $formControls.btnRKill_Desinfection.Add_Click({
-    Invoke-App "rkill64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/rkill64.exe" $global:appPathSource
+    Invoke-App "rkill64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Desinfection/rkill64.exe" $global:appPathSource
     Add-Log $global:logFileName "Désactiver les process"
 })
 
 $formControls.btnAutoruns_Desinfection.Add_Click({
-    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/autoruns.exe" $global:appPathSource
+    Invoke-App "autoruns.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Optimisation_Nettoyage/autoruns.exe" $global:appPathSource
     start-sleep 3
     taskmgr
     Add-Log $global:logFileName "Vérifier les logiciels au démarrage"
@@ -29,18 +29,18 @@ $formControls.btnHDD_Desinfection.Add_Click({
 })
 
 $formControls.btnCcleaner_Desinfection.Add_Click({
-    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/CCleaner64.zip" $global:appPathSource
+    Invoke-App "CCleaner64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Optimisation_Nettoyage/CCleaner64.zip" $global:appPathSource
     Add-Log $global:logFileName "Nettoyage CCleaner effectué"
  })
 
 $formControls.btnRevo_Desinfection.Add_Click({
-    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Optimisation_Nettoyage/main/RevoUPort.zip" $global:appPathSource
+    Invoke-App "RevoUPort.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Optimisation_Nettoyage/RevoUPort.zip" $global:appPathSource
     Add-Log $global:logFileName "Vérifier les programmes nuisibles"
  })
 
 
 $formControls.btnADWcleaner_Desinfection.Add_Click({
-    Invoke-App "adwcleaner.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/adwcleaner.exe" $global:appPathSource
+    Invoke-App "adwcleaner.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Desinfection/adwcleaner.exe" $global:appPathSource
     Add-Log $global:logFileName "Analyse ADW effectué"
  })
 
@@ -52,7 +52,7 @@ $formControls.btnMalwareByte_Desinfection.Add_Click({
         choco install malwarebytes -y | Out-Null
         if($path -eq $false)
         {
-            Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite Malwarebytes Installer.exe" -OutFile "$root\_Tech\Applications\Desinfection\Source\Ninite Malwarebytes Installer.exe"
+            Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Desinfection/Ninite Malwarebytes Installer.exe" -OutFile "$root\_Tech\Applications\Desinfection\Source\Ninite Malwarebytes Installer.exe"
             Start-Process "$root\_Tech\\Applications\Desinfection\Source\Ninite Malwarebytes Installer.exe"
             $path = Test-Path "$env:SystemDrive\Program Files\Malwarebytes\Anti-Malware\mbam.exe"
             if($path -eq $false)
@@ -83,7 +83,7 @@ $formControls.btnSuperAntiSpyware_Desinfection.Add_Click({
         Start-Process "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe" 
         if($path -eq $false)
         {
-            Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/Ninite SUPERAntiSpyware Installer.exe" -OutFile "$root\_Tech\Applications\Desinfection\Source\Ninite SUPERAntiSpyware Installer.exe"
+            Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Desinfection/Ninite SUPERAntiSpyware Installer.exe" -OutFile "$root\_Tech\Applications\Desinfection\Source\Ninite SUPERAntiSpyware Installer.exe"
             Start-Process "$root\_Tech\\Applications\Desinfection\Source\Ninite SUPERAntiSpyware Installer.exe"
             $path = Test-Path "$env:SystemDrive\Program Files\SUPERAntiSpyware\SUPERAntiSpyware.exe"
             if($path -eq $false)
@@ -105,11 +105,11 @@ $formControls.btnSuperAntiSpyware_Desinfection.Add_Click({
  })
 
 $formControls.btnHitmanPro_Desinfection.Add_Click({
-    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/HitmanPro.exe" $global:appPathSource
+    Invoke-App "HitmanPro.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Desinfection/HitmanPro.exe" $global:appPathSource
     Add-Log $global:logFileName "Vérifier les virus avec HitmanPro"
 })
 
 $formControls.btnRogueKiller_Desinfection.Add_Click({
-    Invoke-App "RogueKiller_portable64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Desinfection/main/RogueKiller_portable64.zip" $global:appPathSource
+    Invoke-App "RogueKiller_portable64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Desinfection/RogueKiller_portable64.zip" $global:appPathSource
     Add-Log $global:logFileName "Analyse RogueKiller effectué"
  })

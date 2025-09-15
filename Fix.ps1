@@ -20,7 +20,7 @@ $formControls.btnTweak_Fix.Add_Click({
     $formControls.btnUWT11_Fix.Visibility="Visible"
     $formControls.btnTweaking_Fix.Visibility="Visible"
     $formControls.btnTweak_Fix.Visibility="Collapsed"
-    Get-RemoteFile "Tweak.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Tweak.zip" $global:appPathSource
+    Get-RemoteFile "Tweak.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Fix/Tweak.zip" $global:appPathSource
 })
 $formControls.btnSterjo_Fix.Add_Click({
     $formControls.btnSterjoBrowser_Fix.Visibility="Visible"
@@ -28,23 +28,23 @@ $formControls.btnSterjo_Fix.Add_Click({
     $formControls.btnSterjoMail_Fix.Visibility="Visible"
     $formControls.btnSterjoWireless_Fix.Visibility="Visible"
     $formControls.btnSterjo_Fix.Visibility="Collapsed"
-    Get-RemoteFile "Sterjo.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Sterjo.zip" $global:appPathSource
+    Get-RemoteFile "Sterjo.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Fix/Sterjo.zip" $global:appPathSource
 })
 
 $formControls.btnDDU_Fix.Add_Click({
-    Invoke-App "Display Driver Uninstaller.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/Display Driver Uninstaller.zip" $global:appPathSource
+    Invoke-App "Display Driver Uninstaller.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Fix/Display Driver Uninstaller.zip" $global:appPathSource
 })
 $formControls.btnWFD_Fix.Add_Click({
-    Invoke-App "WiseForceDeleter.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WiseForceDeleter.zip" $global:appPathSource
+    Invoke-App "WiseForceDeleter.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Fix/WiseForceDeleter.zip" $global:appPathSource
 })
 $formControls.btnWinDirStat_Fix.Add_Click({
-    Invoke-App "WinDirStat.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/WinDirStat.exe" $global:appPathSource
+    Invoke-App "WinDirStat.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Fix/WinDirStat.exe" $global:appPathSource
 })
 $formControls.btnPW_Fix.Add_Click({
     Invoke-App "PartitionWizard.zip" "https://ftp.alexchato9.com/public/file/lmyigeszp0mea-kh9cbe0g/PartitionWizard.zip" $global:appPathSource
 })
 $formControls.btnInternet_Fix.Add_Click({
-    Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/ComIntRep_X64.zip"  $global:appPathSource
+    Invoke-App "ComIntRep_X64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Fix/ComIntRep_X64.zip"  $global:appPathSource
 })
 
 $formControls.btnSFC_Fix.Add_Click({
@@ -57,7 +57,7 @@ $formControls.btnCHKDSK_Fix.Add_Click({
     Start-Process cmd.exe -ArgumentList "/k chkdsk /f /r"
 })
 $formControls.btnSession_Fix.Add_Click({
-    Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/Fix/main/creer_session.txt" $global:appPathSource
+    Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Fix/creer_session.txt" $global:appPathSource
     Start-Process "$global:appPathSource\creer_session.txt"
 })
 $formControls.btnFW10_Fix.Add_Click({
