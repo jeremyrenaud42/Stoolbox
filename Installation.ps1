@@ -121,32 +121,20 @@ $formControls.btnGo_InstallationConfig.Add_Click({
 
     if($formControls.chkboxDeleteFolder.IsChecked)
     {
-        $jsonFilePath = "$sourceFolderPath\Settings.JSON"
-        $jsonGlobalSettinngsContent = Get-Content $jsonFilePath | ConvertFrom-Json
-        $jsonGlobalSettinngsContent.RemoveDownloadFolder.Status = "1"
-        $jsonGlobalSettinngsContent | ConvertTo-Json | Set-Content $jsonFilePath
+        Update-JsonFile "$sourceFolderPath\Settings.JSON" "RemoveDownloadFolder" "Status" "1"
     }
     elseif($formControls.chkboxDeleteFolder.IsChecked -eq $false)
     { 
-        $jsonFilePath = "$sourceFolderPath\Settings.JSON"
-        $jsonGlobalSettinngsContent = Get-Content $jsonFilePath | ConvertFrom-Json
-        $jsonGlobalSettinngsContent.RemoveDownloadFolder.Status = "0"
-        $jsonGlobalSettinngsContent | ConvertTo-Json | Set-Content $jsonFilePath
+        Update-JsonFile "$sourceFolderPath\Settings.JSON" "RemoveDownloadFolder" "Status" "0"
     }
 
     if($formControls.chkboxDeleteBin.IsChecked)
     {
-        $jsonFilePath = "$sourceFolderPath\Settings.JSON"
-        $jsonGlobalSettinngsContent = Get-Content $jsonFilePath | ConvertFrom-Json
-        $jsonGlobalSettinngsContent.EmptyRecycleBin.Status = "1"
-        $jsonGlobalSettinngsContent | ConvertTo-Json | Set-Content $jsonFilePath
+        Update-JsonFile "$sourceFolderPath\Settings.JSON" "EmptyRecycleBin" "Status" "1"
     }
     elseif($formControls.chkboxDeleteBin.IsChecked -eq $false)
     { 
-        $jsonFilePath = "$sourceFolderPath\Settings.JSON"
-        $jsonGlobalSettinngsContent = Get-Content $jsonFilePath | ConvertFrom-Json
-        $jsonGlobalSettinngsContent.EmptyRecycleBin.Status = "0"
-        $jsonGlobalSettinngsContent | ConvertTo-Json | Set-Content $jsonFilePath
+        Update-JsonFile "$sourceFolderPath\Settings.JSON" "EmptyRecycleBin" "Status" "0"
     }
     Remove-Item -Path "$env:SystemDrive\_Tech\Applications\source\Menu.lock" -Force 
     $lockFile = "$sourceFolderPath\Installation.lock"

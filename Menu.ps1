@@ -137,7 +137,7 @@ function Initialize-Application($appName)
         Get-RemoteFile "caffeine64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/caffeine64.exe" $global:appPathSource
         Import-Module "$applicationPath\installation\source\Installation.psm1"
         $global:jsonSettingsFilePath = "$global:appPathSource\InstallationSettings.JSON"
-        $global:jsonChkboxContent = Get-Content -Raw $global:jsonSettingsFilePath | ConvertFrom-Json
+        $global:jsonChkboxContent = Import-JsonFile $global:jsonSettingsFilePath
     }
 
         $formControls.imgBackGround.source = "c:\_tech\Applications\$appName\source\Background_$appName.jpeg"
