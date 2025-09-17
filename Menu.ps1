@@ -153,7 +153,8 @@ function Initialize-Application($appName)
 $applicationPath = "$env:SystemDrive\_Tech\Applications"
 $sourceFolderPath = "$applicationPath\source"
 $global:windowsVersion = ((Get-CimInstance -ClassName Win32_OperatingSystem).Caption) -replace 'Microsoft ', ''
-$global:OSUpdate = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion") | Select-Object -expand DisplayVersion
+Import-Module "$sourceFolderPath\Modules\Registry.psm1"
+$global:OSUpdate = Get-RegistryValue -KeyPath "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -EntryName "DisplayVersion"
 $global:actualDate = (Get-Date).ToString()
 function Main
 {
