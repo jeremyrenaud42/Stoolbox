@@ -130,11 +130,11 @@ function Initialize-Application($appName)
     $global:logFileName = Initialize-LogFile $global:appPathSource $appName
     if ($appName -eq "Installation")
     {
-        Get-RemoteFile "$($appName)MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/$($appName)MainWindow.xaml" $global:appPathSource
-        Get-RemoteFile "InstallationSettings.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationSettings.JSON" $global:appPathSource
-        Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/InstallationApps.JSON" $global:appPathSource
-        Get-RemoteFile "Installation.psm1" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/Installation.psm1" $global:appPathSource
-        Get-RemoteFile "caffeine64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/$appName/main/caffeine64.exe" $global:appPathSource
+        Get-RemoteFile "$($appName)MainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/$appName/$($appName)MainWindow.xaml" $global:appPathSource
+        Get-RemoteFile "InstallationSettings.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/$appName/InstallationSettings.JSON" $global:appPathSource
+        Get-RemoteFile "InstallationApps.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/$appName/InstallationApps.JSON" $global:appPathSource
+        Get-RemoteFile "Installation.psm1" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/$appName/Installation.psm1" $global:appPathSource
+        Get-RemoteFile "caffeine64.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/$appName/caffeine64.exe" $global:appPathSource
         Import-Module "$applicationPath\installation\source\Installation.psm1"
         $global:jsonSettingsFilePath = "$global:appPathSource\InstallationSettings.JSON"
         $global:jsonChkboxContent = Import-JsonFile $global:jsonSettingsFilePath
