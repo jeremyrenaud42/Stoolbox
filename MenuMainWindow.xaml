@@ -147,7 +147,7 @@
             <Button x:Name="btnSterjoWireless_Fix" Content="Wireless" Style="{StaticResource ButtonStyle}" Margin="700,380,0,0" Background="White" Visibility="Hidden"/>
             <Button x:Name="btnDDU_Fix" Content="DDU" Style="{StaticResource ButtonStyle}" Margin="105,125,0,0" Background="White"/>
             <Button x:Name="btnWFD_Fix" Content="WiseForceDeleter" Style="{StaticResource ButtonStyle}" Margin="280,125,0,0" Background="White"/>
-            <Button x:Name="btnWinDirStat_Fix" Content="WinDirStat" Style="{StaticResource ButtonStyle}" Margin="445,125,0,0" Background="White"/>
+            <Button x:Name="btnWizTree_Fix" Content="WizTree" Style="{StaticResource ButtonStyle}" Margin="445,125,0,0" Background="White"/>
             <Button x:Name="btnPW_Fix" Content="Minitool PW" Style="{StaticResource ButtonStyle}" Margin="600,125,0,0" Background="White"/>
             <Button x:Name="btnInternet_Fix" Content="Internet Repair" Style="{StaticResource ButtonStyle}" Margin="760,125,0,0" Background="White"/>
             <Button x:Name="btnQuit_Fix" Content="Quitter" Style="{StaticResource ButtonStyle}" Margin="469,575,0,0" Background="darkred"/>
