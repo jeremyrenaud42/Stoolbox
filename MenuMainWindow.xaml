@@ -124,7 +124,7 @@
             <Button x:Name="btnMenu_Diagnostique" Content="Menu principal" Style="{StaticResource ButtonStyle}" Margin="25,25,0,0" Background="darkred"/>
             <Button x:Name="btnSysinfo_Diagnostique" Content="Sysinfo" Style="{StaticResource ButtonStyle}" Margin="825,525,0,0" Background="red"/>
             <Button x:Name="btnWhocrashed_Diagnostique" Content="Whocrashed" Style="{StaticResource ButtonStyle}" Margin="625,525,0,0" Background="darkgreen"/>
-            <Button x:Name="btnHWMonitor_Diagnostique" Content="HWMonitor" Style="{StaticResource ButtonStyle}" Margin="325,525,0,0" Background="magenta"/>
+            <Button x:Name="btnHWiNFO_Diagnostique" Content="HWiNFO" Style="{StaticResource ButtonStyle}" Margin="325,525,0,0" Background="magenta"/>
             <Button x:Name="btnSpeccy_Diagnostique" Content="Speccy" Style="{StaticResource ButtonStyle}" Margin="105,525,0,0" Background="green"/>
         </Grid>
         <Grid x:Name="gridFix" Visibility="Collapsed" Margin="0,60,0,0">

@@ -139,8 +139,8 @@ $formControls.btnSpeccy_Diagnostique.Add_Click({
     Invoke-App "Speccy.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Diagnostique/Speccy.zip" $global:appPathSource
 })
 
-$formControls.btnHWMonitor_Diagnostique.Add_Click({
-    Invoke-App "HWMonitor_x64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Diagnostique/HWMonitor_x64.zip" $global:appPathSource
+$formControls.btnHWiNFO_Diagnostique.Add_Click({
+    Invoke-App "HWiNFO64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Diagnostique/HWiNFO64.zip" $global:appPathSource
 })
 
 $formControls.btnWhocrashed_Diagnostique.Add_Click({
