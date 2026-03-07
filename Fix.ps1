@@ -37,8 +37,8 @@ $formControls.btnDDU_Fix.Add_Click({
 $formControls.btnWFD_Fix.Add_Click({
     Invoke-App "WiseForceDeleter.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Fix/WiseForceDeleter.zip" $global:appPathSource
 })
-$formControls.btnWinDirStat_Fix.Add_Click({
-    Invoke-App "WinDirStat.exe" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Fix/WinDirStat.exe" $global:appPathSource
+$formControls.btnWizTree_Fix.Add_Click({
+    Invoke-App "WizTree64.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Fix/WizTree64.zip" $global:appPathSource
 })
 $formControls.btnPW_Fix.Add_Click({
     Invoke-App "PartitionWizard.zip" "https://ftp.alexchato9.com/public/file/lmyigeszp0mea-kh9cbe0g/PartitionWizard.zip" $global:appPathSource
