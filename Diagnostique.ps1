@@ -126,11 +126,6 @@ $formControls.btnCrystalDiskInfo_Diagnostique.Add_Click({
 })
 
 $formControls.btnFurmark_Diagnostique.Add_Click({
-    Invoke-App "FurMark.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Diagnostique/GPU/FurMark.zip" "$global:appPathSource/GPU"
-    Add-Log $global:logFileName "Stress test du GPU"
-})
-
-$formControls.btnFurmarkV2_Diagnostique.Add_Click({
     Invoke-App "FurMark_GUI.zip" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Diagnostique/GPU/FurMark_GUI.zip" "$global:appPathSource/GPU"
     Add-Log $global:logFileName "Stress test du GPU"
 })
