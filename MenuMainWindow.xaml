@@ -134,11 +134,9 @@
             <Button x:Name="btnCHKDSK_Fix" Content="CHKDSK" Style="{StaticResource ButtonStyle}" Margin="195,320,0,0" Background="White" Visibility="Hidden"/>
             <Button x:Name="btnSession_Fix" Content="Creer session admin" Style="{StaticResource ButtonStyle}" Margin="195,385,0,0" Background="White" Visibility="Hidden"/>
             <Button x:Name="btnTweak_Fix" Content="Tweak" Style="{StaticResource ButtonStyle}" Margin="445,200,0,0" Background="White"/>
-            <Button x:Name="btnFW10_Fix" Content="Fix w10" Style="{StaticResource ButtonStyle}" Margin="445,200,0,0" Background="White" Visibility="Hidden"/>
-            <Button x:Name="btnFW11_Fix" Content="Fix w11" Style="{StaticResource ButtonStyle}" Margin="445,260,0,0" Background="White" Visibility="Hidden"/>
-            <Button x:Name="btnUWT10_Fix" Content="Tweaker W10" Style="{StaticResource ButtonStyle}" Margin="445,320,0,0" Background="White" Visibility="Hidden"/>
-            <Button x:Name="btnUWT11_Fix" Content="Tweaker W11" Style="{StaticResource ButtonStyle}" Margin="445,380,0,0" Background="White" Visibility="Hidden"/>
-            <Button x:Name="btnTweaking_Fix" Content="Tweaking" Style="{StaticResource ButtonStyle}" Margin="445,440,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnFW11_Fix" Content="Fix w11" Style="{StaticResource ButtonStyle}" Margin="445,200,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnUWT11_Fix" Content="Tweaker W11" Style="{StaticResource ButtonStyle}" Margin="445,260,0,0" Background="White" Visibility="Hidden"/>
+            <Button x:Name="btnTweaking_Fix" Content="Tweaking" Style="{StaticResource ButtonStyle}" Margin="445,320,0,0" Background="White" Visibility="Hidden"/>
             <Button x:Name="btnSterjo_Fix" Content="Sterjo" Style="{StaticResource ButtonStyle}" Margin="700,200,0,0" Background="White"/>
             <Button x:Name="btnSterjoBrowser_Fix" Content="Browser" Style="{StaticResource ButtonStyle}" Margin="700,200,0,0" Background="White" Visibility="Hidden"/>
             <Button x:Name="btnSterjoKeys_Fix" Content="Keys" Style="{StaticResource ButtonStyle}" Margin="700,260,0,0" Background="White" Visibility="Hidden"/>

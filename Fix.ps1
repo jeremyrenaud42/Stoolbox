@@ -14,9 +14,7 @@ $formControls.btnScript_Fix.Add_Click({
     $formControls.btnScript_Fix.Visibility="Collapsed"
 })
 $formControls.btnTweak_Fix.Add_Click({
-    $formControls.btnFW10_Fix.Visibility="Visible"
     $formControls.btnFW11_Fix.Visibility="Visible"
-    $formControls.btnUWT10_Fix.Visibility="Visible"
     $formControls.btnUWT11_Fix.Visibility="Visible"
     $formControls.btnTweaking_Fix.Visibility="Visible"
     $formControls.btnTweak_Fix.Visibility="Collapsed"
@@ -60,14 +58,8 @@ $formControls.btnSession_Fix.Add_Click({
     Get-RemoteFile "creer_session.txt" "https://raw.githubusercontent.com/jeremyrenaud42/Software/main/Fix/creer_session.txt" $global:appPathSource
     Start-Process "$global:appPathSource\creer_session.txt"
 })
-$formControls.btnFW10_Fix.Add_Click({
-    Start-Process "$global:appPathSource\Tweak\FixWin10\FixWin 10.2.2.exe"
-})
 $formControls.btnFW11_Fix.Add_Click({
     Start-Process "$global:appPathSource\Tweak\FixWin11\FixWin 11.1.exe"
-})
-$formControls.btnUWT10_Fix.Add_Click({
-    Start-Process "$global:appPathSource\Tweak\Ultimate Windows Tweaker w10\Ultimate Windows Tweaker 4.8.exe"
 })
 $formControls.btnUWT11_Fix.Add_Click({
     Start-Process "$global:appPathSource\Tweak\Ultimate Windows Tweaker w11\Ultimate Windows Tweaker 5.1.exe"
