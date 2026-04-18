@@ -552,6 +552,9 @@ $window.add_Loaded({
         Get-RemoteFileForce "Fix.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Fix.ps1" "$env:SystemDrive\_Tech\Applications\Fix"
         Get-RemoteFileForce "Remove.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Remove.ps1" "$env:SystemDrive\Temp\Stoolbox"
         Get-RemoteFileForce "Menu.ps1" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Menu.ps1" "$env:SystemDrive\_Tech"
+        Get-RemoteFile "MenuMainWindow.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/MenuMainWindow.xaml" "$env:SystemDrive\_Tech\Applications\source"
+        Get-RemoteFile "Resources.xaml" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Resources.xaml" "$env:SystemDrive\_Tech\Applications\source"
+        Get-RemoteFile "Settings.JSON" "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Settings.JSON" "$env:SystemDrive\_Tech\Applications\source"
         Invoke-WebRequest "https://raw.githubusercontent.com/jeremyrenaud42/Stoolbox/main/Modules.zip" -OutFile "$env:SystemDrive\_Tech\Applications\source\Modules.zip" | Out-Null
         Expand-Archive "$env:SystemDrive\_Tech\Applications\source\Modules.zip" "$env:SystemDrive\_Tech\Applications\source" -Force
         Remove-Item "$env:SystemDrive\_Tech\Applications\source\Modules.zip"
